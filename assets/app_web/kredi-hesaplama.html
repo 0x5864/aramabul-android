@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1f6f54" />
+    <title>BanaSorsana</title>
+    <meta
+      name="description"
+      content="Kredi tutarı, faiz ve vade bilgileriyle aylık taksit ve toplam geri ödemeyi hesapla."
+    />
+    <link rel="icon" type="image/png" href="assets/hedef-lred.png" />
+    <link rel="shortcut icon" type="image/png" href="assets/hedef-lred.png" />
+    <link rel="apple-touch-icon" href="assets/hedef-lred.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260326-74" />
+  </head>
+  <body class="credit-page">
+    <div class="texture"></div>
+
+    <header class="global-header-band">
+      <nav class="topbar global-topbar">
+        <a class="brand" href="index.html" aria-label="banasorsana">
+          <span class="brand-wordmark"
+            ><span class="brand-wordmark-accent">bana</span><span class="brand-wordmark-rest">sorsana</span></span
+          >
+        </a>
+      </nav>
+      <div class="global-topline">
+        <div class="global-topline-inner">
+          <a href="index.html">Anasayfa</a>
+          <span>/</span>
+          <span>Kredi Hesaplama</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="credit-page-shell">
+      <section class="credit-layout" aria-label="Kredi hesaplama alanı">
+        <section class="credit-card">
+          <div class="converter-mini-head">
+            <p class="converter-mini-label">Kredi Hesaplama</p>
+          </div>
+
+          <div class="converter-mini-grid credit-form">
+            <label class="converter-field">
+              <span>Kredi tutarı</span>
+              <input type="text" inputmode="decimal" value="250.000,00" placeholder="Örnek: 250.000,00" data-loan-amount />
+            </label>
+            <label class="converter-field">
+              <span>Faiz oranı</span>
+              <input type="text" inputmode="decimal" value="3,29" placeholder="Örnek: 3,29" data-loan-rate />
+            </label>
+            <label class="converter-field">
+              <span>Faiz tipi</span>
+              <select data-loan-rate-period>
+                <option value="monthly">Aylık</option>
+                <option value="quarterly">3 Aylık</option>
+                <option value="yearly" selected>Yıllık</option>
+              </select>
+            </label>
+            <label class="converter-field">
+              <span>Yıllık bileşik faiz oranı</span>
+              <input type="text" value="-" readonly data-loan-effective-rate />
+            </label>
+            <label class="converter-field">
+              <span>Vade (Ay)</span>
+              <input type="number" min="1" step="1" value="24" data-loan-months />
+            </label>
+            <label class="converter-field">
+              <span>Ödeme sıklığı</span>
+              <select data-loan-payment-frequency>
+                <option value="monthly" selected>Aylık</option>
+                <option value="quarterly">3 Aylık</option>
+                <option value="yearly">Yıllık</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="converter-mini-actions">
+            <button class="converter-submit" type="button" data-loan-calculate>Hesapla</button>
+          </div>
+
+          <aside class="credit-results">
+            <article class="credit-result-card">
+              <span class="credit-result-label" data-loan-payment-label>Aylık taksit</span>
+              <strong class="credit-result-value" data-loan-payment>-</strong>
+            </article>
+            <article class="credit-result-card">
+              <span class="credit-result-label">Toplam faiz</span>
+              <strong class="credit-result-value" data-loan-interest>-</strong>
+            </article>
+            <article class="credit-result-card">
+              <span class="credit-result-label">Toplam geri ödeme</span>
+              <strong class="credit-result-value" data-loan-total>-</strong>
+            </article>
+          </aside>
+
+        </section>
+
+        <section class="credit-table-card" data-loan-schedule-card>
+          <div class="credit-table-head">
+            <p class="converter-mini-label">Ödeme Tablosu</p>
+            <button class="converter-secondary" type="button" data-loan-schedule-toggle>
+              Ödeme tablosunu göster
+            </button>
+          </div>
+          <div class="credit-table-wrap" data-loan-schedule-panel hidden>
+            <table class="credit-table">
+              <thead>
+                <tr>
+                  <th>Dönem</th>
+                  <th>Ay</th>
+                  <th>Taksit</th>
+                  <th>Faiz</th>
+                  <th>Anapara</th>
+                  <th>Kalan Borç</th>
+                </tr>
+              </thead>
+              <tbody data-loan-schedule-body></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="kredi.js?v=20260326-45"></script>
+  </body>
+</html>

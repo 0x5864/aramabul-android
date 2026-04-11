@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1f6f54" />
+    <title>AramaBul</title>
+    <meta
+      name="description"
+      content="Çeviri sayfasında metni diller arasında hızlıca çevir, dili değiştir ve sonucu kopyala."
+    />
+    <link rel="icon" type="image/png" href="assets/hedef-lred.png" />
+    <link rel="shortcut icon" type="image/png" href="assets/hedef-lred.png" />
+    <link rel="apple-touch-icon" href="assets/hedef-lred.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260328-01" />
+  </head>
+  <body class="translate-page">
+    <div class="texture"></div>
+
+    <header class="global-header-band">
+      <nav class="topbar global-topbar">
+        <a class="brand" href="index.html" aria-label="aramabul">
+          <span class="brand-wordmark">aramabul</span>
+        </a>
+      </nav>
+      <div class="global-topline">
+        <div class="global-topline-inner">
+          <a href="index.html">Anasayfa</a>
+          <span>/</span>
+          <span>Çeviri</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="hero translate-shell">
+      <section class="translate-card">
+        <div class="translate-head">
+          <div class="converter-mini-head">
+            <span class="converter-mini-thumb" aria-hidden="true"></span>
+            <p class="converter-mini-label">Çeviri</p>
+          </div>
+        </div>
+
+        <div class="translate-layout">
+          <section class="translate-panel" aria-label="Kaynak metin paneli">
+            <div class="translate-panel-head">
+              <p class="translate-panel-title">Kaynak Metin</p>
+              <label class="visually-hidden" for="translateSourceLanguage">Kaynak dil</label>
+              <select id="translateSourceLanguage" class="translate-select" data-translate-source></select>
+            </div>
+
+            <label class="visually-hidden" for="translateInput">Çevrilecek metin</label>
+            <textarea
+              id="translateInput"
+              class="translate-textarea"
+              data-translate-input
+              placeholder="Çevirmek istediğin metni yaz veya yapıştır."
+            >Merhaba, bugün nasılsın?</textarea>
+
+            <div class="translate-actions">
+              <div class="translate-meta">
+                <p class="translate-status" data-translate-status>Hazır.</p>
+              </div>
+              <div class="translate-button-row">
+                <button
+                  class="translate-copy-button translate-icon-button"
+                  type="button"
+                  aria-label="Sesli giriş başlat"
+                  data-tooltip="Sesli giriş başlat"
+                  data-translate-input-mic
+                >
+                  <img class="translate-icon-image translate-icon-image-mic" src="assets/mic.webp" alt="" aria-hidden="true" />
+                </button>
+                <button
+                  class="translate-copy-button translate-icon-button"
+                  type="button"
+                  aria-label="Giriş metnini dinle"
+                  data-tooltip="Giriş metnini dinle"
+                  data-translate-input-listen
+                >
+                  <img class="translate-icon-image translate-icon-image-speak" src="assets/speaker.png" alt="" aria-hidden="true" />
+                </button>
+                <button class="translate-submit-button" type="button" data-translate-submit>Çevir</button>
+              </div>
+            </div>
+          </section>
+
+          <div class="translate-swap-wrap">
+            <button class="translate-swap-button" type="button" aria-label="Dilleri değiştir" data-translate-swap>
+              ⇄
+            </button>
+          </div>
+
+          <section class="translate-panel" aria-label="Çeviri sonucu paneli">
+            <div class="translate-panel-head">
+              <p class="translate-panel-title">Çeviri Sonucu</p>
+              <label class="visually-hidden" for="translateTargetLanguage">Hedef dil</label>
+              <select id="translateTargetLanguage" class="translate-select" data-translate-target></select>
+            </div>
+
+            <div class="translate-textarea translate-output is-placeholder" data-translate-output>
+              Çeviri burada görünecek.
+            </div>
+
+            <div class="translate-actions">
+              <div class="translate-meta">
+                <p class="translate-detected" data-translate-detected>Algılanan dil: -</p>
+                <p class="translate-detected" data-translate-transliteration hidden>Latin okunuş: -</p>
+              </div>
+              <div class="translate-button-row">
+                <button
+                  class="translate-copy-button translate-icon-button"
+                  type="button"
+                  aria-label="Çeviriyi dinle"
+                  data-tooltip="Çeviriyi dinle"
+                  data-translate-listen
+                >
+                  <img class="translate-icon-image translate-icon-image-speak" src="assets/speaker.png" alt="" aria-hidden="true" />
+                </button>
+                <button
+                  class="translate-copy-button translate-icon-button"
+                  type="button"
+                  aria-label="Çeviriyi kopyala"
+                  data-tooltip="Çeviriyi kopyala"
+                  data-translate-copy
+                >
+                  <svg class="translate-icon-image" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      d="M9 4a2 2 0 0 0-2 2v1H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h7a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V8.83a2 2 0 0 0-.59-1.41l-2.83-2.83A2 2 0 0 0 13.17 4H9Zm6 3.41L16.59 9H15V7.41ZM9 6h4v4a1 1 0 0 0 1 1h2v4h-1V9a2 2 0 0 0-2-2H9V6Zm-3 3h7v9H6V9Z"
+                      fill="currentColor"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <footer class="yr-footer" aria-label="Alt Bant">
+      <div class="yr-footer-inner">
+        <div class="yr-footer-grid">
+          <section class="yr-footer-col">
+            <h4>aramabul'u indir!</h4>
+            <a class="store-badge" href="#" aria-label="App Store">
+              <span class="store-badge-top">Hemen indirin</span>
+              <span class="store-badge-name">App Store</span>
+            </a>
+            <a class="store-badge" href="#" aria-label="Google Play">
+              <span class="store-badge-top">Hemen indirin</span>
+              <span class="store-badge-name">Google Play</span>
+            </a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>aramabul'u keşfet</h4>
+            <a href="hakkimizda.html">Hakkımızda</a>
+            <a href="yer-ekle.html">Yer ekle</a>
+            <a href="iletisim.html">İletişim</a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>Yardım mı lazım?</h4>
+            <a href="sss.html">Sıkça Sorulan Sorular</a>
+            <a href="cerez-politikasi.html">Çerez Politikası</a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>Kurumsal</h4>
+            <a href="kullanim-kosullari.html">Kullanım Koşulları</a>
+            <a href="kvkk.html">Kişisel Verilerin Korunması</a>
+            <a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+          </section>
+        </div>
+
+        <div class="yr-footer-bottom">
+          <p>© 2026 aramabul</p>
+          <div class="yr-footer-social" aria-label="Sosyal">
+            <a href="#" aria-label="Instagram">○</a>
+            <a href="#" aria-label="Ara">◌</a>
+            <a href="#" aria-label="Dünya">◍</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="ceviri.js?v=20260328-01"></script>
+  </body>
+</html>

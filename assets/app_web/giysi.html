@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1f6f54" />
+    <title>AramaBul</title>
+    <meta
+      name="description"
+      content="Giysi bedenlerini farklı ülkeler ve beden sistemleri arasında karşılaştır."
+    />
+    <link rel="icon" type="image/png" href="assets/fav.png?v=20260322-02" />
+    <link rel="shortcut icon" type="image/png" href="assets/fav.png?v=20260322-02" />
+    <link rel="apple-touch-icon" href="assets/fav.png?v=20260322-02" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260329-02" />
+  </head>
+  <body class="apparel-page apparel-giysi">
+    <div class="texture"></div>
+    <header class="global-header-band">
+      <nav class="topbar global-topbar">
+        <a class="brand" href="index.html" aria-label="aramabul">
+          <span class="brand-wordmark">aramabul</span>
+        </a>
+      </nav>
+      <div class="global-topline">
+        <div class="global-topline-inner">
+          <a href="index.html">Anasayfa</a>
+          <span>/</span>
+          <a href="hesaplama.html">Hesaplama</a>
+          <span>/</span>
+          <a href="giyim.html">Giyim</a>
+          <span>/</span>
+          <span>Giysi</span>
+        </div>
+      </div>
+    </header>
+    <main class="hero apparel-shell">
+      <section class="apparel-panel">
+        <div class="apparel-head">
+          <p class="converter-mini-label">Giysi</p>
+        </div>
+        <div class="apparel-controls">
+          <label class="converter-field">
+            <span>Sistem</span>
+            <select data-clothing-system></select>
+          </label>
+          <label class="converter-field">
+            <span>Beden</span>
+            <select data-clothing-size></select>
+          </label>
+        </div>
+        <div class="apparel-results" data-clothing-results></div>
+      </section>
+    </main>
+    <footer class="yr-footer" aria-label="Alt Bant">
+      <div class="yr-footer-inner"><div class="yr-footer-grid"></div><div class="yr-footer-bottom"><p>© 2026 aramabul</p></div></div>
+    </footer>
+    <script src="giysi.js?v=20260329-01"></script>
+  </body>
+</html>

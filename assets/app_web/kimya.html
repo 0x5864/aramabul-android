@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1f6f54" />
+    <title>BanaSorsana</title>
+    <meta
+      name="description"
+      content="Kimya sayfasında enerji, sıcaklık, zaman, özgül ağırlık, yoğunluk ve yüzey gerilimi dönüştürücülerini birlikte kullan."
+    />
+    <link rel="icon" type="image/png" href="assets/hedef-lred.png" />
+    <link rel="shortcut icon" type="image/png" href="assets/hedef-lred.png" />
+    <link rel="apple-touch-icon" href="assets/hedef-lred.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260327-04" />
+  </head>
+  <body class="converter-page chemistry-page">
+    <div class="texture"></div>
+
+    <header class="global-header-band">
+      <nav class="topbar global-topbar">
+        <a class="brand" href="index.html" aria-label="aramabul">
+          <span class="brand-wordmark">aramabul</span>
+        </a>
+      </nav>
+      <div class="global-topline">
+        <div class="global-topline-inner">
+          <a href="index.html">Anasayfa</a>
+          <span>/</span>
+          <a href="hesaplama.html">Hesaplama</a>
+          <span>/</span>
+          <span>Kimya</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="hero">
+      <section class="converter-card-grid converter-card-grid-triple" aria-label="Kimya dönüştürücüleri">
+        <section class="converter-mini-card" data-converter-card data-category="energy">
+          <div class="converter-mini-head">
+            <p class="converter-mini-label">Enerji</p>
+          </div>
+          <div class="converter-mini-grid">
+            <label class="converter-field">
+              <span>Miktar</span>
+              <input type="text" inputmode="decimal" value="1" placeholder="Örnek: 12,5" data-amount />
+            </label>
+            <label class="converter-field">
+              <span>Kaynak</span>
+              <select data-from></select>
+            </label>
+            <label class="converter-field">
+              <span>Hedef</span>
+              <select data-to></select>
+            </label>
+          </div>
+          <div class="converter-mini-actions">
+            <button class="converter-submit converter-submit-compact" type="button" data-swap>Yer değiştir</button>
+          </div>
+          <div class="converter-mini-result">
+            <div class="converter-result-value" data-result-value>0,23901</div>
+            <p class="converter-result-unit" data-result-unit>Cal</p>
+            <p class="converter-result-meta" data-summary>1 Joule = 0,23901 Cal</p>
+          </div>
+        </section>
+
+        <section class="converter-mini-card" data-converter-card data-category="temperature">
+          <div class="converter-mini-head">
+            <p class="converter-mini-label">Sıcaklık</p>
+          </div>
+          <div class="converter-mini-grid">
+            <label class="converter-field">
+              <span>Miktar</span>
+              <input type="text" inputmode="decimal" value="1" placeholder="Örnek: 12,5" data-amount />
+            </label>
+            <label class="converter-field">
+              <span>Kaynak</span>
+              <select data-from></select>
+            </label>
+            <label class="converter-field">
+              <span>Hedef</span>
+              <select data-to></select>
+            </label>
+          </div>
+          <div class="converter-mini-actions">
+            <button class="converter-submit converter-submit-compact" type="button" data-swap>Yer değiştir</button>
+          </div>
+          <div class="converter-mini-result">
+            <div class="converter-result-value" data-result-value>33,8</div>
+            <p class="converter-result-unit" data-result-unit>Fahrenheit (°F)</p>
+            <p class="converter-result-meta" data-summary>1 Celsius (°C) = 33,8 Fahrenheit (°F)</p>
+          </div>
+        </section>
+
+        <section class="converter-mini-card" data-converter-card data-category="time">
+          <div class="converter-mini-head">
+            <p class="converter-mini-label">Zaman</p>
+          </div>
+          <div class="converter-mini-grid">
+            <label class="converter-field">
+              <span>Miktar</span>
+              <input type="text" inputmode="decimal" value="1" placeholder="Örnek: 12,5" data-amount />
+            </label>
+            <label class="converter-field">
+              <span>Kaynak</span>
+              <select data-from></select>
+            </label>
+            <label class="converter-field">
+              <span>Hedef</span>
+              <select data-to></select>
+            </label>
+          </div>
+          <div class="converter-mini-actions">
+            <button class="converter-submit converter-submit-compact" type="button" data-swap>Yer değiştir</button>
+          </div>
+          <div class="converter-mini-result">
+            <div class="converter-result-value" data-result-value>0,01667</div>
+            <p class="converter-result-unit" data-result-unit>Dakika</p>
+            <p class="converter-result-meta" data-summary>1 Saniye = 0,01667 Dakika</p>
+          </div>
+        </section>
+
+        <section class="converter-mini-card" data-converter-card data-category="specific_weight">
+          <div class="converter-mini-head">
+            <p class="converter-mini-label">Özgül Ağırlık</p>
+          </div>
+          <div class="converter-mini-grid">
+            <label class="converter-field">
+              <span>Miktar</span>
+              <input type="text" inputmode="decimal" value="1" placeholder="Örnek: 12,5" data-amount />
+            </label>
+            <label class="converter-field">
+              <span>Kaynak</span>
+              <select data-from></select>
+            </label>
+            <label class="converter-field">
+              <span>Hedef</span>
+              <select data-to></select>
+            </label>
+          </div>
+          <div class="converter-mini-actions">
+            <button class="converter-submit converter-submit-compact" type="button" data-swap>Yer değiştir</button>
+          </div>
+          <div class="converter-mini-result">
+            <div class="converter-result-value" data-result-value>0,06243</div>
+            <p class="converter-result-unit" data-result-unit>lb.force/ft³</p>
+            <p class="converter-result-meta" data-summary>1 kp/m³ = 0,06243 lb.force/ft³</p>
+          </div>
+        </section>
+
+        <section class="converter-mini-card" data-converter-card data-category="density">
+          <div class="converter-mini-head">
+            <p class="converter-mini-label">Yoğunluk</p>
+          </div>
+          <div class="converter-mini-grid">
+            <label class="converter-field">
+              <span>Miktar</span>
+              <input type="text" inputmode="decimal" value="1" placeholder="Örnek: 12,5" data-amount />
+            </label>
+            <label class="converter-field">
+              <span>Kaynak</span>
+              <select data-from></select>
+            </label>
+            <label class="converter-field">
+              <span>Hedef</span>
+              <select data-to></select>
+            </label>
+          </div>
+          <div class="converter-mini-actions">
+            <button class="converter-submit converter-submit-compact" type="button" data-swap>Yer değiştir</button>
+          </div>
+          <div class="converter-mini-result">
+            <div class="converter-result-value" data-result-value>0,06243</div>
+            <p class="converter-result-unit" data-result-unit>lb/ft³</p>
+            <p class="converter-result-meta" data-summary>1 Kg/m³ = 0,06243 lb/ft³</p>
+          </div>
+        </section>
+
+        <section class="converter-mini-card" data-converter-card data-category="surface_tension">
+          <div class="converter-mini-head">
+            <p class="converter-mini-label">Yüzey Gerilimi</p>
+          </div>
+          <div class="converter-mini-grid">
+            <label class="converter-field">
+              <span>Miktar</span>
+              <input type="text" inputmode="decimal" value="1" placeholder="Örnek: 12,5" data-amount />
+            </label>
+            <label class="converter-field">
+              <span>Kaynak</span>
+              <select data-from></select>
+            </label>
+            <label class="converter-field">
+              <span>Hedef</span>
+              <select data-to></select>
+            </label>
+          </div>
+          <div class="converter-mini-actions">
+            <button class="converter-submit converter-submit-compact" type="button" data-swap>Yer değiştir</button>
+          </div>
+          <div class="converter-mini-result">
+            <div class="converter-result-value" data-result-value>1000</div>
+            <p class="converter-result-unit" data-result-unit>dyn/cm</p>
+            <p class="converter-result-meta" data-summary>1 N/m = 1000 dyn/cm</p>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="yr-footer" aria-label="Alt Bant">
+      <div class="yr-footer-inner">
+        <div class="yr-footer-grid">
+          <section class="yr-footer-col">
+            <h4>aramabul'u indir!</h4>
+            <a class="store-badge" href="#" aria-label="App Store">
+              <span class="store-badge-top">Hemen indirin</span>
+              <span class="store-badge-name">App Store</span>
+            </a>
+            <a class="store-badge" href="#" aria-label="Google Play">
+              <span class="store-badge-top">Hemen indirin</span>
+              <span class="store-badge-name">Google Play</span>
+            </a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>aramabul'u keşfet</h4>
+            <a href="hakkimizda.html">Hakkımızda</a>
+            <a href="yer-ekle.html">Yer ekle</a>
+            <a href="iletisim.html">İletişim</a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>Yardım mı lazım?</h4>
+            <a href="sss.html">Sıkça Sorulan Sorular</a>
+            <a href="cerez-politikasi.html">Çerez Politikası</a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>Kurumsal</h4>
+            <a href="kullanim-kosullari.html">Kullanım Koşulları</a>
+            <a href="kvkk.html">Kişisel Verilerin Korunması</a>
+            <a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+          </section>
+        </div>
+
+        <div class="yr-footer-bottom">
+          <p>© 2026 aramabul</p>
+          <div class="yr-footer-social" aria-label="Sosyal">
+            <a href="#" aria-label="Instagram">○</a>
+            <a href="#" aria-label="Ara">◌</a>
+            <a href="#" aria-label="Dünya">◍</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="donusturucu.js?v=20260326-39"></script>
+  </body>
+</html>

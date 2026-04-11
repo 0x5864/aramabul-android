@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1f6f54" />
+    <title>AramaBul</title>
+    <meta
+      name="description"
+      content="Seçtiğin il için restoranları bölge, kategori ve bütçe filtreleri ile incele."
+    />
+    <link rel="icon" type="image/png" href="assets/fav.png?v=20260322-02" />
+    <link rel="shortcut icon" type="image/png" href="assets/fav.png?v=20260322-02" />
+    <link rel="apple-touch-icon" href="assets/fav.png?v=20260322-02" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260310-12" />
+    <link rel="stylesheet" href="city.css" />
+  </head>
+  <body class="city-page">
+    <div class="texture"></div>
+
+    <header class="city-header">
+      <nav class="topbar city-topbar">
+        <a class="brand" href="index.html" aria-label="aramabul">
+          <span class="brand-wordmark">aramabul</span>
+        </a>
+        <form class="header-search" action="search.html" method="get" role="search" aria-label="Genel arama">
+          <label class="visually-hidden" for="headerSearchInput">Arama ifadesi</label>
+          <input
+            id="headerSearchInput"
+            class="header-search-input"
+            type="search"
+            name="mekan"
+            placeholder="Ne bulmamı istersin?"
+            autocomplete="off"
+          />
+          <button class="header-search-btn" type="submit">Bul</button>
+        </form>
+      </nav>
+      <div class="city-topline">
+        <div class="city-topline-inner">
+          <a id="cityToplineHomeLink" href="index.html">Anasayfa</a>
+          <span>/</span>
+          <a id="cityToplineFoodLink" href="keyif.html">Keyif</a>
+          <span>/</span>
+          <a id="cityToplineCityLink" href="city.html">Şehir İli</a>
+          <span id="cityToplineDistrictDivider" hidden>/</span>
+          <span id="cityToplineDistrict" hidden>İlçe</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="city-shell">
+      <div class="city-layout">
+        <aside class="city-sidebar" aria-label="Filtreler">
+          <section class="filter-card filter-card-district">
+            <div class="filter-card-head">
+              <h3>İlçeye göre ara</h3>
+            </div>
+            <div id="districtPicker" class="district-picker">
+              <button
+                id="districtPickerTrigger"
+                class="district-picker-trigger"
+                type="button"
+                aria-label="İlçe seçimini aç"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+              >
+                <span id="districtCurrent">Tüm ilçeler</span>
+                <span class="district-picker-caret" aria-hidden="true">▸</span>
+              </button>
+              <aside id="districtFlyout" class="district-flyout" aria-label="İlçe listesi">
+                <header class="district-flyout-head">
+                  <strong>İlçeler</strong>
+                  <span id="districtFlyoutCity" class="district-flyout-city">Şehir</span>
+                </header>
+                <div
+                  id="districtFlyoutList"
+                  class="district-flyout-list"
+                  role="listbox"
+                  aria-label="İlçe seçenekleri"
+                ></div>
+              </aside>
+            </div>
+          </section>
+
+          <section class="filter-card filter-card-category">
+            <div class="filter-card-head">
+              <h3>Kategoriye göre ara</h3>
+            </div>
+            <div id="categoryPicker" class="category-picker">
+              <button
+                id="categoryPickerTrigger"
+                class="category-picker-trigger"
+                type="button"
+                aria-label="Kategori seçimini aç"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+              >
+                <span id="categoryCurrent">Tüm kategoriler</span>
+                <span class="category-picker-caret" aria-hidden="true">▸</span>
+              </button>
+              <aside id="categoryFlyout" class="category-flyout" aria-label="Kategori listesi">
+                <header class="category-flyout-head">
+                  <strong>Kategoriler</strong>
+                  <span id="categoryFlyoutCity" class="category-flyout-city">Şehir</span>
+                </header>
+                <div
+                  id="categoryFlyoutList"
+                  class="category-flyout-list"
+                  role="listbox"
+                  aria-label="Kategori seçenekleri"
+                ></div>
+              </aside>
+            </div>
+          </section>
+
+        </aside>
+
+        <section class="city-main">
+          <header class="city-main-head">
+            <h1 id="cityTitle">Restoranlar</h1>
+            <p id="cityResultMeta" class="city-total-meta">Toplam 0 restoran</p>
+          </header>
+
+          <div class="city-sort-tabs" role="tablist" aria-label="Sıralama">
+            <button type="button" class="city-sort-tab active" data-sort="traveler">En çok tercih edilen</button>
+            <button type="button" class="city-sort-tab" data-sort="locals">Yerel favoriler</button>
+            <button type="button" class="city-sort-tab" data-sort="viewed">En çok görüntülenen</button>
+            <button type="button" class="city-sort-tab" data-sort="rated">En yüksek puan</button>
+          </div>
+
+          <nav id="cityPaginationTop" class="city-pagination" aria-label="Sayfa gezinme (üst)"></nav>
+          <section id="cityVenueList" class="city-venue-list" aria-live="polite"></section>
+          <nav id="cityPaginationBottom" class="city-pagination" aria-label="Sayfa gezinme (alt)"></nav>
+        </section>
+      </div>
+    </main>
+
+    <footer class="yr-footer" aria-label="Alt Bant">
+      <div class="yr-footer-inner">
+        <div class="yr-footer-grid">
+          <section class="yr-footer-col">
+            <h4>aramabul'u indir!</h4>
+            <a class="store-badge" href="#" aria-label="App Store">
+              <span class="store-badge-top">Hemen indirin</span>
+              <span class="store-badge-name">App Store</span>
+            </a>
+            <a class="store-badge" href="#" aria-label="Google Play">
+              <span class="store-badge-top">Hemen indirin</span>
+              <span class="store-badge-name">Google Play</span>
+            </a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>aramabul'u keşfet</h4>
+            <a href="hakkimizda.html">Hakkımızda</a>
+            <a href="yer-ekle.html">Yer ekle</a>
+            <a href="iletisim.html">İletişim</a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>Yardım mı lazım?</h4>
+            <a href="sss.html">Sıkça Sorulan Sorular</a>
+            <a href="cerez-politikasi.html">Çerez Politikası</a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>Kurumsal</h4>
+            <a href="kullanim-kosullari.html">Kullanım Koşulları</a>
+            <a href="kvkk.html">Kişisel Verilerin Korunması</a>
+            <a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+          </section>
+        </div>
+
+        <div class="yr-footer-bottom">
+          <p>© 2026 aramabul</p>
+          <div class="yr-footer-social" aria-label="Sosyal">
+            <a href="#" aria-label="Instagram">○</a>
+            <a href="#" aria-label="Ara">◌</a>
+            <a href="#" aria-label="Dünya">◍</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <template id="cityVenueTemplate">
+      <article class="city-venue-card">
+        <div class="city-venue-media">
+          <img class="city-venue-main-image" alt="Mekan görseli" loading="lazy" />
+          <div class="city-venue-image-empty is-hidden">Mekan görseli bulunmamaktadır.</div>
+          <div class="city-venue-thumb-row">
+            <img class="city-venue-thumb" alt="Mekan detay görseli" loading="lazy" />
+            <img class="city-venue-thumb" alt="Mekan detay görseli" loading="lazy" />
+            <img class="city-venue-thumb" alt="Mekan detay görseli" loading="lazy" />
+          </div>
+        </div>
+        <div class="city-venue-body">
+          <h3 class="city-venue-title"><a class="city-venue-title-link" href="#"></a></h3>
+          <p class="city-venue-subtitle"></p>
+          <p class="city-venue-description"></p>
+          <div class="city-venue-score-row">
+            <span class="city-venue-stars"></span>
+            <strong class="city-venue-rating"></strong>
+          </div>
+          <div class="city-venue-chip-row">
+            <span class="city-venue-chip"></span>
+          </div>
+        </div>
+      </article>
+    </template>
+    <script src="web-runtime.js?v=20260302-01"></script>
+    <script src="header-state.js?v=20260302-01"></script>
+  <script src="header-i18n.js?v=20260307-11"></script>
+  <script src="header-nav.js?v=20260310-12"></script>
+  <script src="header-shell.js?v=20260302-02"></script>
+  <script src="header-search-ui.js?v=20260303-04"></script>
+  <script src="header-search-data.js?v=20260409-search-db-02"></script>
+    <script src="header-search.js?v=20260409-header-search-01"></script>
+    <script src="city.js?v=20260304-08"></script>
+  </body>
+</html>

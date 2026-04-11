@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d2032" />
+    <title>Admin Giriş | AramaBul</title>
+    <meta name="description" content="Admin yönetim ekranına giriş yap." />
+    <link rel="icon" type="image/png" href="assets/fav.png?v=20260322-02" />
+    <link rel="shortcut icon" type="image/png" href="assets/fav.png?v=20260322-02" />
+    <link rel="apple-touch-icon" href="assets/fav.png?v=20260322-02" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260409-button-sync-05" />
+  </head>
+  <body class="venue-detail-page">
+    <div class="texture"></div>
+
+    <header class="global-header-band">
+      <nav class="topbar global-topbar">
+        <a class="brand" href="index.html" aria-label="aramabul">
+          <span class="brand-wordmark">aramabul</span>
+        </a>
+        <div class="istanbul-topbar-actions">
+          <a class="istanbul-topbar-link" href="istanbul-kesfet.html">İstanbul keşfet</a>
+          <a class="istanbul-topbar-link istanbul-topbar-link-strong" href="index.html">Anasayfa</a>
+        </div>
+      </nav>
+      <div class="global-topline"></div>
+    </header>
+
+    <main class="hero venue-detail-shell">
+      <div class="istanbul-breadcrumb">
+        <a href="index.html">Anasayfa</a>
+        <span>/</span>
+        <span>Admin giriş</span>
+      </div>
+
+      <section class="admin-login-shell">
+        <div class="admin-login-card">
+          <p class="istanbul-discovery-kicker">Yönetim girişi</p>
+          <h1 class="admin-venues-title">Admin oturumu aç</h1>
+          <p class="admin-login-copy">Yalnızca yönetici hesabı ile devam edebilirsin. Şifre sıfırlama bağlantısı e-posta ile gelir.</p>
+
+          <div id="adminLoginMessage" class="istanbul-results-state" hidden></div>
+          <a id="adminLoginAssistLink" class="istanbul-topbar-link admin-login-assist-link" href="#" hidden></a>
+
+          <form id="adminLoginForm" class="admin-login-form">
+            <label class="istanbul-filter-field">
+              <span>E-posta</span>
+              <input id="adminLoginEmail" type="email" autocomplete="username" required />
+            </label>
+
+            <label class="istanbul-filter-field">
+              <span>Şifre</span>
+              <input id="adminLoginPassword" type="password" autocomplete="current-password" required />
+            </label>
+
+            <button class="istanbul-discovery-primary-button" type="submit">Giriş yap</button>
+          </form>
+
+          <form id="adminForgotForm" class="admin-login-form" hidden>
+            <label class="istanbul-filter-field">
+              <span>Admin e-posta</span>
+              <input id="adminForgotEmail" type="email" autocomplete="email" required />
+            </label>
+
+            <button class="istanbul-discovery-primary-button" type="submit">Sıfırlama linki gönder</button>
+          </form>
+
+          <form id="adminResetForm" class="admin-login-form" hidden>
+            <label class="istanbul-filter-field">
+              <span>Yeni şifre</span>
+              <input id="adminResetPassword" type="password" autocomplete="new-password" minlength="6" required />
+            </label>
+
+            <label class="istanbul-filter-field">
+              <span>Yeni şifre tekrar</span>
+              <input id="adminResetPasswordRepeat" type="password" autocomplete="new-password" minlength="6" required />
+            </label>
+
+            <button class="istanbul-discovery-primary-button" type="submit">Şifreyi yenile</button>
+          </form>
+
+          <div class="admin-login-inline-actions">
+            <button id="adminShowForgotButton" class="istanbul-filter-reset" type="button">Şifremi unuttum</button>
+            <button id="adminBackToLoginButton" class="istanbul-filter-reset" type="button" hidden>Girişe dön</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="admin-auth.js?v=20260410-admin-auth-02"></script>
+    <script src="admin-login.js?v=20260410-admin-login-visibility-03"></script>
+  </body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d2032" />
+    <title>İstanbul'da Yeme-İçme | AramaBul</title>
+    <meta
+      name="description"
+      content="İstanbul'da yakınındaki veya hedefindeki kafe, restoran ve yeme-içme mekanlarını hızlıca keşfet."
+    />
+    <link rel="icon" type="image/png" href="assets/fav.png?v=20260322-02" />
+    <link rel="shortcut icon" type="image/png" href="assets/fav.png?v=20260322-02" />
+    <link rel="apple-touch-icon" href="assets/fav.png?v=20260322-02" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260410-card-share-02" />
+  </head>
+  <body class="istanbul-discovery-page">
+    <div class="texture"></div>
+
+    <header class="global-header-band">
+      <nav class="topbar global-topbar">
+        <a class="brand" href="index.html" aria-label="aramabul">
+          <span class="brand-wordmark">aramabul</span>
+        </a>
+        <div class="istanbul-topbar-actions">
+          <a class="istanbul-topbar-link" href="favorites.html">Favorilerim</a>
+        </div>
+        <form class="header-search" action="search.html" method="get" role="search" aria-label="Genel arama">
+          <label class="visually-hidden" for="headerSearchInput">Arama ifadesi</label>
+          <input
+            id="headerSearchInput"
+            class="header-search-input"
+            type="search"
+            name="mekan"
+            placeholder="Ne bulmamı istersin?"
+            autocomplete="off"
+          />
+          <button class="header-search-btn" type="submit">Bul</button>
+        </form>
+      </nav>
+      <div class="global-topline"></div>
+    </header>
+
+    <main class="hero istanbul-discovery-shell">
+      <div class="istanbul-breadcrumb">
+        <a href="index.html">Anasayfa</a>
+        <span>/</span>
+        <span>Yeme-İçme</span>
+        <span>/</span>
+        <span>İstanbul</span>
+      </div>
+
+      <section class="istanbul-discovery-hero">
+        <div class="istanbul-discovery-copy">
+          <h1 class="yeme-icme-hero-title">İstanbul'daki tüm yeme-içme mekanları burada.</h1>
+          <p class="istanbul-discovery-subline">
+            Konum izni verirsen sana en yakın mekanları öne çıkarırız. İstersen ilçe, kategori, bütçe ve
+            etiketlerle listeyi daraltabilirsin.
+          </p>
+        </div>
+        <div class="istanbul-discovery-hero-card">
+          <p class="istanbul-discovery-hero-label">Hızlı erişim</p>
+          <button id="nearbyButton" class="istanbul-discovery-primary-button" type="button">
+            Yakınımdaki mekanları göster
+          </button>
+          <p id="locationMessage" class="istanbul-discovery-location-note">
+            Konum izni verirsen nearby modu açılır.
+          </p>
+        </div>
+      </section>
+
+      <section class="istanbul-filter-card" aria-label="Yeme-içme filtreleri">
+        <div class="istanbul-filter-grid">
+          <label class="istanbul-filter-field">
+            <span>İlçe</span>
+            <select id="districtSelect">
+              <option value="">Tüm ilçeler</option>
+            </select>
+          </label>
+
+          <label class="istanbul-filter-field">
+            <span>Mahalle</span>
+            <select id="neighborhoodSelect" disabled>
+              <option value="">Önce ilçe seç</option>
+            </select>
+          </label>
+
+          <label class="istanbul-filter-field">
+            <span>Kategori</span>
+            <select id="categorySelect">
+              <option value="">Tüm kategoriler</option>
+            </select>
+          </label>
+
+          <label class="istanbul-filter-field">
+            <span>Bütçe</span>
+            <select id="budgetSelect">
+              <option value="">Tüm bütçeler</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="istanbul-filter-toolbar">
+          <div id="tagRow" class="istanbul-tag-row" role="group" aria-label="Mekan etiketleri"></div>
+          <div class="istanbul-filter-actions">
+            <button id="resetFiltersButton" class="istanbul-filter-reset" type="button">Filtreleri temizle</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="istanbul-results-shell" aria-live="polite">
+        <div class="istanbul-results-head">
+          <div>
+            <p id="resultsModeLabel" class="istanbul-results-mode">Yeme-İçme listesi</p>
+            <h2 id="resultsTitle">Mekanlar yükleniyor</h2>
+          </div>
+          <p id="resultsMeta" class="istanbul-results-meta">Lütfen bekle.</p>
+        </div>
+
+        <div id="activeFilterPills" class="istanbul-active-pills" aria-label="Aktif filtreler"></div>
+
+        <div id="resultsState" class="istanbul-results-state">Mekanlar getiriliyor.</div>
+        <div id="resultsLayout" class="istanbul-results-layout" hidden>
+          <section id="resultsGrid" class="istanbul-results-grid"></section>
+
+          <aside id="mapPanel" class="istanbul-map-panel" aria-label="Seçili mekan özeti">
+            <div class="istanbul-map-card">
+              <p class="istanbul-map-panel-kicker">Harita ve özet</p>
+              <h3 id="mapPanelTitle" class="istanbul-map-panel-title">Bir mekan seç</h3>
+              <p id="mapPanelMeta" class="istanbul-map-panel-meta">
+                Kartlardan birine dokununca burada adres ve harita görünür.
+              </p>
+              <div id="mapPanelTags" class="istanbul-map-panel-tags"></div>
+              <div class="istanbul-map-frame-wrap">
+                <iframe
+                  id="mapPanelFrame"
+                  class="istanbul-map-frame"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  title="Seçili mekan haritası"
+                ></iframe>
+              </div>
+              <dl class="istanbul-map-info-list">
+                <div class="istanbul-map-info-row">
+                  <dt>Adres</dt>
+                  <dd id="mapPanelAddress">-</dd>
+                </div>
+                <div class="istanbul-map-info-row">
+                  <dt>Puan</dt>
+                  <dd id="mapPanelRating">-</dd>
+                </div>
+                <div class="istanbul-map-info-row">
+                  <dt>Durum</dt>
+                  <dd id="mapPanelStatus">-</dd>
+                </div>
+              </dl>
+              <div class="istanbul-map-panel-actions">
+                <button id="mapPanelFavoriteButton" class="istanbul-favorite-button" type="button">Kaydet</button>
+                <a id="mapPanelDetailLink" class="istanbul-discovery-primary-button" href="#">Ayrıntılı bilgi</a>
+                <a
+                  id="mapPanelExternalLink"
+                  class="istanbul-map-panel-link"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Haritada aç
+                </a>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <nav id="pagination" class="istanbul-pagination" aria-label="Sayfa gezinme"></nav>
+      </section>
+    </main>
+
+    <template id="istanbulVenueCardTemplate">
+      <article class="istanbul-venue-card">
+        <div class="istanbul-venue-media">
+          <img class="istanbul-venue-image" src="" alt="" loading="lazy" />
+        </div>
+        <div class="istanbul-venue-card-head">
+          <p class="istanbul-venue-eyebrow"></p>
+          <span class="istanbul-venue-distance" hidden></span>
+        </div>
+        <h3 class="istanbul-venue-title">
+          <a class="istanbul-venue-title-link" href="#"></a>
+        </h3>
+        <p class="istanbul-venue-address"></p>
+        <div class="istanbul-venue-meta">
+          <span class="istanbul-venue-rating"></span>
+        </div>
+        <div class="istanbul-venue-pill-row">
+          <span class="istanbul-venue-budget"></span>
+          <button class="istanbul-favorite-button" type="button">Kaydet</button>
+          <div class="card-share-wrap">
+            <button class="card-share-trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-label="Paylaş">
+              <img class="card-share-trigger-icon" src="assets/paylas.png" alt="" loading="lazy" />
+              <span class="card-share-trigger-label">Paylaş</span>
+            </button>
+            <div class="card-share-menu" hidden>
+              <button class="card-share-item card-share-icon-button card-native-share-button" type="button" hidden aria-label="Paylaş">
+                <img class="card-share-item-icon" src="assets/insta.png" alt="" loading="lazy" />
+                <span class="card-share-visually-hidden">Paylaş</span>
+              </button>
+              <a
+                class="card-share-item card-share-icon-button card-whatsapp-share-link"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp'ta paylaş"
+                data-share-label="WhatsApp"
+              >
+                <img class="card-share-item-icon" src="assets/wapp.jpg" alt="" loading="lazy" />
+                <span class="card-share-visually-hidden">WhatsApp</span>
+              </a>
+              <a
+                class="card-share-item card-share-icon-button card-facebook-share-link"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook'ta paylaş"
+              >
+                <img class="card-share-item-icon" src="assets/face.png" alt="" loading="lazy" />
+                <span class="card-share-visually-hidden">Facebook</span>
+              </a>
+              <a
+                class="card-share-item card-share-icon-button card-telegram-share-link"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Telegram'da paylaş"
+              >
+                <img class="card-share-item-icon" src="assets/tgram.avif" alt="" loading="lazy" />
+                <span class="card-share-visually-hidden">Telegram</span>
+              </a>
+              <a
+                class="card-share-item card-share-icon-button card-x-share-link"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="X'te paylaş"
+                data-share-label="X"
+              >
+                <img class="card-share-item-icon" src="assets/x.jpg" alt="" loading="lazy" />
+                <span class="card-share-visually-hidden">X</span>
+              </a>
+              <button class="card-share-item card-share-icon-button card-copy-share-button" type="button" aria-label="Bağlantıyı kopyala">
+                <img class="card-share-item-icon" src="assets/copy.png" alt="" loading="lazy" />
+                <span class="card-share-visually-hidden">Bağlantıyı kopyala</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="istanbul-venue-tags"></div>
+        <footer class="istanbul-venue-actions">
+          <div class="istanbul-venue-action-group">
+            <a class="istanbul-venue-detail-link" href="#">Ayrıntılı bilgi</a>
+          </div>
+        </footer>
+      </article>
+    </template>
+
+    <footer class="yr-footer" aria-label="Alt Bant">
+      <div class="yr-footer-inner">
+        <div class="yr-footer-grid">
+          <section class="yr-footer-col">
+            <h4>aramabul'u indir!</h4>
+            <a class="store-badge" href="#" aria-label="App Store">
+              <span class="store-badge-top">Hemen indirin</span>
+              <span class="store-badge-name">App Store</span>
+            </a>
+            <a class="store-badge" href="#" aria-label="Google Play">
+              <span class="store-badge-top">Hemen indirin</span>
+              <span class="store-badge-name">Google Play</span>
+            </a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>aramabul'u keşfet</h4>
+            <a href="hakkimizda.html">Hakkımızda</a>
+            <a href="donusturme.html">Dönüştürme</a>
+            <a href="iletisim.html">İletişim</a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>Yardım mı lazım?</h4>
+            <a href="sss.html">Sözlük</a>
+            <a href="cerez-politikasi.html">Çerez Politikası</a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>Kurumsal</h4>
+            <a href="kvkk.html">Kişisel Verilerin Korunması</a>
+            <a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+          </section>
+        </div>
+      </div>
+    </footer>
+
+    <script src="web-runtime.js?v=20260302-01"></script>
+    <script src="header-state.js?v=20260302-01"></script>
+    <script src="header-i18n.js?v=20260307-12"></script>
+    <script src="header-nav.js?v=20260310-12"></script>
+    <script src="header-shell.js?v=20260302-02"></script>
+    <script src="header-search-ui.js?v=20260303-04"></script>
+    <script src="header-search-data.js?v=20260409-search-db-02"></script>
+    <script src="header-search.js?v=20260409-header-search-01"></script>
+    <script src="istanbul-kesfet.js?v=20260410-istanbul-mvp-09"></script>
+  </body>
+</html>

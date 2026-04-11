@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1f6f54" />
+    <title>AramaBul</title>
+    <meta
+      name="description"
+      content="Reel getiri aracıyla TL, döviz ve değerli metal yatırımlarının enflasyondan arındırılmış getirisini hesapla."
+    />
+    <link rel="icon" type="image/png" href="assets/hedef-lred.png" />
+    <link rel="shortcut icon" type="image/png" href="assets/hedef-lred.png" />
+    <link rel="apple-touch-icon" href="assets/hedef-lred.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260327-30" />
+  </head>
+  <body class="credit-page reel-page">
+    <div class="texture"></div>
+
+    <header class="global-header-band">
+      <nav class="topbar global-topbar">
+        <a class="brand" href="index.html" aria-label="aramabul">
+          <span class="brand-wordmark">aramabul</span>
+        </a>
+      </nav>
+      <div class="global-topline">
+        <div class="global-topline-inner">
+          <a href="index.html">Anasayfa</a>
+          <span>/</span>
+          <a href="finans.html">Finans</a>
+          <span>/</span>
+          <span>Reel Getiri</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="credit-page-shell">
+      <section class="reel-layout" aria-label="Reel getiri hesaplama alanı">
+        <section class="credit-card reel-form-card">
+          <div class="converter-mini-head">
+            <p class="converter-mini-label">Reel Getiri</p>
+          </div>
+
+          <div class="converter-mini-grid credit-form reel-form-grid">
+            <label class="converter-field reel-mode-field">
+              <span>Yatırım türü</span>
+              <select data-reel-mode>
+                <option value="tl" selected>TL Yatırımı</option>
+                <option value="currency">Döviz Yatırımı</option>
+                <option value="metal">Değerli Metal</option>
+              </select>
+            </label>
+            <label class="converter-field">
+              <span>Alış tarihi</span>
+              <input type="date" value="2025-01-01" data-reel-start-date />
+            </label>
+            <label class="converter-field">
+              <span>Satış tarihi</span>
+              <input type="date" value="2026-02-01" data-reel-end-date />
+            </label>
+
+            <label class="converter-field" data-reel-group="tl">
+              <span>Başlangıç tutarı (TL)</span>
+              <input type="text" inputmode="decimal" value="100.000,00" data-reel-initial-tl />
+            </label>
+            <label class="converter-field" data-reel-group="tl">
+              <span>Vade sonu tutarı (TL)</span>
+              <input type="text" inputmode="decimal" value="132.500,00" data-reel-final-tl />
+            </label>
+
+            <label class="converter-field reel-hidden" data-reel-group="currency">
+              <span>Para birimi</span>
+              <select data-reel-currency>
+                <option value="USD" selected>USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="CHF">CHF</option>
+                <option value="JPY">JPY</option>
+              </select>
+            </label>
+            <label class="converter-field reel-hidden" data-reel-group="currency">
+              <span>Döviz miktarı</span>
+              <input type="text" inputmode="decimal" value="5000" data-reel-currency-amount />
+            </label>
+            <label class="converter-field reel-hidden" data-reel-group="currency">
+              <span>Alış kuru (TL)</span>
+              <input type="text" inputmode="decimal" value="31,20" data-reel-currency-buy-rate />
+            </label>
+            <label class="converter-field reel-hidden" data-reel-group="currency">
+              <span>Satış kuru (TL)</span>
+              <input type="text" inputmode="decimal" value="38,60" data-reel-currency-sell-rate />
+            </label>
+
+            <label class="converter-field reel-hidden" data-reel-group="metal">
+              <span>Metal türü</span>
+              <select data-reel-metal>
+                <option value="24 Ayar Gram Altın" selected>24 Ayar Gram Altın</option>
+                <option value="22 Ayar Gram Altın">22 Ayar Gram Altın</option>
+                <option value="Gümüş">Gümüş</option>
+                <option value="Platin">Platin</option>
+                <option value="Paladyum">Paladyum</option>
+              </select>
+            </label>
+            <label class="converter-field reel-hidden" data-reel-group="metal">
+              <span>Metal miktarı</span>
+              <input type="text" inputmode="decimal" value="120" data-reel-metal-amount />
+            </label>
+            <label class="converter-field reel-hidden" data-reel-group="metal">
+              <span>Alış fiyatı (TL)</span>
+              <input type="text" inputmode="decimal" value="2.150,00" data-reel-metal-buy-price />
+            </label>
+            <label class="converter-field reel-hidden" data-reel-group="metal">
+              <span>Satış fiyatı (TL)</span>
+              <input type="text" inputmode="decimal" value="2.640,00" data-reel-metal-sell-price />
+            </label>
+          </div>
+
+          <div class="converter-mini-grid credit-form reel-form-footer">
+            <label class="converter-field">
+              <span>Enflasyon kaynağı</span>
+              <select data-reel-index-type>
+                <option value="cpi" selected>TÜİK-TÜFE</option>
+                <option value="enag">ENAG-TÜFE</option>
+              </select>
+            </label>
+          </div>
+
+          <p class="reel-note" data-reel-note>
+            Alış ve satış tarihlerinin denk geldiği aylarda enflasyon gün oranına dağıtılır. ENAG serisi şu an Aralık 2024 - Şubat 2026 aralığında hazırdır.
+          </p>
+
+          <div class="converter-mini-actions">
+            <button class="converter-submit" type="button" data-reel-calculate>Hesapla</button>
+          </div>
+        </section>
+
+        <aside class="credit-results reel-results">
+          <article class="credit-result-card">
+            <span class="credit-result-label">Kullanılan Enflasyon</span>
+            <strong class="credit-result-value" data-reel-inflation-used>-</strong>
+          </article>
+          <article class="credit-result-card">
+            <span class="credit-result-label">Nominal Getiri</span>
+            <strong class="credit-result-value" data-reel-nominal>-</strong>
+          </article>
+          <article class="credit-result-card">
+            <span class="credit-result-label">Enflasyonlu Eşik</span>
+            <strong class="credit-result-value" data-reel-threshold>-</strong>
+          </article>
+          <article class="credit-result-card">
+            <span class="credit-result-label">Reel Getiri</span>
+            <strong class="credit-result-value" data-reel-amount>-</strong>
+          </article>
+          <article class="credit-result-card">
+            <span class="credit-result-label">Reel Getiri Oranı</span>
+            <strong class="credit-result-value" data-reel-rate>-</strong>
+          </article>
+        </aside>
+      </section>
+    </main>
+
+    <script src="reel-getiri.js?v=20260327-34"></script>
+  </body>
+</html>

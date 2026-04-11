@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1f6f54" />
+    <title>AramaBul</title>
+    <meta name="description" content="Görsel kırpma aracı." />
+    <link rel="icon" type="image/png" href="assets/fav.png?v=20260322-02" />
+    <link rel="shortcut icon" type="image/png" href="assets/fav.png?v=20260322-02" />
+    <link rel="apple-touch-icon" href="assets/fav.png?v=20260322-02" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260329-01" />
+  </head>
+  <body class="content-page">
+    <div class="texture"></div>
+
+    <header class="global-header-band">
+      <nav class="topbar global-topbar">
+        <a class="brand" href="index.html" aria-label="aramabul">
+          <span class="brand-wordmark">aramabul</span>
+        </a>
+      </nav>
+      <div class="global-topline">
+        <div class="global-topline-inner">
+          <a href="index.html">Anasayfa</a>
+          <span>/</span>
+          <a href="donusturme.html">Dönüştürme</a>
+          <span>/</span>
+          <a href="goruntu.html">Görsel</a>
+          <span>/</span>
+          <span>Kırpma</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="hero content-page-shell" data-page-key="donusturme">
+      <section class="content-page-hero">
+        <h1 class="content-page-title">Kırpma</h1>
+      </section>
+
+      <section class="image-crop-shell" aria-label="Görsel kırpma aracı">
+        <div class="image-crop-card">
+          <div class="image-crop-header">
+            <h2>Görseli kırp</h2>
+          </div>
+
+          <div class="image-crop-grid">
+            <div class="image-crop-panel">
+              <label class="image-crop-upload">
+                <input type="file" accept="image/*" id="imageCropInput" />
+                <span class="image-crop-upload-label">Dosya seç</span>
+                <span class="image-crop-upload-meta" id="imageCropFileName">Seçili dosya yok</span>
+              </label>
+              <div class="image-crop-canvas-wrap">
+                <canvas id="imageCropCanvas" width="640" height="420"></canvas>
+                <div id="imageCropOverlay" class="image-crop-overlay" aria-hidden="true">
+                  <span class="image-crop-handle" data-handle="nw"></span>
+                  <span class="image-crop-handle" data-handle="n"></span>
+                  <span class="image-crop-handle" data-handle="ne"></span>
+                  <span class="image-crop-handle" data-handle="w"></span>
+                  <span class="image-crop-handle" data-handle="e"></span>
+                  <span class="image-crop-handle" data-handle="sw"></span>
+                  <span class="image-crop-handle" data-handle="s"></span>
+                  <span class="image-crop-handle" data-handle="se"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="image-crop-panel">
+              <div class="image-crop-controls">
+                <label class="image-crop-field">
+                  <span>X</span>
+                  <input type="number" min="0" id="cropX" />
+                </label>
+                <label class="image-crop-field">
+                  <span>Y</span>
+                  <input type="number" min="0" id="cropY" />
+                </label>
+                <label class="image-crop-field">
+                  <span>Genişlik</span>
+                  <input type="number" min="1" id="cropW" />
+                </label>
+                <label class="image-crop-field">
+                  <span>Yükseklik</span>
+                  <input type="number" min="1" id="cropH" />
+                </label>
+                <label class="image-crop-checkbox">
+                  <input type="checkbox" id="cropLock" checked />
+                  <span>Oranı koru</span>
+                </label>
+              </div>
+
+              <div class="image-crop-actions">
+                <button class="image-crop-button" id="cropApply" type="button">Kırp</button>
+                <button class="image-crop-button secondary" id="cropDownload" type="button" disabled>
+                  İndir
+                </button>
+              </div>
+              <p class="image-crop-note" id="cropNote">Lütfen bir görsel seç.</p>
+
+              <div class="image-crop-result">
+                <p>Kırpılmış önizleme</p>
+                <canvas id="imageCropResult" width="320" height="220"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="yr-footer" aria-label="Alt Bant">
+      <div class="yr-footer-inner">
+        <div class="yr-footer-grid">
+          <section class="yr-footer-col">
+            <h4>aramabul'u indir!</h4>
+            <a class="store-badge" href="#" aria-label="App Store">
+              <span class="store-badge-top">Hemen indirin</span>
+              <span class="store-badge-name">App Store</span>
+            </a>
+            <a class="store-badge" href="#" aria-label="Google Play">
+              <span class="store-badge-top">Hemen indirin</span>
+              <span class="store-badge-name">Google Play</span>
+            </a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>aramabul'u keşfet</h4>
+            <a href="hakkimizda.html">Hakkımızda</a>
+            <a href="donusturme.html">Dönüştürme</a>
+            <a href="iletisim.html">İletişim</a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>Yardım mı lazım?</h4>
+            <a href="ingilizce-sozluk.html">Sözlük</a>
+            <a href="cerez-politikasi.html">Çerez Politikası</a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>Kurumsal</h4>
+            <a href="kullanim-kosullari.html">Kullanım Koşulları</a>
+            <a href="kvkk.html">Kişisel Verilerin Korunması</a>
+            <a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+          </section>
+        </div>
+
+        <div class="yr-footer-bottom">
+          <p>© 2026 aramabul</p>
+          <div class="yr-footer-social" aria-label="Sosyal">
+            <a href="#" aria-label="Instagram">Instagram</a>
+            <a href="#" aria-label="X">X</a>
+            <a href="#" aria-label="Facebook">Facebook</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script src="kirpma.js?v=20260330-01"></script>
+  </body>
+</html>
