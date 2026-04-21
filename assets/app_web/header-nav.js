@@ -848,6 +848,14 @@
       forgotPasswordButton.disabled = true;
       setMessage(copy.forgotPasswordSending, false);
 
+      const activateLocalResetFallback = (messageText) => {
+        if (resetEmail instanceof HTMLInputElement) {
+          resetEmail.value = email;
+        }
+        setMode("reset");
+        setMessage(messageText, false);
+      };
+
       try {
         const response = await fetch("/api/auth/password-change/request", {
           method: "POST",
@@ -865,10 +873,40 @@
             return;
           }
           if (response.status === 503) {
-            setMessage(copy.forgotPasswordServiceUnavailable, true);
+            activateLocalResetFallback(
+              `${copy.forgotPasswordServiceUnavailable} E-posta beklemeden şifreni şimdi yenileyebilirsin.`,
+            );
             return;
           }
-          setMessage(copy.forgotPasswordFailed, true);
+          activateLocalResetFallback(
+            `${copy.forgotPasswordFailed} E-posta beklemeden şifreni şimdi yenileyebilirsin.`,
+          );
+          return;
+        }
+
+        const localChangeUrl = String(payload?.changeUrl || "").trim();
+        if (localChangeUrl) {
+          const requestedAtRaw = String(payload?.requestMeta?.requestedAt || "").trim();
+          const requestIpRaw = String(payload?.requestMeta?.requestIp || "").trim();
+          let requestedAtText = "-";
+          if (requestedAtRaw) {
+            const timestamp = new Date(requestedAtRaw);
+            if (!Number.isNaN(timestamp.getTime())) {
+              requestedAtText = new Intl.DateTimeFormat(authLocale(), {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              }).format(timestamp);
+            }
+          }
+          const requestIpText = requestIpRaw || "-";
+          setMessage(
+            `${copy.forgotPasswordSent} ${copy.forgotPasswordLogAt}: ${requestedAtText} | ${copy.forgotPasswordLogIp}: ${requestIpText} | Link: ${localChangeUrl}`,
+            false,
+          );
           return;
         }
 
@@ -894,7 +932,9 @@
           false,
         );
       } catch (_error) {
-        setMessage(copy.forgotPasswordFailed, true);
+        activateLocalResetFallback(
+          `${copy.forgotPasswordFailed} E-posta beklemeden şifreni şimdi yenileyebilirsin.`,
+        );
       } finally {
         forgotPasswordButton.disabled = false;
       }
@@ -1085,12 +1125,7 @@
           title="${labels.signin}"
         >
           <span class="desktop-auth-link-icon-wrap" aria-hidden="true">
-            <svg class="desktop-auth-link-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="10" cy="8.2" r="3.2"></circle>
-              <path d="M4.8 18.2c.7-2.7 2.8-4.5 5.2-4.5s4.5 1.8 5.2 4.5"></path>
-              <path d="M17 12h4"></path>
-              <path d="m19 10 2 2-2 2"></path>
-            </svg>
+            <img class="desktop-auth-link-image" src="assets/giris.png" alt="" />
           </span>
           <span class="visually-hidden desktop-auth-link-text">${labels.signin}</span>
         </a>
@@ -1104,7 +1139,7 @@
             aria-label="Dil seç"
             title="Dil seç"
           >
-            <span class="lang-switch-code" data-lang-current>TR</span>
+            <img class="lang-switch-code" data-lang-current src="assets/dil.png" alt="TR" style="width: 19px; height: 19px;">
           </button>
           <div class="lang-switch-menu" data-lang-menu hidden>
             <button class="lang-switch-option active" data-lang-option="TR" type="button" aria-pressed="true">TR</button>
@@ -1165,7 +1200,7 @@
   }
 
   function createMobileBottomNav(options = {}) {
-    const { currentPageName, getNavLabels, input } = options;
+    const { currentPageName, getNavLabels, getDesktopAuthLabels, input } = options;
     if (typeof currentPageName !== "function" || typeof getNavLabels !== "function") {
       return;
     }
@@ -1177,20 +1212,42 @@
 
     const isHomePage = () => currentPageName() === "index.html" || currentPageName() === "";
     const labels = getNavLabels();
+    const authLabels =
+      typeof getDesktopAuthLabels === "function"
+        ? getDesktopAuthLabels()
+        : { signin: "Giriş yap" };
     const wrapper = document.createElement("div");
     wrapper.className = "mobile-bottom-nav";
     wrapper.innerHTML = `
       <nav class="mobile-bottom-nav-actions" aria-label="${labels.nav}">
         <button class="mobile-bottom-nav-btn" data-mobile-nav="home" type="button" aria-label="${labels.home}" title="${labels.home}">
           <span class="mobile-bottom-nav-chip" aria-hidden="true">
+            <img class="mobile-bottom-nav-icon-img" src="assets/ev.png" alt="" />
             <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
               <path d="m3 11 9-7 9 7"></path>
               <path d="M7 10v9h10v-9"></path>
             </svg>
           </span>
         </button>
-        <button class="mobile-bottom-nav-btn" data-mobile-nav="signup" type="button" aria-label="${labels.signup}" title="${labels.signup}">
+        <button class="mobile-bottom-nav-btn" data-mobile-nav="favorites" type="button" aria-label="${labels.favorites}" title="${labels.favorites}">
           <span class="mobile-bottom-nav-chip" aria-hidden="true">
+            <img class="mobile-bottom-nav-icon-img" src="assets/fav-footer.png" alt="" />
+            <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m12 20.2-6.3-3.3 1.2-7L12 4.8l5.1 5.1 1.2 7z"></path>
+            </svg>
+          </span>
+        </button>
+        <button class="mobile-bottom-nav-btn" data-mobile-nav="search" type="button" aria-label="${labels.search}" title="${labels.search}">
+          <span class="mobile-bottom-nav-chip icon-load-failed" aria-hidden="true">
+            <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5"></circle>
+              <path d="m16 16 4.5 4.5"></path>
+            </svg>
+          </span>
+        </button>
+        <button class="mobile-bottom-nav-btn" data-mobile-nav="signin" type="button" aria-label="${authLabels.signin}" title="${authLabels.signin}">
+          <span class="mobile-bottom-nav-chip" aria-hidden="true">
+            <img class="mobile-bottom-nav-icon-img" src="assets/giris.png" alt="" />
             <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="10" cy="8.2" r="3.4"></circle>
               <path d="M4.5 18.5c.8-2.9 2.9-4.8 5.5-4.8s4.7 1.9 5.5 4.8"></path>
@@ -1201,7 +1258,7 @@
         </button>
         <button class="mobile-bottom-nav-btn" data-mobile-nav="profile" type="button" aria-label="${labels.profile}" title="${labels.profile}">
           <span class="mobile-bottom-nav-chip" aria-hidden="true">
-            <img class="mobile-bottom-nav-icon-img" src="assets/ayar1.png?v=20260226-2" alt="" />
+            <img class="mobile-bottom-nav-icon-img" src="assets/ayar.png" alt="" />
             <svg class="mobile-bottom-nav-icon-svg mobile-bottom-nav-icon-svg-fallback" viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="12" cy="12" r="3"></circle>
               <path d="M12 3.8v2.2"></path>
@@ -1219,34 +1276,38 @@
     `;
 
     document.body.appendChild(wrapper);
+    document.body.classList.add("mobile-bottom-nav-visible");
 
-    const settingsIconImage = wrapper.querySelector('[data-mobile-nav="profile"] .mobile-bottom-nav-icon-img');
-    if (settingsIconImage instanceof HTMLImageElement) {
-      const chip = settingsIconImage.closest(".mobile-bottom-nav-chip");
+    const navIconImages = [...wrapper.querySelectorAll(".mobile-bottom-nav-icon-img")];
+    navIconImages.forEach((iconImage) => {
+      if (!(iconImage instanceof HTMLImageElement)) {
+        return;
+      }
+      const chip = iconImage.closest(".mobile-bottom-nav-chip");
       const syncIconState = () => {
         if (!chip) {
           return;
         }
-        if (settingsIconImage.complete && settingsIconImage.naturalWidth > 0) {
+        if (iconImage.complete && iconImage.naturalWidth > 0) {
           chip.classList.remove("icon-load-failed");
           return;
         }
-        if (settingsIconImage.complete && settingsIconImage.naturalWidth === 0) {
+        if (iconImage.complete && iconImage.naturalWidth === 0) {
           chip.classList.add("icon-load-failed");
         }
       };
-      settingsIconImage.addEventListener("error", () => {
+      iconImage.addEventListener("error", () => {
         if (chip) {
           chip.classList.add("icon-load-failed");
         }
       });
-      settingsIconImage.addEventListener("load", () => {
+      iconImage.addEventListener("load", () => {
         if (chip) {
           chip.classList.remove("icon-load-failed");
         }
       });
       syncIconState();
-    }
+    });
 
     const buttons = [...wrapper.querySelectorAll(".mobile-bottom-nav-btn")];
     let navToastNode = null;
@@ -1303,6 +1364,9 @@
         const type = button.dataset.mobileNav;
         const active =
           (type === "home" && isHomePage()) ||
+          (type === "favorites" && currentPageName() === "favorites.html") ||
+          (type === "signin" && window.ARAMABUL_AUTH_MODAL?.isOpen?.()) ||
+          (type === "search" && currentPageName() === "search.html") ||
           (type === "profile" && currentPageName() === "profile.html") ||
           false;
         button.classList.toggle("active", active);
@@ -1319,12 +1383,22 @@
           return;
         }
 
-        if (type === "signup") {
+        if (type === "signin") {
           if (readSession()) {
             showBottomNavToast(authText().alreadyRegisteredUser);
             return;
           }
-          openAuthModal("signup", button);
+          openAuthModal("login", button);
+          return;
+        }
+
+        if (type === "search") {
+          window.location.assign("search.html");
+          return;
+        }
+
+        if (type === "favorites") {
+          window.location.assign("favorites.html");
           return;
         }
 
@@ -1336,9 +1410,15 @@
 
     document.addEventListener("aramabul:languagechange", () => {
       const nextLabels = getNavLabels();
+      const nextAuthLabels =
+        typeof getDesktopAuthLabels === "function"
+          ? getDesktopAuthLabels()
+          : { signin: "Giriş yap" };
       const navWrap = wrapper.querySelector(".mobile-bottom-nav-actions");
       const homeBtn = wrapper.querySelector('[data-mobile-nav="home"]');
-      const signupBtn = wrapper.querySelector('[data-mobile-nav="signup"]');
+      const favoritesBtn = wrapper.querySelector('[data-mobile-nav="favorites"]');
+      const signinBtn = wrapper.querySelector('[data-mobile-nav="signin"]');
+      const searchBtn = wrapper.querySelector('[data-mobile-nav="search"]');
       const profileBtn = wrapper.querySelector('[data-mobile-nav="profile"]');
 
       if (navWrap) navWrap.setAttribute("aria-label", nextLabels.nav);
@@ -1346,15 +1426,25 @@
         homeBtn.setAttribute("aria-label", nextLabels.home);
         homeBtn.setAttribute("title", nextLabels.home);
       }
-      if (signupBtn) {
-        signupBtn.setAttribute("aria-label", nextLabels.signup);
-        signupBtn.setAttribute("title", nextLabels.signup);
+      if (favoritesBtn) {
+        favoritesBtn.setAttribute("aria-label", nextLabels.favorites);
+        favoritesBtn.setAttribute("title", nextLabels.favorites);
+      }
+      if (signinBtn) {
+        signinBtn.setAttribute("aria-label", nextAuthLabels.signin);
+        signinBtn.setAttribute("title", nextAuthLabels.signin);
+      }
+      if (searchBtn) {
+        searchBtn.setAttribute("aria-label", nextLabels.search);
+        searchBtn.setAttribute("title", nextLabels.search);
       }
       if (profileBtn) {
         profileBtn.setAttribute("aria-label", nextLabels.profile);
         profileBtn.setAttribute("title", nextLabels.profile);
       }
     });
+
+    document.addEventListener("aramabul:authmodalchange", updateActiveNav);
 
     updateActiveNav();
   }
@@ -1377,4 +1467,37 @@
     createDesktopAuthLinks,
     createMobileBottomNav,
   };
+
+  const autoCreateMobileBottomNav = () => {
+    if (document.querySelector(".mobile-bottom-nav")) {
+      return;
+    }
+
+    createMobileBottomNav({
+      currentPageName() {
+        const raw = window.location.pathname.split("/").pop() || "index.html";
+        return raw.toLocaleLowerCase("tr");
+      },
+      getNavLabels() {
+        return window.ARAMABUL_HEADER_I18N?.getBottomNavLabels?.() || {
+          nav: "Alt menü",
+          home: "Anasayfa",
+          favorites: "Favorilerim",
+          search: "Ara",
+          profile: "Ayarlar",
+        };
+      },
+      getDesktopAuthLabels() {
+        return window.ARAMABUL_HEADER_I18N?.getDesktopAuthLabels?.() || {
+          signin: "Giriş yap",
+        };
+      },
+    });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", autoCreateMobileBottomNav, { once: true });
+  } else {
+    autoCreateMobileBottomNav();
+  }
 })();

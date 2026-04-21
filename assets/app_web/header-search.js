@@ -215,7 +215,7 @@
   }
 
   function createMobileBottomNav() {
-    return headerNav.createMobileBottomNav({ currentPageName, getNavLabels, input });
+    return headerNav.createMobileBottomNav({ currentPageName, getNavLabels, getDesktopAuthLabels, input });
   }
 
   function applySearchUiLanguage() {
@@ -499,6 +499,14 @@
       return;
     }
 
+    if (!headerSearchData || typeof headerSearchData.resolveQuery !== "function") {
+      console.error("ARAMABUL_HEADER_SEARCH_DATA missing; cannot run search.");
+      const fallbackUrl = new URL("yeme-icme.html", window.location.href);
+      fallbackUrl.searchParams.set("q", normalizedQuery);
+      window.location.assign(`${fallbackUrl.pathname}${fallbackUrl.search}`);
+      return;
+    }
+
     setLoadingState(true);
 
     try {
@@ -522,7 +530,15 @@
             : "";
       if (targetUrl) {
         window.location.assign(targetUrl);
+      } else if (result && typeof result === "object" && result.type === "navigate") {
+        ensureSearchNotFoundToast()?.show();
+        input.focus();
       }
+    } catch (error) {
+      console.error("runSearchQuery failed:", error);
+      const fallbackUrl = new URL("yeme-icme.html", window.location.href);
+      fallbackUrl.searchParams.set("q", normalizedQuery);
+      window.location.assign(`${fallbackUrl.pathname}${fallbackUrl.search}`);
     } finally {
       setLoadingState(false);
     }
