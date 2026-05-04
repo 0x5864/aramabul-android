@@ -1,11 +1,18 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 const String kBundledEntryAssetPath = 'assets/app_web/index.html';
+const String kDeepLinkHost = 'aramabul.com';
+const String kDeepLinkHostWww = 'www.aramabul.com';
 
 void main() {
   runApp(const AramaBulApp());
@@ -42,6 +49,11 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   int _progress = 0;
   String? _lastError;
   bool _hasLoadedAtLeastOnce = false;
+  bool _isOffline = false;
+
+  // ---------------------------------------------------------------------------
+  // URL helpers
+  // ---------------------------------------------------------------------------
 
   bool _isMapLikeUrl(Uri uri, String rawUrl) {
     final scheme = uri.scheme.toLowerCase();
@@ -86,6 +98,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     return Uri.parse(raw);
   }
 
+  /// Check if URL is an AramaBul deep link that should stay inside the app.
+  bool _isDeepLink(Uri uri) {
+    final host = uri.host.toLowerCase();
+    return host == kDeepLinkHost || host == kDeepLinkHostWww;
+  }
+
   Future<NavigationDecision> _onNavigationRequest(
     NavigationRequest request,
   ) async {
@@ -93,6 +111,11 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     final parsed = Uri.tryParse(rawUrl);
 
     if (parsed == null) {
+      return NavigationDecision.navigate;
+    }
+
+    // Deep links from aramabul.com stay in WebView.
+    if (_isDeepLink(parsed)) {
       return NavigationDecision.navigate;
     }
 
@@ -121,9 +144,45 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     return NavigationDecision.prevent;
   }
 
+  // ---------------------------------------------------------------------------
+  // Geolocation permission
+  // ---------------------------------------------------------------------------
+
+  Future<void> _requestLocationPermission() async {
+    final status = await Permission.locationWhenInUse.request();
+    debugPrint('Location permission: $status');
+  }
+
+  // ---------------------------------------------------------------------------
+  // Connectivity
+  // ---------------------------------------------------------------------------
+
+  late final StreamSubscription<List<ConnectivityResult>> _connectivitySub;
+
+  void _startConnectivityWatch() {
+    _connectivitySub = Connectivity().onConnectivityChanged.listen((results) {
+      final offline = results.every((r) => r == ConnectivityResult.none);
+      if (!mounted) return;
+      if (offline != _isOffline) {
+        setState(() => _isOffline = offline);
+        // Auto-reload when back online after being offline.
+        if (!offline && _lastError != null) {
+          _reload();
+        }
+      }
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Lifecycle
+  // ---------------------------------------------------------------------------
+
   @override
   void initState() {
     super.initState();
+
+    _startConnectivityWatch();
+
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -175,8 +234,33 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     if (platformController is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
       platformController.setMediaPlaybackRequiresUserGesture(false);
+
+      // Grant geolocation permission automatically when the web page requests it.
+      platformController.setGeolocationPermissionsPromptCallbacks(
+        onShowPrompt: (request) async {
+          await _requestLocationPermission();
+          final status = await Permission.locationWhenInUse.status;
+          return GeolocationPermissionsResponse(
+            allow: status.isGranted,
+            retain: true,
+          );
+        },
+        onHidePrompt: () {},
+      );
+
+      // Handle file downloads
+      platformController.setOnShowFileSelector((params) async {
+        return [];
+      });
     }
+
     _loadInitialPage();
+  }
+
+  @override
+  void dispose() {
+    _connectivitySub.cancel();
+    super.dispose();
   }
 
   Future<void> _loadInitialPage() async {
@@ -197,7 +281,23 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   }
 
   Future<void> _reload() async {
-    await _controller.reload();
+    setState(() {
+      _isLoading = true;
+      _lastError = null;
+    });
+    try {
+      if (_hasLoadedAtLeastOnce) {
+        await _controller.reload();
+      } else {
+        await _loadBundledPage();
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _lastError = e.toString();
+      });
+    }
   }
 
   /// Handle Android back button: go back in WebView history if possible,
@@ -209,6 +309,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     }
     return true; // Nothing to go back to — let system handle it.
   }
+
+  // ---------------------------------------------------------------------------
+  // UI
+  // ---------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
@@ -230,52 +334,130 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           bottom: false,
           child: Column(
             children: [
-              if (showProgress) LinearProgressIndicator(value: _progress / 100),
+              // Offline banner
+              if (_isOffline)
+                Container(
+                  width: double.infinity,
+                  color: Colors.orange.shade800,
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: const Text(
+                    'İnternet bağlantısı yok',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+
+              // Loading progress
+              if (showProgress)
+                LinearProgressIndicator(
+                  value: _progress / 100,
+                  color: const Color(0xFF1F6F54),
+                  backgroundColor: const Color(0xFFEAE7DC),
+                ),
+
+              // Main content
               Expanded(
                 child: Stack(
                   children: [
-                    WebViewWidget(controller: _controller),
-                    if (_lastError != null)
-                      Align(
-                        alignment: Alignment.center,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Text(
-                                    'Sayfa yüklenemedi',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(_lastError!, textAlign: TextAlign.center),
-                                  const SizedBox(height: 14),
-                                  FilledButton(
-                                    onPressed: _reload,
-                                    child: const Text('Tekrar Dene'),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    'Varsayılan olarak uygulama içindeki paketli web dosyası açılır.',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 12),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                    // Pull-to-refresh wrapper
+                    RefreshIndicator(
+                      color: const Color(0xFF1F6F54),
+                      backgroundColor: Colors.white,
+                      onRefresh: _reload,
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height -
+                              MediaQuery.of(context).padding.top -
+                              (_isOffline ? 34 : 0) -
+                              (showProgress ? 4 : 0),
+                          child: WebViewWidget(controller: _controller),
                         ),
                       ),
+                    ),
+
+                    // Error / offline fallback overlay
+                    if (_lastError != null)
+                      _buildErrorOverlay(),
                   ],
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorOverlay() {
+    return Container(
+      color: const Color(0xFFEAE7DC),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    _isOffline ? Icons.wifi_off_rounded : Icons.error_outline_rounded,
+                    size: 56,
+                    color: _isOffline ? Colors.orange.shade700 : Colors.red.shade400,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    _isOffline ? 'Bağlantı Kesildi' : 'Sayfa Yüklenemedi',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _isOffline
+                        ? 'İnternet bağlantınızı kontrol edin.\nBağlantı sağlandığında otomatik olarak yeniden yüklenecektir.'
+                        : _lastError ?? 'Bilinmeyen hata',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  FilledButton.icon(
+                    onPressed: _reload,
+                    icon: const Icon(Icons.refresh_rounded),
+                    label: const Text('Tekrar Dene'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFF1F6F54),
+                      minimumSize: const Size(180, 48),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'AramaBul — Mekan Keşfet',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
