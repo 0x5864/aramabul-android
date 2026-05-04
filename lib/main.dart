@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -17,7 +18,7 @@ class AramaBulApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'arama bul',
+      title: 'AramaBul',
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1F6F54)),
@@ -199,63 +200,83 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     await _controller.reload();
   }
 
+  /// Handle Android back button: go back in WebView history if possible,
+  /// otherwise let the system handle it (exit app).
+  Future<bool> _onBackPressed() async {
+    if (await _controller.canGoBack()) {
+      await _controller.goBack();
+      return false; // Don't pop the route / exit the app.
+    }
+    return true; // Nothing to go back to — let system handle it.
+  }
+
   @override
   Widget build(BuildContext context) {
     final showProgress = _isLoading && _progress < 100;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFEAE7DC),
-      body: SafeArea(
-        top: true,
-        bottom: false,
-        child: Column(
-          children: [
-            if (showProgress) LinearProgressIndicator(value: _progress / 100),
-            Expanded(
-              child: Stack(
-                children: [
-                  WebViewWidget(controller: _controller),
-                  if (_lastError != null)
-                    Align(
-                      alignment: Alignment.center,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text(
-                                  'Sayfa yüklenemedi',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        final shouldPop = await _onBackPressed();
+        if (shouldPop && context.mounted) {
+          SystemNavigator.pop();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFEAE7DC),
+        body: SafeArea(
+          top: true,
+          bottom: false,
+          child: Column(
+            children: [
+              if (showProgress) LinearProgressIndicator(value: _progress / 100),
+              Expanded(
+                child: Stack(
+                  children: [
+                    WebViewWidget(controller: _controller),
+                    if (_lastError != null)
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                    'Sayfa yüklenemedi',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(_lastError!, textAlign: TextAlign.center),
-                                const SizedBox(height: 14),
-                                FilledButton(
-                                  onPressed: _reload,
-                                  child: const Text('Tekrar Dene'),
-                                ),
-                                const SizedBox(height: 10),
-                                const Text(
-                                  'Varsayılan olarak uygulama içindeki paketli web dosyası açılır.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ],
+                                  const SizedBox(height: 8),
+                                  Text(_lastError!, textAlign: TextAlign.center),
+                                  const SizedBox(height: 14),
+                                  FilledButton(
+                                    onPressed: _reload,
+                                    child: const Text('Tekrar Dene'),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  const Text(
+                                    'Varsayılan olarak uygulama içindeki paketli web dosyası açılır.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

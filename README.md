@@ -1,24 +1,19 @@
-# Aramabul Android
+# AramaBul Android
 
-This repo is the Flutter shell for Aramabul.
+Flutter WebView shell for [AramaBul](https://aramabul.com) – Turkey venue discovery.
 
-The app opens the web product inside a WebView.
+## Package Info
 
-It keeps a light bundled web snapshot under `assets/app_web/`.
-
-The Android repo should stay small. Heavy data snapshots do not belong here.
+| Key | Value |
+|-----|-------|
+| Package ID | `com.aramabul.app` |
+| Min SDK | Flutter default |
+| Entry point | `assets/app_web/index.html` |
 
 ## Working Model
 
-The source of truth is the web repo.
-
-Recommended source repo names:
-
-- `aramabul`
-- `aramabul-istanbul-web`
-
-This Android repo should receive stable snapshots.
-
+The source of truth is the web repo (`aramabul`).
+This Android repo receives stable web snapshots.
 It should not mirror every web change right away.
 
 ## Run The App
@@ -31,28 +26,26 @@ flutter run
 ## Run With A Different Start URL
 
 ```bash
-cd /Users/metintuncgenc/Documents/aramabul-android
 flutter run --dart-define=APP_START_URL=https://example.com
 ```
 
 ## Refresh The Bundled Web Snapshot
 
-If the web repo has a stable update, sync the snapshot:
+Sync stable web changes into `assets/app_web/`:
 
 ```bash
-cd /Users/metintuncgenc/Documents/aramabul-android
 ./scripts/sync_web_assets.sh
 ```
 
-If the source web repo is in a custom location, pass it in:
+If the source web repo is in a custom location:
 
 ```bash
-cd /Users/metintuncgenc/Documents/aramabul-android
-WEB_REPO_ROOT=/path/to/aramabul-istanbul-web ./scripts/sync_web_assets.sh
+WEB_REPO_ROOT=/path/to/aramabul ./scripts/sync_web_assets.sh
 ```
 
 ## Notes
 
 - Internet access is enabled in the app.
+- Android back button navigates WebView history before exiting.
 - Local HTTP testing can still be used when needed.
 - Sync the Android snapshot only after the web change is tested.

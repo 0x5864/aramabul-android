@@ -2,7 +2,7 @@
 set -euo pipefail
 
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TARGET_DIR="$APP_DIR/assets/web"
+TARGET_DIR="$APP_DIR/assets/app_web"
 
 DEFAULT_ROOT_A="$APP_DIR/../aramabul"
 DEFAULT_ROOT_B="$APP_DIR/../aramabul-istanbul-web"
@@ -15,6 +15,11 @@ else
   ROOT_DIR="$DEFAULT_ROOT_A"
 fi
 
+if [[ ! -d "$ROOT_DIR" ]]; then
+  echo "Error: source web repo not found at $ROOT_DIR"
+  exit 1
+fi
+
 echo "Source web repo: $ROOT_DIR"
 echo "Sync web files to: $TARGET_DIR"
 mkdir -p "$TARGET_DIR"
@@ -22,8 +27,12 @@ mkdir -p "$TARGET_DIR"
 cp -f "$ROOT_DIR"/*.html "$TARGET_DIR"/
 cp -f "$ROOT_DIR"/*.js "$TARGET_DIR"/
 cp -f "$ROOT_DIR"/*.css "$TARGET_DIR"/
-rsync -a --delete "$ROOT_DIR/assets/" "$TARGET_DIR/assets/"
 
-find "$TARGET_DATA_DIR" -type f \( -name "*.backup.json" -o -name "*.xls" -o -name "*.csv" \) -delete
+if [[ -d "$ROOT_DIR/assets" ]]; then
+  rsync -a --delete "$ROOT_DIR/assets/" "$TARGET_DIR/assets/"
+fi
+
+# Clean up large unnecessary files from the snapshot
+find "$TARGET_DIR" -type f \( -name "*.backup.json" -o -name "*.xls" -o -name "*.csv" -o -name "*.log" -o -name "*.sql" \) -delete
 
 echo "Sync done."
