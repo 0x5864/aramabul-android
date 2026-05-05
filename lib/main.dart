@@ -81,44 +81,64 @@ class _AppEntryPointState extends State<AppEntryPoint> {
   Future<void> _onWelcomeComplete(String? route) async {
     if (!mounted) return;
 
-    // Map route to initial URL
-    String? initialPath;
-    bool markSeen = true;
     switch (route) {
       case 'login':
-        initialPath = '#login';
+        // Mark welcome as seen, open home with login modal
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool(_kWelcomeSeenKey, true);
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => const HomeWebViewPage(initialPath: '#login'),
+          ),
+        );
         break;
-      case 'register':
-        initialPath = '#register';
-        break;
-      case 'privacy':
-        initialPath = '/gizlilik-politikasi.html';
-        markSeen = false; // Don't consume welcome — let user come back
-        break;
-      case 'terms':
-        initialPath = '/kullanim-kosullari.html';
-        markSeen = false;
-        break;
-      default:
-        initialPath = null;
-    }
 
-    if (markSeen) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(_kWelcomeSeenKey, true);
-      if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => HomeWebViewPage(initialPath: initialPath),
-        ),
-      );
-    } else {
-      // Policy / terms — open in a page the user can navigate back from
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => HomeWebViewPage(initialPath: initialPath),
-        ),
-      );
+      case 'register':
+        // Mark welcome as seen, open home with signup modal
+        final prefsR = await SharedPreferences.getInstance();
+        await prefsR.setBool(_kWelcomeSeenKey, true);
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => const HomeWebViewPage(initialPath: '#signup'),
+          ),
+        );
+        break;
+
+      case 'privacy':
+        // Open lightweight policy viewer — can go back to welcome
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => const _PolicyViewerPage(
+              title: 'Gizlilik Politikası',
+              url: 'https://aramabul.com/gizlilik-politikasi.html',
+            ),
+          ),
+        );
+        break;
+
+      case 'terms':
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => const _PolicyViewerPage(
+              title: 'Kullanım Koşulları',
+              url: 'https://aramabul.com/kullanim-kosullari.html',
+            ),
+          ),
+        );
+        break;
+
+      default:
+        // Guest — just go to home
+        final prefsG = await SharedPreferences.getInstance();
+        await prefsG.setBool(_kWelcomeSeenKey, true);
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => const HomeWebViewPage(),
+          ),
+        );
     }
   }
 
@@ -139,6 +159,69 @@ class _AppEntryPointState extends State<AppEntryPoint> {
     }
 
     return const HomeWebViewPage();
+  }
+}
+
+/// Lightweight policy/terms viewer — AppBar with back button, no footer.
+class _PolicyViewerPage extends StatefulWidget {
+  final String title;
+  final String url;
+
+  const _PolicyViewerPage({required this.title, required this.url});
+
+  @override
+  State<_PolicyViewerPage> createState() => _PolicyViewerPageState();
+}
+
+class _PolicyViewerPageState extends State<_PolicyViewerPage> {
+  late final WebViewController _controller;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (_) {
+            // Hide header and footer for clean reading
+            _controller.runJavaScript('''
+              (function() {
+                var style = document.createElement('style');
+                style.textContent = '.mobile-bottom-nav, .global-topbar, .yr-footer { display: none !important; } .global-header-band { padding-top: 1rem !important; }';
+                document.head.appendChild(style);
+              })();
+            ''');
+            if (mounted) setState(() => _isLoading = false);
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.url));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          widget.title,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+        backgroundColor: const Color(0xFF093827),
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: Stack(
+        children: [
+          WebViewWidget(controller: _controller),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(color: Color(0xFF13690C)),
+            ),
+        ],
+      ),
+    );
   }
 }
 
