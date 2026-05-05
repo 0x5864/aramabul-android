@@ -385,6 +385,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   Widget build(BuildContext context) {
     final showProgress = _isLoading && _progress < 100;
 
+    // Match status bar to the web header color
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Color(0xFFFDEFD6),
+      statusBarIconBrightness: Brightness.dark,
+    ));
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
@@ -395,43 +401,44 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFFFFAED),
-        body: SafeArea(
-          top: true,
-          bottom: false,
-          child: Column(
-            children: [
-              if (_isOffline)
-                Container(
-                  width: double.infinity,
-                  color: Colors.orange.shade800,
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  child: const Text(
-                    'İnternet bağlantısı yok',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
+        backgroundColor: const Color(0xFFFDEFD6),
+        body: Column(
+          children: [
+            // Status bar safe padding with matching color
+            Container(
+              color: const Color(0xFFFDEFD6),
+              height: MediaQuery.of(context).padding.top,
+            ),
+            if (_isOffline)
+              Container(
+                width: double.infinity,
+                color: Colors.orange.shade800,
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: const Text(
+                  'İnternet bağlantısı yok',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              if (showProgress)
-                LinearProgressIndicator(
-                  value: _progress / 100,
-                  color: const Color(0xFF1F6F54),
-                  backgroundColor: const Color(0xFFFFFAED),
-                ),
-              Expanded(
-                child: Stack(
-                  children: [
-                    WebViewWidget(controller: _controller),
-                    if (_lastError != null) _buildErrorOverlay(),
-                  ],
-                ),
               ),
-            ],
-          ),
+            if (showProgress)
+              LinearProgressIndicator(
+                value: _progress / 100,
+                color: const Color(0xFF1F6F54),
+                backgroundColor: const Color(0xFFFDEFD6),
+              ),
+            Expanded(
+              child: Stack(
+                children: [
+                  WebViewWidget(controller: _controller),
+                  if (_lastError != null) _buildErrorOverlay(),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
