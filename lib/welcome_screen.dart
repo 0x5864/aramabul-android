@@ -69,7 +69,7 @@ class WelcomeScreen extends StatelessWidget {
             children: [
               // --- Hero header ---
               SizedBox(
-                height: screenHeight * 0.40,
+                height: screenHeight * 0.48,
                 child: Padding(
                   padding: EdgeInsets.only(
                     top: topPadding + 40,
@@ -82,8 +82,8 @@ class WelcomeScreen extends StatelessWidget {
                       // App logo — pin with magnifying glass
                       Image.asset(
                         'assets/welcome/app_logo.png',
-                        width: 192,
-                        height: 192,
+                        width: 134,
+                        height: 134,
                       ),
                       const SizedBox(height: 16),
                       Text(
