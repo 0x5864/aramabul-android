@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 /// AramaBul Welcome / Onboarding screen.
-///
-/// Inspired by modern app login screens with a colored hero header
-/// and a white/cream card section below.
 class WelcomeScreen extends StatelessWidget {
   final void Function(String? route) onContinue;
 
@@ -23,13 +20,13 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // --- Background gradient ---
+          // --- Background ---
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xFF1A4A3A), Color(0xFF1F6F54)],
+                colors: [Color(0xFF093827), Color(0xFF0D4C35)],
               ),
             ),
           ),
@@ -43,31 +40,31 @@ class WelcomeScreen extends StatelessWidget {
               height: 180,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.06),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 80,
-            right: 40,
-            child: Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
                 color: Colors.white.withValues(alpha: 0.04),
               ),
             ),
           ),
           Positioned(
-            top: 30,
+            top: 100,
+            right: 50,
+            child: Container(
+              width: 90,
+              height: 90,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.03),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 40,
             left: -50,
             child: Container(
               width: 140,
               height: 140,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.03),
+                color: Colors.white.withValues(alpha: 0.025),
               ),
             ),
           ),
@@ -77,31 +74,21 @@ class WelcomeScreen extends StatelessWidget {
             children: [
               // --- Hero header ---
               SizedBox(
-                height: screenHeight * 0.38,
+                height: screenHeight * 0.40,
                 child: Padding(
                   padding: EdgeInsets.only(
-                    top: topPadding + 32,
+                    top: topPadding + 40,
                     left: 32,
                     right: 32,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Logo icon
-                      Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.location_on_rounded,
-                            size: 36,
-                            color: Color(0xFFFF6B56),
-                          ),
-                        ),
+                      // Logo — bare icon, no background
+                      const Icon(
+                        Icons.location_on_rounded,
+                        size: 56,
+                        color: Color(0xFF13690C),
                       ),
                       const SizedBox(height: 24),
                       const Text(
@@ -121,7 +108,7 @@ class WelcomeScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w400,
-                          color: Colors.white.withValues(alpha: 0.75),
+                          color: Colors.white.withValues(alpha: 0.7),
                           height: 1.5,
                         ),
                       ),
@@ -146,39 +133,17 @@ class WelcomeScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const Text(
-                          'Başlamak için bir yöntem seçin',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF162123),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-
                         // --- Login button ---
                         _ActionButton(
                           label: 'Giriş Yap',
                           icon: Icons.login_rounded,
                           gradient: const [
-                            Color(0xFF1F6F54),
-                            Color(0xFF2A9070),
+                            Color(0xFF093827),
+                            Color(0xFF13690C),
                           ],
                           onTap: () => onContinue('login'),
                         ),
-                        const SizedBox(height: 14),
-
-                        // --- Register button ---
-                        _ActionButton(
-                          label: 'Hesap Oluştur',
-                          icon: Icons.person_add_alt_1_rounded,
-                          gradient: const [
-                            Color(0xFF20364D),
-                            Color(0xFF2C4E6E),
-                          ],
-                          onTap: () => onContinue('register'),
-                        ),
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 24),
 
                         // --- Divider ---
                         Row(
@@ -192,7 +157,7 @@ class WelcomeScreen extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 16),
                               child: Text(
-                                'veya',
+                                'veya şununla kaydol',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: const Color(0xFF162123).withValues(alpha: 0.4),
@@ -207,30 +172,83 @@ class WelcomeScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 20),
 
-                        // --- Guest button ---
-                        OutlinedButton.icon(
-                          onPressed: () => onContinue(null),
-                          icon: const Icon(Icons.explore_rounded, size: 20),
-                          label: const Text(
-                            'Misafir olarak devam et',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
+                        // --- Social login icons ---
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _SocialButton(
+                              icon: Icons.g_mobiledata_rounded,
+                              iconSize: 30,
+                              color: const Color(0xFFDB4437),
+                              label: 'Google',
+                              onTap: () => onContinue('register'),
                             ),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFF162123),
-                            minimumSize: const Size(double.infinity, 52),
-                            side: const BorderSide(color: Color(0xFFB8C8DC)),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
+                            const SizedBox(width: 20),
+                            _SocialButton(
+                              icon: Icons.facebook_rounded,
+                              iconSize: 24,
+                              color: const Color(0xFF1877F2),
+                              label: 'Facebook',
+                              onTap: () => onContinue('register'),
+                            ),
+                            const SizedBox(width: 20),
+                            _SocialButton(
+                              icon: Icons.apple_rounded,
+                              iconSize: 26,
+                              color: const Color(0xFF000000),
+                              label: 'Apple',
+                              onTap: () => onContinue('register'),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 28),
+
+                        // --- Register link ---
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Hesabın yok mu? ',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: const Color(0xFF162123).withValues(alpha: 0.5),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => onContinue('register'),
+                              child: const Text(
+                                'Hesap Oluştur',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF093827),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        // --- Guest skip ---
+                        Center(
+                          child: GestureDetector(
+                            onTap: () => onContinue(null),
+                            child: Text(
+                              'Misafir olarak atla →',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF162123).withValues(alpha: 0.35),
+                              ),
                             ),
                           ),
                         ),
 
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 28),
 
                         // --- Policy text ---
                         Text(
@@ -238,11 +256,11 @@ class WelcomeScreen extends StatelessWidget {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 12,
-                            color: const Color(0xFF162123).withValues(alpha: 0.45),
+                            color: const Color(0xFF162123).withValues(alpha: 0.4),
                             height: 1.5,
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -256,7 +274,7 @@ class WelcomeScreen extends StatelessWidget {
                                 '·',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: const Color(0xFF162123).withValues(alpha: 0.25),
+                                  color: const Color(0xFF162123).withValues(alpha: 0.2),
                                 ),
                               ),
                             ),
@@ -310,9 +328,9 @@ class _ActionButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
             boxShadow: [
               BoxShadow(
-                color: gradient.first.withValues(alpha: 0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+                color: gradient.first.withValues(alpha: 0.35),
+                blurRadius: 14,
+                offset: const Offset(0, 5),
               ),
             ],
           ),
@@ -324,13 +342,57 @@ class _ActionButton extends StatelessWidget {
               Text(
                 label,
                 style: const TextStyle(
-                  fontSize: 15,
+                  fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SocialButton extends StatelessWidget {
+  final IconData icon;
+  final double iconSize;
+  final Color color;
+  final String label;
+  final VoidCallback onTap;
+
+  const _SocialButton({
+    required this.icon,
+    required this.iconSize,
+    required this.color,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFFB8C8DC).withValues(alpha: 0.5),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Icon(icon, color: color, size: iconSize),
         ),
       ),
     );
