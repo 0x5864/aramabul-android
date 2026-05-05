@@ -199,6 +199,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
   /// After every page load, inject a global flag so the web code knows
   /// it is running inside the Android app.
+  /// Also inject CSS overrides for app-specific visual fixes.
   Future<void> _injectAppFlag() async {
     await _controller.runJavaScript('''
       window.__ARAMABUL_APP__ = {
@@ -206,6 +207,26 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         version: '$kAppVersion',
         isApp: true
       };
+
+      // Inject app-specific CSS fixes
+      if (!document.getElementById('aramabul-app-css')) {
+        var style = document.createElement('style');
+        style.id = 'aramabul-app-css';
+        style.textContent = `
+          body {
+            background: #fffaed !important;
+          }
+          .hero-content {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+          }
+        `;
+        document.head.appendChild(style);
+      }
     ''');
   }
 
