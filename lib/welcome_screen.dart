@@ -20,7 +20,7 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // --- Background ---
+          // --- Background gradient ---
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -84,32 +84,22 @@ class WelcomeScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Logo — bare icon, no background
-                      const Icon(
-                        Icons.location_on_rounded,
-                        size: 56,
-                        color: Color(0xFF13690C),
+                      // App logo — pin with magnifying glass
+                      Image.asset(
+                        'assets/welcome/app_logo.png',
+                        width: 64,
+                        height: 64,
                       ),
                       const SizedBox(height: 24),
                       const Text(
-                        'Merhaba!',
+                        "AramaBul'a\nhoşgeldin!",
                         style: TextStyle(
                           fontFamily: 'Inter',
-                          fontSize: 36,
+                          fontSize: 34,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
                           letterSpacing: -0.5,
-                          height: 1.1,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'AramaBul ile yakınındaki mekanları\nkeşfet, favorilerini kaydet.',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white.withValues(alpha: 0.7),
-                          height: 1.5,
+                          height: 1.15,
                         ),
                       ),
                     ],
@@ -178,27 +168,26 @@ class WelcomeScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            _SocialButton(
-                              icon: Icons.g_mobiledata_rounded,
-                              iconSize: 30,
-                              color: const Color(0xFFDB4437),
-                              label: 'Google',
+                            // Google — using G.png
+                            _SocialButtonImage(
+                              assetPath: 'assets/welcome/google_g.png',
+                              size: 26,
                               onTap: () => onContinue('register'),
                             ),
                             const SizedBox(width: 20),
+                            // Facebook
                             _SocialButton(
                               icon: Icons.facebook_rounded,
-                              iconSize: 24,
+                              iconSize: 28,
                               color: const Color(0xFF1877F2),
-                              label: 'Facebook',
                               onTap: () => onContinue('register'),
                             ),
                             const SizedBox(width: 20),
+                            // Apple
                             _SocialButton(
                               icon: Icons.apple_rounded,
-                              iconSize: 26,
+                              iconSize: 30,
                               color: const Color(0xFF000000),
-                              label: 'Apple',
                               onTap: () => onContinue('register'),
                             ),
                           ],
@@ -224,7 +213,7 @@ class WelcomeScreen extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF093827),
+                                  color: Color(0xFF13690C),
                                 ),
                               ),
                             ),
@@ -232,23 +221,6 @@ class WelcomeScreen extends StatelessWidget {
                         ),
 
                         const SizedBox(height: 32),
-
-                        // --- Guest skip ---
-                        Center(
-                          child: GestureDetector(
-                            onTap: () => onContinue(null),
-                            child: Text(
-                              'Misafir olarak atla →',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF162123).withValues(alpha: 0.35),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 28),
 
                         // --- Policy text ---
                         Text(
@@ -355,18 +327,17 @@ class _ActionButton extends StatelessWidget {
   }
 }
 
+/// Social button with a Material icon.
 class _SocialButton extends StatelessWidget {
   final IconData icon;
   final double iconSize;
   final Color color;
-  final String label;
   final VoidCallback onTap;
 
   const _SocialButton({
     required this.icon,
     required this.iconSize,
     required this.color,
-    required this.label,
     required this.onTap,
   });
 
@@ -399,6 +370,52 @@ class _SocialButton extends StatelessWidget {
   }
 }
 
+/// Social button with a PNG image asset.
+class _SocialButtonImage extends StatelessWidget {
+  final String assetPath;
+  final double size;
+  final VoidCallback onTap;
+
+  const _SocialButtonImage({
+    required this.assetPath,
+    required this.size,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: const Color(0xFFB8C8DC).withValues(alpha: 0.5),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Image.asset(
+            assetPath,
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _PolicyLink extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
@@ -413,7 +430,7 @@ class _PolicyLink extends StatelessWidget {
         label,
         style: const TextStyle(
           fontSize: 13,
-          color: Color(0xFF1EA7FF),
+          color: Color(0xFF13690C),
           fontWeight: FontWeight.w500,
         ),
       ),
