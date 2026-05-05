@@ -82,8 +82,8 @@ class WelcomeScreen extends StatelessWidget {
                       // App logo — pin with magnifying glass
                       Image.asset(
                         'assets/welcome/app_logo.png',
-                        width: 128,
-                        height: 128,
+                        width: 192,
+                        height: 192,
                       ),
                       const SizedBox(height: 16),
                       Text(
