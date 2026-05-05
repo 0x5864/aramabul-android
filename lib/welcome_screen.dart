@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// AramaBul Welcome / Onboarding screen.
 class WelcomeScreen extends StatelessWidget {
@@ -90,16 +91,25 @@ class WelcomeScreen extends StatelessWidget {
                         width: 64,
                         height: 64,
                       ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        "AramaBul'a\nhoşgeldin!",
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 34,
-                          fontWeight: FontWeight.w800,
+                      const SizedBox(height: 28),
+                      Text(
+                        'Merhaba',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 38,
+                          fontWeight: FontWeight.w300,
                           color: Colors.white,
-                          letterSpacing: -0.5,
-                          height: 1.15,
+                          letterSpacing: -0.3,
+                          height: 1.1,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        "AramaBul'a hoşgeldiniz!",
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w300,
+                          color: Colors.white70,
+                          height: 1.4,
                         ),
                       ),
                     ],
