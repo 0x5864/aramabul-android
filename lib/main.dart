@@ -41,7 +41,7 @@ class AramaBulApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1F6F54)),
-        scaffoldBackgroundColor: const Color(0xFFEAE7DC),
+        scaffoldBackgroundColor: const Color(0xFFFFFAED),
       ),
       home: const HomeWebViewPage(),
     );
@@ -286,7 +286,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
     final platformController = _controller.platform;
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      _controller.setBackgroundColor(const Color(0xFFEAE7DC));
+      _controller.setBackgroundColor(const Color(0xFFFFFAED));
     }
     if (platformController is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
@@ -395,7 +395,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFEAE7DC),
+        backgroundColor: const Color(0xFFFFFAED),
         body: SafeArea(
           top: true,
           bottom: false,
@@ -420,26 +420,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                 LinearProgressIndicator(
                   value: _progress / 100,
                   color: const Color(0xFF1F6F54),
-                  backgroundColor: const Color(0xFFEAE7DC),
+                  backgroundColor: const Color(0xFFFFFAED),
                 ),
               Expanded(
                 child: Stack(
                   children: [
-                    RefreshIndicator(
-                      color: const Color(0xFF1F6F54),
-                      backgroundColor: Colors.white,
-                      onRefresh: _reload,
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.height -
-                              MediaQuery.of(context).padding.top -
-                              (_isOffline ? 34 : 0) -
-                              (showProgress ? 4 : 0),
-                          child: WebViewWidget(controller: _controller),
-                        ),
-                      ),
-                    ),
+                    WebViewWidget(controller: _controller),
                     if (_lastError != null) _buildErrorOverlay(),
                   ],
                 ),
@@ -453,7 +439,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
   Widget _buildErrorOverlay() {
     return Container(
-      color: const Color(0xFFEAE7DC),
+      color: const Color(0xFFFFFAED),
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
