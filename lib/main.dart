@@ -229,7 +229,7 @@ class _PolicyViewerPageState extends State<_PolicyViewerPage> {
   }
 }
 
-/// Unified auth page — full-screen modal for login or signup.
+/// Unified auth page — full-screen form for login or signup (no tabs).
 class _AuthPage extends StatefulWidget {
   final String mode;
   final String title;
@@ -244,6 +244,10 @@ class _AuthPageState extends State<_AuthPage> {
   late final WebViewController _controller;
   bool _isLoading = true;
 
+  String get _hideLoginForm => widget.mode == 'signup'
+      ? '#globalLoginForm{display:none!important}'
+      : '#globalSignupForm{display:none!important}#globalLoginSignupHint{display:none!important}';
+
   String get _injectJs =>
       'var _s=document.createElement("style");'
       '_s.textContent=".mobile-bottom-nav{display:none!important}'
@@ -257,6 +261,8 @@ class _AuthPageState extends State<_AuthPage> {
       '.auth-modal.is-hidden{display:flex!important}'
       '.auth-modal-panel{position:relative!important;width:100%!important;max-width:100%!important;margin:0!important;border-radius:0!important;box-shadow:none!important;min-height:100vh!important;padding-top:1rem!important}'
       '.auth-modal-close{display:none!important}'
+      '.auth-mode-tabs{display:none!important}'
+      '$_hideLoginForm'
       'body{background:#fffaed!important;overflow:auto!important}";'
       'document.head.appendChild(_s);'
       'function _h(){document.querySelectorAll(".mobile-bottom-nav,.global-topbar,.global-topline,.yr-footer,.global-header-band").forEach(function(e){e.remove()})}'
@@ -264,11 +270,29 @@ class _AuthPageState extends State<_AuthPage> {
       'if(document.body){new MutationObserver(_h).observe(document.body,{childList:true,subtree:true});'
       'document.body.classList.remove("mobile-bottom-nav-visible")}';
 
+  Future<void> _onAuthSuccess() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('welcome_seen', true);
+    if (!mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const HomeWebViewPage()),
+      (route) => false,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..addJavaScriptChannel(
+        'FlutterAuth',
+        onMessageReceived: (message) {
+          if (message.message == 'success') {
+            _onAuthSuccess();
+          }
+        },
+      )
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (_) {
@@ -276,8 +300,12 @@ class _AuthPageState extends State<_AuthPage> {
           },
           onPageFinished: (_) {
             _controller.runJavaScript(_injectJs);
+            // Open modal + listen for auth success
             _controller.runJavaScript(
-              'setTimeout(function(){if(window.ARAMABUL_AUTH_MODAL&&window.ARAMABUL_AUTH_MODAL.open){window.ARAMABUL_AUTH_MODAL.open("${widget.mode}")}},300);'
+              'setTimeout(function(){'
+              'if(window.ARAMABUL_AUTH_MODAL&&window.ARAMABUL_AUTH_MODAL.open){window.ARAMABUL_AUTH_MODAL.open("${widget.mode}")}'
+              'document.addEventListener("aramabul:authchange",function(){FlutterAuth.postMessage("success")})'
+              '},300);'
             );
             if (mounted) setState(() => _isLoading = false);
           },
@@ -491,6 +519,14 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           }
         `;
         document.head.appendChild(style);
+      }
+
+      // Hide signin icon and topbar in app context
+      if (!document.getElementById('aramabul-app-nav-css')) {
+        var navStyle = document.createElement('style');
+        navStyle.id = 'aramabul-app-nav-css';
+        navStyle.textContent = '.mobile-bottom-nav-btn[data-mobile-nav="signin"] { display: none !important; } .global-topbar { display: none !important; }';
+        document.head.appendChild(navStyle);
       }
     ''');
   }
