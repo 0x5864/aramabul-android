@@ -1,6 +1,6 @@
 const ASSET_VERSION = "20260302-01";
 const DISTRICTS_JSON_PATH = "data/districts.json";
-const YEMEK_JSON_PATH = "data/keyif-food.json";
+const YEMEK_JSON_PATH = "data/yeme-icme-food.json";
 const runtime = window.ARAMABUL_RUNTIME;
 const FALLBACK_DATA_SCRIPT = "data/fallback-data.js?v=20260302-01";
 const FALLBACK_FOOD_SCRIPT = "data/fallback-food-data.js?v=20260302-01";

@@ -1,5 +1,5 @@
 const ASSET_VERSION = "20260302-01";
-const YEMEK_JSON_PATH = "data/keyif-food.json";
+const YEMEK_JSON_PATH = "data/yeme-icme-food.json";
 const CATEGORY_VENUES_JSON_PATH = "data/venues.json";
 const runtime = window.ARAMABUL_RUNTIME;
 const FALLBACK_FOOD_SCRIPT = "data/fallback-food-data.js?v=20260302-01";
@@ -468,19 +468,19 @@ function renderDistrictHeader() {
 
   if (yemekDistrictTitle) {
     yemekDistrictTitle.textContent = hasLocation
-      ? `${state.district} İlçesi (${venueCount} adet yeme mekanı)`
-      : "İlçe Restoranları";
+      ? `${state.district} bölgesi (${venueCount} adet yeme mekanı)`
+      : "Konum Restoranları";
   }
 
   if (yemekDistrictBreadcrumb) {
-    yemekDistrictBreadcrumb.textContent = state.district || "İlçe";
+    yemekDistrictBreadcrumb.textContent = state.district || "Konum";
   }
 
   if (yemekDistrictCityLink) {
     yemekDistrictCityLink.textContent = state.city || "İl";
     yemekDistrictCityLink.href = state.city
       ? `yemek-city.html?sehir=${encodeURIComponent(state.city)}`
-      : "keyif.html";
+      : "yeme-icme.html";
   }
 
   document.title = "AramaBul";
@@ -496,7 +496,7 @@ function renderVenueGrid() {
   if (!state.city || !state.district || state.venues.length === 0) {
     const empty = document.createElement("article");
     empty.className = "empty-state";
-    empty.textContent = "Bu ilçe için restoran verisi bulunamadı.";
+    empty.textContent = "Bu konum için restoran verisi bulunamadı.";
     yemekRestaurantGrid.append(empty);
     return;
   }

@@ -175,12 +175,12 @@ function renderHeader() {
 
   if (kuaforDistrictTitle) {
     kuaforDistrictTitle.textContent = hasLocation
-      ? `${state.city} İli / ${state.district} İlçesi Kuaför Salonları`
-      : "İlçe Kuaför Salonları";
+      ? `${state.city} İli / ${state.district} bölgesi Kuaför Salonları`
+      : "Konum Kuaför Salonları";
   }
 
   if (kuaforDistrictBreadcrumb) {
-    kuaforDistrictBreadcrumb.textContent = state.district || "İlçe";
+    kuaforDistrictBreadcrumb.textContent = state.district || "Konum";
   }
 
   if (kuaforDistrictCityLink) {
@@ -203,7 +203,7 @@ function renderPlaces() {
   if (!state.city || !state.district || state.places.length === 0) {
     const empty = document.createElement("article");
     empty.className = "empty-state";
-    empty.textContent = state.errorMessage || "Bu ilçe için kuaför verisi bulunamadı.";
+    empty.textContent = state.errorMessage || "Bu konum için kuaför verisi bulunamadı.";
     kuaforBusinessGrid.append(empty);
     return;
   }
@@ -311,7 +311,7 @@ async function initKuaforDistrictPage() {
 
   if (!matchedDistrict) {
     state.places = [];
-    state.errorMessage = "Bu ilçe için kuaför verisi bulunamadı.";
+    state.errorMessage = "Bu konum için kuaför verisi bulunamadı.";
     renderHeader();
     renderPlaces();
     return;

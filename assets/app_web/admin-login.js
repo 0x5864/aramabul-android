@@ -28,17 +28,23 @@
     resetEmail: "",
   };
 
-  function readResetToken() {
-    const searchParams = new URLSearchParams(window.location.search);
-    const directToken = String(searchParams.get("token") || "").trim();
-    if (directToken) {
-      return directToken;
+  function readTokenFromUrl(urlValue) {
+    try {
+      const parsed = new URL(urlValue || window.location.href, window.location.origin);
+      const directToken = String(parsed.searchParams.get("token") || "").trim();
+      if (directToken) {
+        return directToken;
+      }
+      const hashSource = String(parsed.hash || "").replace(/^#/, "");
+      const hashParams = new URLSearchParams(hashSource);
+      return String(hashParams.get("token") || "").trim();
+    } catch (_error) {
+      return "";
     }
+  }
 
-    const rawHash = String(window.location.hash || "");
-    const hashSource = rawHash.startsWith("#") ? rawHash.slice(1) : rawHash;
-    const hashParams = new URLSearchParams(hashSource);
-    return String(hashParams.get("token") || "").trim();
+  function readResetToken() {
+    return readTokenFromUrl(window.location.href);
   }
 
   function clearResetTokenFromLocation() {
@@ -183,6 +189,13 @@
     if (payload?.resetUrl) {
       setAssistLink(payload.resetUrl, "Şifre yenileme sayfasını aç");
       setMessage("Yerel ortamda e-posta yerine doğrudan şifre yenileme bağlantısı hazırlandı.", false);
+      const nextToken = readTokenFromUrl(payload.resetUrl);
+      if (nextToken) {
+        state.resetToken = nextToken;
+        state.mode = "reset";
+        applyMode();
+        await verifyResetToken();
+      }
       return;
     }
 
@@ -313,6 +326,19 @@
     });
 
     passwordToggleButton?.addEventListener("click", togglePasswordVisibility);
+
+    window.addEventListener("hashchange", () => {
+      const nextToken = readResetToken();
+      if (!nextToken || nextToken === state.resetToken) {
+        return;
+      }
+      state.resetToken = nextToken;
+      state.mode = "reset";
+      applyMode();
+      verifyResetToken().catch((error) => {
+        setMessage(error instanceof Error ? error.message : "Sıfırlama bağlantısı doğrulanamadı.", true);
+      });
+    });
   }
 
   main().catch((error) => {

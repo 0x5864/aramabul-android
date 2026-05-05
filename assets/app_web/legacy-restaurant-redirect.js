@@ -3,7 +3,7 @@
     "kuafor",
     "veteriner",
     "eczane",
-    "keyif",
+    "yeme-icme",
     "otel",
     "atm",
     "kargo",
@@ -18,7 +18,7 @@
     "kuafor",
     "veteriner",
     "eczane",
-    "keyif",
+    "yeme-icme",
     "otel",
     "atm",
     "kargo",
@@ -78,7 +78,7 @@
     const searchable = normalizeForSearch([record?.cuisine, record?.name].filter(Boolean).join(" "));
 
     if (!searchable) {
-      return "keyif";
+      return "yeme-icme";
     }
 
     if (hasAnyKeyword(searchable, ["eczane", "pharmacy"])) {
@@ -127,7 +127,7 @@
       return "hastane";
     }
 
-    return "keyif";
+    return "yeme-icme";
   }
 
   async function readVenueRecord(params) {

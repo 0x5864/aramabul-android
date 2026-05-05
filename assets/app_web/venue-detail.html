@@ -6,16 +6,38 @@
     <meta name="theme-color" content="#0d2032" />
     <title>Mekan Detayı | AramaBul</title>
     <meta name="description" content="İstanbul mekan detay sayfası." />
-    <link rel="icon" type="image/png" href="assets/fav.png?v=20260322-02" />
-    <link rel="shortcut icon" type="image/png" href="assets/fav.png?v=20260322-02" />
-    <link rel="apple-touch-icon" href="assets/fav.png?v=20260322-02" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://aramabul.com/venue-detail.html" />
+    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Mekan Detayı | AramaBul" />
+    <meta property="og:description" content="İstanbul mekan detay sayfası." />
+    <meta property="og:url" content="https://aramabul.com/venue-detail.html" />
+    <meta property="og:site_name" content="AramaBul" />
+    <meta property="og:image" content="https://aramabul.com/assets/yemek.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Mekan Detayı | AramaBul" />
+    <meta name="twitter:description" content="İstanbul mekan detay sayfası." />
+    <meta name="twitter:image" content="https://aramabul.com/assets/yemek.png" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260410-venue-share-03" />
+    <link rel="stylesheet" href="styles.css?v=20260423-venue-rating-order-01" />
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3016888060216617" crossorigin="anonymous"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NHE1J9FWDG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "G-NHE1J9FWDG");
+    </script>
   </head>
   <body class="venue-detail-page">
     <div class="texture"></div>
@@ -23,24 +45,11 @@
     <header class="global-header-band">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
+          <img class="brand-logo" src="assets/logo.png?v=20260504" alt="aramabul logo" />
           <span class="brand-wordmark">aramabul</span>
         </a>
         <div class="istanbul-topbar-actions">
-          <a class="istanbul-topbar-link" href="favorites.html">Favorilerim</a>
-          <a class="istanbul-topbar-link" href="yeme-icme.html">Yeme-İçme</a>
         </div>
-        <form class="header-search" action="search.html" method="get" role="search" aria-label="Genel arama">
-          <label class="visually-hidden" for="headerSearchInput">Arama ifadesi</label>
-          <input
-            id="headerSearchInput"
-            class="header-search-input"
-            type="search"
-            name="mekan"
-            placeholder="Ne bulmamı istersin?"
-            autocomplete="off"
-          />
-          <button class="header-search-btn" type="submit">Bul</button>
-        </form>
       </nav>
       <div class="global-topline"></div>
     </header>
@@ -49,16 +58,16 @@
       <div class="istanbul-breadcrumb">
         <a href="index.html">Anasayfa</a>
         <span>/</span>
-        <a href="yeme-icme.html">Yeme-İçme</a>
+        <a id="venueDetailBreadcrumbDomain" href="yeme-icme.html">Yeme-İçme</a>
         <span>/</span>
         <span id="venueDetailBreadcrumbCurrent">Mekan</span>
       </div>
 
       <section id="venueDetailState" class="istanbul-results-state">
-        <p id="venueDetailStateMessage" class="venue-detail-state-message">Mekan bilgisi getiriliyor.</p>
+        <p id="venueDetailStateMessage" class="venue-detail-state-message" data-i18n-key="venue.loading">Mekan bilgisi getiriliyor.</p>
         <div id="venueDetailStateActions" class="venue-detail-state-actions" hidden>
-          <a id="venueDetailStateSearchLink" class="venue-detail-action" href="yeme-icme.html">Yeme-İçme'de ara</a>
-          <a id="venueDetailStateBackLink" class="venue-detail-action venue-detail-action-secondary" href="yeme-icme.html">
+          <a id="venueDetailStateSearchLink" class="venue-detail-action" href="yeme-icme.html" data-i18n-key="venue.search">Yeme-İçme'de ara</a>
+          <a id="venueDetailStateBackLink" class="venue-detail-action venue-detail-action-secondary" href="yeme-icme.html" data-i18n-key="venue.back">
             Listeye dön
           </a>
         </div>
@@ -66,23 +75,150 @@
 
       <section id="venueDetailContent" class="venue-detail-layout" hidden>
         <article class="venue-detail-main-card">
-          <div id="venueDetailMedia" class="venue-detail-media" hidden>
-            <img id="venueDetailImage" class="venue-detail-image" src="" alt="" loading="lazy" />
-          </div>
-          <div id="venueDetailMediaPlaceholder" class="venue-detail-media-placeholder" hidden>
-            <p class="venue-detail-media-placeholder-kicker">Fotoğraf</p>
-            <p class="venue-detail-media-placeholder-text">Bu mekan için henüz fotoğraf yok.</p>
-          </div>
-          <div class="venue-detail-kicker-row">
-            <p id="venueDetailEyebrow" class="venue-detail-eyebrow"></p>
-            <div id="venueDetailTags" class="venue-detail-tags"></div>
-          </div>
+          <div class="venue-detail-top-grid">
+            <div class="venue-detail-side-info">
+              <div class="venue-detail-side-header">
+                <h1 id="venueDetailTitle" class="venue-detail-title"></h1>
+                <p id="venueDetailAddress" class="venue-detail-side-address" hidden></p>
+              </div>
 
-          <h1 id="venueDetailTitle" class="venue-detail-title"></h1>
+              <dl class="venue-detail-contact-stack">
+              <div class="venue-detail-contact-item">
+                <dt data-i18n-key="venue.phone">Telefon</dt>
+                <dd id="venueDetailPhone">-</dd>
+              </div>
+              <div class="venue-detail-contact-item">
+                <dt data-i18n-key="venue.website">Web sitesi</dt>
+                <dd id="venueDetailWebsite">-</dd>
+              </div>
+              <div class="venue-detail-contact-item">
+                <dt data-i18n-key="venue.instagram">Instagram</dt>
+                <dd id="venueDetailInstagram">-</dd>
+              </div>
+              </dl>
+              <div class="venue-detail-rating-block" aria-label="Puan ve yıldızlar">
+                <div class="istanbul-venue-meta venue-detail-rating-row">
+                  <span id="venueDetailRating" class="istanbul-venue-rating" hidden></span>
+                </div>
+              </div>
+
+              <div class="venue-detail-kicker-row venue-detail-tags-above-meta">
+                <div id="venueDetailTags" class="venue-detail-tags" aria-label="İlçe, mahalle ve tür"></div>
+              </div>
+
+              <div class="venue-detail-meta-stack">
+                <div class="istanbul-venue-pill-row venue-detail-pill-row">
+                  <span id="venueDetailBudget" class="istanbul-venue-budget" hidden></span>
+                  <button id="venueDetailFavoriteButton" class="istanbul-favorite-button" type="button">Kaydet</button>
+                  <div id="venueDetailShareWrap" class="card-share-wrap" hidden>
+                    <button
+                      id="venueDetailShareButton"
+                      class="card-share-trigger"
+                      type="button"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                      aria-label="Paylaş"
+                    >
+                      <img class="card-share-trigger-icon" src="assets/paylas.png" alt="" aria-hidden="true" />
+                      <span class="card-share-trigger-label">Paylaş</span>
+                    </button>
+                    <div id="venueDetailShareMenu" class="card-share-menu" hidden>
+                      <button
+                        id="venueDetailNativeShareButton"
+                        class="card-share-item card-share-icon-button card-native-share-button"
+                        type="button"
+                        hidden
+                        aria-label="Instagram / cihazda paylaş"
+                        title="Instagram / cihazda paylaş"
+                      >
+                        <img class="card-share-item-icon" src="assets/insta.png" alt="" aria-hidden="true" />
+                        <span class="card-share-visually-hidden">Instagram / cihazda paylaş</span>
+                      </button>
+                      <a
+                        id="venueDetailWhatsappShareLink"
+                        class="card-share-item card-share-icon-button card-whatsapp-share-link"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="WhatsApp"
+                        title="WhatsApp"
+                        data-share-label="WhatsApp"
+                      >
+                        <img class="card-share-item-icon" src="assets/wapp.jpg" alt="" aria-hidden="true" />
+                        <span class="card-share-visually-hidden">WhatsApp</span>
+                      </a>
+                      <a
+                        id="venueDetailFacebookShareLink"
+                        class="card-share-item card-share-icon-button card-facebook-share-link"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Facebook"
+                        title="Facebook"
+                      >
+                        <img class="card-share-item-icon" src="assets/face.png" alt="" aria-hidden="true" />
+                        <span class="card-share-visually-hidden">Facebook</span>
+                      </a>
+                      <a
+                        id="venueDetailTelegramShareLink"
+                        class="card-share-item card-share-icon-button card-telegram-share-link"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Telegram"
+                        title="Telegram"
+                      >
+                        <img class="card-share-item-icon" src="assets/tgram.avif" alt="" aria-hidden="true" />
+                        <span class="card-share-visually-hidden">Telegram</span>
+                      </a>
+                      <a
+                        id="venueDetailXShareLink"
+                        class="card-share-item card-share-icon-button card-x-share-link"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="X"
+                        title="X"
+                        data-share-label="X"
+                      >
+                        <img class="card-share-item-icon" src="assets/x.jpg" alt="" aria-hidden="true" />
+                        <span class="card-share-visually-hidden">X</span>
+                      </a>
+                      <button
+                        id="venueDetailCopyShareButton"
+                        class="card-share-item card-share-icon-button card-copy-share-button"
+                        type="button"
+                        aria-label="Bağlantıyı kopyala"
+                        title="Bağlantıyı kopyala"
+                      >
+                        <img class="card-share-item-icon" src="assets/copy.png" alt="" aria-hidden="true" />
+                        <span class="card-share-visually-hidden">Bağlantıyı kopyala</span>
+                      </button>
+                    </div>
+                  </div>
+                  <a id="venueDetailBackLink" class="venue-detail-action venue-detail-action-secondary" href="yeme-icme.html" data-i18n-key="venue.back">Listeye dön</a>
+                  <span id="venueDetailStatus" class="venue-detail-meta-pill" hidden></span>
+                </div>
+              </div>
+            </div>
+
+            <div id="venueDetailMedia" class="venue-detail-media" hidden>
+              <img id="venueDetailImage" class="venue-detail-image" src="" alt="" loading="lazy" />
+            </div>
+            <div id="venueDetailMediaPlaceholder" class="venue-detail-media-placeholder" hidden>
+              <p class="venue-detail-media-placeholder-kicker">Fotoğraf</p>
+              <p class="venue-detail-media-placeholder-text">Bu mekan için henüz fotoğraf yok.</p>
+            </div>
+          </div>
           <p id="venueDetailSummary" class="venue-detail-summary" hidden></p>
 
+          <section id="venueDetailServicesSection" class="venue-detail-section" hidden>
+            <h2 class="venue-detail-section-title">Servis</h2>
+            <div id="venueDetailServicesList" class="venue-detail-chip-list"></div>
+          </section>
+
           <section id="venueDetailMenuSection" class="venue-detail-section" hidden>
-            <h2 class="venue-detail-section-title">Menü</h2>
+            <h2 class="venue-detail-section-title" data-i18n-key="venue.menu">Menü</h2>
             <a
               id="venueDetailMenuLink"
               class="venue-detail-action venue-detail-action-inline"
@@ -96,166 +232,66 @@
             <div id="venueDetailMenuList" class="venue-detail-chip-list"></div>
           </section>
 
-          <div class="venue-detail-meta-row">
-            <span id="venueDetailRating" class="venue-detail-meta-pill" hidden></span>
-            <div id="venueDetailShareWrap" class="venue-detail-share-wrap" hidden>
-              <button
-                id="venueDetailShareButton"
-                class="venue-detail-share-trigger"
-                type="button"
-                aria-haspopup="true"
-                aria-expanded="false"
-                aria-label="Paylaş"
-              >
-                <img class="venue-detail-share-trigger-icon" src="assets/paylas.png" alt="" aria-hidden="true" />
-                <span class="venue-detail-share-trigger-label">Paylaş</span>
-              </button>
-              <div id="venueDetailShareMenu" class="venue-detail-share-menu" hidden>
-                <button
-                  id="venueDetailNativeShareButton"
-                  class="venue-detail-share-item venue-detail-share-icon-button"
-                  type="button"
-                  hidden
-                  aria-label="Instagram / cihazda paylaş"
-                  title="Instagram / cihazda paylaş"
-                >
-                  <img class="venue-detail-share-item-icon" src="assets/insta.png" alt="" aria-hidden="true" />
-                  <span class="venue-detail-visually-hidden">Instagram / cihazda paylaş</span>
-                </button>
-                <a
-                  id="venueDetailWhatsappShareLink"
-                  class="venue-detail-share-item venue-detail-share-icon-button"
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="WhatsApp"
-                  title="WhatsApp"
-                >
-                  <img class="venue-detail-share-item-icon" src="assets/wapp.jpg" alt="" aria-hidden="true" />
-                  <span class="venue-detail-visually-hidden">WhatsApp</span>
-                </a>
-                <a
-                  id="venueDetailFacebookShareLink"
-                  class="venue-detail-share-item venue-detail-share-icon-button"
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Facebook"
-                  title="Facebook"
-                >
-                  <img class="venue-detail-share-item-icon" src="assets/face.png" alt="" aria-hidden="true" />
-                  <span class="venue-detail-visually-hidden">Facebook</span>
-                </a>
-                <a
-                  id="venueDetailTelegramShareLink"
-                  class="venue-detail-share-item venue-detail-share-icon-button"
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Telegram"
-                  title="Telegram"
-                >
-                  <img class="venue-detail-share-item-icon" src="assets/tgram.avif" alt="" aria-hidden="true" />
-                  <span class="venue-detail-visually-hidden">Telegram</span>
-                </a>
-                <a
-                  id="venueDetailXShareLink"
-                  class="venue-detail-share-item venue-detail-share-icon-button"
-                  href="#"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="X"
-                  title="X"
-                >
-                  <img class="venue-detail-share-item-icon" src="assets/x.jpg" alt="" aria-hidden="true" />
-                  <span class="venue-detail-visually-hidden">X</span>
-                </a>
-                <button
-                  id="venueDetailCopyShareButton"
-                  class="venue-detail-share-item venue-detail-share-icon-button"
-                  type="button"
-                  aria-label="Bağlantıyı kopyala"
-                  title="Bağlantıyı kopyala"
-                >
-                  <img class="venue-detail-share-item-icon" src="assets/copy.png" alt="" aria-hidden="true" />
-                  <span class="venue-detail-visually-hidden">Bağlantıyı kopyala</span>
-                </button>
-              </div>
-            </div>
-            <span id="venueDetailBudget" class="venue-detail-meta-pill" hidden></span>
-            <span id="venueDetailStatus" class="venue-detail-meta-pill" hidden></span>
-          </div>
-
-          <section id="venueDetailServicesSection" class="venue-detail-section" hidden>
-            <h2 class="venue-detail-section-title">Servis</h2>
-            <div id="venueDetailServicesList" class="venue-detail-chip-list"></div>
-          </section>
-
           <section id="venueDetailAtmosphereSection" class="venue-detail-section" hidden>
-            <h2 class="venue-detail-section-title">Ortam</h2>
+            <h2 class="venue-detail-section-title" data-i18n-key="venue.atmosphere">Ortam</h2>
             <div id="venueDetailAtmosphereList" class="venue-detail-chip-list"></div>
           </section>
 
-          <dl class="venue-detail-info-grid">
-            <div class="venue-detail-info-item">
-              <dt>Adres</dt>
-              <dd id="venueDetailAddress">-</dd>
+          <section class="venue-detail-section venue-detail-map-section" aria-label="Harita ve bağlantılar">
+            <h2 class="venue-detail-section-title" data-i18n-key="venue.map">Harita ve bağlantılar</h2>
+            <div id="venueDetailMapWrap" class="venue-detail-map-wrap">
+              <iframe
+                id="venueDetailMapFrame"
+                class="venue-detail-map-frame"
+                src=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen
+                title="Mekan haritası"
+              ></iframe>
             </div>
-            <div class="venue-detail-info-item">
-              <dt>Telefon</dt>
-              <dd id="venueDetailPhone">-</dd>
+            <div class="venue-detail-link-grid">
+              <a id="venueDetailInstagramLink" class="venue-detail-action" href="#" target="_blank" rel="noopener noreferrer" hidden>
+                Instagram
+              </a>
             </div>
-            <div class="venue-detail-info-item">
-              <dt>Web sitesi</dt>
-              <dd id="venueDetailWebsite">-</dd>
-            </div>
-            <div class="venue-detail-info-item">
-              <dt>Instagram</dt>
-              <dd id="venueDetailInstagram">-</dd>
-            </div>
-          </dl>
+          </section>
+
+          <section id="venueDetailWriteReviewSection" class="venue-detail-section">
+            <h2 class="venue-detail-section-title" data-i18n-key="venue.writeReview">Yorum yaz</h2>
+            <form id="venueDetailReviewForm" class="venue-detail-review-form" novalidate>
+              <label class="venue-detail-review-field">
+                <span data-i18n-key="venue.yourName">Adın</span>
+                <input id="venueDetailReviewName" type="text" name="name" autocomplete="name" maxlength="80" />
+              </label>
+              <label class="venue-detail-review-field">
+                <span data-i18n-key="venue.yourReview">Yorumun</span>
+                <textarea id="venueDetailReviewText" name="review" rows="4" maxlength="800" required></textarea>
+              </label>
+              <div class="venue-detail-review-form-actions">
+                <button class="venue-detail-action" type="submit" data-i18n-key="venue.submitReview">Yorumu gönder</button>
+                <p id="venueDetailReviewFormStatus" class="venue-detail-review-form-status" aria-live="polite"></p>
+              </div>
+            </form>
+          </section>
 
           <section id="venueDetailReviewsSection" class="venue-detail-section" hidden>
-            <h2 class="venue-detail-section-title">Yorumlardan</h2>
+            <h2 class="venue-detail-section-title" data-i18n-key="venue.reviews">Yorumlardan</h2>
             <div id="venueDetailReviewsList" class="venue-detail-review-list"></div>
           </section>
         </article>
-
-        <aside class="venue-detail-side-card">
-          <h2>Harita ve bağlantılar</h2>
-          <div class="venue-detail-map-wrap">
-            <iframe
-              id="venueDetailMapFrame"
-              class="venue-detail-map-frame"
-              src=""
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              allowfullscreen
-              title="Mekan haritası"
-            ></iframe>
-          </div>
-          <div class="venue-detail-link-grid">
-            <button id="venueDetailFavoriteButton" class="venue-detail-action" type="button">Kaydet</button>
-            <a id="venueDetailWebsiteLink" class="venue-detail-action" href="#" target="_blank" rel="noopener noreferrer" hidden>
-              Siteye git
-            </a>
-            <a id="venueDetailInstagramLink" class="venue-detail-action" href="#" target="_blank" rel="noopener noreferrer" hidden>
-              Instagram
-            </a>
-            <a class="venue-detail-action venue-detail-action-secondary" href="yeme-icme.html">Listeye dön</a>
-          </div>
-        </aside>
       </section>
     </main>
 
     <script src="web-runtime.js?v=20260302-01"></script>
     <script src="header-state.js?v=20260302-01"></script>
-    <script src="header-i18n.js?v=20260307-12"></script>
-    <script src="header-nav.js?v=20260310-12"></script>
+    <script src="header-i18n.js?v=20260429-i18n-page-keys-01"></script>
+    <script src="header-nav.js?v=20260422-header-fav-desktop-01"></script>
     <script src="header-shell.js?v=20260302-02"></script>
     <script src="header-search-ui.js?v=20260303-04"></script>
-    <script src="header-search-data.js?v=20260409-search-db-02"></script>
-    <script src="header-search.js?v=20260409-header-search-01"></script>
-    <script src="venue-detail.js?v=20260410-venue-detail-07"></script>
+    <script src="header-search-data.js?v=20260420-search-db-06"></script>
+    <script src="header-search.js?v=20260422-header-no-topbar-01"></script>
+    <script src="venue-detail.js?v=20260423-venue-rating-order-01"></script>
+    <script src="adsense-privacy.js?v=20260429-01"></script>
   </body>
 </html>

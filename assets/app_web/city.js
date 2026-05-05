@@ -1,5 +1,5 @@
 const VENUES_JSON_PATH = "data/venues.json";
-const FOOD_JSON_PATH = "data/keyif-food.json";
+const FOOD_JSON_PATH = "data/yeme-icme-food.json";
 const DISTRICTS_JSON_PATH = "data/districts.json";
 const API_BASE_URL = (() => {
   if (typeof window === "undefined") {
@@ -105,7 +105,7 @@ const mainPageCategoryTags = [
   "Vegan",
   "Vejetaryen",
   "Glutensiz",
-  "Asya Mutfağı",
+  "Asya",
   "İtalyan",
   "Mangal",
   "Kafe",
@@ -119,6 +119,21 @@ const mainPageCategoryTags = [
 const sortedMainPageCategoryTags = [...mainPageCategoryTags].sort((left, right) =>
   left.localeCompare(right, "tr"),
 );
+
+function formatVenueRatingText(ratingValue, reviewCount) {
+  const rating = Number(ratingValue);
+  if (!Number.isFinite(rating) || rating <= 0) {
+    return "0,0";
+  }
+
+  const formattedRating = rating.toFixed(1).replace(".", ",");
+  const count = Number(reviewCount);
+  if (Number.isFinite(count) && count > 0) {
+    return `${formattedRating} (${new Intl.NumberFormat("tr-TR").format(count)})`;
+  }
+
+  return formattedRating;
+}
 
 const cityTitle = document.querySelector("#cityTitle");
 const cityToplineHomeLink = document.querySelector("#cityToplineHomeLink");
@@ -225,21 +240,21 @@ const CITY_I18N = {
     title: "aramabul | {city} Restoranları",
     cityTitle: "{city} Restoranları",
     toplineHome: "Anasayfa",
-    toplineFood: "Keyif",
+    toplineFood: "Yeme-İçme",
     cityLink: "{city} İli",
-    districtFallback: "İlçe",
-    districtLabel: "{district} İlçesi",
-    districtSearch: "İlçeye göre ara",
+    districtFallback: "Konum",
+    districtLabel: "{district} bölgesi",
+    districtSearch: "Konuma göre ara",
     categorySearch: "Kategoriye göre ara",
-    districtPickerAria: "İlçe seçimini aç",
+    districtPickerAria: "Konum seçimini aç",
     categoryPickerAria: "Kategori seçimini aç",
-    districtListAria: "İlçe listesi",
-    districtOptionsAria: "İlçe seçenekleri",
+    districtListAria: "Konum listesi",
+    districtOptionsAria: "Konum seçenekleri",
     categoryListAria: "Kategori listesi",
     categoryOptionsAria: "Kategori seçenekleri",
     allDistricts: "Tüm ilçeler",
     allCategories: "Tüm kategoriler",
-    districtListTitle: "İlçeler",
+    districtListTitle: "Konumlar",
     categoryListTitle: "Kategoriler",
     sortTraveler: "En çok tercih edilen",
     sortLocals: "Yerel favoriler",
@@ -251,7 +266,7 @@ const CITY_I18N = {
     emptyFiltered: "Bu filtrelerle eşleşen restoran bulunamadı. Filtreleri genişleterek tekrar dene.",
     openVenueAria: "{name} sayfasını aç",
     resultWithDistrict:
-      "{city} ilinde toplam {cityTotal} restoran bulunmaktadır. {district} İlçesinde de {districtTotal} restoran vardır.",
+      "{city} ilinde toplam {cityTotal} restoran bulunmaktadır. {district} bölgesinde de {districtTotal} restoran vardır.",
     resultWithoutDistrict: "{city} ilinde toplam {cityTotal} restoran bulunmaktadır.",
     cityDataMissingTitle: "Şehir verisi bulunamadı",
     cityDataMissingText: "Gösterilecek restoran verisi yok.",
@@ -259,7 +274,7 @@ const CITY_I18N = {
     footerDownloadTitle: "İndir.",
     footerDownloadNow: "Hemen indirin",
     footerDiscoverTitle: "Keşfet",
-    footerAbout: "Hakkımızda",
+    footerAbout: "Hakkında",
     footerCareer: "Kariyer",
     footerContact: "İletişim",
     footerHelpTitle: "Yardım",
@@ -280,7 +295,7 @@ const CITY_I18N = {
     title: "aramabul | {city} Restaurants",
     cityTitle: "{city} Restaurants",
     toplineHome: "Home",
-    toplineFood: "Keyif",
+    toplineFood: "Yeme-İçme",
     cityLink: "{city} City",
     districtFallback: "District",
     districtLabel: "{district} District",
@@ -335,7 +350,7 @@ const CITY_I18N = {
     title: "aramabul | Рестораны {city}",
     cityTitle: "Рестораны {city}",
     toplineHome: "Главная",
-    toplineFood: "Keyif",
+    toplineFood: "Yeme-İçme",
     cityLink: "Город {city}",
     districtFallback: "Район",
     districtLabel: "Район {district}",
@@ -390,7 +405,7 @@ const CITY_I18N = {
     title: "aramabul | Restaurants in {city}",
     cityTitle: "{city} Restaurants",
     toplineHome: "Startseite",
-    toplineFood: "Keyif",
+    toplineFood: "Yeme-İçme",
     cityLink: "Stadt {city}",
     districtFallback: "Bezirk",
     districtLabel: "{district} Bezirk",
@@ -445,7 +460,7 @@ const CITY_I18N = {
     title: "aramabul | {city} 餐厅",
     cityTitle: "{city} 餐厅",
     toplineHome: "首页",
-    toplineFood: "Keyif",
+    toplineFood: "Yeme-İçme",
     cityLink: "{city} 市",
     districtFallback: "区",
     districtLabel: "{district} 区",
@@ -560,7 +575,7 @@ function applyCityStaticTranslations() {
   }
 
   if (cityToplineFoodLink) {
-    cityToplineFoodLink.href = "keyif.html";
+    cityToplineFoodLink.href = "yeme-icme.html";
     cityToplineFoodLink.textContent = cityT("toplineFood");
   }
 
@@ -740,7 +755,7 @@ function inferVenuePageBase(venue) {
   );
 
   if (!searchable) {
-    return "keyif";
+    return "yeme-icme";
   }
 
   if (searchable.includes("eczane")) {
@@ -805,7 +820,7 @@ function inferVenuePageBase(venue) {
     return "hastane";
   }
 
-  return "keyif";
+  return "yeme-icme";
 }
 
 function normalizeCuisineLabel(value, fallback = "Yerel") {
@@ -1359,7 +1374,7 @@ function restaurantDetailUrl(venue) {
     "kuafor",
     "veteriner",
     "eczane",
-    "keyif",
+    "yeme-icme",
     "otel",
     "atm",
     "kargo",
@@ -1374,7 +1389,7 @@ function restaurantDetailUrl(venue) {
     "kuafor",
     "veteriner",
     "eczane",
-    "keyif",
+    "yeme-icme",
     "otel",
     "atm",
     "kargo",
@@ -1868,7 +1883,7 @@ function renderVenueCard(venue) {
   card.querySelector(".city-venue-description").textContent =
     venue.address || `${venue.district}, ${venue.city}`;
   card.querySelector(".city-venue-stars").textContent = starText(displayRating);
-  card.querySelector(".city-venue-rating").textContent = displayRating.toFixed(1);
+  card.querySelector(".city-venue-rating").textContent = formatVenueRatingText(displayRating, venue.userRatingCount);
 
   const cuisineChip = card.querySelector(".city-venue-chip");
   if (cuisineChip) {

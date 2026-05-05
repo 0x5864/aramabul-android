@@ -6,16 +6,17 @@
     <meta name="theme-color" content="#0d2032" />
     <title>Admin Giriş | AramaBul</title>
     <meta name="description" content="Admin yönetim ekranına giriş yap." />
-    <link rel="icon" type="image/png" href="assets/fav.png?v=20260322-02" />
-    <link rel="shortcut icon" type="image/png" href="assets/fav.png?v=20260322-02" />
-    <link rel="apple-touch-icon" href="assets/fav.png?v=20260322-02" />
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260409-button-sync-05" />
+    <link rel="stylesheet" href="styles.css?v=20260422-header-fav-desktop-01" />
   </head>
   <body class="venue-detail-page">
     <div class="texture"></div>
@@ -23,10 +24,10 @@
     <header class="global-header-band">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
-          <span class="brand-wordmark">aramabul</span>
+          <img class="brand-logo" src="assets/logo.png?v=20260504" alt="aramabul logo" />
+          <span class="brand-wordmark"><span class="brand-wordmark-search">arama</span><span class="brand-wordmark-rest">bul</span></span>
         </a>
         <div class="istanbul-topbar-actions">
-          <a class="istanbul-topbar-link" href="istanbul-kesfet.html">İstanbul keşfet</a>
           <a class="istanbul-topbar-link istanbul-topbar-link-strong" href="index.html">Anasayfa</a>
         </div>
       </nav>
@@ -34,11 +35,6 @@
     </header>
 
     <main class="hero venue-detail-shell">
-      <div class="istanbul-breadcrumb">
-        <a href="index.html">Anasayfa</a>
-        <span>/</span>
-        <span>Admin giriş</span>
-      </div>
 
       <section class="admin-login-shell">
         <div class="admin-login-card">
@@ -55,9 +51,20 @@
               <input id="adminLoginEmail" type="email" autocomplete="username" required />
             </label>
 
-            <label class="istanbul-filter-field">
+            <label class="istanbul-filter-field admin-password-field">
               <span>Şifre</span>
-              <input id="adminLoginPassword" type="password" autocomplete="current-password" required />
+              <div class="admin-password-input-row">
+                <input id="adminLoginPassword" type="password" autocomplete="current-password" required />
+                <button
+                  id="adminLoginPasswordToggle"
+                  class="istanbul-filter-reset admin-password-toggle"
+                  type="button"
+                  aria-controls="adminLoginPassword"
+                  aria-label="Şifreyi göster"
+                >
+                  Göster
+                </button>
+              </div>
             </label>
 
             <button class="istanbul-discovery-primary-button" type="submit">Giriş yap</button>

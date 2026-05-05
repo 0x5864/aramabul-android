@@ -1109,6 +1109,7 @@
     }
 
     const profileMode = currentPageName() === "profile.html";
+    const favoritesMode = currentPageName() === "favorites.html";
     let authNav = topbar.querySelector(".desktop-auth-links");
 
     if (!(authNav instanceof HTMLElement)) {
@@ -1139,7 +1140,7 @@
             aria-label="Dil seç"
             title="Dil seç"
           >
-            <img class="lang-switch-code" data-lang-current src="assets/dil.png" alt="TR" style="width: 19px; height: 19px;">
+            <img class="lang-switch-code" data-lang-current src="assets/dil.png?v=20260504" alt="TR" style="width: 23px; height: 23px;">
           </button>
           <div class="lang-switch-menu" data-lang-menu hidden>
             <button class="lang-switch-option active" data-lang-option="TR" type="button" aria-pressed="true">TR</button>
@@ -1149,6 +1150,16 @@
             <button class="lang-switch-option" data-lang-option="ZH" type="button" aria-pressed="false">ZH</button>
           </div>
         </div>
+        <a
+          class="desktop-favorites-link${favoritesMode ? " is-active" : ""}"
+          data-desktop-auth="favorites"
+          href="favorites.html"
+          aria-label="${labels.favorites}"
+          title="${labels.favorites}"
+        >
+          <img class="desktop-favorites-icon" src="assets/fav.png?v=20260504" alt="" width="19" height="19" />
+          <span class="visually-hidden desktop-favorites-link-text">${labels.favorites}</span>
+        </a>
         <a
           class="desktop-auth-link desktop-auth-link-settings${profileMode ? " is-active" : ""}"
           data-desktop-auth="settings"
@@ -1166,6 +1177,7 @@
     }
 
     const signinLink = authNav.querySelector('[data-desktop-auth="signin"]');
+    const favoritesLink = authNav.querySelector('[data-desktop-auth="favorites"]');
     const settingsLink = authNav.querySelector('[data-desktop-auth="settings"]');
 
     function updateDesktopAuthLabels() {
@@ -1177,6 +1189,17 @@
       const settingsLabel = labels.settings || labels.profile || copy.profile;
       setDesktopLinkLabel(signinLink, labels.signin);
       setDesktopLinkLabel(settingsLink, settingsLabel);
+
+      if (favoritesLink instanceof HTMLAnchorElement) {
+        const favLabel = labels.favorites || "Favorilerim";
+        favoritesLink.setAttribute("aria-label", favLabel);
+        favoritesLink.setAttribute("title", favLabel);
+        const favHidden = favoritesLink.querySelector(".desktop-favorites-link-text");
+        if (favHidden instanceof HTMLElement) {
+          favHidden.textContent = favLabel;
+        }
+        favoritesLink.classList.toggle("is-active", currentPageName() === "favorites.html");
+      }
 
       if (signinLink instanceof HTMLElement) {
         signinLink.classList.toggle("is-hidden", hasSession);
@@ -1360,8 +1383,12 @@
     }
 
     function updateActiveNav() {
+      const hasSession = Boolean(readSession());
       buttons.forEach((button) => {
         const type = button.dataset.mobileNav;
+        if (type === "signin") {
+          button.classList.toggle("is-hidden", hasSession);
+        }
         const active =
           (type === "home" && isHomePage()) ||
           (type === "favorites" && currentPageName() === "favorites.html") ||
@@ -1445,6 +1472,7 @@
     });
 
     document.addEventListener("aramabul:authmodalchange", updateActiveNav);
+    document.addEventListener("aramabul:authchange", updateActiveNav);
 
     updateActiveNav();
   }

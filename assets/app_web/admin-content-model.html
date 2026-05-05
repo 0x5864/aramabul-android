@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d2032" />
+    <title>Admin İçerik Mimarisi | AramaBul</title>
+    <meta name="description" content="Ana ve alt kategoriler, İstanbul ilçe/mahalle." />
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260422-admin-neighborhood-add-01" />
+  </head>
+  <body class="venue-detail-page admin-venue-editor-page admin-content-model-page">
+    <div class="texture"></div>
+
+    <header class="global-header-band">
+      <nav class="topbar global-topbar">
+        <a class="brand" href="index.html" aria-label="aramabul">
+          <img class="brand-logo" src="assets/logo.png?v=20260504" alt="aramabul logo" />
+          <span class="brand-wordmark"><span class="brand-wordmark-search">arama</span><span class="brand-wordmark-rest">bul</span></span>
+        </a>
+        <div class="istanbul-topbar-actions">
+          <span class="istanbul-topbar-link admin-session-chip" data-admin-session-name>Admin</span>
+          <button class="istanbul-topbar-link admin-logout-button" type="button" data-admin-logout>Çıkış yap</button>
+        </div>
+      </nav>
+      <div class="global-topline"></div>
+    </header>
+
+    <main class="hero venue-detail-shell">
+
+      <section class="admin-panel-nav" aria-label="Admin panel sayfaları">
+        <a class="admin-panel-nav-card" href="admin-venues.html">
+          <span class="admin-panel-nav-title">Yeme-İçme</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-gezi.html">
+          <span class="admin-panel-nav-title">Gezi</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-hizmetler.html">
+          <span class="admin-panel-nav-title">Hizmetler</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-saglik.html">
+          <span class="admin-panel-nav-title">Sağlık</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-kultur.html">
+          <span class="admin-panel-nav-title">Kültür</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-sanat.html">
+          <span class="admin-panel-nav-title">Sanat</span>
+        </a>
+        <a class="admin-panel-nav-card is-active" href="admin-content-model.html" aria-current="page">
+          <span class="admin-panel-nav-title">İçerik Mimarisi</span>
+        </a>
+      </section>
+
+      <section class="admin-venue-form-card">
+        <div class="admin-venues-toolbar">
+          <div>
+            <p class="istanbul-discovery-kicker">Pilot iskelet</p>
+          </div>
+        </div>
+
+        <div id="adminContentModelState" class="istanbul-results-state">İçerik mimarisi yükleniyor.</div>
+
+        <div id="adminContentModelLayout" class="admin-content-model-layout" hidden>
+          <section class="admin-content-model-summary admin-content-model-summary--two" aria-label="İçerik özeti">
+            <article class="admin-content-model-stat">
+              <span class="admin-content-model-stat-label">Ana kategori</span>
+              <strong id="adminContentMainCategoryCount" class="admin-content-model-stat-value">0</strong>
+            </article>
+            <article class="admin-content-model-stat">
+              <span class="admin-content-model-stat-label">Alt kategori</span>
+              <strong id="adminContentSubcategoryCount" class="admin-content-model-stat-value">0</strong>
+            </article>
+          </section>
+
+          <section class="admin-venues-layout">
+            <section class="admin-venues-list-card">
+              <div class="admin-venues-toolbar">
+                <div>
+                  <p class="istanbul-discovery-kicker">Ana kategoriler</p>
+                </div>
+                <button id="adminContentMainCategoryNewButton" class="istanbul-discovery-primary-button" type="button">Yeni ana kategori</button>
+              </div>
+              <div class="admin-content-model-jump-actions" aria-label="Seçili kategori işlemleri">
+                <button id="adminContentJumpToSubcategoriesButton" class="admin-content-model-jump-button" type="button">
+                  Alt kategorilere git
+                </button>
+                <a id="adminContentOpenCategoryAdminLink" class="admin-content-model-jump-button" href="admin-venues.html" hidden>
+                  Yeme-İçme adminine git
+                </a>
+                <a id="adminContentOpenRootPageLink" class="admin-content-model-jump-button" href="#" target="_blank" rel="noreferrer" hidden>
+                  Canlı sayfayı aç
+                </a>
+              </div>
+              <div id="adminContentMainCategoryMessage" class="istanbul-results-state" hidden></div>
+              <div id="adminContentMainCategoryList" class="admin-venue-list"></div>
+
+              <form id="adminContentMainCategoryForm" class="admin-venue-form">
+                <div class="admin-venue-form-grid">
+                  <label class="istanbul-filter-field">
+                    <span>Ad</span>
+                    <input id="adminContentMainCategoryName" type="text" required />
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>Key</span>
+                    <input id="adminContentMainCategoryKey" type="text" />
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>Slug</span>
+                    <input id="adminContentMainCategorySlug" type="text" />
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>Landing</span>
+                    <select id="adminContentMainCategoryLandingMode">
+                      <option value="tree">Tree</option>
+                      <option value="discovery">Discovery</option>
+                      <option value="direct_list">Direct list</option>
+                    </select>
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>İkon yolu</span>
+                    <input id="adminContentMainCategoryIconAsset" type="text" placeholder="assets/gezi.png" />
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>Hero görseli</span>
+                    <input id="adminContentMainCategoryHeroImage" type="text" placeholder="assets/gezi.png" />
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>Sıra</span>
+                    <input id="adminContentMainCategorySortOrder" type="number" min="0" step="1" value="0" />
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>Aktif</span>
+                    <select id="adminContentMainCategoryIsActive">
+                      <option value="true">Evet</option>
+                      <option value="false">Hayır</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="admin-venues-actions-row">
+                  <button class="istanbul-discovery-primary-button" type="submit">Kaydet</button>
+                  <button id="adminContentMainCategoryDeleteButton" class="istanbul-filter-reset" type="button" hidden>Sil</button>
+                </div>
+              </form>
+            </section>
+
+            <section id="adminContentSubcategoriesSection" class="admin-venue-form-card">
+              <div class="admin-venues-toolbar">
+                <div>
+                  <p class="istanbul-discovery-kicker">Alt kategoriler</p>
+                </div>
+                <button id="adminContentSubcategoryNewButton" class="istanbul-discovery-primary-button" type="button">Yeni alt kategori</button>
+              </div>
+              <p class="admin-venues-scope-note">
+                Seçili ana kategori için alt kategoriler burada düzenlenir. Üst bağ yalnızca aynı ana kategori içinden seçilir.
+              </p>
+              <div id="adminContentSubcategoryMessage" class="istanbul-results-state" hidden></div>
+              <div id="adminContentSubcategoryList" class="admin-venue-list"></div>
+
+              <form id="adminContentSubcategoryForm" class="admin-venue-form">
+                <div class="admin-venue-form-grid">
+                  <label class="istanbul-filter-field">
+                    <span>Ana kategori</span>
+                    <select id="adminContentSubcategoryMainCategoryId"></select>
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>Üst alt kategori</span>
+                    <select id="adminContentSubcategoryParentId">
+                      <option value="">Yok</option>
+                    </select>
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>Ad</span>
+                    <input id="adminContentSubcategoryName" type="text" required />
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>Key</span>
+                    <input id="adminContentSubcategoryKey" type="text" />
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>Slug</span>
+                    <input id="adminContentSubcategorySlug" type="text" />
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>Tip başlığı</span>
+                    <input id="adminContentSubcategoryTitleUnit" type="text" placeholder="mekan, tesis, rota" />
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>Record mode</span>
+                    <select id="adminContentSubcategoryRecordMode">
+                      <option value="dataset">Dataset</option>
+                      <option value="dynamic_type">Dynamic type</option>
+                      <option value="venues">Venues</option>
+                      <option value="hybrid">Hybrid</option>
+                    </select>
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>Sıra</span>
+                    <input id="adminContentSubcategorySortOrder" type="number" min="0" step="1" value="0" />
+                  </label>
+                  <label class="istanbul-filter-field">
+                    <span>Aktif</span>
+                    <select id="adminContentSubcategoryIsActive">
+                      <option value="true">Evet</option>
+                      <option value="false">Hayır</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="admin-venues-actions-row">
+                  <button class="istanbul-discovery-primary-button" type="submit">Kaydet</button>
+                  <button id="adminContentSubcategoryDeleteButton" class="istanbul-filter-reset" type="button" hidden>Sil</button>
+                </div>
+              </form>
+            </section>
+
+            <section
+              id="adminContentIstanbulGeoSection"
+              class="admin-venue-form-card admin-content-model-geo-section"
+              aria-label="İstanbul ilçe ve mahalle (pilot filtre API)"
+            >
+              <div class="admin-venues-toolbar">
+                <div>
+                  <p class="istanbul-discovery-kicker">İlçe ve mahalle</p>
+                  <p class="admin-venues-scope-note">
+                    Aynı uç: <code class="admin-content-model-inline-code">GET /api/mvp/istanbul/filters</code>. İlçe/mahalle
+                    listesi pilot mekan verisinden gelir. Mahalle seçip <strong>güncelle</strong> veya <strong>kaldır</strong> ile
+                    eşleşen tüm pilot kayıtları toplu güncellenir
+                    (<code class="admin-content-model-inline-code">PATCH /api/admin/istanbul-mvp/neighborhoods</code>).
+                  </p>
+                </div>
+                <button id="adminContentIstanbulGeoRefresh" class="istanbul-filter-reset" type="button">Yenile</button>
+              </div>
+              <div id="adminContentIstanbulGeoMessage" class="istanbul-results-state" hidden></div>
+              <div class="admin-content-model-geo-split">
+                <div class="admin-content-model-geo-col">
+                  <p class="admin-content-model-geo-kicker">İlçeler <span id="adminContentIstanbulGeoDistrictCount" class="admin-content-model-geo-count">0</span></p>
+                  <div class="admin-content-model-table-wrap admin-content-model-geo-table-wrap">
+                    <table class="admin-content-model-table" aria-label="İlçe listesi">
+                      <tbody id="adminContentIstanbulGeoDistrictTbody"></tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="admin-content-model-geo-col">
+                  <p class="admin-content-model-geo-kicker">
+                    Mahalleler
+                    <span class="admin-content-model-geo-sub">— <span id="adminContentIstanbulGeoSelectedDistrict">—</span> ·
+                      <span id="adminContentIstanbulGeoNeighborhoodCount" class="admin-content-model-geo-count">0</span>
+                    </span>
+                  </p>
+                  <div class="admin-content-model-table-wrap admin-content-model-geo-table-wrap">
+                    <table class="admin-content-model-table" aria-label="Seçili ilçe mahalle listesi">
+                      <tbody id="adminContentIstanbulGeoNeighborhoodTbody"></tbody>
+                    </table>
+                  </div>
+                  <div class="admin-content-model-geo-actions">
+                    <label class="istanbul-filter-field admin-content-model-geo-action-label">
+                      <span>Mahalle adı</span>
+                      <input
+                        id="adminContentIstanbulGeoNeighborhoodNew"
+                        type="text"
+                        autocomplete="off"
+                        placeholder="Önce ilçe seçin"
+                        disabled
+                      />
+                    </label>
+                    <p class="admin-venues-scope-note admin-content-model-geo-add-hint">
+                      <strong>Ekle</strong>: bu ilçede mahalle alanı <strong>boş</strong> olan pilot mekânlara yazılır. Güncelle/Kaldır için soldan mahalle seçin.
+                    </p>
+                    <div class="admin-venues-actions-row admin-content-model-geo-actions-buttons">
+                      <button
+                        id="adminContentIstanbulGeoNeighborhoodAdd"
+                        class="istanbul-discovery-primary-button"
+                        type="button"
+                        disabled
+                      >
+                        Ekle
+                      </button>
+                      <button
+                        id="adminContentIstanbulGeoNeighborhoodSave"
+                        class="istanbul-discovery-primary-button"
+                        type="button"
+                        disabled
+                      >
+                        Güncelle
+                      </button>
+                      <button id="adminContentIstanbulGeoNeighborhoodClear" class="istanbul-filter-reset" type="button" disabled>
+                        Kaldır
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <template id="adminContentMainCategoryTemplate">
+      <button class="admin-venue-list-item" type="button">
+        <strong class="admin-venue-list-item-title"></strong>
+        <span class="admin-venue-list-item-meta"></span>
+      </button>
+    </template>
+
+    <script src="admin-auth.js?v=20260410-admin-auth-02"></script>
+    <script src="admin-content-model.js?v=20260422-admin-neighborhood-add-01"></script>
+  </body>
+</html>

@@ -6,24 +6,26 @@
     <meta name="theme-color" content="#0d2032" />
     <title>Admin Mekanlar | AramaBul</title>
     <meta name="description" content="İstanbul MVP mekanlarını yönet." />
-    <link rel="icon" type="image/png" href="assets/fav.png?v=20260322-02" />
-    <link rel="shortcut icon" type="image/png" href="assets/fav.png?v=20260322-02" />
-    <link rel="apple-touch-icon" href="assets/fav.png?v=20260322-02" />
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260409-button-sync-05" />
+    <link rel="stylesheet" href="styles.css?v=20260423-review-moderation-01" />
   </head>
-  <body class="venue-detail-page">
+  <body class="venue-detail-page admin-venue-editor-page">
     <div class="texture"></div>
 
     <header class="global-header-band">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
-          <span class="brand-wordmark">aramabul</span>
+          <img class="brand-logo" src="assets/logo.png?v=20260504" alt="aramabul logo" />
+          <span class="brand-wordmark"><span class="brand-wordmark-search">arama</span><span class="brand-wordmark-rest">bul</span></span>
         </a>
         <div class="istanbul-topbar-actions">
           <span class="istanbul-topbar-link admin-session-chip" data-admin-session-name>Admin</span>
@@ -34,33 +36,37 @@
     </header>
 
     <main class="hero venue-detail-shell">
-      <div class="istanbul-breadcrumb">
-        <a href="index.html">Anasayfa</a>
-        <span>/</span>
-        <span>Admin</span>
-        <span>/</span>
-        <span>Mekanlar</span>
-      </div>
 
       <section class="admin-panel-nav" aria-label="Admin panel sayfaları">
         <a class="admin-panel-nav-card is-active" href="admin-venues.html" aria-current="page">
-          <span class="admin-panel-nav-kicker">Admin panel</span>
-          <strong class="admin-panel-nav-title">Mekanlar</strong>
-          <span class="admin-panel-nav-copy">Mekan listesi, düzenleme ve yeni kayıt işlemleri.</span>
+          <span class="admin-panel-nav-title">Yeme-İçme</span>
         </a>
-        <a class="admin-panel-nav-card" href="admin-taxonomy.html">
-          <span class="admin-panel-nav-kicker">Admin panel</span>
-          <strong class="admin-panel-nav-title">Kategori ve Tag</strong>
-          <span class="admin-panel-nav-copy">Kategori ve etiket kayıtlarını aynı panel içinde yönet.</span>
+        <a class="admin-panel-nav-card" href="admin-gezi.html">
+          <span class="admin-panel-nav-title">Gezi</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-hizmetler.html">
+          <span class="admin-panel-nav-title">Hizmetler</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-saglik.html">
+          <span class="admin-panel-nav-title">Sağlık</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-kultur.html">
+          <span class="admin-panel-nav-title">Kültür</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-sanat.html">
+          <span class="admin-panel-nav-title">Sanat</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-content-model.html">
+          <span class="admin-panel-nav-title">İçerik Mimarisi</span>
         </a>
       </section>
+
 
       <section class="admin-venues-layout">
         <aside class="admin-venues-list-card">
           <div class="admin-venues-toolbar">
             <div>
               <p class="istanbul-discovery-kicker">Admin mekan listesi</p>
-              <h1 class="admin-venues-title">Mekanları yönet</h1>
             </div>
             <button id="adminVenueNewButton" class="istanbul-discovery-primary-button" type="button">Yeni mekan</button>
           </div>
@@ -73,7 +79,12 @@
 
             <label class="istanbul-filter-field">
               <span>İlçe</span>
-              <input id="adminVenueDistrictInput" type="text" placeholder="Örn. Kadıköy" />
+              <input id="adminVenueDistrictInput" type="text" list="adminVenueDistrictList" placeholder="Örn. Kadıköy" />
+            </label>
+
+            <label class="istanbul-filter-field">
+              <span>Mahalle</span>
+              <input id="adminVenueNeighborhoodInput" type="text" list="adminVenueFilterNeighborhoodList" placeholder="Örn. Fenerbahçe" />
             </label>
 
             <label class="istanbul-filter-field">
@@ -117,6 +128,7 @@
 
           <div class="admin-venues-actions-row">
             <button id="adminVenueSearchButton" class="istanbul-filter-reset" type="button">Listeyi güncelle</button>
+            <span id="adminVenueTotalCount" class="admin-venues-count-note">Toplam 0 kayıt bulundu.</span>
           </div>
 
           <div id="adminVenueListState" class="istanbul-results-state">Mekanlar getiriliyor.</div>
@@ -131,7 +143,7 @@
                     <button class="admin-table-sort-button" type="button" data-sort-key="category" aria-sort="none">Kategori</button>
                   </th>
                   <th scope="col">
-                    <button class="admin-table-sort-button" type="button" data-sort-key="location" aria-sort="none">Konum</button>
+                    <button class="admin-table-sort-button" type="button" data-sort-key="location" aria-sort="none">İlçe</button>
                   </th>
                   <th scope="col">
                     <button class="admin-table-sort-button" type="button" data-sort-key="rating" aria-sort="descending">Puan</button>
@@ -150,11 +162,30 @@
           </div>
         </aside>
 
+        <section class="admin-review-moderation-card" aria-label="Yorum moderasyonu">
+          <div class="admin-venues-toolbar">
+            <div>
+              <p class="istanbul-discovery-kicker">Yorum moderasyonu</p>
+            </div>
+            <div class="admin-review-filter-row">
+              <select id="adminReviewStatusFilter" class="admin-review-status-filter" aria-label="Yorum durumu">
+                <option value="pending">Bekleyen</option>
+                <option value="approved">Onaylı</option>
+                <option value="rejected">Reddedilen</option>
+                <option value="">Tümü</option>
+              </select>
+              <button id="adminReviewRefreshButton" class="istanbul-filter-reset" type="button">Yorumları güncelle</button>
+            </div>
+          </div>
+          <div id="adminReviewState" class="istanbul-results-state">Yorumlar getiriliyor.</div>
+          <div id="adminReviewList" class="admin-review-list"></div>
+        </section>
+
         <section class="admin-venue-form-card">
           <div class="admin-venues-toolbar">
             <div>
               <p class="istanbul-discovery-kicker">Düzenleme</p>
-              <h2 id="adminVenueFormTitle" class="admin-venues-title">Yeni mekan</h2>
+              <h2 id="adminVenueFormTitle" class="admin-venues-title visually-hidden">Yeni mekan</h2>
             </div>
           </div>
 
@@ -179,20 +210,20 @@
               </label>
 
               <label class="istanbul-filter-field">
-                <span>İlçe</span>
-                <input id="adminVenueDistrict" name="district" type="text" required />
-              </label>
-
-              <label class="istanbul-filter-field">
-                <span>Mahalle</span>
-                <input id="adminVenueNeighborhood" name="neighborhood" type="text" />
-              </label>
-
-              <label class="istanbul-filter-field">
                 <span>Kategori</span>
                 <select id="adminVenueCategory" name="categoryId">
                   <option value="">Kategori seç</option>
                 </select>
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>İlçe</span>
+                <input id="adminVenueDistrict" name="district" type="text" list="adminVenueDistrictList" required />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Mahalle</span>
+                <input id="adminVenueNeighborhood" name="neighborhood" type="text" list="adminVenueNeighborhoodList" />
               </label>
 
               <label class="istanbul-filter-field">
@@ -262,25 +293,17 @@
               <input id="adminVenueSourcePlaceId" name="sourcePlaceId" type="hidden" />
 
               <div class="istanbul-filter-field admin-map-link-field">
+                <span>Hızlı erişim</span>
+                <div class="admin-map-link-actions">
+                  <a id="adminVenueMapsQuickLink" class="istanbul-topbar-link" href="#" target="_blank" rel="noopener noreferrer">Haritada aç</a>
+                  <a id="adminVenueDetailQuickLink" class="istanbul-topbar-link" href="#" target="_blank" rel="noopener noreferrer">Detayı aç</a>
+                </div>
+              </div>
+
+              <div class="istanbul-filter-field admin-map-link-field">
                 <span>Google bilgileri</span>
                 <div class="admin-map-link-actions">
                   <button id="adminVenueLookupGoogleButton" class="istanbul-filter-reset" type="button">Google'dan doldur</button>
-                </div>
-              </div>
-
-              <div class="istanbul-filter-field admin-map-link-field">
-                <span>Harita hızlı aç</span>
-                <div class="admin-map-link-actions">
-                  <a id="adminVenueMapsQuickLink" class="istanbul-topbar-link" href="#" target="_blank" rel="noopener noreferrer">Haritada aç</a>
-                  <button id="adminVenueGenerateMapsButton" class="istanbul-filter-reset" type="button">Link üret</button>
-                </div>
-              </div>
-
-              <div class="istanbul-filter-field admin-map-link-field">
-                <span>Detay hızlı aç</span>
-                <div class="admin-map-link-actions">
-                  <a id="adminVenueDetailQuickLink" class="istanbul-topbar-link" href="#" target="_blank" rel="noopener noreferrer">Detayı aç</a>
-                  <button id="adminVenueOpenDetailButton" class="istanbul-filter-reset" type="button">Detail sayfasını aç</button>
                 </div>
               </div>
 
@@ -339,10 +362,6 @@
               <textarea id="adminVenueSummary" name="editorialSummary" rows="4"></textarea>
             </label>
 
-            <div class="admin-tag-field">
-              <span class="admin-tag-field-label">Etiketler</span>
-              <div id="adminTagList" class="istanbul-tag-row"></div>
-            </div>
 
             <div class="admin-tag-field">
               <div class="admin-venues-toolbar admin-photos-toolbar">
@@ -368,6 +387,10 @@
         </section>
       </section>
     </main>
+
+    <datalist id="adminVenueDistrictList"></datalist>
+    <datalist id="adminVenueFilterNeighborhoodList"></datalist>
+    <datalist id="adminVenueNeighborhoodList"></datalist>
 
     <template id="adminVenuePhotoItemTemplate">
       <div class="admin-photo-item">
@@ -418,6 +441,6 @@
     </template>
 
     <script src="admin-auth.js?v=20260410-admin-auth-02"></script>
-    <script src="admin-venues.js?v=20260410-admin-13"></script>
+    <script src="admin-venues.js?v=20260423-review-moderation-01"></script>
   </body>
 </html>

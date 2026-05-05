@@ -149,18 +149,19 @@
 
   initializeFooterComingSoonNotice();
 
-  const form = document.querySelector(".header-search");
-  if (!form) {
-    return;
-  }
-
-  const input = form.querySelector(".header-search-input");
-  const submitButton = form.querySelector(".header-search-btn");
-  if (!input || !submitButton) {
-    return;
-  }
+  /* Üst barda genel arama yok; keşfet filtre satırındaki formlar .istanbul-filter-inline-search */
+  const form = document.querySelector("form.header-search:not(.istanbul-filter-inline-search)");
+  const input = form ? form.querySelector(".header-search-input") : null;
+  const submitButton = form ? form.querySelector(".header-search-btn") : null;
+  const canBindSearch = Boolean(
+    form instanceof HTMLFormElement && input && submitButton
+  );
+  const inputLabel = canBindSearch ? form.querySelector('label[for="headerSearchInput"]') : null;
 
   function setSubmitButtonLabel(label) {
+    if (!submitButton) {
+      return;
+    }
     const labelNode = submitButton.querySelector(".header-search-btn-text");
     if (labelNode) {
       labelNode.textContent = label;
@@ -169,7 +170,6 @@
     submitButton.textContent = label;
   }
 
-  const inputLabel = form.querySelector('label[for="headerSearchInput"]');
   function currentPageName() {
     const raw = window.location.pathname.split("/").pop() || "index.html";
     return raw.toLocaleLowerCase("tr");
@@ -219,6 +219,9 @@
   }
 
   function applySearchUiLanguage() {
+    if (!canBindSearch) {
+      return;
+    }
     return headerSearchUi.applySearchUiLanguage({
       currentPageName,
       form,
@@ -232,9 +235,9 @@
   createDesktopAuthLinks();
   initializeLanguageSwitcher();
   formatBrandWordmark();
-  applySearchUiLanguage();
   hideTopLayerForCategoryPages();
   createMobileBottomNav();
+  applySearchUiLanguage();
   document.addEventListener("aramabul:languagechange", () => {
     applySearchUiLanguage();
     applyStaticPageTranslations();
@@ -242,6 +245,10 @@
       normalizeFooterUi();
     });
   });
+
+  if (!canBindSearch) {
+    return;
+  }
 
   function setLoadingState(isLoading) {
     return headerSearchUi.setLoadingState({

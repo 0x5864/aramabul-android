@@ -116,19 +116,19 @@ function renderHeader() {
 
   if (akaryakitDistrictTitle) {
     akaryakitDistrictTitle.textContent = hasLocation
-      ? `${state.city} İli / ${state.district} İlçesi Akaryakıt İstasyonları`
-      : "İlçe Akaryakıt İstasyonları";
+      ? `${state.city} İli / ${state.district} bölgesi Akaryakıt İstasyonları`
+      : "Konum Akaryakıt İstasyonları";
   }
 
   if (akaryakitDistrictBreadcrumb) {
-    akaryakitDistrictBreadcrumb.textContent = state.district || "İlçe";
+    akaryakitDistrictBreadcrumb.textContent = state.district || "Konum";
   }
 
   if (akaryakitDistrictCityLink) {
     akaryakitDistrictCityLink.textContent = state.city || "İl";
     akaryakitDistrictCityLink.href = state.city
-      ? `keyif-city.html?sehir=${encodeURIComponent(state.city)}`
-      : "keyif.html";
+      ? `akaryakit-city.html?sehir=${encodeURIComponent(state.city)}`
+      : "hizmetler-akaryakit.html";
   }
 
   document.title = "AramaBul";
@@ -144,7 +144,7 @@ function renderPlaces() {
   if (!state.city || !state.district || state.places.length === 0) {
     const empty = document.createElement("article");
     empty.className = "empty-state";
-    empty.textContent = state.errorMessage || "Bu ilçe için akaryakıt verisi bulunamadı.";
+    empty.textContent = state.errorMessage || "Bu konum için akaryakıt verisi bulunamadı.";
     akaryakitBusinessGrid.append(empty);
     return;
   }
@@ -257,7 +257,7 @@ async function initAkaryakitDistrictPage() {
 
   if (!matchedDistrict) {
     state.places = [];
-    state.errorMessage = "Bu ilçe için akaryakıt verisi bulunamadı.";
+    state.errorMessage = "Bu konum için akaryakıt verisi bulunamadı.";
     renderHeader();
     renderPlaces();
     return;

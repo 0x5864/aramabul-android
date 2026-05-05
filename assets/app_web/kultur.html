@@ -3,61 +3,304 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AramaBul</title>
+    <meta name="theme-color" content="#0d2032" />
+    <title>İstanbul — Kültür | AramaBul</title>
     <meta
       name="description"
-      content="Önce kültür türünü seç, sonra il, ilçe ve mekan adımında ilerle."
+      content="İstanbul’da müze, kültür ve ören yeri noktaları; ilçe, arama ve konum ile keşfet."
     />
-    <link rel="icon" type="image/png" href="assets/fav.png?v=20260322-02" />
-    <link rel="shortcut icon" type="image/png" href="assets/fav.png?v=20260322-02" />
-    <link rel="apple-touch-icon" href="assets/fav.png?v=20260322-02" />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://aramabul.com/kultur.html" />
+    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="İstanbul Kültür | AramaBul" />
+    <meta property="og:description" content="İstanbul’da müze, kültür ve ören yeri noktaları; ilçe, arama ve konum ile keşfet." />
+    <meta property="og:url" content="https://aramabul.com/kultur.html" />
+    <meta property="og:site_name" content="AramaBul" />
+    <meta property="og:image" content="https://aramabul.com/assets/kultur.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="İstanbul Kültür | AramaBul" />
+    <meta name="twitter:description" content="İstanbul’da müze, kültür ve ören yeri noktaları; ilçe, arama ve konum ile keşfet." />
+    <meta name="twitter:image" content="https://aramabul.com/assets/kultur.png" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260310-12" />
+    <link rel="stylesheet" href="styles.css?v=20260422-header-fav-desktop-01" />
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3016888060216617" crossorigin="anonymous"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NHE1J9FWDG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "G-NHE1J9FWDG");
+    </script>
   </head>
-  <body class="kultur-page" data-category-key="kultur" data-category-page="root">
+  <body
+    class="istanbul-discovery-page kultur-page"
+    data-mvp-main-category="kultur"
+    data-mvp-page="kultur.html"
+    data-mvp-favorites-key="kulturKesfetFavorites"
+  >
     <div class="texture"></div>
 
     <header class="global-header-band">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
+          <img class="brand-logo" src="assets/logo.png?v=20260504" alt="aramabul logo" />
           <span class="brand-wordmark">aramabul</span>
         </a>
-        <form class="header-search" action="search.html" method="get" role="search" aria-label="Genel arama">
-          <label class="visually-hidden" for="headerSearchInput">Arama ifadesi</label>
-          <input
-            id="headerSearchInput"
-            class="header-search-input"
-            type="search"
-            name="mekan"
-            placeholder="Ne bulmamı istersin?"
-            autocomplete="off"
-          />
-          <button class="header-search-btn" type="submit">Bul</button>
-        </form>
       </nav>
-      <div class="global-topline">
-        <div class="global-topline-inner">
-          <a href="index.html">Anasayfa</a>
-          <span>/</span>
-          <span>Kültür</span>
-        </div>
-      </div>
+      <div class="global-topline"></div>
     </header>
 
-    <main class="hero">
-      <section class="section-head province-head">
+    <main class="hero istanbul-discovery-shell">
+      <section class="section-head province-head" aria-label="Keşfet">
         <div>
-          <h3>Kültür alt kategorileri</h3>
+          <h1 id="resultsTitle" class="istanbul-results-outside-title" data-i18n-key="shared.placesLoading">Mekanlar yükleniyor</h1>
+          <p data-i18n-key="kultur.hero.p1" style="margin:12px 0 4px;color:rgba(16,40,61,.82);font-size:1rem;line-height:1.4;">Kültür bölümü, kullanıcıların müze, ören yeri, tarihi cami ve benzeri kamusal kültür noktalarındaki yerlere, "Yakındaki Mekanlar" seçimini yaparak veya istediği ilçe ve mahalle bilgisi seçerek hızlıca ulaşmasını sağlar.</p>
+          <p data-i18n-key="kultur.hero.p2" style="margin:0;color:rgba(16,40,61,.72);font-size:.95rem;line-height:1.4;">Mekân listeleri karar vermeyi hızlandıracak ihtiyaca göre filtrelenerek, sade ve kullanıcı dostu bir biçimde sunulmuştur.</p>
         </div>
       </section>
+      <section class="istanbul-results-shell istanbul-results-shell--kultur" aria-live="polite">
+        <section
+          class="istanbul-filter-card istanbul-filter-card--kultur-in-results"
+          aria-label="İstanbul kültür filtreleri"
+        >
+          <div class="istanbul-filter-body istanbul-filter-body--yeme-icme">
+            <div
+              class="istanbul-filter-yeme-icme-sidebar istanbul-filter-yeme-icme-sidebar--gezi-two-up"
+              aria-label="Konum ve kategori"
+            >
+              <div class="istanbul-filter-location-box" aria-label="Konum seç">
+                <label class="istanbul-filter-field">
+                  <span>Konum</span>
+                  <div class="kesfet-category-dropdown lang-switch" data-kesfet-district-switch>
+                    <button
+                      type="button"
+                      class="lang-switch-btn kesfet-category-dropdown-btn"
+                      data-kesfet-district-trigger
+                      id="districtTrigger"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                      aria-controls="districtMenu"
+                    >
+                      <span class="lang-switch-code kesfet-category-dropdown-label" data-kesfet-district-current>Tüm ilçeler</span>
+                      <span class="kesfet-category-dropdown-chevron" aria-hidden="true">▾</span>
+                    </button>
+                    <div
+                      class="lang-switch-menu kesfet-category-dropdown-menu"
+                      id="districtMenu"
+                      data-kesfet-district-menu
+                      role="group"
+                      hidden
+                      aria-label="Konum seçenekleri"
+                    >
+                      <div
+                        id="districtOptions"
+                        class="kesfet-category-dropdown-options"
+                        role="radiogroup"
+                        aria-label="Konum seç"
+                      ></div>
+                    </div>
+                  </div>
+                </label>
+              </div>
 
-      <section id="categoryGroupGrid" class="province-grid" aria-label="Türkiye illeri"></section>
+              <div class="istanbul-filter-section-box istanbul-filter-gezi-category-box" aria-label="Kategori">
+                <p class="istanbul-filter-section-box-title" id="kesfetCategoryBannerLabel">Kategori</p>
+                <div class="kesfet-category-dropdown lang-switch" data-kesfet-category-switch>
+                  <button
+                    type="button"
+                    class="lang-switch-btn kesfet-category-dropdown-btn"
+                    data-kesfet-category-trigger
+                    id="kesfetCategoryTrigger"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    aria-controls="kesfetCategoryMenu"
+                  >
+                    <span class="lang-switch-code kesfet-category-dropdown-label" data-kesfet-category-current>Tüm kategoriler</span>
+                    <span class="kesfet-category-dropdown-chevron" aria-hidden="true">▾</span>
+                  </button>
+                  <div
+                    class="lang-switch-menu kesfet-category-dropdown-menu"
+                    id="kesfetCategoryMenu"
+                    data-kesfet-category-menu
+                    role="group"
+                    hidden
+                    aria-label="Kategori seçenekleri"
+                  >
+                    <div
+                      id="mvpSubcategoryGrid"
+                      class="kesfet-category-dropdown-options"
+                      role="radiogroup"
+                      aria-label="Kategori seç"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="istanbul-filter-meta-column">
+              <div class="istanbul-filter-combined-search-row">
+                <form id="istanbulMvpSearchForm" class="header-search istanbul-filter-inline-search" role="search">
+                  <label class="visually-hidden" for="queryInput">Mekan adı, ilçe veya mahalle adı ile ara</label>
+                  <input
+                    id="queryInput"
+                    class="header-search-input"
+                    type="search"
+                    placeholder="Mekan adı, ilçe veya mahalle"
+                    autocomplete="off"
+                  />
+                  <button class="header-search-btn" type="submit">Bul</button>
+                </form>
+              </div>
+
+              <div
+                class="istanbul-filter-nearby-panel istanbul-filter-nearby-panel--kultur-below-search"
+                aria-label="Konuma göre listele"
+              >
+                <button
+                  id="nearbyButton"
+                  class="istanbul-discovery-primary-button istanbul-filter-nearby-panel-button"
+                  type="button"
+                >
+                  Yakındakiler
+                </button>
+                <p id="locationMessage" class="istanbul-discovery-location-note istanbul-filter-location-note"></p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="istanbul-results-head istanbul-results-head--kultur">
+          <p id="resultsMeta" class="istanbul-results-meta">Lütfen bekle.</p>
+        </div>
+
+        <div id="activeFilterPills" class="istanbul-active-pills" aria-label="Aktif filtreler"></div>
+
+        <div id="resultsState" class="istanbul-results-state">Mekanlar getiriliyor.</div>
+        <div id="resultsLayout" class="istanbul-results-layout istanbul-results-layout--cards-only" hidden>
+          <section id="resultsGrid" class="istanbul-results-grid"></section>
+        </div>
+
+        <nav id="pagination" class="istanbul-pagination" aria-label="Sayfa gezinme"></nav>
+      </section>
+
+      <section class="content-guide" aria-label="İstanbul Kültürel Miras Rehberi">
+        <h2>İstanbul Kültürel Miras Rehberi</h2>
+        <p>İstanbul, Roma, Bizans ve Osmanlı İmparatorluklarının mirasını taşıyan dünyanın en zengin kültürel başkentlerinden biridir. UNESCO Dünya Mirası Listesi'nde yer alan tarihi alanları, müzeleri, camileri ve saraylarıyla şehir başlı başına açık hava müzesi niteliğindedir. Kültür bölümü, İstanbul'un bu eşsiz mirasını keşfetmenize rehberlik eder.</p>
+
+        <h3>Müzeler ve Tarihi Mekanlar</h3>
+        <p>İstanbul Arkeoloji Müzeleri, Topkapı Sarayı Müzesi, Ayasofya, Kariye Müzesi ve İstanbul Modern, şehrin en çok ziyaret edilen kültür mekanlarıdır. Pera Müzesi, Rahmi M. Koç Müzesi ve Sakıp Sabancı Müzesi de ulusal ve uluslararası sergilere ev sahipliği yapan önemli kurumlardır.</p>
+
+        <h3>UNESCO Dünya Mirası Alanları</h3>
+        <p>İstanbul'un Tarihi Yarımadası, 1985 yılından bu yana UNESCO Dünya Mirası Listesi'ndedir. Sultanahmet Camii, Ayasofya, Yerebatan Sarnıcı, Süleymaniye Camii ve Topkapı Sarayı bu koruma alanı içindeki en önemli yapılardır. Bu alanlar yıl boyunca yerli ve yabancı turistlerin en yoğun ilgi gösterdiği noktalar arasında yer alır.</p>
+
+        <h3>Kültürel Keşif İçin Öneriler</h3>
+        <ul>
+          <li><strong>Müze kartları:</strong> İstanbul Müze Kart ile birçok müzeye indirimli veya ücretsiz giriş yapılabilir.</li>
+          <li><strong>Tarihi yarımada yürüyüşü:</strong> Sultanahmet, Eminönü ve Balat arasında yürüyerek birçok tarihi noktayı keşfedebilirsiniz.</li>
+          <li><strong>Rehberli turlar:</strong> Özellikle ilk kez gelenler için lisanslı rehberli turlar zengin bir deneyim sunar.</li>
+          <li><strong>Ziyaret saatleri:</strong> Müze ve ören yerlerinin kapanış saatlerini ve kapalı günlerini önceden kontrol edin.</li>
+      </ul>
+
+        <h3>Aramabul'da Kültür Araması</h3>
+        <p>Kültür bölümünde İstanbul'daki müzeler, tarihi camiler, kiliseler, saraylar ve arkeolojik alanları ilçe bazında listeleyebilirsiniz. Her mekanın detay sayfasında konum, iletişim bilgileri ve ziyaretçi değerlendirmelerini bulabilirsiniz.</p>
+      </section>
     </main>
+
+    <template id="istanbulVenueCardTemplate">
+      <article class="istanbul-venue-card">
+        <div class="istanbul-venue-media">
+          <img class="istanbul-venue-image" src="" alt="" loading="lazy" />
+        </div>
+        <div class="istanbul-venue-card-head">
+          <p class="istanbul-venue-eyebrow"></p>
+          <span class="istanbul-venue-distance" hidden></span>
+        </div>
+        <h3 class="istanbul-venue-title">
+          <a class="istanbul-venue-title-link" href="#"></a>
+        </h3>
+        <p class="istanbul-venue-address"></p>
+        <div class="istanbul-venue-meta">
+          <span class="istanbul-venue-rating"></span>
+        </div>
+        <div class="istanbul-venue-pill-row">
+          <span class="istanbul-venue-budget"></span>
+          <button class="istanbul-favorite-button" type="button">Kaydet</button>
+          <div class="card-share-wrap">
+            <button class="card-share-trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-label="Paylaş">
+              <img class="card-share-trigger-icon" src="assets/paylas.png" alt="Paylaş" loading="lazy" />
+              <span class="card-share-trigger-label">Paylaş</span>
+            </button>
+            <div class="card-share-menu" hidden>
+              <button class="card-share-item card-share-icon-button card-native-share-button" type="button" hidden aria-label="Paylaş">
+                <img class="card-share-item-icon" src="assets/insta.png" alt="Paylaş" loading="lazy" />
+                <span class="card-share-visually-hidden">Paylaş</span>
+              </button>
+              <a
+                class="card-share-item card-share-icon-button card-whatsapp-share-link"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp'ta paylaş"
+                data-share-label="WhatsApp"
+              >
+                <img class="card-share-item-icon" src="assets/wapp.jpg" alt="WhatsApp" loading="lazy" />
+                <span class="card-share-visually-hidden">WhatsApp</span>
+              </a>
+              <a
+                class="card-share-item card-share-icon-button card-facebook-share-link"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook'ta paylaş"
+              >
+                <img class="card-share-item-icon" src="assets/face.png" alt="Facebook" loading="lazy" />
+                <span class="card-share-visually-hidden">Facebook</span>
+              </a>
+              <a
+                class="card-share-item card-share-icon-button card-telegram-share-link"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Telegram'da paylaş"
+              >
+                <img class="card-share-item-icon" src="assets/tgram.avif" alt="Telegram" loading="lazy" />
+                <span class="card-share-visually-hidden">Telegram</span>
+              </a>
+              <a
+                class="card-share-item card-share-icon-button card-x-share-link"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="X'te paylaş"
+                data-share-label="X"
+              >
+                <img class="card-share-item-icon" src="assets/x.jpg" alt="X" loading="lazy" />
+                <span class="card-share-visually-hidden">X</span>
+              </a>
+              <button class="card-share-item card-share-icon-button card-copy-share-button" type="button" aria-label="Bağlantıyı kopyala">
+                <img class="card-share-item-icon" src="assets/copy.png" alt="Bağlantıyı kopyala" loading="lazy" />
+                <span class="card-share-visually-hidden">Bağlantıyı kopyala</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="istanbul-venue-tags"></div>
+        <footer class="istanbul-venue-actions">
+          <div class="istanbul-venue-action-group"></div>
+        </footer>
+      </article>
+    </template>
+
 
     <footer class="yr-footer" aria-label="Alt Bant">
       <div class="yr-footer-inner">
@@ -76,7 +319,7 @@
 
           <section class="yr-footer-col">
             <h4>aramabul'u keşfet</h4>
-            <a href="hakkimizda.html">Hakkımızda</a>
+            <a href="hakkimizda.html">Hakkında</a>
             <a href="yer-ekle.html">Yer ekle</a>
             <a href="iletisim.html">İletişim</a>
           </section>
@@ -94,25 +337,21 @@
             <a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
           </section>
         </div>
-
         <div class="yr-footer-bottom">
           <p>© 2026 aramabul</p>
-          <div class="yr-footer-social" aria-label="Sosyal">
-            <a href="#" aria-label="Instagram">○</a>
-            <a href="#" aria-label="Ara">◌</a>
-            <a href="#" aria-label="Dünya">◍</a>
-          </div>
         </div>
       </div>
     </footer>
+
     <script src="web-runtime.js?v=20260302-01"></script>
     <script src="header-state.js?v=20260302-01"></script>
-  <script src="header-i18n.js?v=20260307-11"></script>
-  <script src="header-nav.js?v=20260310-12"></script>
-  <script src="header-shell.js?v=20260302-02"></script>
-  <script src="header-search-ui.js?v=20260303-04"></script>
-  <script src="header-search-data.js?v=20260409-search-db-02"></script>
-    <script src="header-search.js?v=20260409-header-search-01"></script>
-    <script src="category-pages.js?v=20260306-01"></script>
+    <script src="header-i18n.js?v=20260429-i18n-page-keys-01"></script>
+    <script src="header-nav.js?v=20260422-header-fav-desktop-01"></script>
+    <script src="header-shell.js?v=20260302-02"></script>
+    <script src="header-search-ui.js?v=20260303-04"></script>
+    <script src="header-search-data.js?v=20260420-search-db-06"></script>
+    <script src="header-search.js?v=20260422-header-no-topbar-01"></script>
+    <script src="istanbul-kesfet.js?v=20260425-discovery-random-all-01"></script>
+    <script src="adsense-privacy.js?v=20260429-01"></script>
   </body>
 </html>

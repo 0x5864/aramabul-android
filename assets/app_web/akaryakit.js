@@ -118,7 +118,7 @@ function dedupeGroups(groups) {
 }
 
 function cityUrl(provinceName) {
-  return `keyif-city.html?sehir=${encodeURIComponent(provinceName)}`;
+  return `akaryakit-city.html?sehir=${encodeURIComponent(provinceName)}`;
 }
 
 function renderEmptyState(messageText) {

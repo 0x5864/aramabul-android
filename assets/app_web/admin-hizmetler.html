@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d2032" />
+    <title>Admin Hizmetler | AramaBul</title>
+    <meta name="description" content="İstanbul Hizmetler (lokal hizmet noktaları) kayıtlarını yönet." />
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260422-admin-venue-editor-type-01" />
+  </head>
+  <body class="venue-detail-page admin-venue-editor-page">
+    <div class="texture"></div>
+
+    <header class="global-header-band">
+      <nav class="topbar global-topbar">
+        <a class="brand" href="index.html" aria-label="aramabul">
+          <img class="brand-logo" src="assets/logo.png?v=20260504" alt="aramabul logo" />
+          <span class="brand-wordmark"><span class="brand-wordmark-search">arama</span><span class="brand-wordmark-rest">bul</span></span>
+        </a>
+        <div class="istanbul-topbar-actions">
+          <span class="istanbul-topbar-link admin-session-chip" data-admin-session-name>Admin</span>
+          <button class="istanbul-topbar-link admin-logout-button" type="button" data-admin-logout>Çıkış yap</button>
+        </div>
+      </nav>
+      <div class="global-topline"></div>
+    </header>
+
+    <main class="hero venue-detail-shell">
+
+      <section class="admin-panel-nav" aria-label="Admin panel sayfaları">
+        <a class="admin-panel-nav-card" href="admin-venues.html">
+          <span class="admin-panel-nav-title">Yeme-İçme</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-gezi.html">
+          <span class="admin-panel-nav-title">Gezi</span>
+        </a>
+        <a class="admin-panel-nav-card is-active" href="admin-hizmetler.html" aria-current="page">
+          <span class="admin-panel-nav-title">Hizmetler</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-saglik.html">
+          <span class="admin-panel-nav-title">Sağlık</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-kultur.html">
+          <span class="admin-panel-nav-title">Kültür</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-sanat.html">
+          <span class="admin-panel-nav-title">Sanat</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-content-model.html">
+          <span class="admin-panel-nav-title">İçerik Mimarisi</span>
+        </a>
+      </section>
+
+      <section class="admin-venues-layout">
+        <aside class="admin-venues-list-card">
+          <div class="admin-venues-toolbar">
+            <div>
+              <p class="istanbul-discovery-kicker">Admin hizmet listesi</p>
+            </div>
+            <button id="adminHizmetlerNewButton" class="istanbul-discovery-primary-button" type="button">Yeni hizmet kaydı</button>
+          </div>
+
+          <div class="admin-venues-filter-grid">
+            <label class="istanbul-filter-field admin-venue-field-wide">
+              <span>Ara</span>
+              <input id="adminHizmetlerSearchInput" type="search" placeholder="Tesis adı veya ilçe" />
+            </label>
+
+            <label class="istanbul-filter-field">
+              <span>İlçe</span>
+              <input id="adminHizmetlerDistrictInput" type="text" list="adminHizmetlerDistrictList" placeholder="Örn. Kadıköy" />
+            </label>
+
+            <label class="istanbul-filter-field">
+              <span>Mahalle</span>
+              <input id="adminHizmetlerNeighborhoodInput" type="text" list="adminHizmetlerFilterNeighborhoodList" placeholder="Örn. Fenerbahçe" />
+            </label>
+
+            <label class="istanbul-filter-field">
+              <span>Kategori</span>
+              <select id="adminHizmetlerCategoryFilter">
+                <option value="">Tüm kategoriler</option>
+              </select>
+            </label>
+
+            <label class="istanbul-filter-field">
+              <span>Durum</span>
+              <select id="adminHizmetlerActiveFilter">
+                <option value="">Aktif + pasif</option>
+                <option value="true">Sadece aktif</option>
+                <option value="false">Sadece pasif</option>
+              </select>
+            </label>
+
+            <label class="istanbul-filter-field">
+              <span>Foto</span>
+              <select id="adminHizmetlerPhotoFilter">
+                <option value="">Tümü</option>
+                <option value="missing_with_refs">Foto eksik, referans var</option>
+                <option value="has_photo">Foto var</option>
+                <option value="no_photo">Foto yok</option>
+              </select>
+            </label>
+
+            <label class="istanbul-filter-field">
+              <span>Sıralama</span>
+              <select id="adminHizmetlerSortFilter">
+                <option value="stale">En eski güncellenen</option>
+                <option value="updated">Son güncellenen</option>
+                <option value="rating">En yüksek puan</option>
+                <option value="name">Ada göre</option>
+              </select>
+            </label>
+
+            <label class="istanbul-filter-field">
+              <span>Sayfa başına</span>
+              <select id="adminHizmetlerPageLimitSelect" aria-label="Sayfa başına kayıt sayısı">
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="250" selected>250</option>
+                <option value="500">500</option>
+                <option value="1000">1.000</option>
+                <option value="2000">2.000</option>
+                <option value="5000">5.000</option>
+                <option value="10000">10.000 (tek sayfada mümkün olan tümü)</option>
+              </select>
+            </label>
+          </div>
+
+          <p class="admin-venues-scope-note">
+            Liste yalnızca içerik mimarisindeki Hizmetler dikeyine bağlı kategorilerdeki İstanbul kayıtlarını gösterir
+            (yeme-içme hariç). Satıra tıklayıp düzenleyebilirsin.
+          </p>
+
+          <div class="admin-venues-actions-row">
+            <button id="adminHizmetlerSearchButton" class="istanbul-filter-reset" type="button">Listeyi güncelle</button>
+            <span id="adminHizmetlerTotalCount" class="admin-venues-count-note">Toplam 0 kayıt bulundu.</span>
+          </div>
+
+          <div id="adminHizmetlerListState" class="istanbul-results-state">Hizmet kayıtları getiriliyor.</div>
+          <div id="adminHizmetlerTableWrap" class="admin-venue-table-wrap" hidden>
+            <table class="admin-venue-table">
+              <thead>
+                <tr>
+                  <th scope="col">
+                    <button class="admin-table-sort-button" type="button" data-sort-key="name" aria-sort="none">Ad</button>
+                  </th>
+                  <th scope="col">
+                    <button class="admin-table-sort-button" type="button" data-sort-key="category" aria-sort="none">Kategori</button>
+                  </th>
+                  <th scope="col">
+                    <button class="admin-table-sort-button" type="button" data-sort-key="location" aria-sort="none">İlçe</button>
+                  </th>
+                  <th scope="col">
+                    <button class="admin-table-sort-button" type="button" data-sort-key="rating" aria-sort="descending">Puan</button>
+                  </th>
+                  <th scope="col">Durum</th>
+                  <th scope="col">İşlem</th>
+                </tr>
+              </thead>
+              <tbody id="adminHizmetlerList"></tbody>
+            </table>
+          </div>
+          <div id="adminHizmetlerPagination" class="istanbul-pagination" hidden>
+            <button id="adminHizmetlerPrevPageButton" class="istanbul-pagination-button" type="button">Önceki</button>
+            <span id="adminHizmetlerPaginationCurrent" class="istanbul-pagination-current">1 / 1</span>
+            <button id="adminHizmetlerNextPageButton" class="istanbul-pagination-button" type="button">Sonraki</button>
+          </div>
+        </aside>
+
+        <section class="admin-venue-form-card">
+          <div class="admin-venues-toolbar">
+            <div>
+              <p class="istanbul-discovery-kicker">Düzenleme</p>
+              <h2 id="adminHizmetlerFormTitle" class="admin-venues-title visually-hidden">Yeni hizmet kaydı</h2>
+            </div>
+          </div>
+
+          <div id="adminHizmetlerFormMessage" class="istanbul-results-state" hidden></div>
+          <ul id="adminHizmetlerFormDetails" class="admin-form-feedback-list" hidden></ul>
+
+          <form id="adminHizmetlerForm" class="admin-venue-form">
+            <div class="admin-venue-form-grid">
+              <label class="istanbul-filter-field">
+                <span>Ad</span>
+                <input id="adminHizmetlerName" name="name" type="text" required />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Slug</span>
+                <input id="adminHizmetlerSlug" name="slug" type="text" />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Şehir</span>
+                <input id="adminHizmetlerCity" name="city" type="text" value="İstanbul" required />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Kategori</span>
+                <select id="adminHizmetlerCategory" name="categoryId">
+                  <option value="">Kategori seç</option>
+                </select>
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>İlçe</span>
+                <input id="adminHizmetlerDistrict" name="district" type="text" list="adminHizmetlerDistrictList" required />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Mahalle</span>
+                <input id="adminHizmetlerNeighborhood" name="neighborhood" type="text" list="adminHizmetlerNeighborhoodList" />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Hizmet türü / tip</span>
+                <input id="adminHizmetlerCuisine" name="cuisine" type="text" />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Bütçe</span>
+                <select id="adminHizmetlerBudget" name="budget">
+                  <option value="">Bütçe seç</option>
+                  <option value="budget">Uygun</option>
+                  <option value="mid">Makul</option>
+                  <option value="high">Yüksek</option>
+                </select>
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Puan</span>
+                <input id="adminHizmetlerRating" name="rating" type="number" min="0" max="5" step="0.1" />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Oy sayısı</span>
+                <input id="adminHizmetlerRatingCount" name="userRatingCount" type="number" min="0" step="1" />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Enlem</span>
+                <input id="adminHizmetlerLatitude" name="latitude" type="number" step="any" />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Boylam</span>
+                <input id="adminHizmetlerLongitude" name="longitude" type="number" step="any" />
+              </label>
+
+              <label class="istanbul-filter-field admin-venue-field-wide">
+                <span>Adres</span>
+                <input id="adminHizmetlerAddress" name="address" type="text" />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Telefon</span>
+                <input id="adminHizmetlerPhone" name="phone" type="text" />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Website</span>
+                <input id="adminHizmetlerWebsite" name="website" type="url" />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Menü linki</span>
+                <input id="adminHizmetlerMenuUrl" name="menuUrl" type="url" />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Instagram</span>
+                <input id="adminHizmetlerInstagram" name="instagram" type="url" />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Harita linki</span>
+                <input id="adminHizmetlerMapsUrl" name="mapsUrl" type="url" />
+              </label>
+              <input id="adminHizmetlerSourcePlaceId" name="sourcePlaceId" type="hidden" />
+
+              <div class="istanbul-filter-field admin-map-link-field">
+                <span>Hızlı erişim</span>
+                <div class="admin-map-link-actions">
+                  <a id="adminHizmetlerMapsQuickLink" class="istanbul-topbar-link" href="#" target="_blank" rel="noopener noreferrer">Haritada aç</a>
+                  <a id="adminHizmetlerDetailQuickLink" class="istanbul-topbar-link" href="#" target="_blank" rel="noopener noreferrer">Detayı aç</a>
+                </div>
+              </div>
+
+              <div class="istanbul-filter-field admin-map-link-field">
+                <span>Google bilgileri</span>
+                <div class="admin-map-link-actions">
+                  <button id="adminHizmetlerLookupGoogleButton" class="istanbul-filter-reset" type="button">Google'dan doldur</button>
+                </div>
+              </div>
+
+              <label class="istanbul-filter-field">
+                <span>Ana foto</span>
+                <div class="admin-photo-uri-actions">
+                  <input id="adminHizmetlerPhotoUri" name="photoUri" type="url" />
+                  <button id="adminHizmetlerFindPhotoButton" class="istanbul-filter-reset" type="button">Gorsel bul</button>
+                </div>
+                <div id="adminHizmetlerPhotoUriPreviewWrap" class="admin-photo-preview-wrap admin-photo-uri-preview-wrap" hidden>
+                  <img id="adminHizmetlerPhotoUriPreview" class="admin-photo-preview" alt="Ana foto önizleme" hidden />
+                </div>
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Şu an açık mı?</span>
+                <select id="adminHizmetlerIsOpenNow" name="isOpenNow">
+                  <option value="">Bilinmiyor</option>
+                  <option value="true">Açık</option>
+                  <option value="false">Kapalı</option>
+                </select>
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Açılış durumu metni</span>
+                <input id="adminHizmetlerOpeningStatusText" name="openingStatusText" type="text" placeholder="Örn. 22:00'a kadar açık" />
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Geçici kapalı</span>
+                <select id="adminHizmetlerTemporarilyClosed" name="temporarilyClosed">
+                  <option value="false">Hayır</option>
+                  <option value="true">Evet</option>
+                </select>
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>Aktif kayıt</span>
+                <select id="adminHizmetlerIsActive" name="isActive">
+                  <option value="true">Aktif</option>
+                  <option value="false">Pasif</option>
+                </select>
+              </label>
+
+              <label class="istanbul-filter-field">
+                <span>İstanbul MVP</span>
+                <select id="adminHizmetlerIsIstanbulMvp" name="isIstanbulMvp">
+                  <option value="true">Evet</option>
+                  <option value="false">Hayır</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="istanbul-filter-field">
+              <span>Açıklama / özet</span>
+              <textarea id="adminHizmetlerSummary" name="editorialSummary" rows="4"></textarea>
+            </label>
+
+
+            <div class="admin-tag-field">
+              <div class="admin-venues-toolbar admin-photos-toolbar">
+                <span class="admin-tag-field-label">Fotoğraflar</span>
+                <div class="admin-photos-toolbar-actions">
+                  <input id="adminHizmetlerPhotoUploadInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" hidden />
+                  <button id="adminHizmetlerUploadPhotoButton" class="istanbul-filter-reset" type="button">Foto yükle</button>
+                  <button id="adminHizmetlerAddPhotoButton" class="istanbul-filter-reset" type="button">Foto ekle</button>
+                </div>
+              </div>
+              <div id="adminHizmetlerPhotoList" class="admin-photo-list"></div>
+              <p class="admin-venues-scope-note">Ana foto boşsa birincil işaretli foto otomatik kullanılır.</p>
+            </div>
+
+            <div class="admin-venues-actions-row">
+              <button id="adminHizmetlerSaveButton" class="istanbul-discovery-primary-button" type="submit">Kaydet</button>
+              <button id="adminHizmetlerSaveAndNewButton" class="istanbul-filter-reset" type="button">Kaydet ve yeni</button>
+              <button id="adminHizmetlerSyncGoogleButton" class="istanbul-filter-reset" type="button" hidden>Google puan ve yorum çek</button>
+              <button id="adminHizmetlerPermanentCloseButton" class="istanbul-filter-reset" type="button" hidden>Kalıcı kapalıysa pasife al</button>
+              <button id="adminHizmetlerDeleteButton" class="istanbul-filter-reset" type="button" hidden>Sil</button>
+            </div>
+          </form>
+        </section>
+      </section>
+    </main>
+
+    <datalist id="adminHizmetlerDistrictList"></datalist>
+    <datalist id="adminHizmetlerFilterNeighborhoodList"></datalist>
+    <datalist id="adminHizmetlerNeighborhoodList"></datalist>
+
+    <template id="adminHizmetlerPhotoItemTemplate">
+      <div class="admin-photo-item">
+        <div class="admin-photo-item-grid">
+          <label class="istanbul-filter-field admin-venue-field-wide">
+            <span>Foto URL</span>
+            <input class="admin-photo-url" type="url" />
+          </label>
+
+          <label class="istanbul-filter-field">
+            <span>Kaynak</span>
+            <input class="admin-photo-source" type="text" placeholder="admin" />
+          </label>
+
+          <label class="istanbul-filter-field">
+            <span>Kaynak ref</span>
+            <input class="admin-photo-source-ref" type="text" />
+          </label>
+
+          <label class="istanbul-filter-field">
+            <span>Genişlik (opsiyonel)</span>
+            <input class="admin-photo-width" type="number" min="1" step="1" />
+          </label>
+
+          <label class="istanbul-filter-field">
+            <span>Yükseklik (opsiyonel)</span>
+            <input class="admin-photo-height" type="number" min="1" step="1" />
+          </label>
+
+          <label class="istanbul-filter-field">
+            <span>Sıra</span>
+            <input class="admin-photo-sort-order" type="number" min="0" step="1" />
+          </label>
+        </div>
+
+        <div class="admin-photo-item-actions">
+          <label class="admin-photo-primary-toggle">
+            <input class="admin-photo-primary" type="radio" name="adminHizmetlerPrimaryPhoto" />
+            <span>Birincil foto</span>
+          </label>
+          <button class="istanbul-filter-reset admin-photo-remove-button" type="button">Foto sil</button>
+        </div>
+
+        <div class="admin-photo-preview-wrap">
+          <img class="admin-photo-preview" alt="Foto önizleme" />
+        </div>
+      </div>
+    </template>
+
+    <script src="admin-auth.js?v=20260410-admin-auth-02"></script>
+    <script src="admin-hizmetler.js?v=20260421-admin-hizmetler-01"></script>
+  </body>
+</html>

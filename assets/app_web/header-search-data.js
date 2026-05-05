@@ -1,13 +1,14 @@
 (() => {
   const runtime = window.ARAMABUL_RUNTIME;
   const CATEGORY_SEARCH_ROUTES = [
-    { href: "keyif.html", keywords: ["yemek", "food", "restoran", "restaurant", "lokanta"] },
-    { href: "hizmetler.html", keywords: ["hizmetler", "service", "services", "akaryakit", "akaryakıt", "benzin", "petrol", "fuel"] },
+    { href: "yeme-icme.html", keywords: ["yemek", "food", "restoran", "restaurant", "lokanta"] },
+    { href: "hizmetler-ulkeler.html", keywords: ["hizmetler türkiye", "hizmet il", "hizmet ilçe"] },
+    { href: "hizmetler.html", keywords: ["hizmetler", "hizmet keşfet", "hizmetler keşfet", "hizmetler istanbul", "hizmet noktası", "hizmet mekan", "hizmet keşif", "service", "services", "akaryakit", "akaryakıt", "benzin", "petrol", "fuel", "kuafor", "kuaför"] },
     { href: "kuafor.html", keywords: ["kuafor", "kuaför", "berber", "sac", "saç", "guzellik", "güzellik"] },
     { href: "veteriner.html", keywords: ["veteriner", "vet", "hayvan"] },
     { href: "saglik.html", keywords: ["eczane", "pharmacy", "saglik", "sağlık", "health", "klinik", "clinic"] },
     { href: "market.html", keywords: ["market", "supermarket", "süpermarket", "bakkal"] },
-    { href: "keyif.html", keywords: ["keyif", "meyhane", "meyhaneler", "rakı", "raki", "kafe", "cafe", "kahve", "kahvaltı", "kahvalti", "kebap", "doner", "döner", "pide", "lahmacun", "cigkofte", "çiğ köfte"] },
+    { href: "yeme-icme.html", keywords: ["keyif", "meyhane", "meyhaneler", "rakı", "raki", "kafe", "cafe", "kahve", "kahvaltı", "kahvalti", "kebap", "doner", "döner", "pide", "lahmacun", "cigkofte", "çiğ köfte"] },
     { href: "hastane.html", keywords: ["hastane", "hospital"] },
     { href: "banka.html", keywords: ["banka", "bank"] },
     { href: "gezi-city.html?tur=dynamic&tt=Otel", keywords: ["otel", "hotel", "konaklama"] },
@@ -24,7 +25,7 @@
     ARAMABUL_FALLBACK_DATA: "data/fallback-data.js?v=20260302-01",
     ARAMABUL_FALLBACK_CATEGORY_DATA: "data/fallback-category-data.js?v=20260302-01",
   });
-  const FOOD_JSON_PATH = "data/keyif-food.json";
+  const FOOD_JSON_PATH = "data/yeme-icme-food.json";
   const DISTRICTS_JSON_PATH = "data/districts.json";
   const CATEGORY_DATASET_SOURCES = [
     {
@@ -44,11 +45,11 @@
     },
     { pageBase: "eczane", dataPath: "data/nobetci-eczane.json", fallbacks: [] },
     {
-      pageBase: "keyif",
-      dataPath: "data/keyif.json",
+      pageBase: "yeme-icme",
+      dataPath: "data/yeme-icme.json",
       fallbacks: [],
     },
-    { pageBase: "keyif", dataPath: "data/keyif-restoran.json", fallbacks: [] },
+    { pageBase: "yeme-icme", dataPath: "data/yeme-icme-restoran.json", fallbacks: [] },
     { pageBase: "atm", dataPath: "data/atm.json", fallbacks: [] },
     { pageBase: "kargo", dataPath: "data/kargo.json", fallbacks: [] },
     { pageBase: "noter", dataPath: "data/noter.json", fallbacks: [] },
@@ -64,7 +65,7 @@
     "kuafor",
     "veteriner",
     "eczane",
-    "keyif",
+    "yeme-icme",
     "otel",
     "atm",
     "kargo",
@@ -81,7 +82,7 @@
     "kuafor",
     "veteriner",
     "eczane",
-    "keyif",
+    "yeme-icme",
     "otel",
     "atm",
     "kargo",
@@ -109,7 +110,7 @@
       : "İstanbul";
   const DEFAULT_VENUES_QUERY = new URLSearchParams({
     city: DEFAULT_VENUES_CITY,
-    limit: "50000",
+    limit: "15000",
   }).toString();
   const VENUES_API_ENDPOINT =
     typeof window.ARAMABUL_VENUES_API === "string" && window.ARAMABUL_VENUES_API.trim()
@@ -152,7 +153,7 @@
   function normalizeForSearch(value) {
     return String(value || "")
       .toLocaleLowerCase("tr")
-      .replace(/[çğıöşü]/g, (char) => turkishCharMap[char] || char)
+      .replace(/[çğıöşü]/gu, (char) => turkishCharMap[char] || char)
       .normalize("NFC");
   }
 
@@ -167,6 +168,31 @@
     return normalizeForSearch(value)
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
+  }
+
+  function buildDerivedVenueSlug(record) {
+    if (!record || typeof record !== "object") {
+      return "";
+    }
+
+    const name = sanitizeText(record.name);
+    const district = sanitizeText(record.district) || "Merkez";
+    const sourcePlaceId = sanitizeText(record.sourcePlaceId || record.placeId);
+    const dedupeKey = sanitizeText(record.dedupeKey || record.dedupe_key);
+    const nameSlug = toSlug(name);
+    const districtSlug = toSlug(district);
+    const baseSlug = [nameSlug, districtSlug].filter(Boolean).join("-");
+    if (!baseSlug) {
+      return "";
+    }
+
+    const uniqueSeed = toSlug(sourcePlaceId || dedupeKey || "");
+    if (!uniqueSeed) {
+      return baseSlug;
+    }
+
+    const suffix = uniqueSeed.slice(-6);
+    return suffix ? `${baseSlug}-${suffix}` : baseSlug;
   }
 
   function sanitizeText(value) {
@@ -228,7 +254,9 @@
         ? payload.venues
         : Array.isArray(payload.data)
           ? payload.data
-          : null;
+          : Array.isArray(payload.items)
+            ? payload.items
+            : null;
 
       if (collection) {
         return collection.map((record) => normalizeVenueRecord(record, options)).filter((venue) => venue !== null);
@@ -348,7 +376,7 @@
 
       const apiPayload = await fetchVenuePayload(VENUES_API_ENDPOINT);
       return normalizeVenueCollection(apiPayload, {
-        pageBase: "keyif",
+        pageBase: "yeme-icme",
         openAsRestaurant: true,
       });
     })();
@@ -358,9 +386,11 @@
 
   async function loadCategoryDataset(source) {
     const payload = await fetchVenuePayload(source.dataPath);
+    const openAsRestaurant = source.pageBase === "yeme-icme";
     const records = normalizeVenueCollection(payload, {
       pageBase: source.pageBase,
       dynamicTypeEnabled: Boolean(source.dynamicTypeEnabled),
+      openAsRestaurant,
     });
     if (records.length > 0) {
       return records;
@@ -464,37 +494,83 @@
     }) || "";
   }
 
-  function findMatchingRecord(records, query) {
+  function dedupeMatchRecords(matches) {
+    const seen = new Set();
+    const out = [];
+    matches.forEach((record) => {
+      if (!record || typeof record !== "object") {
+        return;
+      }
+      const placeKey = sanitizeText(record.sourcePlaceId);
+      const key = placeKey || `${record.pageBase}|${record.canonicalName}`;
+      if (seen.has(key)) {
+        return;
+      }
+      seen.add(key);
+      out.push(record);
+    });
+    return out;
+  }
+
+  function collectVenueSearchMatches(records, query) {
     const canonicalQuery = canonicalize(query);
-    if (!canonicalQuery) {
-      return null;
+    if (!canonicalQuery || canonicalQuery.length < 2) {
+      return [];
     }
 
-    const exactMatch = records.find((record) => record.canonicalName === canonicalQuery);
-    if (exactMatch) {
-      return exactMatch;
+    const allowAmbiguousSet = (matches) =>
+      canonicalQuery.length >= 4 || matches.length <= 8;
+
+    const exactMatches = records.filter((record) => record.canonicalName === canonicalQuery);
+    if (exactMatches.length) {
+      return dedupeMatchRecords(exactMatches);
     }
 
-    const prefixMatch = records.find((record) => record.canonicalName.startsWith(canonicalQuery));
-    if (prefixMatch) {
-      return prefixMatch;
+    const prefixMatches = records.filter((record) => record.canonicalName.startsWith(canonicalQuery));
+    if (prefixMatches.length === 1) {
+      return dedupeMatchRecords(prefixMatches);
+    }
+    if (prefixMatches.length > 1 && allowAmbiguousSet(prefixMatches)) {
+      return dedupeMatchRecords(prefixMatches);
     }
 
     if (canonicalQuery.length >= 3) {
-      const containsMatch = records.find((record) => record.canonicalName.includes(canonicalQuery));
-      if (containsMatch) {
-        return containsMatch;
+      const containsMatches = records.filter((record) => record.canonicalName.includes(canonicalQuery));
+      if (containsMatches.length === 1) {
+        return dedupeMatchRecords(containsMatches);
+      }
+      if (containsMatches.length > 1 && allowAmbiguousSet(containsMatches)) {
+        return dedupeMatchRecords(containsMatches);
       }
 
       const queryTokens = canonicalQuery.split(" ").filter((token) => token.length >= 2);
       if (queryTokens.length >= 2) {
-        return records.find((record) => {
-          return queryTokens.every((token) => record.canonicalSearchBlob.includes(token));
-        }) || null;
+        const tokenMatches = records.filter((record) =>
+          queryTokens.every((token) => record.canonicalSearchBlob.includes(token)),
+        );
+        if (tokenMatches.length === 1) {
+          return dedupeMatchRecords(tokenMatches);
+        }
+        if (tokenMatches.length > 1 && allowAmbiguousSet(tokenMatches)) {
+          return dedupeMatchRecords(tokenMatches);
+        }
+      }
+
+      if (canonicalQuery.length >= 5) {
+        const blobMatches = records.filter((record) =>
+          record.canonicalSearchBlob.includes(canonicalQuery),
+        );
+        const blobDeduped = dedupeMatchRecords(blobMatches);
+        if (blobDeduped.length === 1) {
+          return blobDeduped;
+        }
+        if (blobDeduped.length > 1 && allowAmbiguousSet(blobDeduped)) {
+          return blobDeduped;
+        }
       }
     }
 
-    return null;
+    return [];
   }
 
   function findExactMatchingRecords(records, query) {
@@ -602,10 +678,19 @@
       return cityUrlFor(record.city || record.name || "");
     }
 
-    if (record.openAsRestaurant && record.slug) {
+    if (record.openAsRestaurant) {
       const targetUrl = new URL("venue-detail.html", window.location.href);
-      targetUrl.searchParams.set("slug", record.slug);
-      return `${targetUrl.pathname}${targetUrl.search}`;
+      const slugValue = sanitizeText(record.slug) || buildDerivedVenueSlug(record);
+      if (slugValue) {
+        targetUrl.searchParams.set("slug", slugValue);
+        return `${targetUrl.pathname}${targetUrl.search}`;
+      }
+      const venueName = sanitizeText(record.name);
+      if (venueName) {
+        targetUrl.searchParams.set("venue", venueName);
+        targetUrl.searchParams.set("district", sanitizeText(record.district || ""));
+        return `${targetUrl.pathname}${targetUrl.search}`;
+      }
     }
 
     const dynamicType = sanitizeText(record.dynamicType);
@@ -660,6 +745,40 @@
     return `${targetUrl.pathname}${targetUrl.search}`;
   }
 
+  async function fetchVenuesByApiTextSearch(rawQuery) {
+    const query = String(rawQuery || "").trim();
+    if (query.length < 2 || !API_BASE_URL) {
+      return [];
+    }
+
+    const normalizeOpts = {
+      pageBase: "yeme-icme",
+      openAsRestaurant: true,
+    };
+
+    const mvpParams = new URLSearchParams();
+    mvpParams.set("q", query);
+    mvpParams.set("limit", "50");
+    const mvpUrl = `${API_BASE_URL}/api/mvp/istanbul/venues?${mvpParams.toString()}`;
+
+    const legacyParams = new URLSearchParams();
+    legacyParams.set("city", DEFAULT_VENUES_CITY);
+    legacyParams.set("limit", "50");
+    legacyParams.set("q", query);
+    const legacyUrl = `${API_BASE_URL}/api/venues?${legacyParams.toString()}`;
+
+    const [mvpPayload, legacyPayload] = await Promise.all([
+      fetchVenuePayload(mvpUrl),
+      fetchVenuePayload(legacyUrl),
+    ]);
+
+    const merged = [
+      ...normalizeVenueCollection(mvpPayload, normalizeOpts),
+      ...normalizeVenueCollection(legacyPayload, normalizeOpts),
+    ];
+    return dedupeVenueRecords(merged);
+  }
+
   async function resolveQuery(rawQuery) {
     const query = String(rawQuery || "").trim();
     if (!query) {
@@ -676,7 +795,11 @@
       return routeResult(cityUrlFor(exactCity));
     }
 
-    const records = await loadSearchRecords();
+    const [records, apiTextMatches] = await Promise.all([
+      loadSearchRecords(),
+      fetchVenuesByApiTextSearch(query),
+    ]);
+
     const exactRecords = findExactMatchingRecords(records, query);
     if (exactRecords.length > 1) {
       return choiceResult(exactRecords);
@@ -686,9 +809,19 @@
       return routeResult(categoryUrlFor(exactRecords[0]));
     }
 
-    const matchedRecord = findMatchingRecord(records, query);
-    if (matchedRecord) {
-      return routeResult(categoryUrlFor(matchedRecord));
+    const venueMatches = collectVenueSearchMatches(records, query);
+    if (venueMatches.length > 1) {
+      return choiceResult(venueMatches);
+    }
+    if (venueMatches.length === 1) {
+      return routeResult(categoryUrlFor(venueMatches[0]));
+    }
+
+    if (venueMatches.length === 0 && apiTextMatches.length > 1) {
+      return choiceResult(apiTextMatches);
+    }
+    if (venueMatches.length === 0 && apiTextMatches.length === 1) {
+      return routeResult(categoryUrlFor(apiTextMatches[0]));
     }
 
     const queryTokenCount = canonicalize(query).split(" ").filter(Boolean).length;

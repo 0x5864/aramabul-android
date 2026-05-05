@@ -144,7 +144,7 @@ function renderDistrictGrid() {
 
   const rowTitle = document.createElement("h4");
   rowTitle.className = "province-region";
-  rowTitle.textContent = "İlçeler";
+  rowTitle.textContent = "Konumlar";
 
   const chips = document.createElement("div");
   chips.className = "province-cities";

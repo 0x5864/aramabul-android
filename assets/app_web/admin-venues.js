@@ -8,6 +8,7 @@
   }
 
   const DEFAULT_ADMIN_CITY = "İstanbul";
+  const ADMIN_MAIN_CATEGORY_KEY = "yeme-icme";
 
   const state = {
     items: [],
@@ -18,6 +19,11 @@
     selectedVenueId: null,
     selectedVenueSource: "",
     selectedTagKeys: new Set(),
+    location: {
+      districts: [],
+      neighborhoodsByDistrict: {},
+      allNeighborhoods: [],
+    },
     tableSort: {
       key: "",
       direction: "none",
@@ -25,15 +31,20 @@
   };
 
   const listStateNode = document.getElementById("adminVenueListState");
+  const totalCountNode = document.getElementById("adminVenueTotalCount");
   const formMessageNode = document.getElementById("adminVenueFormMessage");
   const formDetailsNode = document.getElementById("adminVenueFormDetails");
   const formTitleNode = document.getElementById("adminVenueFormTitle");
   const searchInput = document.getElementById("adminVenueSearchInput");
   const districtInput = document.getElementById("adminVenueDistrictInput");
+  const neighborhoodInput = document.getElementById("adminVenueNeighborhoodInput");
   const categoryFilterSelect = document.getElementById("adminVenueCategoryFilter");
   const activeFilterSelect = document.getElementById("adminVenueActiveFilter");
   const photoFilterSelect = document.getElementById("adminVenuePhotoFilter");
   const sortFilterSelect = document.getElementById("adminVenueSortFilter");
+  const districtDatalist = document.getElementById("adminVenueDistrictList");
+  const filterNeighborhoodDatalist = document.getElementById("adminVenueFilterNeighborhoodList");
+  const formNeighborhoodDatalist = document.getElementById("adminVenueNeighborhoodList");
   const searchButton = document.getElementById("adminVenueSearchButton");
   const newButton = document.getElementById("adminVenueNewButton");
   const deleteButton = document.getElementById("adminVenueDeleteButton");
@@ -58,8 +69,13 @@
   const mapsQuickLink = document.getElementById("adminVenueMapsQuickLink");
   const detailQuickLink = document.getElementById("adminVenueDetailQuickLink");
   const openDetailButton = document.getElementById("adminVenueOpenDetailButton");
+  const lookupGoogleButton = document.getElementById("adminVenueLookupGoogleButton");
   const mainPhotoPreviewWrap = document.getElementById("adminVenuePhotoUriPreviewWrap");
   const mainPhotoPreviewNode = document.getElementById("adminVenuePhotoUriPreview");
+  const reviewStatusFilter = document.getElementById("adminReviewStatusFilter");
+  const reviewRefreshButton = document.getElementById("adminReviewRefreshButton");
+  const reviewStateNode = document.getElementById("adminReviewState");
+  const reviewListNode = document.getElementById("adminReviewList");
 
   const fields = {
     name: document.getElementById("adminVenueName"),
@@ -80,6 +96,7 @@
     menuUrl: document.getElementById("adminVenueMenuUrl"),
     instagram: document.getElementById("adminVenueInstagram"),
     mapsUrl: document.getElementById("adminVenueMapsUrl"),
+    sourcePlaceId: document.getElementById("adminVenueSourcePlaceId"),
     photoUri: document.getElementById("adminVenuePhotoUri"),
     isOpenNow: document.getElementById("adminVenueIsOpenNow"),
     openingStatusText: document.getElementById("adminVenueOpeningStatusText"),
@@ -108,6 +125,7 @@
     menuUrl: fields.menuUrl,
     instagram: fields.instagram,
     mapsUrl: fields.mapsUrl,
+    sourcePlaceId: fields.sourcePlaceId,
     photoUri: fields.photoUri,
     isOpenNow: fields.isOpenNow,
     openingStatusText: fields.openingStatusText,
@@ -180,6 +198,126 @@
     fieldWrap.appendChild(detailNode);
   }
 
+  function formatAdminReviewDate(value) {
+    const parsedDate = new Date(String(value || ""));
+    if (Number.isNaN(parsedDate.getTime())) {
+      return String(value || "").trim();
+    }
+    return new Intl.DateTimeFormat("tr-TR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(parsedDate);
+  }
+
+  function getReviewStatusLabel(status) {
+    if (status === "approved") return "Onaylı";
+    if (status === "rejected") return "Reddedildi";
+    return "Bekliyor";
+  }
+
+  function setReviewState(message, isError = false) {
+    if (!reviewStateNode) {
+      return;
+    }
+    reviewStateNode.hidden = !message;
+    reviewStateNode.textContent = message || "";
+    reviewStateNode.dataset.state = isError ? "error" : "neutral";
+  }
+
+  function renderReviewModerationList(reviews) {
+    if (!reviewListNode) {
+      return;
+    }
+    reviewListNode.innerHTML = "";
+    const items = Array.isArray(reviews) ? reviews : [];
+    if (items.length === 0) {
+      setReviewState("Bu durumda yorum yok.");
+      return;
+    }
+    setReviewState("");
+
+    items.forEach((review) => {
+      const card = document.createElement("article");
+      card.className = "admin-review-card";
+
+      const head = document.createElement("div");
+      head.className = "admin-review-card-head";
+
+      const titleWrap = document.createElement("div");
+      const title = document.createElement("strong");
+      title.textContent = review.venueName || "Mekan";
+      const meta = document.createElement("span");
+      meta.textContent = [review.district, review.author, formatAdminReviewDate(review.date)].filter(Boolean).join(" / ");
+      titleWrap.append(title, meta);
+
+      const status = document.createElement("span");
+      status.className = `admin-review-status admin-review-status-${review.status || "pending"}`;
+      status.textContent = getReviewStatusLabel(review.status);
+      head.append(titleWrap, status);
+
+      const text = document.createElement("p");
+      text.className = "admin-review-text";
+      text.textContent = review.text || "";
+
+      const actions = document.createElement("div");
+      actions.className = "admin-review-actions";
+      [
+        ["approved", "Onayla"],
+        ["rejected", "Reddet"],
+        ["pending", "Beklet"],
+      ].forEach(([nextStatus, label]) => {
+        const button = document.createElement("button");
+        button.className = "istanbul-filter-reset admin-table-action";
+        button.type = "button";
+        button.textContent = label;
+        button.disabled = review.status === nextStatus;
+        button.addEventListener("click", () => {
+          updateReviewStatus(review.venueKey, review.id, nextStatus).catch((error) => {
+            setReviewState(error instanceof Error ? error.message : "Yorum güncellenemedi.", true);
+          });
+        });
+        actions.appendChild(button);
+      });
+
+      card.append(head, text, actions);
+      reviewListNode.appendChild(card);
+    });
+  }
+
+  async function loadReviewModerationList() {
+    if (!reviewListNode || !window.AramaBulAdminAuth) {
+      return;
+    }
+    setReviewState("Yorumlar getiriliyor.");
+    const status = String(reviewStatusFilter?.value || "");
+    const query = status ? `?status=${encodeURIComponent(status)}` : "";
+    const { response, payload } = await window.AramaBulAdminAuth.fetchJson(`/api/admin/venue-reviews${query}`);
+    if (!response.ok || !payload?.ok) {
+      throw new Error(payload?.error?.message || "Yorumlar getirilemedi.");
+    }
+    renderReviewModerationList(payload.reviews || []);
+  }
+
+  async function updateReviewStatus(venueKey, reviewId, status) {
+    const { response, payload } = await window.AramaBulAdminAuth.fetchJson(
+      `/api/admin/venue-reviews/${encodeURIComponent(venueKey)}/${encodeURIComponent(reviewId)}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      },
+    );
+    if (!response.ok || !payload?.ok) {
+      throw new Error(payload?.error?.message || "Yorum güncellenemedi.");
+    }
+    await loadReviewModerationList();
+  }
+
   function applyFieldErrors(details) {
     clearFieldErrors();
     const detailItems = Array.isArray(details) ? details : [];
@@ -238,6 +376,67 @@
     });
   }
 
+  function toLocationKey(value) {
+    return String(value || "").trim().toLocaleLowerCase("tr-TR");
+  }
+
+  function renderDatalistOptions(datalistNode, values) {
+    if (!(datalistNode instanceof HTMLDataListElement)) {
+      return;
+    }
+
+    const uniqueValues = Array.from(new Set((Array.isArray(values) ? values : [])
+      .map((value) => String(value || "").trim())
+      .filter(Boolean)))
+      .sort((left, right) => left.localeCompare(right, "tr-TR"));
+
+    datalistNode.textContent = "";
+    const fragment = document.createDocumentFragment();
+    uniqueValues.forEach((value) => {
+      const optionNode = document.createElement("option");
+      optionNode.value = value;
+      fragment.appendChild(optionNode);
+    });
+    datalistNode.appendChild(fragment);
+  }
+
+  function getMatchedDistrictName(value) {
+    const districtKey = toLocationKey(value);
+    if (!districtKey) {
+      return "";
+    }
+    return state.location.districts.find((district) => toLocationKey(district) === districtKey) || "";
+  }
+
+  function getNeighborhoodOptions(districtValue) {
+    const matchedDistrict = getMatchedDistrictName(districtValue);
+    if (!matchedDistrict) {
+      return state.location.allNeighborhoods;
+    }
+    return state.location.neighborhoodsByDistrict[matchedDistrict] || [];
+  }
+
+  function syncNeighborhoodDatalist(districtNode, datalistNode) {
+    if (!(districtNode instanceof HTMLInputElement)) {
+      return;
+    }
+    renderDatalistOptions(datalistNode, getNeighborhoodOptions(districtNode.value));
+  }
+
+  function syncLocationDatalists() {
+    renderDatalistOptions(districtDatalist, state.location.districts);
+    syncNeighborhoodDatalist(districtInput, filterNeighborhoodDatalist);
+    syncNeighborhoodDatalist(fields.district, formNeighborhoodDatalist);
+  }
+
+  function reloadVenueListFromFilters() {
+    resetListPage();
+    loadVenueList().catch((error) => {
+      listStateNode.hidden = false;
+      listStateNode.textContent = error instanceof Error ? error.message : "Liste alınamadı.";
+    });
+  }
+
   function updateTableSortButtons() {
     sortButtons.forEach((button) => {
       const isActive = button.dataset.sortKey === state.tableSort.key;
@@ -254,12 +453,16 @@
     const params = new URLSearchParams();
     params.set("limit", "50");
     params.set("city", DEFAULT_ADMIN_CITY);
+    params.set("mainCategoryKey", ADMIN_MAIN_CATEGORY_KEY);
     params.set("page", String(state.pagination?.page || 1));
     if (searchInput.value.trim()) {
       params.set("q", searchInput.value.trim());
     }
     if (districtInput.value.trim()) {
       params.set("district", districtInput.value.trim());
+    }
+    if (neighborhoodInput && neighborhoodInput.value.trim()) {
+      params.set("neighborhood", neighborhoodInput.value.trim());
     }
     if (categoryFilterSelect.value) {
       params.set("categoryId", categoryFilterSelect.value);
@@ -426,6 +629,109 @@
     return "";
   }
 
+  function buildGoogleLookupPayload() {
+    return {
+      mapsUrl: fields.mapsUrl.value.trim() || null,
+      name: fields.name.value.trim() || null,
+      address: fields.address.value.trim() || null,
+      district: fields.district.value.trim() || null,
+      city: fields.city.value.trim() || null,
+      latitude: normalizeNumber(fields.latitude.value),
+      longitude: normalizeNumber(fields.longitude.value),
+    };
+  }
+
+  function shouldOverwriteField(field, nextValue, force) {
+    if (!field || nextValue === null || nextValue === undefined || nextValue === "") {
+      return false;
+    }
+    if (force) {
+      return true;
+    }
+    return field.value.trim() === "";
+  }
+
+  function applyGoogleLookup(item, match, overwrite) {
+    const updates = [
+      { field: fields.name, value: item.name || "" },
+      { field: fields.city, value: item.city || "" },
+      { field: fields.district, value: item.district || "" },
+      { field: fields.neighborhood, value: item.neighborhood || "" },
+      { field: fields.address, value: item.address || "" },
+      { field: fields.phone, value: item.phone || "" },
+      { field: fields.website, value: item.website || "" },
+      { field: fields.mapsUrl, value: item.mapsUrl || "" },
+      { field: fields.photoUri, value: item.photoUri || "" },
+      { field: fields.latitude, value: Number.isFinite(Number(item.latitude)) ? String(item.latitude) : "" },
+      { field: fields.longitude, value: Number.isFinite(Number(item.longitude)) ? String(item.longitude) : "" },
+      { field: fields.rating, value: Number.isFinite(Number(item.rating)) ? String(item.rating) : "" },
+      { field: fields.userRatingCount, value: Number.isFinite(Number(item.userRatingCount)) ? String(item.userRatingCount) : "" },
+    ];
+
+    updates.forEach(({ field, value }) => {
+      if (shouldOverwriteField(field, value, overwrite)) {
+        field.value = value;
+      }
+    });
+
+    if (fields.sourcePlaceId) {
+      const placeId = item.sourcePlaceId || match?.placeId || "";
+      if (placeId && (overwrite || fields.sourcePlaceId.value.trim() === "")) {
+        fields.sourcePlaceId.value = placeId;
+      }
+    }
+
+    syncMapsQuickLink();
+    syncDetailQuickLink();
+    updateMainPhotoPreview();
+  }
+
+  async function lookupGoogleForVenue() {
+    if (!(lookupGoogleButton instanceof HTMLButtonElement)) {
+      return;
+    }
+
+    const payload = buildGoogleLookupPayload();
+    if (!payload.mapsUrl && !payload.name && !payload.address) {
+      setFormMessage("Google'dan doldurmak için harita linki ya da isim/adres gerekli.", true);
+      return;
+    }
+
+    const overwrite = true;
+
+    lookupGoogleButton.disabled = true;
+    setFormMessage("Google bilgileri aranıyor.", false);
+
+    try {
+      const { response, payload: responsePayload } = await window.AramaBulAdminAuth.fetchJson(
+        "/api/admin/venues/lookup-google",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+
+      if (!response.ok) {
+        const details = Array.isArray(responsePayload?.error?.details) ? responsePayload.error.details : [];
+        const error = new Error(responsePayload?.error?.message || "Google bilgileri alınamadı.");
+        error.details = details;
+        throw error;
+      }
+
+      applyGoogleLookup(responsePayload.item || {}, responsePayload.match || null, overwrite);
+      const matchName = String(responsePayload?.match?.name || responsePayload?.item?.name || "").trim();
+      setFormMessage(
+        matchName ? `${matchName} için Google bilgileri dolduruldu.` : "Google bilgileri dolduruldu.",
+        false,
+      );
+    } finally {
+      lookupGoogleButton.disabled = false;
+    }
+  }
+
   function buildDetailQuickLink() {
     const slug = fields.slug.value.trim();
     if (!slug) {
@@ -562,7 +868,12 @@
   }
 
   function setSelectedVenueId(venueId) {
-    state.selectedVenueId = Number.isFinite(Number(venueId)) ? Number(venueId) : null;
+    if (venueId === null || venueId === undefined || venueId === "") {
+      state.selectedVenueId = null;
+    } else {
+      const parsedId = Number(venueId);
+      state.selectedVenueId = Number.isFinite(parsedId) && parsedId > 0 ? parsedId : null;
+    }
     renderVenueList();
     deleteButton.hidden = state.selectedVenueId === null;
     syncPermanentClosureAction();
@@ -632,7 +943,7 @@
     });
   }
 
-  function renderTagList() {
+  function renderTagList() { if (!tagList) return;
     tagList.innerHTML = "";
     state.tags.forEach((tag) => {
       const button = document.createElement("button");
@@ -648,8 +959,8 @@
         } else {
           state.selectedTagKeys.add(tag.key);
         }
-        tagList.classList.remove("is-invalid");
-        tagList.removeAttribute("aria-invalid");
+        tagList?.classList.remove("is-invalid");
+        tagList?.removeAttribute("aria-invalid");
         renderTagList();
       });
       tagList.appendChild(button);
@@ -814,10 +1125,14 @@
     renderPhotoList();
     syncMapsQuickLink();
     syncDetailQuickLink();
+    syncNeighborhoodDatalist(fields.district, formNeighborhoodDatalist);
     updateMainPhotoPreview();
     syncPermanentClosureAction();
     clearFieldErrors();
     setFormMessage("", false);
+    if (fields.sourcePlaceId) {
+      fields.sourcePlaceId.value = "";
+    }
     fields.name.focus();
   }
 
@@ -827,6 +1142,7 @@
     fields.city.value = item.city || DEFAULT_ADMIN_CITY;
     fields.district.value = item.district || "";
     fields.neighborhood.value = item.neighborhood || "";
+    syncNeighborhoodDatalist(fields.district, formNeighborhoodDatalist);
     fields.categoryId.value = item.category?.id ? String(item.category.id) : "";
     fields.cuisine.value = item.cuisine || "";
     fields.budget.value = item.budget || "";
@@ -840,6 +1156,10 @@
     fields.menuUrl.value = item.menuUrl || "";
     fields.instagram.value = item.instagram || "";
     fields.mapsUrl.value = item.mapsUrl || "";
+    if (!fields.mapsUrl.value) { const _autoUrl = buildMapsUrlValueFromFields(); if (_autoUrl) fields.mapsUrl.value = _autoUrl; }
+    if (fields.sourcePlaceId) {
+      fields.sourcePlaceId.value = item.sourcePlaceId || "";
+    }
     fields.photoUri.value = item.photoUri || "";
     fields.isOpenNow.value = item.isOpenNow === null ? "" : String(Boolean(item.isOpenNow));
     fields.openingStatusText.value = item.openingStatusText || "";
@@ -1002,20 +1322,62 @@
     renderPagination();
   }
 
+  async function loadLocationReferenceData() {
+    try {
+      const [districtResponse, neighborhoodResponse] = await Promise.all([
+        fetch("/data/districts.json"),
+        fetch("/data/location-neighborhoods.json"),
+      ]);
+
+      if (!districtResponse.ok || !neighborhoodResponse.ok) {
+        return;
+      }
+
+      const [districtPayload, neighborhoodPayload] = await Promise.all([
+        districtResponse.json(),
+        neighborhoodResponse.json(),
+      ]);
+      const districts = Array.isArray(districtPayload?.[DEFAULT_ADMIN_CITY])
+        ? districtPayload[DEFAULT_ADMIN_CITY]
+        : [];
+      const neighborhoodsByDistrict = typeof neighborhoodPayload?.[DEFAULT_ADMIN_CITY] === "object" && neighborhoodPayload[DEFAULT_ADMIN_CITY]
+        ? neighborhoodPayload[DEFAULT_ADMIN_CITY]
+        : {};
+      const allNeighborhoods = Object.values(neighborhoodsByDistrict)
+        .flatMap((items) => (Array.isArray(items) ? items : []));
+
+      state.location = {
+        districts,
+        neighborhoodsByDistrict,
+        allNeighborhoods,
+      };
+      syncLocationDatalists();
+    } catch (_) {
+      state.location = {
+        districts: [],
+        neighborhoodsByDistrict: {},
+        allNeighborhoods: [],
+      };
+    }
+  }
+
   async function loadReferenceData() {
     const [{ response: categoryResponse, payload: categoryPayload }, { response: tagResponse, payload: tagPayload }] = await Promise.all([
-      window.AramaBulAdminAuth.fetchJson("/api/admin/categories"),
+      window.AramaBulAdminAuth.fetchJson(
+        `/api/admin/categories?mainCategoryKey=${encodeURIComponent(ADMIN_MAIN_CATEGORY_KEY)}&isActive=true`,
+      ),
       window.AramaBulAdminAuth.fetchJson("/api/admin/tags"),
     ]);
 
-    if (!categoryResponse.ok || !tagResponse.ok) {
-      throw new Error("Kategori veya tag verileri alınamadı.");
+    if (!categoryResponse.ok) {
+      throw new Error("Kategori verileri alınamadı.");
     }
 
     state.categories = Array.isArray(categoryPayload.items) ? categoryPayload.items : [];
     state.tags = Array.isArray(tagPayload.items) ? tagPayload.items : [];
     populateCategorySelect();
     renderTagList();
+    await loadLocationReferenceData();
   }
 
   async function loadVenueList() {
@@ -1036,6 +1398,13 @@
       total: state.items.length,
       totalPages: 1,
     };
+    const totalCount = Number(state.pagination?.total ?? state.items.length);
+    if (totalCountNode) {
+      totalCountNode.textContent = `Toplam ${totalCount} kayıt bulundu.`;
+    }
+    listStateNode.hidden = false;
+    listStateNode.textContent = `Toplam ${totalCount} kayıt bulundu.`;
+    tableWrapNode.hidden = state.items.length === 0;
     renderVenueList();
   }
 
@@ -1070,6 +1439,7 @@
       menuUrl: fields.menuUrl.value.trim() || null,
       instagram: fields.instagram.value.trim() || null,
       mapsUrl: fields.mapsUrl.value.trim() || null,
+      sourcePlaceId: fields.sourcePlaceId ? fields.sourcePlaceId.value.trim() || null : null,
       photoUri: fields.photoUri.value.trim() || null,
       isOpenNow: parseBooleanSelectValue(fields.isOpenNow.value),
       openingStatusText: fields.openingStatusText.value.trim() || null,
@@ -1368,43 +1738,23 @@
 
   function bindEvents() {
     searchButton.addEventListener("click", () => {
-      resetListPage();
-      loadVenueList().catch((error) => {
-        listStateNode.hidden = false;
-        listStateNode.textContent = error instanceof Error ? error.message : "Liste alınamadı.";
-      });
+      reloadVenueListFromFilters();
     });
 
     categoryFilterSelect.addEventListener("change", () => {
-      resetListPage();
-      loadVenueList().catch((error) => {
-        listStateNode.hidden = false;
-        listStateNode.textContent = error instanceof Error ? error.message : "Liste alınamadı.";
-      });
+      reloadVenueListFromFilters();
     });
 
     activeFilterSelect.addEventListener("change", () => {
-      resetListPage();
-      loadVenueList().catch((error) => {
-        listStateNode.hidden = false;
-        listStateNode.textContent = error instanceof Error ? error.message : "Liste alınamadı.";
-      });
+      reloadVenueListFromFilters();
     });
 
     photoFilterSelect.addEventListener("change", () => {
-      resetListPage();
-      loadVenueList().catch((error) => {
-        listStateNode.hidden = false;
-        listStateNode.textContent = error instanceof Error ? error.message : "Liste alınamadı.";
-      });
+      reloadVenueListFromFilters();
     });
 
     sortFilterSelect.addEventListener("change", () => {
-      resetListPage();
-      loadVenueList().catch((error) => {
-        listStateNode.hidden = false;
-        listStateNode.textContent = error instanceof Error ? error.message : "Liste alınamadı.";
-      });
+      reloadVenueListFromFilters();
     });
 
     sortButtons.forEach((button) => {
@@ -1434,23 +1784,33 @@
         return;
       }
       event.preventDefault();
-      resetListPage();
-      loadVenueList().catch((error) => {
-        listStateNode.hidden = false;
-        listStateNode.textContent = error instanceof Error ? error.message : "Liste alınamadı.";
-      });
+      reloadVenueListFromFilters();
     });
+    districtInput.addEventListener("input", () => {
+      syncNeighborhoodDatalist(districtInput, filterNeighborhoodDatalist);
+    });
+    districtInput.addEventListener("change", () => {
+      syncNeighborhoodDatalist(districtInput, filterNeighborhoodDatalist);
+      reloadVenueListFromFilters();
+    });
+
+    if (neighborhoodInput) {
+      neighborhoodInput.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") {
+          return;
+        }
+        event.preventDefault();
+        reloadVenueListFromFilters();
+      });
+      neighborhoodInput.addEventListener("change", reloadVenueListFromFilters);
+    }
 
     searchInput.addEventListener("keydown", (event) => {
       if (event.key !== "Enter") {
         return;
       }
       event.preventDefault();
-      resetListPage();
-      loadVenueList().catch((error) => {
-        listStateNode.hidden = false;
-        listStateNode.textContent = error instanceof Error ? error.message : "Liste alınamadı.";
-      });
+      reloadVenueListFromFilters();
     });
 
     prevPageButton.addEventListener("click", () => {
@@ -1496,6 +1856,12 @@
         });
       },
     );
+    fields.district.addEventListener("input", () => {
+      syncNeighborhoodDatalist(fields.district, formNeighborhoodDatalist);
+    });
+    fields.district.addEventListener("change", () => {
+      syncNeighborhoodDatalist(fields.district, formNeighborhoodDatalist);
+    });
 
     Object.values(fields).forEach((inputNode) => {
       inputNode.addEventListener("input", () => {
@@ -1518,7 +1884,7 @@
       mainPhotoPreviewNode.addEventListener("error", hideBrokenMainPhotoPreview);
     }
 
-    generateMapsButton.addEventListener("click", () => {
+    generateMapsButton?.addEventListener("click", () => {
       const generatedUrl = buildMapsUrlValueFromFields();
       if (!generatedUrl) {
         setFormMessage("Harita linki üretmek için adres veya koordinat gerekli.", true);
@@ -1530,8 +1896,16 @@
       syncMapsQuickLink();
       setFormMessage("Harita linki otomatik üretildi.", false);
     });
+    if (lookupGoogleButton instanceof HTMLButtonElement) {
+      lookupGoogleButton.addEventListener("click", () => {
+        lookupGoogleForVenue().catch((error) => {
+          const details = Array.isArray(error?.details) ? error.details : [];
+          setFormMessage(error instanceof Error ? error.message : "Google bilgileri alınamadı.", true, details);
+        });
+      });
+    }
     if (openDetailButton instanceof HTMLButtonElement) {
-      openDetailButton.addEventListener("click", () => {
+      openDetailButton?.addEventListener("click", () => {
         const href = buildDetailQuickLink();
         if (!href) {
           setFormMessage("Detail sayfasını açmak için önce geçerli bir slug gerekli.", true);
@@ -1601,6 +1975,20 @@
         });
       });
     }
+    if (reviewRefreshButton instanceof HTMLButtonElement) {
+      reviewRefreshButton.addEventListener("click", () => {
+        loadReviewModerationList().catch((error) => {
+          setReviewState(error instanceof Error ? error.message : "Yorumlar getirilemedi.", true);
+        });
+      });
+    }
+    if (reviewStatusFilter instanceof HTMLSelectElement) {
+      reviewStatusFilter.addEventListener("change", () => {
+        loadReviewModerationList().catch((error) => {
+          setReviewState(error instanceof Error ? error.message : "Yorumlar getirilemedi.", true);
+        });
+      });
+    }
     deleteButton.addEventListener("click", () => {
       deleteVenue().catch((error) => {
         setFormMessage(error instanceof Error ? error.message : "Silme işlemi başarısız oldu.", true);
@@ -1626,6 +2014,7 @@
     resetForm();
     await loadReferenceData();
     bindEvents();
+    await loadReviewModerationList();
     await loadVenueList();
   }
 

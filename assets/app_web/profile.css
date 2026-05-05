@@ -1,8 +1,8 @@
 .settings-page {
   color: var(--ink);
   background: var(--bg);
-  font-family: "Plus Jakarta Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  font-size: 0.94rem;
+  font-family: var(--ui-font-family);
+  font-size: var(--ui-font-size);
   font-weight: 400;
 }
 

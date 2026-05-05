@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -10,9 +10,21 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
+// ---------------------------------------------------------------------------
+// Configuration
+// ---------------------------------------------------------------------------
+
+/// Live URL — the primary source when online.
+const String kLiveUrl = 'https://aramabul.com';
+
+/// Bundled fallback — used only when there is no internet connection.
 const String kBundledEntryAssetPath = 'assets/app_web/index.html';
+
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
+
+/// App version string injected into the WebView so the web code can detect it.
+const String kAppVersion = '1.1.0';
 
 void main() {
   runApp(const AramaBulApp());
@@ -64,41 +76,33 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     if (scheme == 'intent' || scheme == 'geo' || scheme == 'comgooglemaps') {
       return true;
     }
-
     if (host.contains('maps.google.') || host == 'maps.app.goo.gl') {
       return true;
     }
-
     if (host.contains('google.com') && path.startsWith('/maps')) {
       return true;
     }
-
     return raw.contains('google.com/maps') || raw.contains('maps.app.goo.gl');
   }
 
   Uri _resolveExternalUri(String rawUrl) {
     final raw = rawUrl.trim();
-
     if (raw.toLowerCase().startsWith('intent://')) {
       final intentPrefix = 'intent://';
       final intentIndex = raw.indexOf('#Intent;');
       final body = intentIndex >= 0 ? raw.substring(0, intentIndex) : raw;
       final meta = intentIndex >= 0 ? raw.substring(intentIndex) : '';
       final defaultHostPath = body.substring(intentPrefix.length);
-
       var scheme = 'https';
       final schemeMatch = RegExp(r';scheme=([^;]+);').firstMatch(meta);
       if (schemeMatch != null) {
         scheme = (schemeMatch.group(1) ?? 'https').trim();
       }
-
       return Uri.parse('$scheme://$defaultHostPath');
     }
-
     return Uri.parse(raw);
   }
 
-  /// Check if URL is an AramaBul deep link that should stay inside the app.
   bool _isDeepLink(Uri uri) {
     final host = uri.host.toLowerCase();
     return host == kDeepLinkHost || host == kDeepLinkHostWww;
@@ -109,15 +113,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   ) async {
     final rawUrl = request.url.trim();
     final parsed = Uri.tryParse(rawUrl);
-
-    if (parsed == null) {
-      return NavigationDecision.navigate;
-    }
+    if (parsed == null) return NavigationDecision.navigate;
 
     // Deep links from aramabul.com stay in WebView.
-    if (_isDeepLink(parsed)) {
-      return NavigationDecision.navigate;
-    }
+    if (_isDeepLink(parsed)) return NavigationDecision.navigate;
 
     final scheme = parsed.scheme.toLowerCase();
     final shouldOpenExternally = _isMapLikeUrl(parsed, rawUrl) ||
@@ -128,9 +127,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             scheme != 'data' &&
             scheme != 'javascript');
 
-    if (!shouldOpenExternally) {
-      return NavigationDecision.navigate;
-    }
+    if (!shouldOpenExternally) return NavigationDecision.navigate;
 
     Uri externalUri;
     try {
@@ -139,7 +136,6 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       debugPrint('Dis URL cozumleme hatasi: $error');
       return NavigationDecision.prevent;
     }
-
     await launchUrl(externalUri, mode: LaunchMode.externalApplication);
     return NavigationDecision.prevent;
   }
@@ -154,6 +150,66 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   }
 
   // ---------------------------------------------------------------------------
+  // JS ↔ Dart bridge
+  // ---------------------------------------------------------------------------
+
+  /// Inject a JavaScript channel so the web code can call into Dart.
+  ///
+  /// From JS:  AramaBulAndroid.postMessage(JSON.stringify({action:'...'}))
+  void _setupJsBridge() {
+    _controller.addJavaScriptChannel(
+      'AramaBulAndroid',
+      onMessageReceived: (JavaScriptMessage message) {
+        _handleJsMessage(message.message);
+      },
+    );
+  }
+
+  void _handleJsMessage(String raw) {
+    try {
+      final data = jsonDecode(raw) as Map<String, dynamic>;
+      final action = data['action'] as String? ?? '';
+
+      switch (action) {
+        case 'getAppInfo':
+          // Reply with app info so web can adapt its UI.
+          _controller.runJavaScript(
+            'window.__ARAMABUL_APP__ = ${jsonEncode({
+                  'platform': 'android',
+                  'version': kAppVersion,
+                  'isApp': true,
+                })}',
+          );
+          break;
+        case 'shareVenue':
+          // Native share sheet
+          final title = data['title'] as String? ?? 'AramaBul';
+          final url = data['url'] as String? ?? kLiveUrl;
+          // Use platform channel or url_launcher for basic share
+          launchUrl(Uri.parse('https://wa.me/?text=${Uri.encodeComponent('$title $url')}'),
+              mode: LaunchMode.externalApplication);
+          break;
+        default:
+          debugPrint('Unknown JS action: $action');
+      }
+    } catch (e) {
+      debugPrint('JS bridge parse error: $e');
+    }
+  }
+
+  /// After every page load, inject a global flag so the web code knows
+  /// it is running inside the Android app.
+  Future<void> _injectAppFlag() async {
+    await _controller.runJavaScript('''
+      window.__ARAMABUL_APP__ = {
+        platform: 'android',
+        version: '$kAppVersion',
+        isApp: true
+      };
+    ''');
+  }
+
+  // ---------------------------------------------------------------------------
   // Connectivity
   // ---------------------------------------------------------------------------
 
@@ -165,12 +221,16 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       if (!mounted) return;
       if (offline != _isOffline) {
         setState(() => _isOffline = offline);
-        // Auto-reload when back online after being offline.
         if (!offline && _lastError != null) {
           _reload();
         }
       }
     });
+  }
+
+  Future<bool> _checkConnectivity() async {
+    final results = await Connectivity().checkConnectivity();
+    return results.any((r) => r != ConnectivityResult.none);
   }
 
   // ---------------------------------------------------------------------------
@@ -202,22 +262,16 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
               _lastError = null;
               _hasLoadedAtLeastOnce = true;
             });
+            // Inject the app flag every time a page finishes loading.
+            _injectAppFlag();
           },
           onProgress: (value) {
             if (!mounted) return;
-            setState(() {
-              _progress = value;
-            });
+            setState(() => _progress = value);
           },
           onWebResourceError: (error) {
-            if (error.isForMainFrame != true) {
-              return;
-            }
-
-            if (_hasLoadedAtLeastOnce) {
-              return;
-            }
-
+            if (error.isForMainFrame != true) return;
+            if (_hasLoadedAtLeastOnce) return;
             if (!mounted) return;
             setState(() {
               _lastError = error.description;
@@ -227,6 +281,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         ),
       );
 
+    // JS bridge
+    _setupJsBridge();
+
     final platformController = _controller.platform;
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       _controller.setBackgroundColor(const Color(0xFFEAE7DC));
@@ -235,7 +292,6 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       AndroidWebViewController.enableDebugging(true);
       platformController.setMediaPlaybackRequiresUserGesture(false);
 
-      // Grant geolocation permission automatically when the web page requests it.
       platformController.setGeolocationPermissionsPromptCallbacks(
         onShowPrompt: (request) async {
           await _requestLocationPermission();
@@ -248,7 +304,6 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         onHidePrompt: () {},
       );
 
-      // Handle file downloads
       platformController.setOnShowFileSelector((params) async {
         return [];
       });
@@ -263,20 +318,31 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     super.dispose();
   }
 
+  /// Smart loading: try live URL first, fall back to bundled assets if offline.
   Future<void> _loadInitialPage() async {
     try {
-      await _loadBundledPage();
+      final online = await _checkConnectivity();
+      if (online) {
+        await _controller.loadRequest(Uri.parse(kLiveUrl));
+      } else {
+        await _loadBundledPage();
+      }
     } catch (error) {
       if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-        _lastError = error.toString();
-      });
+      // If live URL fails, try bundled fallback.
+      try {
+        await _loadBundledPage();
+      } catch (e2) {
+        if (!mounted) return;
+        setState(() {
+          _isLoading = false;
+          _lastError = e2.toString();
+        });
+      }
     }
   }
 
   Future<void> _loadBundledPage() async {
-    await _controller.clearCache();
     await _controller.loadFlutterAsset(kBundledEntryAssetPath);
   }
 
@@ -286,7 +352,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       _lastError = null;
     });
     try {
-      if (_hasLoadedAtLeastOnce) {
+      final online = await _checkConnectivity();
+      if (online && !_hasLoadedAtLeastOnce) {
+        await _controller.loadRequest(Uri.parse(kLiveUrl));
+      } else if (_hasLoadedAtLeastOnce) {
         await _controller.reload();
       } else {
         await _loadBundledPage();
@@ -300,14 +369,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     }
   }
 
-  /// Handle Android back button: go back in WebView history if possible,
-  /// otherwise let the system handle it (exit app).
   Future<bool> _onBackPressed() async {
     if (await _controller.canGoBack()) {
       await _controller.goBack();
-      return false; // Don't pop the route / exit the app.
+      return false;
     }
-    return true; // Nothing to go back to — let system handle it.
+    return true;
   }
 
   // ---------------------------------------------------------------------------
@@ -334,7 +401,6 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           bottom: false,
           child: Column(
             children: [
-              // Offline banner
               if (_isOffline)
                 Container(
                   width: double.infinity,
@@ -350,20 +416,15 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                     ),
                   ),
                 ),
-
-              // Loading progress
               if (showProgress)
                 LinearProgressIndicator(
                   value: _progress / 100,
                   color: const Color(0xFF1F6F54),
                   backgroundColor: const Color(0xFFEAE7DC),
                 ),
-
-              // Main content
               Expanded(
                 child: Stack(
                   children: [
-                    // Pull-to-refresh wrapper
                     RefreshIndicator(
                       color: const Color(0xFF1F6F54),
                       backgroundColor: Colors.white,
@@ -379,10 +440,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                         ),
                       ),
                     ),
-
-                    // Error / offline fallback overlay
-                    if (_lastError != null)
-                      _buildErrorOverlay(),
+                    if (_lastError != null) _buildErrorOverlay(),
                   ],
                 ),
               ),
@@ -410,9 +468,13 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    _isOffline ? Icons.wifi_off_rounded : Icons.error_outline_rounded,
+                    _isOffline
+                        ? Icons.wifi_off_rounded
+                        : Icons.error_outline_rounded,
                     size: 56,
-                    color: _isOffline ? Colors.orange.shade700 : Colors.red.shade400,
+                    color: _isOffline
+                        ? Colors.orange.shade700
+                        : Colors.red.shade400,
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -425,13 +487,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                   const SizedBox(height: 8),
                   Text(
                     _isOffline
-                        ? 'İnternet bağlantınızı kontrol edin.\nBağlantı sağlandığında otomatik olarak yeniden yüklenecektir.'
+                        ? 'İnternet bağlantınızı kontrol edin.\nBağlantı sağlandığında otomatik yüklenecektir.'
                         : _lastError ?? 'Bilinmeyen hata',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade700,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
                   ),
                   const SizedBox(height: 20),
                   FilledButton.icon(
@@ -450,10 +509,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                   Text(
                     'AramaBul — Mekan Keşfet',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade500,
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
                   ),
                 ],
               ),

@@ -200,12 +200,12 @@ function renderHeader() {
 
   if (veterinerDistrictTitle) {
     veterinerDistrictTitle.textContent = hasLocation
-      ? `${state.city} İli / ${state.district} İlçesi Veteriner Klinikleri`
-      : "İlçe Veteriner Klinikleri";
+      ? `${state.city} İli / ${state.district} bölgesi Veteriner Klinikleri`
+      : "Konum Veteriner Klinikleri";
   }
 
   if (veterinerDistrictBreadcrumb) {
-    veterinerDistrictBreadcrumb.textContent = state.district || "İlçe";
+    veterinerDistrictBreadcrumb.textContent = state.district || "Konum";
   }
 
   if (veterinerDistrictCityLink) {
@@ -228,7 +228,7 @@ function renderPlaces() {
   if (!state.city || !state.district || state.places.length === 0) {
     const empty = document.createElement("article");
     empty.className = "empty-state";
-    empty.textContent = state.errorMessage || "Bu ilçe için veteriner verisi bulunamadı.";
+    empty.textContent = state.errorMessage || "Bu konum için veteriner verisi bulunamadı.";
     veterinerBusinessGrid.append(empty);
     return;
   }
@@ -360,7 +360,7 @@ async function initVeterinerDistrictPage() {
 
   if (!matchedDistrict) {
     state.places = [];
-    state.errorMessage = "Bu ilçe için veteriner verisi bulunamadı.";
+    state.errorMessage = "Bu konum için veteriner verisi bulunamadı.";
     renderHeader();
     renderPlaces();
     return;

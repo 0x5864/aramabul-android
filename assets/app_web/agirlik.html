@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1f6f54" />
+    <title>AramaBul</title>
+    <meta
+      name="description"
+      content="Ağırlık birimleri arasında hızlı ve sade biçimde dönüşüm yap."
+    />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260422-header-fav-desktop-01" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NHE1J9FWDG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "G-NHE1J9FWDG");
+    </script>
+  </head>
+  <body class="weight-page">
+    <div class="texture"></div>
+
+    <header class="global-header-band">
+      <nav class="topbar global-topbar">
+        <a class="brand" href="index.html" aria-label="aramabul">
+          <img class="brand-logo" src="assets/logo.png?v=20260504" alt="aramabul logo" />
+          <span class="brand-wordmark">aramabul</span>
+        </a>
+      </nav>
+      <div class="global-topline">
+        <div class="global-topline-inner">
+          <a href="index.html">Anasayfa</a>
+          <span>/</span>
+          <a href="hesaplama.html">Hesaplama</a>
+          <span>/</span>
+          <a href="fizik.html">Fizik</a>
+          <span>/</span>
+          <span>Ağırlık</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="hero">
+      <section class="weight-shell" aria-label="Ağırlık birim çevirici">
+        <section class="weight-panel">
+          <div class="weight-panel-head">
+            <p class="weight-eyebrow">Ağırlık</p>
+            <h2>Ağırlık birim çevirici</h2>
+            <p>
+              Miktarı yaz, kaynak ve hedef birimi seç. Nokta ya da virgül kullanabilirsin; sonucu
+              anında bizim sayfa stilinde göstereceğim.
+            </p>
+          </div>
+
+          <form class="weight-form" converter-form autocomplete="off">
+            <div class="weight-grid">
+              <label class="weight-field">
+                <span>Miktar</span>
+                <input
+                  type="text"
+                  inputmode="decimal"
+                  name="amount"
+                  placeholder="Örnek: 12,5"
+                  value="1"
+                  converter-amount
+                />
+              </label>
+
+              <label class="weight-field">
+                <span>Kaynak birim</span>
+                <select name="from_unit" converter-from>
+                  <option value="kg">Kilogram (kg)</option>
+                  <option value="kps2m">kp.s²/m</option>
+                  <option value="oz">Ons (oz)</option>
+                  <option value="lbs">Pound (lbs)</option>
+                  <option value="short_ton">Ton (short)</option>
+                  <option value="long_ton">Ton (long)</option>
+                  <option value="metric_ton">Ton (metrik)</option>
+                </select>
+              </label>
+
+              <label class="weight-field">
+                <span>Hedef birim</span>
+                <select name="to_unit" converter-to>
+                  <option value="lbs">Pound (lbs)</option>
+                  <option value="kg">Kilogram (kg)</option>
+                  <option value="kps2m">kp.s²/m</option>
+                  <option value="oz">Ons (oz)</option>
+                  <option value="short_ton">Ton (short)</option>
+                  <option value="long_ton">Ton (long)</option>
+                  <option value="metric_ton">Ton (metrik)</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="weight-actions">
+              <button class="weight-submit" type="submit">Çevir</button>
+              <button class="weight-secondary" type="button" converter-swap>Yer değiştir</button>
+            </div>
+          </form>
+
+          <p class="weight-inline-note">
+            Referanstaki kütle birim seti korundu: kilogram, kp.s²/m, ons, pound, short ton, long
+            ton ve metrik ton.
+          </p>
+        </section>
+
+        <aside class="weight-side-column">
+          <section class="weight-result-card">
+            <p class="weight-result-label">Sonuç</p>
+            <div class="weight-result-value" converter-result>2.20462</div>
+            <p class="weight-result-unit" converter-result-unit>Pound (lbs)</p>
+            <p class="weight-result-meta" converter-summary>
+              1 Kilogram (kg) = 2.20462 Pound (lbs)
+            </p>
+          </section>
+
+          <section class="weight-reference-card">
+            <p class="weight-result-label">Birimler</p>
+            <ul class="weight-reference-list">
+              <li>Kilogram (kg)</li>
+              <li>kp.s²/m</li>
+              <li>Ons (oz)</li>
+              <li>Pound (lbs)</li>
+              <li>Ton (short)</li>
+              <li>Ton (long)</li>
+              <li>Ton (metrik)</li>
+            </ul>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="yr-footer" aria-label="Alt Bant">
+      <div class="yr-footer-inner">
+        <div class="yr-footer-grid">
+          <section class="yr-footer-col">
+            <h4>aramabul'u indir!</h4>
+            <a class="store-badge" href="#" aria-label="App Store">
+              <span class="store-badge-top">Hemen indirin</span>
+              <span class="store-badge-name">App Store</span>
+            </a>
+            <a class="store-badge" href="#" aria-label="Google Play">
+              <span class="store-badge-top">Hemen indirin</span>
+              <span class="store-badge-name">Google Play</span>
+            </a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>aramabul'u keşfet</h4>
+            <a href="hakkimizda.html">Hakkında</a>
+            <a href="yer-ekle.html">Yer ekle</a>
+            <a href="iletisim.html">İletişim</a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>Yardım mı lazım?</h4>
+            <a href="sss.html">Sıkça Sorulan Sorular</a>
+            <a href="cerez-politikasi.html">Çerez Politikası</a>
+          </section>
+
+          <section class="yr-footer-col">
+            <h4>Kurumsal</h4>
+            <a href="kullanim-kosullari.html">Kullanım Koşulları</a>
+            <a href="kvkk.html">Kişisel Verilerin Korunması</a>
+            <a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+          </section>
+        </div>
+
+        <div class="yr-footer-bottom">
+          <p>© 2026 aramabul</p>
+          <div class="yr-footer-social" aria-label="Sosyal">
+            <a href="#" aria-label="Instagram">○</a>
+            <a href="#" aria-label="Ara">◌</a>
+            <a href="#" aria-label="Dünya">◍</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="agirlik.js?v=20260329-01"></script>
+  </body>
+</html>

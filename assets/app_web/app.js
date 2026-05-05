@@ -414,7 +414,7 @@ const categoryTags = [
   "Vegan",
   "Vejetaryen",
   "Glutensiz",
-  "Asya Mutfağı",
+  "Asya",
   "İtalyan",
   "Mangal",
   "Kafe",
@@ -580,7 +580,7 @@ const UI_TRANSLATIONS = {
     "footer.appStoreAria": "App Store",
     "footer.googlePlayAria": "Google Play",
     "footer.discoverTitle": "Keşfet",
-    "footer.about": "Hakkımızda",
+    "footer.about": "Hakkında",
     "footer.career": "Kariyer",
     "footer.tech": "Teknoloji",
     "footer.contact": "İletişim",
@@ -1169,7 +1169,7 @@ function inferVenuePageBase(venue) {
   );
 
   if (!searchable) {
-    return "keyif";
+    return "yeme-icme";
   }
 
   if (searchable.includes("eczane")) {
@@ -1234,7 +1234,7 @@ function inferVenuePageBase(venue) {
     return "hastane";
   }
 
-  return "keyif";
+  return "yeme-icme";
 }
 
 function normalizeCuisineLabel(value, fallback = "Yerel") {
@@ -2220,7 +2220,7 @@ function restaurantPageUrl(venue) {
     "kuafor",
     "veteriner",
     "eczane",
-    "keyif",
+    "yeme-icme",
     "otel",
     "atm",
     "kargo",
@@ -2235,7 +2235,7 @@ function restaurantPageUrl(venue) {
     "kuafor",
     "veteriner",
     "eczane",
-    "keyif",
+    "yeme-icme",
     "otel",
     "atm",
     "kargo",
