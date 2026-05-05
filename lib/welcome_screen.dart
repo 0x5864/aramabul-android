@@ -23,13 +23,7 @@ class WelcomeScreen extends StatelessWidget {
         children: [
           // --- Background gradient ---
           Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFF093827), Color(0xFF0D4C35)],
-              ),
-            ),
+            color: const Color(0xFF093827),
           ),
 
           // --- Decorative circles ---
