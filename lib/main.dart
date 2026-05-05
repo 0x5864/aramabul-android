@@ -79,13 +79,11 @@ class _AppEntryPointState extends State<AppEntryPoint> {
   }
 
   Future<void> _onWelcomeComplete(String? route) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_kWelcomeSeenKey, true);
-
     if (!mounted) return;
 
     // Map route to initial URL
     String? initialPath;
+    bool markSeen = true;
     switch (route) {
       case 'login':
         initialPath = '#login';
@@ -95,19 +93,33 @@ class _AppEntryPointState extends State<AppEntryPoint> {
         break;
       case 'privacy':
         initialPath = '/gizlilik-politikasi.html';
+        markSeen = false; // Don't consume welcome — let user come back
         break;
       case 'terms':
         initialPath = '/kullanim-kosullari.html';
+        markSeen = false;
         break;
       default:
-        initialPath = null; // guest → home page
+        initialPath = null;
     }
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => HomeWebViewPage(initialPath: initialPath),
-      ),
-    );
+    if (markSeen) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_kWelcomeSeenKey, true);
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => HomeWebViewPage(initialPath: initialPath),
+        ),
+      );
+    } else {
+      // Policy / terms — open in a page the user can navigate back from
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => HomeWebViewPage(initialPath: initialPath),
+        ),
+      );
+    }
   }
 
   @override
