@@ -83,13 +83,10 @@ class _AppEntryPointState extends State<AppEntryPoint> {
 
     switch (route) {
       case 'login':
-        // Mark welcome as seen, open home with login modal
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool(_kWelcomeSeenKey, true);
-        if (!mounted) return;
-        Navigator.of(context).pushReplacement(
+        // Open standalone login page — can go back to welcome
+        Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => const HomeWebViewPage(initialPath: '#login'),
+            builder: (_) => const _AuthPage(mode: 'login', title: 'Giriş Yap'),
           ),
         );
         break;
@@ -98,7 +95,7 @@ class _AppEntryPointState extends State<AppEntryPoint> {
         // Open standalone signup page — can go back to welcome
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => const _SignupPage(),
+            builder: (_) => const _AuthPage(mode: 'signup', title: 'Hesap Oluştur'),
           ),
         );
         break;
@@ -174,6 +171,20 @@ class _PolicyViewerPageState extends State<_PolicyViewerPage> {
   late final WebViewController _controller;
   bool _isLoading = true;
 
+  static const String _injectJs =
+      'var _s=document.createElement("style");'
+      '_s.textContent=".mobile-bottom-nav{display:none!important}'
+      '.global-topbar{display:none!important}'
+      '.global-topline{display:none!important}'
+      '.yr-footer{display:none!important}'
+      '.auth-modal{display:none!important}'
+      '.global-header-band{padding-top:1rem!important}";'
+      'document.head.appendChild(_s);'
+      'function _h(){document.querySelectorAll(".mobile-bottom-nav,.global-topbar,.global-topline,.yr-footer,.auth-modal").forEach(function(e){e.remove()})}'
+      '_h();'
+      'if(document.body){new MutationObserver(_h).observe(document.body,{childList:true,subtree:true});'
+      'document.body.classList.remove("mobile-bottom-nav-visible")}';
+
   @override
   void initState() {
     super.initState();
@@ -181,31 +192,11 @@ class _PolicyViewerPageState extends State<_PolicyViewerPage> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
+          onPageStarted: (_) {
+            _controller.runJavaScript(_injectJs);
+          },
           onPageFinished: (_) {
-            _controller.runJavaScript('''
-              (function() {
-                var css = document.createElement('style');
-                css.textContent = [
-                  '.mobile-bottom-nav { display:none!important }',
-                  '.global-topbar { display:none!important }',
-                  '.global-topline { display:none!important }',
-                  '.yr-footer { display:none!important }',
-                  '.auth-modal { display:none!important }',
-                  '.global-header-band { padding-top:1rem!important }'
-                ].join('\\n');
-                document.head.appendChild(css);
-
-                function hideAll() {
-                  document.querySelectorAll('.mobile-bottom-nav,.global-topbar,.global-topline,.yr-footer,.auth-modal').forEach(function(el) {
-                    el.style.display = 'none';
-                  });
-                }
-                hideAll();
-
-                var obs = new MutationObserver(hideAll);
-                obs.observe(document.body, { childList: true, subtree: true });
-              })();
-            ''');
+            _controller.runJavaScript(_injectJs);
             if (mounted) setState(() => _isLoading = false);
           },
         ),
@@ -238,17 +229,40 @@ class _PolicyViewerPageState extends State<_PolicyViewerPage> {
   }
 }
 
-/// Standalone signup page — full-screen modal, no background content visible.
-class _SignupPage extends StatefulWidget {
-  const _SignupPage();
+/// Unified auth page — full-screen modal for login or signup.
+class _AuthPage extends StatefulWidget {
+  final String mode;
+  final String title;
+
+  const _AuthPage({required this.mode, required this.title});
 
   @override
-  State<_SignupPage> createState() => _SignupPageState();
+  State<_AuthPage> createState() => _AuthPageState();
 }
 
-class _SignupPageState extends State<_SignupPage> {
+class _AuthPageState extends State<_AuthPage> {
   late final WebViewController _controller;
   bool _isLoading = true;
+
+  String get _injectJs =>
+      'var _s=document.createElement("style");'
+      '_s.textContent=".mobile-bottom-nav{display:none!important}'
+      '.global-topbar{display:none!important}'
+      '.global-topline{display:none!important}'
+      '.global-header-band{display:none!important}'
+      '.yr-footer{display:none!important}'
+      'body>.texture{display:none!important}'
+      'body>main,body>.content,body>section{display:none!important}'
+      '.auth-modal{position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;background:#fffaed!important;display:flex!important;align-items:flex-start!important;justify-content:center!important;z-index:99999!important}'
+      '.auth-modal.is-hidden{display:flex!important}'
+      '.auth-modal-panel{position:relative!important;width:100%!important;max-width:100%!important;margin:0!important;border-radius:0!important;box-shadow:none!important;min-height:100vh!important;padding-top:1rem!important}'
+      '.auth-modal-close{display:none!important}'
+      'body{background:#fffaed!important;overflow:auto!important}";'
+      'document.head.appendChild(_s);'
+      'function _h(){document.querySelectorAll(".mobile-bottom-nav,.global-topbar,.global-topline,.yr-footer,.global-header-band").forEach(function(e){e.remove()})}'
+      '_h();'
+      'if(document.body){new MutationObserver(_h).observe(document.body,{childList:true,subtree:true});'
+      'document.body.classList.remove("mobile-bottom-nav-visible")}';
 
   @override
   void initState() {
@@ -257,44 +271,14 @@ class _SignupPageState extends State<_SignupPage> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
+          onPageStarted: (_) {
+            _controller.runJavaScript(_injectJs);
+          },
           onPageFinished: (_) {
-            _controller.runJavaScript('''
-              (function() {
-                var css = document.createElement('style');
-                css.textContent = [
-                  '.mobile-bottom-nav { display:none!important }',
-                  '.global-topbar { display:none!important }',
-                  '.global-topline { display:none!important }',
-                  '.global-header-band { display:none!important }',
-                  '.yr-footer { display:none!important }',
-                  'body > .texture { display:none!important }',
-                  'body > main, body > .content, body > section { display:none!important }',
-                  '.auth-modal { position:fixed!important; top:0!important; left:0!important; right:0!important; bottom:0!important; background:#fffaed!important; display:flex!important; align-items:flex-start!important; justify-content:center!important; z-index:99999!important }',
-                  '.auth-modal.is-hidden { display:flex!important }',
-                  '.auth-modal-panel { position:relative!important; width:100%!important; max-width:100%!important; margin:0!important; border-radius:0!important; box-shadow:none!important; min-height:100vh!important; padding-top:1rem!important }',
-                  '.auth-modal-close { display:none!important }',
-                  'body { background:#fffaed!important; overflow:auto!important }'
-                ].join('\\n');
-                document.head.appendChild(css);
-
-                function hideChrome() {
-                  document.querySelectorAll('.mobile-bottom-nav,.global-topbar,.global-topline,.yr-footer,.global-header-band').forEach(function(el) {
-                    el.style.display = 'none';
-                  });
-                }
-                hideChrome();
-
-                var obs = new MutationObserver(hideChrome);
-                obs.observe(document.body, { childList: true, subtree: true });
-
-                // Open signup modal
-                setTimeout(function() {
-                  if (window.ARAMABUL_AUTH_MODAL && window.ARAMABUL_AUTH_MODAL.open) {
-                    window.ARAMABUL_AUTH_MODAL.open('signup');
-                  }
-                }, 400);
-              })();
-            ''');
+            _controller.runJavaScript(_injectJs);
+            _controller.runJavaScript(
+              'setTimeout(function(){if(window.ARAMABUL_AUTH_MODAL&&window.ARAMABUL_AUTH_MODAL.open){window.ARAMABUL_AUTH_MODAL.open("${widget.mode}")}},300);'
+            );
             if (mounted) setState(() => _isLoading = false);
           },
         ),
@@ -306,9 +290,9 @@ class _SignupPageState extends State<_SignupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Hesap Oluştur',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        title: Text(
+          widget.title,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         backgroundColor: const Color(0xFF093827),
         foregroundColor: Colors.white,
