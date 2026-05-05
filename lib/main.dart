@@ -521,11 +521,11 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         document.head.appendChild(style);
       }
 
-      // Hide signin icon and topbar in app context
+      // Hide signin icon from footer + distribute remaining 4 icons evenly
       if (!document.getElementById('aramabul-app-nav-css')) {
         var navStyle = document.createElement('style');
         navStyle.id = 'aramabul-app-nav-css';
-        navStyle.textContent = '.mobile-bottom-nav-btn[data-mobile-nav="signin"] { display: none !important; } .global-topbar { display: none !important; }';
+        navStyle.textContent = '.mobile-bottom-nav-btn[data-mobile-nav="signin"] { display: none !important; } .mobile-bottom-nav-actions { justify-content: space-around !important; } .mobile-bottom-nav-btn { flex: 1 !important; max-width: 25% !important; }';
         document.head.appendChild(navStyle);
       }
     ''');
