@@ -85,13 +85,13 @@ class WelcomeScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // App logo — pin with magnifying glass
-                      Image.asset(
-                        'assets/welcome/app_logo.png',
-                        width: 64,
-                        height: 64,
+                      // App logo — native icon, true transparency
+                      const Icon(
+                        Icons.location_on_rounded,
+                        size: 128,
+                        color: Color(0xFF13690C),
                       ),
-                      const SizedBox(height: 28),
+                      const SizedBox(height: 16),
                       Text(
                         'Merhaba',
                         style: GoogleFonts.plusJakartaSans(
@@ -157,7 +157,7 @@ class WelcomeScreen extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 16),
                               child: Text(
-                                'veya şununla kaydol',
+                                'veya',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: const Color(0xFF162123).withValues(alpha: 0.4),
@@ -202,8 +202,17 @@ class WelcomeScreen extends StatelessWidget {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'ile kaydol',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: const Color(0xFF162123).withValues(alpha: 0.4),
+                          ),
+                        ),
 
-                        const SizedBox(height: 28),
+                        const SizedBox(height: 24),
 
                         // --- Register link ---
                         Row(
@@ -222,7 +231,7 @@ class WelcomeScreen extends StatelessWidget {
                                 'Hesap Oluştur',
                                 style: TextStyle(
                                   fontSize: 14,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w500,
                                   color: Color(0xFF13690C),
                                 ),
                               ),
@@ -325,7 +334,7 @@ class _ActionButton extends StatelessWidget {
                 label,
                 style: const TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w400,
                   color: Colors.white,
                 ),
               ),
