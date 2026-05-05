@@ -6,9 +6,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
+
+import 'welcome_screen.dart';
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -24,9 +27,12 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 /// App version string injected into the WebView so the web code can detect it.
-const String kAppVersion = '1.1.0';
+const String kAppVersion = '1.2.0';
+
+const String _kWelcomeSeenKey = 'welcome_seen';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const AramaBulApp());
 }
 
@@ -43,13 +49,91 @@ class AramaBulApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1F6F54)),
         scaffoldBackgroundColor: const Color(0xFFFFFAED),
       ),
-      home: const HomeWebViewPage(),
+      home: const AppEntryPoint(),
     );
   }
 }
 
+/// Decides whether to show the welcome screen or go directly to WebView.
+class AppEntryPoint extends StatefulWidget {
+  const AppEntryPoint({super.key});
+
+  @override
+  State<AppEntryPoint> createState() => _AppEntryPointState();
+}
+
+class _AppEntryPointState extends State<AppEntryPoint> {
+  bool? _showWelcome;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkFirstLaunch();
+  }
+
+  Future<void> _checkFirstLaunch() async {
+    final prefs = await SharedPreferences.getInstance();
+    final seen = prefs.getBool(_kWelcomeSeenKey) ?? false;
+    if (!mounted) return;
+    setState(() => _showWelcome = !seen);
+  }
+
+  Future<void> _onWelcomeComplete(String? route) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kWelcomeSeenKey, true);
+
+    if (!mounted) return;
+
+    // Map route to initial URL
+    String? initialPath;
+    switch (route) {
+      case 'login':
+        initialPath = '#login';
+        break;
+      case 'register':
+        initialPath = '#register';
+        break;
+      case 'privacy':
+        initialPath = '/gizlilik-politikasi.html';
+        break;
+      case 'terms':
+        initialPath = '/kullanim-kosullari.html';
+        break;
+      default:
+        initialPath = null; // guest → home page
+    }
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => HomeWebViewPage(initialPath: initialPath),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_showWelcome == null) {
+      // Loading state
+      return const Scaffold(
+        backgroundColor: Color(0xFF1A4A3A),
+        body: Center(
+          child: CircularProgressIndicator(color: Colors.white),
+        ),
+      );
+    }
+
+    if (_showWelcome!) {
+      return WelcomeScreen(onContinue: _onWelcomeComplete);
+    }
+
+    return const HomeWebViewPage();
+  }
+}
+
 class HomeWebViewPage extends StatefulWidget {
-  const HomeWebViewPage({super.key});
+  final String? initialPath;
+
+  const HomeWebViewPage({super.key, this.initialPath});
 
   @override
   State<HomeWebViewPage> createState() => _HomeWebViewPageState();
@@ -344,7 +428,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     try {
       final online = await _checkConnectivity();
       if (online) {
-        await _controller.loadRequest(Uri.parse(kLiveUrl));
+        final path = widget.initialPath ?? '';
+        final url = path.isNotEmpty ? '$kLiveUrl$path' : kLiveUrl;
+        await _controller.loadRequest(Uri.parse(url));
       } else {
         await _loadBundledPage();
       }
