@@ -18,3 +18,8 @@
 # Keep annotations
 -keepattributes *Annotation*
 -keepattributes SourceFile,LineNumberTable
+
+# Play Core (deferred components) — suppress missing class warnings
+-dontwarn com.google.android.play.core.splitcompat.**
+-dontwarn com.google.android.play.core.splitinstall.**
+-dontwarn com.google.android.play.core.tasks.**
