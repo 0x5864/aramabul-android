@@ -95,13 +95,10 @@ class _AppEntryPointState extends State<AppEntryPoint> {
         break;
 
       case 'register':
-        // Mark welcome as seen, open home with signup modal
-        final prefsR = await SharedPreferences.getInstance();
-        await prefsR.setBool(_kWelcomeSeenKey, true);
-        if (!mounted) return;
-        Navigator.of(context).pushReplacement(
+        // Open standalone signup page — can go back to welcome
+        Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => const HomeWebViewPage(initialPath: '#signup'),
+            builder: (_) => const _SignupPage(),
           ),
         );
         break;
@@ -162,7 +159,7 @@ class _AppEntryPointState extends State<AppEntryPoint> {
   }
 }
 
-/// Lightweight policy/terms viewer — AppBar with back button, no footer.
+/// Lightweight policy/terms viewer — AppBar with back button, no footer/breadcrumb.
 class _PolicyViewerPage extends StatefulWidget {
   final String title;
   final String url;
@@ -177,6 +174,15 @@ class _PolicyViewerPageState extends State<_PolicyViewerPage> {
   late final WebViewController _controller;
   bool _isLoading = true;
 
+  static const String _hideUiCss = '''
+    .mobile-bottom-nav,
+    .global-topbar,
+    .global-topline,
+    .yr-footer,
+    .auth-modal { display: none !important; }
+    .global-header-band { padding-top: 1rem !important; }
+  ''';
+
   @override
   void initState() {
     super.initState();
@@ -185,12 +191,11 @@ class _PolicyViewerPageState extends State<_PolicyViewerPage> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (_) {
-            // Hide header and footer for clean reading
             _controller.runJavaScript('''
               (function() {
-                var style = document.createElement('style');
-                style.textContent = '.mobile-bottom-nav, .global-topbar, .yr-footer { display: none !important; } .global-header-band { padding-top: 1rem !important; }';
-                document.head.appendChild(style);
+                var s = document.createElement('style');
+                s.textContent = `$_hideUiCss`;
+                document.head.appendChild(s);
               })();
             ''');
             if (mounted) setState(() => _isLoading = false);
@@ -207,6 +212,81 @@ class _PolicyViewerPageState extends State<_PolicyViewerPage> {
         title: Text(
           widget.title,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+        backgroundColor: const Color(0xFF093827),
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: Stack(
+        children: [
+          WebViewWidget(controller: _controller),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(color: Color(0xFF13690C)),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Standalone signup page — opens main site, hides chrome, auto-opens signup modal.
+class _SignupPage extends StatefulWidget {
+  const _SignupPage();
+
+  @override
+  State<_SignupPage> createState() => _SignupPageState();
+}
+
+class _SignupPageState extends State<_SignupPage> {
+  late final WebViewController _controller;
+  bool _isLoading = true;
+
+  static const String _hideUiCss = '''
+    .mobile-bottom-nav,
+    .global-topbar,
+    .global-topline,
+    .global-header-band,
+    .yr-footer { display: none !important; }
+    body { background: #fffaed !important; }
+  ''';
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (_) {
+            _controller.runJavaScript('''
+              (function() {
+                var s = document.createElement('style');
+                s.textContent = `$_hideUiCss`;
+                document.head.appendChild(s);
+
+                // Auto-open signup modal after a short delay
+                setTimeout(function() {
+                  if (window.ARAMABUL_AUTH_MODAL && window.ARAMABUL_AUTH_MODAL.open) {
+                    window.ARAMABUL_AUTH_MODAL.open('signup');
+                  }
+                }, 500);
+              })();
+            ''');
+            if (mounted) setState(() => _isLoading = false);
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse('https://aramabul.com/'));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Hesap Oluştur',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         backgroundColor: const Color(0xFF093827),
         foregroundColor: Colors.white,
