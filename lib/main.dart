@@ -174,15 +174,6 @@ class _PolicyViewerPageState extends State<_PolicyViewerPage> {
   late final WebViewController _controller;
   bool _isLoading = true;
 
-  static const String _hideUiCss = '''
-    .mobile-bottom-nav,
-    .global-topbar,
-    .global-topline,
-    .yr-footer,
-    .auth-modal { display: none !important; }
-    .global-header-band { padding-top: 1rem !important; }
-  ''';
-
   @override
   void initState() {
     super.initState();
@@ -193,9 +184,26 @@ class _PolicyViewerPageState extends State<_PolicyViewerPage> {
           onPageFinished: (_) {
             _controller.runJavaScript('''
               (function() {
-                var s = document.createElement('style');
-                s.textContent = `$_hideUiCss`;
-                document.head.appendChild(s);
+                var css = document.createElement('style');
+                css.textContent = [
+                  '.mobile-bottom-nav { display:none!important }',
+                  '.global-topbar { display:none!important }',
+                  '.global-topline { display:none!important }',
+                  '.yr-footer { display:none!important }',
+                  '.auth-modal { display:none!important }',
+                  '.global-header-band { padding-top:1rem!important }'
+                ].join('\\n');
+                document.head.appendChild(css);
+
+                function hideAll() {
+                  document.querySelectorAll('.mobile-bottom-nav,.global-topbar,.global-topline,.yr-footer,.auth-modal').forEach(function(el) {
+                    el.style.display = 'none';
+                  });
+                }
+                hideAll();
+
+                var obs = new MutationObserver(hideAll);
+                obs.observe(document.body, { childList: true, subtree: true });
               })();
             ''');
             if (mounted) setState(() => _isLoading = false);
@@ -230,7 +238,7 @@ class _PolicyViewerPageState extends State<_PolicyViewerPage> {
   }
 }
 
-/// Standalone signup page — opens main site, hides chrome, auto-opens signup modal.
+/// Standalone signup page — full-screen modal, no background content visible.
 class _SignupPage extends StatefulWidget {
   const _SignupPage();
 
@@ -242,15 +250,6 @@ class _SignupPageState extends State<_SignupPage> {
   late final WebViewController _controller;
   bool _isLoading = true;
 
-  static const String _hideUiCss = '''
-    .mobile-bottom-nav,
-    .global-topbar,
-    .global-topline,
-    .global-header-band,
-    .yr-footer { display: none !important; }
-    body { background: #fffaed !important; }
-  ''';
-
   @override
   void initState() {
     super.initState();
@@ -261,16 +260,39 @@ class _SignupPageState extends State<_SignupPage> {
           onPageFinished: (_) {
             _controller.runJavaScript('''
               (function() {
-                var s = document.createElement('style');
-                s.textContent = `$_hideUiCss`;
-                document.head.appendChild(s);
+                var css = document.createElement('style');
+                css.textContent = [
+                  '.mobile-bottom-nav { display:none!important }',
+                  '.global-topbar { display:none!important }',
+                  '.global-topline { display:none!important }',
+                  '.global-header-band { display:none!important }',
+                  '.yr-footer { display:none!important }',
+                  'body > .texture { display:none!important }',
+                  'body > main, body > .content, body > section { display:none!important }',
+                  '.auth-modal { position:fixed!important; top:0!important; left:0!important; right:0!important; bottom:0!important; background:#fffaed!important; display:flex!important; align-items:flex-start!important; justify-content:center!important; z-index:99999!important }',
+                  '.auth-modal.is-hidden { display:flex!important }',
+                  '.auth-modal-panel { position:relative!important; width:100%!important; max-width:100%!important; margin:0!important; border-radius:0!important; box-shadow:none!important; min-height:100vh!important; padding-top:1rem!important }',
+                  '.auth-modal-close { display:none!important }',
+                  'body { background:#fffaed!important; overflow:auto!important }'
+                ].join('\\n');
+                document.head.appendChild(css);
 
-                // Auto-open signup modal after a short delay
+                function hideChrome() {
+                  document.querySelectorAll('.mobile-bottom-nav,.global-topbar,.global-topline,.yr-footer,.global-header-band').forEach(function(el) {
+                    el.style.display = 'none';
+                  });
+                }
+                hideChrome();
+
+                var obs = new MutationObserver(hideChrome);
+                obs.observe(document.body, { childList: true, subtree: true });
+
+                // Open signup modal
                 setTimeout(function() {
                   if (window.ARAMABUL_AUTH_MODAL && window.ARAMABUL_AUTH_MODAL.open) {
                     window.ARAMABUL_AUTH_MODAL.open('signup');
                   }
-                }, 500);
+                }, 400);
               })();
             ''');
             if (mounted) setState(() => _isLoading = false);
