@@ -79,17 +79,17 @@ class WelcomeScreen extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.only(
                     top: topPadding + 40,
-                    left: 32,
+                    left: 20,
                     right: 32,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // App logo — native icon, true transparency
-                      const Icon(
-                        Icons.location_on_rounded,
-                        size: 128,
-                        color: Color(0xFF13690C),
+                      // App logo — pin with magnifying glass
+                      Image.asset(
+                        'assets/welcome/app_logo.png',
+                        width: 128,
+                        height: 128,
                       ),
                       const SizedBox(height: 16),
                       Text(
