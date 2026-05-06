@@ -647,6 +647,16 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         document.head.appendChild(navStyle);
       }
 
+      // Keep Android footer order as: home, search, favorites, profile.
+      var mobileNav = document.querySelector('.mobile-bottom-nav-actions');
+      if (mobileNav) {
+        var searchBtn = mobileNav.querySelector('[data-mobile-nav="search"]');
+        var favoritesBtn = mobileNav.querySelector('[data-mobile-nav="favorites"]');
+        if (searchBtn && favoritesBtn && (searchBtn.compareDocumentPosition(favoritesBtn) & Node.DOCUMENT_POSITION_PRECEDING)) {
+          mobileNav.insertBefore(searchBtn, favoritesBtn);
+        }
+      }
+
       // Color the "arama" part of brand wordmark
       var wm = document.querySelector('.brand-wordmark');
       if (wm && !wm.dataset.colored) {

@@ -370,6 +370,38 @@
     return Number.isFinite(parsed) ? parsed : null;
   }
 
+  function normalizeCategoryLookupText(value) {
+    return String(value || "")
+      .trim()
+      .toLocaleLowerCase("tr")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/ı/g, "i")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+  }
+
+  function findCategoryIdByLegacyCuisine(value) {
+    const legacyCategory = normalizeCategoryLookupText(value);
+    if (!legacyCategory) {
+      return "";
+    }
+    const match = state.categories.find((item) => {
+      return [item.name, item.key, item.slug]
+        .map(normalizeCategoryLookupText)
+        .some((candidate) => candidate && candidate === legacyCategory);
+    });
+    return match ? String(match.id) : "";
+  }
+
+  function resolveVenueCategory(item) {
+    if (item?.category?.id || item?.category?.name) {
+      return item.category;
+    }
+    const legacyCategoryId = findCategoryIdByLegacyCuisine(item?.cuisine);
+    return state.categories.find((category) => String(category.id) === legacyCategoryId) || null;
+  }
+
   function parseBooleanSelectValue(value, fallback = null) {
     if (value === "true") {
       return true;
@@ -434,8 +466,8 @@
       if (state.tableSort.key === "name") {
         comparison = String(left?.name || "").localeCompare(String(right?.name || ""), "tr");
       } else if (state.tableSort.key === "category") {
-        comparison = String(left?.category?.name || left?.cuisine || "").localeCompare(
-          String(right?.category?.name || right?.cuisine || ""),
+        comparison = String(resolveVenueCategory(left)?.name || "").localeCompare(
+          String(resolveVenueCategory(right)?.name || ""),
           "tr",
         );
       } else if (state.tableSort.key === "location") {
@@ -1034,8 +1066,8 @@
     fields.district.value = item.district || "";
     fields.neighborhood.value = item.neighborhood || "";
     syncNeighborhoodDatalist(fields.district, formNeighborhoodDatalist);
-    fields.categoryId.value = item.category?.id ? String(item.category.id) : "";
-    fields.cuisine.value = item.cuisine || "";
+    fields.categoryId.value = item.category?.id ? String(item.category.id) : findCategoryIdByLegacyCuisine(item.cuisine);
+    fields.cuisine.value = "";
     fields.budget.value = item.budget || "";
     fields.rating.value = item.rating ?? "";
     fields.userRatingCount.value = item.userRatingCount ?? "";
@@ -1122,7 +1154,7 @@
       titleCell.appendChild(meta);
 
       const categoryCell = document.createElement("td");
-      categoryCell.textContent = item.category?.name || item.cuisine || "-";
+      categoryCell.textContent = resolveVenueCategory(item)?.name || "-";
 
       const locationCell = document.createElement("td");
       locationCell.textContent = [item.district, item.neighborhood].filter(Boolean).join(" / ") || item.city || "-";
@@ -1323,7 +1355,7 @@
       district: fields.district.value.trim(),
       neighborhood: fields.neighborhood.value.trim() || null,
       categoryId: normalizeNumber(fields.categoryId.value),
-      cuisine: fields.cuisine.value.trim() || null,
+      cuisine: null,
       budget: fields.budget.value || null,
       rating: normalizeNumber(fields.rating.value),
       userRatingCount: normalizeNumber(fields.userRatingCount.value),

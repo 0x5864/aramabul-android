@@ -1252,19 +1252,19 @@
             </svg>
           </span>
         </button>
-        <button class="mobile-bottom-nav-btn" data-mobile-nav="favorites" type="button" aria-label="${labels.favorites}" title="${labels.favorites}">
-          <span class="mobile-bottom-nav-chip" aria-hidden="true">
-            <img class="mobile-bottom-nav-icon-img" src="assets/fav-footer.png" alt="" />
-            <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="m12 20.2-6.3-3.3 1.2-7L12 4.8l5.1 5.1 1.2 7z"></path>
-            </svg>
-          </span>
-        </button>
         <button class="mobile-bottom-nav-btn" data-mobile-nav="search" type="button" aria-label="${labels.search}" title="${labels.search}">
           <span class="mobile-bottom-nav-chip icon-load-failed" aria-hidden="true">
             <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="11" cy="11" r="6.5"></circle>
               <path d="m16 16 4.5 4.5"></path>
+            </svg>
+          </span>
+        </button>
+        <button class="mobile-bottom-nav-btn" data-mobile-nav="favorites" type="button" aria-label="${labels.favorites}" title="${labels.favorites}">
+          <span class="mobile-bottom-nav-chip" aria-hidden="true">
+            <img class="mobile-bottom-nav-icon-img" src="assets/fav.png?v=20260506" alt="" />
+            <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m12 20.2-6.3-3.3 1.2-7L12 4.8l5.1 5.1 1.2 7z"></path>
             </svg>
           </span>
         </button>
