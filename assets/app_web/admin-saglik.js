@@ -400,12 +400,34 @@
     if (!legacyCategory) {
       return "";
     }
-    const match = state.categories.find((item) => {
-      return [item.name, item.key, item.slug]
+
+    const normalizedCategories = state.categories.map((item) => ({
+      item,
+      candidates: [item.name, item.key, item.slug]
         .map(normalizeCategoryLookupText)
-        .some((candidate) => candidate && candidate === legacyCategory);
+        .filter(Boolean),
+    }));
+
+    const exactMatch = normalizedCategories.find(({ candidates }) => {
+      return candidates.some((candidate) => candidate === legacyCategory);
     });
-    return match ? String(match.id) : "";
+    if (exactMatch) {
+      return String(exactMatch.item.id);
+    }
+
+    const legacyWords = legacyCategory.split(" ").filter((word) => word.length >= 3);
+    const fuzzyMatch = normalizedCategories.find(({ candidates }) => {
+      return candidates.some((candidate) => {
+        if (!candidate || legacyCategory.length < 4) {
+          return false;
+        }
+        return candidate.includes(legacyCategory)
+          || legacyCategory.includes(candidate)
+          || (legacyWords.length > 0 && legacyWords.every((word) => candidate.includes(word)));
+      });
+    });
+
+    return fuzzyMatch ? String(fuzzyMatch.item.id) : "";
   }
 
   function findCategoryIdForVenue(item) {
