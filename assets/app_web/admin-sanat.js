@@ -435,7 +435,10 @@
     if (directCategory) {
       return String(directCategory.id);
     }
-    return findCategoryIdByLegacyCuisine(item?.category?.name) || findCategoryIdByLegacyCuisine(item?.cuisine);
+    return findCategoryIdByLegacyCuisine(item?.category?.name)
+      || findCategoryIdByLegacyCuisine(item?.cuisine)
+      || findCategoryIdByLegacyCuisine("Restoran")
+      || findCategoryIdByLegacyCuisine("Restoranlar");
   }
 
   function resolveVenueCategory(item) {
