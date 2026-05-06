@@ -512,6 +512,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           body {
             background: #fffaed !important;
           }
+          .global-header-band {
+            padding-top: calc(80px + 1rem) !important;
+          }
           .hero-content {
             background: transparent !important;
             border: none !important;
@@ -524,12 +527,22 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         document.head.appendChild(style);
       }
 
-      // Hide signin icon from footer + distribute remaining 4 icons evenly
+      // Hide signin icon + 4-column grid + brand coloring
       if (!document.getElementById('aramabul-app-nav-css')) {
         var navStyle = document.createElement('style');
         navStyle.id = 'aramabul-app-nav-css';
-        navStyle.textContent = '.mobile-bottom-nav-btn[data-mobile-nav="signin"] { display: none !important; } .mobile-bottom-nav-actions { justify-content: space-around !important; } .mobile-bottom-nav-btn { flex: 1 !important; max-width: 25% !important; }';
+        navStyle.textContent = `
+          .mobile-bottom-nav-btn[data-mobile-nav="signin"] { display: none !important; }
+          .mobile-bottom-nav-actions { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+        `;
         document.head.appendChild(navStyle);
+      }
+
+      // Color the "arama" part of brand wordmark
+      var wm = document.querySelector('.brand-wordmark');
+      if (wm && !wm.dataset.colored) {
+        wm.dataset.colored = '1';
+        wm.innerHTML = '<span style="color:#093827">arama</span>bul';
       }
     ''');
   }
