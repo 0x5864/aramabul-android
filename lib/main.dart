@@ -155,7 +155,9 @@ class _AppEntryPointState extends State<AppEntryPoint> {
 
   Future<void> _handleGoogleSignIn() async {
     try {
-      await GoogleSignIn.instance.initialize();
+      await GoogleSignIn.instance.initialize(
+        serverClientId: '481244794487-v5at2f43oeth0cqef3bhr6u5rc7lo7ef.apps.googleusercontent.com',
+      );
       final account = await GoogleSignIn.instance.authenticate();
       if (account == null) return; // User cancelled
 
