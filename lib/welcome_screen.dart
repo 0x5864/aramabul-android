@@ -176,7 +176,7 @@ class WelcomeScreen extends StatelessWidget {
                             _SocialButtonImage(
                               assetPath: 'assets/welcome/google_g.png',
                               size: 26,
-                              onTap: () => onContinue('register'),
+                              onTap: () => onContinue('google_signin'),
                             ),
                             const SizedBox(width: 20),
                             // Facebook
@@ -184,7 +184,7 @@ class WelcomeScreen extends StatelessWidget {
                               icon: Icons.facebook_rounded,
                               iconSize: 28,
                               color: const Color(0xFF1877F2),
-                              onTap: () => onContinue('register'),
+                              onTap: () => onContinue('facebook_signin'),
                             ),
                             const SizedBox(width: 20),
                             // Apple
@@ -192,7 +192,7 @@ class WelcomeScreen extends StatelessWidget {
                               icon: Icons.apple_rounded,
                               iconSize: 30,
                               color: const Color(0xFF000000),
-                              onTap: () => onContinue('register'),
+                              onTap: () => onContinue('apple_signin'),
                             ),
                           ],
                         ),

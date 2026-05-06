@@ -11,6 +11,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
+import 'package:google_sign_in/google_sign_in.dart';
+
 import 'welcome_screen.dart';
 
 // ---------------------------------------------------------------------------
@@ -100,6 +102,21 @@ class _AppEntryPointState extends State<AppEntryPoint> {
         );
         break;
 
+      case 'google_signin':
+        await _handleGoogleSignIn();
+        break;
+
+      case 'facebook_signin':
+      case 'apple_signin':
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Bu giriş yöntemi yakında aktif olacak.'),
+            backgroundColor: Color(0xFF093827),
+          ),
+        );
+        break;
+
       case 'privacy':
         // Open lightweight policy viewer — can go back to welcome
         Navigator.of(context).push(
@@ -133,6 +150,37 @@ class _AppEntryPointState extends State<AppEntryPoint> {
             builder: (_) => const HomeWebViewPage(),
           ),
         );
+    }
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    try {
+      await GoogleSignIn.instance.initialize();
+      final account = await GoogleSignIn.instance.authenticate();
+      if (account == null) return; // User cancelled
+
+      final name = account.displayName ?? '';
+      final email = account.email;
+
+      // Save session locally
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_kWelcomeSeenKey, true);
+      await prefs.setString('auth_user_name', name);
+      await prefs.setString('auth_user_email', email);
+
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const HomeWebViewPage()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Google ile giriş başarısız: $e'),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
     }
   }
 
