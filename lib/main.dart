@@ -303,8 +303,11 @@ class _AuthPageState extends State<_AuthPage> {
             // Open modal + listen for auth success
             _controller.runJavaScript(
               'setTimeout(function(){'
-              'if(window.ARAMABUL_AUTH_MODAL&&window.ARAMABUL_AUTH_MODAL.open){window.ARAMABUL_AUTH_MODAL.open("${widget.mode}")}'
-              'document.addEventListener("aramabul:authchange",function(){FlutterAuth.postMessage("success")})'
+              'if(window.ARAMABUL_AUTH_MODAL&&window.ARAMABUL_AUTH_MODAL.open){window.ARAMABUL_AUTH_MODAL.open("${widget.mode}");}'
+              'document.addEventListener("aramabul:authchange",function(){FlutterAuth.postMessage("success");});'
+              'var _m=document.querySelector("#globalAuthModal");'
+              'if(_m){var _ob=new MutationObserver(function(){if(_m.classList.contains("is-hidden")){FlutterAuth.postMessage("success");}});'
+              '_ob.observe(_m,{attributes:true,attributeFilter:["class"]});}'
               '},300);'
             );
             if (mounted) setState(() => _isLoading = false);
