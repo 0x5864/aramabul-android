@@ -135,6 +135,20 @@
     photos: photoList,
   };
 
+  function hideLegacyCuisineField() {
+    if (!(fields.cuisine instanceof HTMLElement)) {
+      return;
+    }
+    fields.cuisine.value = "";
+    fields.cuisine.hidden = true;
+    fields.cuisine.disabled = true;
+    const fieldWrap = fields.cuisine.closest("label, .istanbul-filter-field");
+    if (fieldWrap instanceof HTMLElement) {
+      fieldWrap.hidden = true;
+      fieldWrap.style.display = "none";
+    }
+  }
+
   function setFormMessage(message, isError, details = []) {
     if (!message) {
       formMessageNode.hidden = true;
@@ -394,12 +408,17 @@
     return match ? String(match.id) : "";
   }
 
-  function resolveVenueCategory(item) {
-    if (item?.category?.id || item?.category?.name) {
-      return item.category;
+  function findCategoryIdForVenue(item) {
+    const directCategory = state.categories.find((category) => String(category.id) === String(item?.category?.id || ""));
+    if (directCategory) {
+      return String(directCategory.id);
     }
-    const legacyCategoryId = findCategoryIdByLegacyCuisine(item?.cuisine);
-    return state.categories.find((category) => String(category.id) === legacyCategoryId) || null;
+    return findCategoryIdByLegacyCuisine(item?.category?.name) || findCategoryIdByLegacyCuisine(item?.cuisine);
+  }
+
+  function resolveVenueCategory(item) {
+    const categoryId = findCategoryIdForVenue(item);
+    return state.categories.find((category) => String(category.id) === categoryId) || null;
   }
 
   function parseBooleanSelectValue(value, fallback = null) {
@@ -1033,6 +1052,7 @@
   }
 
   function resetForm() {
+    hideLegacyCuisineField();
     form.reset();
     fields.city.value = DEFAULT_ADMIN_CITY;
     fields.temporarilyClosed.value = "false";
@@ -1060,13 +1080,14 @@
   }
 
   function fillForm(item) {
+    hideLegacyCuisineField();
     fields.name.value = item.name || "";
     fields.slug.value = item.slug || "";
     fields.city.value = item.city || DEFAULT_ADMIN_CITY;
     fields.district.value = item.district || "";
     fields.neighborhood.value = item.neighborhood || "";
     syncNeighborhoodDatalist(fields.district, formNeighborhoodDatalist);
-    fields.categoryId.value = item.category?.id ? String(item.category.id) : findCategoryIdByLegacyCuisine(item.cuisine);
+    fields.categoryId.value = findCategoryIdForVenue(item);
     fields.cuisine.value = "";
     fields.budget.value = item.budget || "";
     fields.rating.value = item.rating ?? "";
@@ -1934,6 +1955,7 @@
     }
 
     window.AramaBulAdminAuth.bindSessionUi(session);
+    hideLegacyCuisineField();
     resetListPage();
     resetForm();
     await loadReferenceData();
