@@ -544,6 +544,18 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         wm.dataset.colored = '1';
         wm.innerHTML = '<span style="color:#093827">arama</span>bul';
       }
+
+      // Simplify hero: change h1 + remove description paragraphs
+      var heroH1 = document.querySelector('.section-head h1, .province-head h1');
+      if (heroH1 && !heroH1.dataset.appModified) {
+        heroH1.dataset.appModified = '1';
+        heroH1.textContent = "İstanbul'u keşfet!";
+        // Hide all <p> siblings in the same container
+        var container = heroH1.parentElement;
+        if (container) {
+          container.querySelectorAll('p').forEach(function(p) { p.style.display = 'none'; });
+        }
+      }
     ''');
   }
 
