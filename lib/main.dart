@@ -12,6 +12,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'welcome_screen.dart';
 
@@ -106,12 +107,15 @@ class _AppEntryPointState extends State<AppEntryPoint> {
         await _handleGoogleSignIn();
         break;
 
-      case 'facebook_signin':
       case 'apple_signin':
+        await _handleAppleSignIn();
+        break;
+
+      case 'facebook_signin':
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Bu giriş yöntemi yakında aktif olacak.'),
+            content: Text('Facebook ile giriş yakında aktif olacak.'),
             backgroundColor: Color(0xFF093827),
           ),
         );
@@ -180,6 +184,61 @@ class _AppEntryPointState extends State<AppEntryPoint> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Google ile giriş başarısız: $e'),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
+    }
+  }
+
+  Future<void> _handleAppleSignIn() async {
+    try {
+      // Check if Apple Sign-In is available (iOS only)
+      final isAvailable = await SignInWithApple.isAvailable();
+      if (!isAvailable) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Apple ile giriş bu cihazda desteklenmiyor.'),
+            backgroundColor: Color(0xFF093827),
+          ),
+        );
+        return;
+      }
+
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      final name = [
+        credential.givenName ?? '',
+        credential.familyName ?? '',
+      ].where((s) => s.isNotEmpty).join(' ');
+      final email = credential.email ?? '';
+
+      // Save session locally
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_kWelcomeSeenKey, true);
+      if (name.isNotEmpty) await prefs.setString('auth_user_name', name);
+      if (email.isNotEmpty) await prefs.setString('auth_user_email', email);
+
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => const HomeWebViewPage()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      // User cancelled — don't show error
+      if (e is SignInWithAppleAuthorizationException &&
+          e.code == AuthorizationErrorCode.canceled) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Apple ile giriş başarısız: $e'),
           backgroundColor: Colors.red.shade700,
         ),
       );
