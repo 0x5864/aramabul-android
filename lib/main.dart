@@ -759,7 +759,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-pagination-button { background: #deab6d !important; border-color: #deab6d !important; color: #000 !important; }' +
           '.istanbul-pagination-current { background: #497676 !important; border-color: #497676 !important; color: #fff !important; }' +
           '.istanbul-results-mode { display: none !important; }' +
-          '.istanbul-venue-distance { display: none !important; }';
+          '.istanbul-venue-distance { display: none !important; }' +
+          '.istanbul-favorite-button { background: #deab6d !important; border-color: #deab6d !important; color: #000 !important; }' +
+          '#favoritesTitle { color: #ffffff !important; }' +
+          '.istanbul-results-head h2 { color: #ffffff !important; }';
         document.head.appendChild(style);
       }
 
@@ -820,10 +823,17 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         });
       }
 
-      // Favorites page: rename title
+      // Favorites page: rename title with observer for dynamic content
       var favTitle = document.getElementById('favoritesTitle');
-      if (favTitle && favTitle.textContent.indexOf('Kaydet') !== -1) {
-        favTitle.textContent = 'Favorilerim';
+      if (favTitle) {
+        function fixFavTitle() {
+          if (favTitle.textContent.indexOf('Kaydet') !== -1) {
+            favTitle.textContent = 'Favorilerim';
+          }
+        }
+        fixFavTitle();
+        var favObs = new MutationObserver(fixFavTitle);
+        favObs.observe(favTitle, { childList: true, characterData: true, subtree: true });
       }
 
       // Hide header language switch and apply selected language
