@@ -745,7 +745,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.mobile-bottom-nav-btn.active .mobile-bottom-nav-label { color: #3c4b49 !important; }' +
           '.global-footer, .global-footer-band, .footer-band, .yr-footer { background: transparent !important; border: none !important; color: #ffffff !important; }' +
           '.global-footer a, .global-footer-band a, .footer-band a, .yr-footer a { color: #ffffff !important; }' +
-          '.yr-footer h4 { color: #ffffff !important; }';
+          '.yr-footer h4 { color: #ffffff !important; }' +
+          '.settings-shell, .settings-layout { background: transparent !important; border: none !important; box-shadow: none !important; }' +
+          '.settings-card, .settings-panel-card, .settings-sidebar-card { background: #f4dfc8 !important; border-color: #e8d4b8 !important; border-radius: 8px !important; }' +
+          '.search-page-shell { background: transparent !important; border: none !important; box-shadow: none !important; }' +
+          '.search-page-note { color: #ffffff !important; }' +
+          '.search-page .hero { padding-top: 2.5rem !important; }';
         document.head.appendChild(style);
       }
 
