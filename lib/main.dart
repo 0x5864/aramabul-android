@@ -751,6 +751,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.yr-footer h4 { color: #ffffff !important; }' +
           '.settings-shell, .settings-layout { background: transparent !important; border: none !important; box-shadow: none !important; }' +
           '.settings-card, .settings-panel-card, .settings-sidebar-card { background: #f4dfc8 !important; border-color: #e8d4b8 !important; border-radius: 8px !important; }' +
+          '.settings-feedback-field input, .settings-feedback-field textarea, .settings-feedback-field select, .settings-signup-field input, .settings-feedback-phone-group input { background: #fff !important; color: #000 !important; }' +
           '.search-page-shell { background: transparent !important; border: none !important; box-shadow: none !important; }' +
           '.search-page-note { display: none !important; }' +
           '.search-page .hero { padding-top: 3rem !important; }' +
