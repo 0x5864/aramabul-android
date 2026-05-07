@@ -757,7 +757,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.header-search-btn, .istanbul-discovery-primary-button, .istanbul-filter-nearby-panel-button, .settings-feedback-submit, .settings-signout, .store-badge { background: #deab6d !important; border-color: #deab6d !important; color: #000 !important; }' +
           '.header-search-btn:hover, .istanbul-discovery-primary-button:hover { background: #c9984f !important; }' +
           '.istanbul-pagination-button { background: #deab6d !important; border-color: #deab6d !important; color: #000 !important; }' +
-          '.istanbul-pagination-current { background: #c9984f !important; border-color: #c9984f !important; color: #000 !important; }' +
+          '.istanbul-pagination-current { background: #497676 !important; border-color: #497676 !important; color: #fff !important; }' +
           '.istanbul-results-mode { display: none !important; }' +
           '.istanbul-venue-distance { display: none !important; }';
         document.head.appendChild(style);
