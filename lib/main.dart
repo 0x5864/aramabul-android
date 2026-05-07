@@ -709,8 +709,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         var style = document.createElement('style');
         style.id = 'aramabul-app-css';
         style.textContent = 
-          '@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap");' +
-          'body, * { font-family: "Noto Sans", sans-serif !important; }' +
+          '@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");' +
+          'body, * { font-family: "Plus Jakarta Sans", sans-serif !important; }' +
           'body { background: #497676 !important; }' +
           '.global-header-band { display: none !important; }' +
           '.hero { padding-top: 0 !important; }' +
