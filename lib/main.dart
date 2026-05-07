@@ -710,10 +710,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         style.id = 'aramabul-app-css';
         style.textContent = `
           body {
-            background: #fffaed !important;
+            background: #497676 !important;
           }
           .global-header-band {
-            padding-top: calc(80px + 1rem) !important;
+            display: none !important;
           }
           .hero-content {
             background: transparent !important;
@@ -722,6 +722,13 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             border-radius: 0 !important;
             padding-left: 0 !important;
             padding-right: 0 !important;
+            padding-top: 0 !important;
+          }
+          .hero {
+            padding-top: 0 !important;
+          }
+          .mobile-bottom-nav {
+            background: #497676 !important;
           }
         `;
         document.head.appendChild(style);
@@ -980,7 +987,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
     // Match status bar to the web header color
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Color(0xFFFBF5DF),
+      statusBarColor: Color(0xFF497676),
       statusBarIconBrightness: Brightness.dark,
     ));
 

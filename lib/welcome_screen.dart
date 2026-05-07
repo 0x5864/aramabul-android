@@ -2,11 +2,77 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// Localized strings for the welcome screen.
+const Map<String, Map<String, String>> _welcomeStrings = {
+  'TR': {
+    'hello': 'Merhaba',
+    'subtitle': "AramaBul'a hoşgeldiniz!",
+    'login': 'Giriş Yap',
+    'or': 'veya',
+    'signup_with': 'ile kaydol',
+    'no_account': 'Hesabın yok mu? ',
+    'create_account': 'Hesap Oluştur',
+    'policy': 'Devam ederek Gizlilik Politikası ve\nKullanım Koşullarını kabul etmiş olursunuz.',
+    'privacy': 'Gizlilik Politikası',
+    'terms': 'Kullanım Koşulları',
+  },
+  'EN': {
+    'hello': 'Hello',
+    'subtitle': 'Welcome to AramaBul!',
+    'login': 'Sign In',
+    'or': 'or',
+    'signup_with': 'sign up with',
+    'no_account': "Don't have an account? ",
+    'create_account': 'Create Account',
+    'policy': 'By continuing, you agree to our Privacy Policy\nand Terms of Service.',
+    'privacy': 'Privacy Policy',
+    'terms': 'Terms of Service',
+  },
+  'DE': {
+    'hello': 'Hallo',
+    'subtitle': 'Willkommen bei AramaBul!',
+    'login': 'Anmelden',
+    'or': 'oder',
+    'signup_with': 'registrieren mit',
+    'no_account': 'Kein Konto? ',
+    'create_account': 'Konto erstellen',
+    'policy': 'Durch Fortfahren akzeptieren Sie unsere\nDatenschutzrichtlinie und Nutzungsbedingungen.',
+    'privacy': 'Datenschutzrichtlinie',
+    'terms': 'Nutzungsbedingungen',
+  },
+  'RU': {
+    'hello': 'Привет',
+    'subtitle': 'Добро пожаловать в AramaBul!',
+    'login': 'Войти',
+    'or': 'или',
+    'signup_with': 'зарегистрироваться через',
+    'no_account': 'Нет аккаунта? ',
+    'create_account': 'Создать аккаунт',
+    'policy': 'Продолжая, вы принимаете Политику\nконфиденциальности и Условия использования.',
+    'privacy': 'Политика конфиденциальности',
+    'terms': 'Условия использования',
+  },
+};
+
 /// AramaBul Welcome / Onboarding screen.
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   final void Function(String? route) onContinue;
 
   const WelcomeScreen({super.key, required this.onContinue});
+
+  @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  String _selectedLang = 'TR';
+
+  Map<String, String> get _t => _welcomeStrings[_selectedLang] ?? _welcomeStrings['TR']!;
+
+  void _selectLang(String lang) {
+    setState(() => _selectedLang = lang);
+    widget.onContinue('lang_${lang.toLowerCase()}');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +134,7 @@ class WelcomeScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Merhaba',
+                            _t['hello']!,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 34,
                               fontWeight: FontWeight.w300,
@@ -79,7 +145,7 @@ class WelcomeScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            "AramaBul'a ho\u015fgeldiniz!",
+                            _t['subtitle']!,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 14,
                               fontWeight: FontWeight.w300,
@@ -112,13 +178,13 @@ class WelcomeScreen extends StatelessWidget {
                       children: [
                         // --- Login button ---
                         _ActionButton(
-                          label: 'Giriş Yap',
+                          label: _t['login']!,
                           icon: Icons.login_rounded,
                           gradient: const [
                             Color(0xFF093827),
                             Color(0xFF13690C),
                           ],
-                          onTap: () => onContinue('login'),
+                          onTap: () => widget.onContinue('login'),
                         ),
                         const SizedBox(height: 24),
 
@@ -134,7 +200,7 @@ class WelcomeScreen extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 16),
                               child: Text(
-                                'veya',
+                                _t['or']!,
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: const Color(0xFF162123).withValues(alpha: 0.4),
@@ -159,7 +225,7 @@ class WelcomeScreen extends StatelessWidget {
                             _SocialButtonImage(
                               assetPath: 'assets/welcome/google_g.png',
                               size: 26,
-                              onTap: () => onContinue('google_signin'),
+                              onTap: () => widget.onContinue('google_signin'),
                             ),
                             const SizedBox(width: 20),
                             // Apple
@@ -167,13 +233,13 @@ class WelcomeScreen extends StatelessWidget {
                               icon: Icons.apple_rounded,
                               iconSize: 30,
                               color: const Color(0xFF000000),
-                              onTap: () => onContinue('apple_signin'),
+                              onTap: () => widget.onContinue('apple_signin'),
                             ),
                           ],
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'ile kaydol',
+                          _t['signup_with']!,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 13,
@@ -188,17 +254,17 @@ class WelcomeScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Hesabın yok mu? ',
+                              _t['no_account']!,
                               style: TextStyle(
                                 fontSize: 14,
                                 color: const Color(0xFF162123).withValues(alpha: 0.5),
                               ),
                             ),
                             GestureDetector(
-                              onTap: () => onContinue('register'),
-                              child: const Text(
-                                'Hesap Oluştur',
-                                style: TextStyle(
+                              onTap: () => widget.onContinue('register'),
+                              child: Text(
+                                _t['create_account']!,
+                                style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: Color(0xFF13690C),
@@ -212,7 +278,7 @@ class WelcomeScreen extends StatelessWidget {
 
                         // --- Policy text ---
                         Text(
-                          'Devam ederek Gizlilik Politikası ve\nKullan\u0131m Ko\u015fullar\u0131n\u0131 kabul etmi\u015f olursunuz.',
+                          _t['policy']!,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 12,
@@ -225,8 +291,8 @@ class WelcomeScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             _PolicyLink(
-                              label: 'Gizlilik Politikas\u0131',
-                              onTap: () => onContinue('privacy'),
+                              label: _t['privacy']!,
+                              onTap: () => widget.onContinue('privacy'),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -239,8 +305,8 @@ class WelcomeScreen extends StatelessWidget {
                               ),
                             ),
                             _PolicyLink(
-                              label: 'Kullan\u0131m Ko\u015fullar\u0131',
-                              onTap: () => onContinue('terms'),
+                              label: _t['terms']!,
+                              onTap: () => widget.onContinue('terms'),
                             ),
                           ],
                         ),
@@ -251,13 +317,13 @@ class WelcomeScreen extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            _LangChip(label: 'TR', isSelected: true, onTap: () => onContinue('lang_tr')),
+                            _LangChip(label: 'TR', isSelected: _selectedLang == 'TR', onTap: () => _selectLang('TR')),
                             const SizedBox(width: 4),
-                            _LangChip(label: 'EN', isSelected: false, onTap: () => onContinue('lang_en')),
+                            _LangChip(label: 'EN', isSelected: _selectedLang == 'EN', onTap: () => _selectLang('EN')),
                             const SizedBox(width: 4),
-                            _LangChip(label: 'DE', isSelected: false, onTap: () => onContinue('lang_de')),
+                            _LangChip(label: 'DE', isSelected: _selectedLang == 'DE', onTap: () => _selectLang('DE')),
                             const SizedBox(width: 4),
-                            _LangChip(label: 'RU', isSelected: false, onTap: () => onContinue('lang_ru')),
+                            _LangChip(label: 'RU', isSelected: _selectedLang == 'RU', onTap: () => _selectLang('RU')),
                           ],
                         ),
                       ],
