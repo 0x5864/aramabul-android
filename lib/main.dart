@@ -724,7 +724,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.featured-venues-panel { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; }' +
           '.featured-venues-grid { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; }' +
           '.content-guide { background: #f4dfc8 !important; border: none !important; box-shadow: none !important; border-radius: 8px !important; padding: 16px !important; margin-top: 12px !important; }' +
-          '.home-empty-box, .home-subcategory-list { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; }' +
+          '.home-empty-box { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }' +
+          '.home-subcategory-list { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0.5rem !important; }' +
+          '.home-subcat-chip { border-radius: 8px !important; padding: 0.5rem 0.25rem !important; font-size: 0.8rem !important; }' +
           '.content-guide h2, .content-guide h3, .content-guide p, .content-guide li, .content-guide strong { color: #000 !important; }' +
           '.home-top-category-row { background: transparent !important; }' +
           '.istanbul-venue-card { background: #f4dfc8 !important; border-color: #f4dfc8 !important; }' +
