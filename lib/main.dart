@@ -750,7 +750,11 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.settings-card, .settings-panel-card, .settings-sidebar-card { background: #f4dfc8 !important; border-color: #e8d4b8 !important; border-radius: 8px !important; }' +
           '.search-page-shell { background: transparent !important; border: none !important; box-shadow: none !important; }' +
           '.search-page-note { color: #ffffff !important; }' +
-          '.search-page .hero { padding-top: 2.5rem !important; }';
+          '.search-page .hero { padding-top: 2.5rem !important; }' +
+          '.header-search-btn, .istanbul-discovery-primary-button, .istanbul-filter-nearby-panel-button, .settings-feedback-submit, .settings-signout, .store-badge { background: #deab6d !important; border-color: #deab6d !important; color: #000 !important; }' +
+          '.header-search-btn:hover, .istanbul-discovery-primary-button:hover { background: #c9984f !important; }' +
+          '.istanbul-results-mode { display: none !important; }' +
+          '.istanbul-venue-distance { display: none !important; }';
         document.head.appendChild(style);
       }
 
@@ -797,6 +801,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             if (label) { label.style.color = '#3c4b49'; }
           }
         });
+      }
+
+      // Favorites page: rename title
+      var favTitle = document.getElementById('favoritesTitle');
+      if (favTitle && favTitle.textContent.indexOf('Kaydet') !== -1) {
+        favTitle.textContent = 'Favorilerim';
       }
 
       // Hide header language switch and apply selected language
