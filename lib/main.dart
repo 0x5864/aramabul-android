@@ -715,6 +715,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           .global-header-band {
             display: none !important;
           }
+          .hero {
+            padding-top: 0 !important;
+          }
           .hero-content {
             background: transparent !important;
             border: none !important;
@@ -724,11 +727,53 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             padding-right: 0 !important;
             padding-top: 0 !important;
           }
-          .hero {
-            padding-top: 0 !important;
+
+          /* Remove card outer containers — cards sit directly on bg */
+          .istanbul-discovery-copy,
+          .istanbul-discovery-hero-card,
+          .istanbul-filter-card,
+          .istanbul-results-shell,
+          .venue-detail-main-card,
+          .venue-detail-side-card {
+            border: none !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
           }
+
+          /* Heading & breadcrumb text color #f4dfc8 */
+          .section-head h1,
+          .section-head h2,
+          .section-head h3,
+          .province-head h1,
+          .province-head h2,
+          .province-head h3,
+          .istanbul-discovery-copy h1,
+          .istanbul-discovery-copy h2,
+          .istanbul-discovery-kicker,
+          .istanbul-breadcrumb,
+          .istanbul-breadcrumb a,
+          .istanbul-breadcrumb a:visited,
+          .istanbul-breadcrumb span,
+          .istanbul-discovery-subline {
+            color: #f4dfc8 !important;
+          }
+
+          /* Footer bg */
           .mobile-bottom-nav {
             background: #497676 !important;
+          }
+
+          /* Bottom text (footer area, copyright etc.) on bg */
+          .global-footer,
+          .global-footer-band {
+            background: transparent !important;
+            border: none !important;
+            color: #f4dfc8 !important;
+          }
+          .global-footer a,
+          .global-footer-band a {
+            color: #f4dfc8 !important;
           }
         `;
         document.head.appendChild(style);
