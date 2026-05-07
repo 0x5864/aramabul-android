@@ -69,10 +69,10 @@ class WelcomeScreen extends StatelessWidget {
             children: [
               // --- Hero header ---
               SizedBox(
-                height: screenHeight * 0.48,
+                height: screenHeight * 0.36,
                 child: Padding(
                   padding: EdgeInsets.only(
-                    top: topPadding + 40,
+                    top: topPadding + 24,
                     left: 20,
                     right: 32,
                   ),
@@ -82,25 +82,25 @@ class WelcomeScreen extends StatelessWidget {
                       // App logo — pin with magnifying glass
                       Image.asset(
                         'assets/welcome/app_logo.png',
-                        width: 134,
-                        height: 134,
+                        width: 110,
+                        height: 110,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
                       Text(
                         'Merhaba',
                         style: GoogleFonts.plusJakartaSans(
-                          fontSize: 38,
+                          fontSize: 34,
                           fontWeight: FontWeight.w300,
                           color: Colors.white,
                           letterSpacing: -0.3,
                           height: 1.1,
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 4),
                       Text(
-                        "AramaBul'a hoşgeldiniz!",
+                        "AramaBul'a ho\u015fgeldiniz!",
                         style: GoogleFonts.plusJakartaSans(
-                          fontSize: 15,
+                          fontSize: 14,
                           fontWeight: FontWeight.w300,
                           color: Colors.white70,
                           height: 1.4,
@@ -179,14 +179,6 @@ class WelcomeScreen extends StatelessWidget {
                               onTap: () => onContinue('google_signin'),
                             ),
                             const SizedBox(width: 20),
-                            // Facebook
-                            _SocialButton(
-                              icon: Icons.facebook_rounded,
-                              iconSize: 28,
-                              color: const Color(0xFF1877F2),
-                              onTap: () => onContinue('facebook_signin'),
-                            ),
-                            const SizedBox(width: 20),
                             // Apple
                             _SocialButton(
                               icon: Icons.apple_rounded,
@@ -233,11 +225,27 @@ class WelcomeScreen extends StatelessWidget {
                           ],
                         ),
 
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 24),
+
+                        // --- Language selector ---
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _LangChip(label: 'TR', isSelected: true, onTap: () => onContinue('lang_tr')),
+                            const SizedBox(width: 10),
+                            _LangChip(label: 'EN', isSelected: false, onTap: () => onContinue('lang_en')),
+                            const SizedBox(width: 10),
+                            _LangChip(label: 'DE', isSelected: false, onTap: () => onContinue('lang_de')),
+                            const SizedBox(width: 10),
+                            _LangChip(label: 'RU', isSelected: false, onTap: () => onContinue('lang_ru')),
+                          ],
+                        ),
+
+                        const SizedBox(height: 24),
 
                         // --- Policy text ---
                         Text(
-                          'Devam ederek Gizlilik Politikası ve\nKullanım Koşullarını kabul etmiş olursunuz.',
+                          'Devam ederek Gizlilik Politikası ve\nKullan\u0131m Ko\u015fullar\u0131n\u0131 kabul etmi\u015f olursunuz.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 12,
@@ -250,13 +258,13 @@ class WelcomeScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             _PolicyLink(
-                              label: 'Gizlilik Politikası',
+                              label: 'Gizlilik Politikas\u0131',
                               onTap: () => onContinue('privacy'),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 12),
                               child: Text(
-                                '·',
+                                '\u00b7',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: const Color(0xFF162123).withValues(alpha: 0.2),
@@ -264,7 +272,7 @@ class WelcomeScreen extends StatelessWidget {
                               ),
                             ),
                             _PolicyLink(
-                              label: 'Kullanım Koşulları',
+                              label: 'Kullan\u0131m Ko\u015fullar\u0131',
                               onTap: () => onContinue('terms'),
                             ),
                           ],
@@ -445,6 +453,48 @@ class _PolicyLink extends StatelessWidget {
           fontSize: 13,
           color: Color(0xFF13690C),
           fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+}
+
+class _LangChip extends StatelessWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _LangChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 48,
+        height: 32,
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF093827) : Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFF093827)
+                : const Color(0xFFB8C8DC).withValues(alpha: 0.6),
+          ),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: isSelected ? Colors.white : const Color(0xFF162123),
+            ),
+          ),
         ),
       ),
     );

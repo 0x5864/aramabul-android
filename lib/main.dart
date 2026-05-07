@@ -144,6 +144,23 @@ class _AppEntryPointState extends State<AppEntryPoint> {
         );
         break;
 
+      case 'lang_tr':
+      case 'lang_en':
+      case 'lang_de':
+      case 'lang_ru':
+        final langCode = route!.replaceFirst('lang_', '');
+        final prefsL = await SharedPreferences.getInstance();
+        await prefsL.setString('app_language', langCode);
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(langCode == 'tr' ? 'Dil: Türkçe' : langCode == 'en' ? 'Language: English' : langCode == 'de' ? 'Sprache: Deutsch' : 'Язык: Русский'),
+            backgroundColor: const Color(0xFF093827),
+            duration: const Duration(seconds: 1),
+          ),
+        );
+        break;
+
       default:
         // Guest — just go to home
         final prefsG = await SharedPreferences.getInstance();
@@ -192,8 +209,9 @@ class _AppEntryPointState extends State<AppEntryPoint> {
 
   Future<void> _handleAppleSignIn() async {
     try {
-      // Check if Apple Sign-In is available (iOS only)
+      debugPrint('[AppleSignIn] Starting...');
       final isAvailable = await SignInWithApple.isAvailable();
+      debugPrint('[AppleSignIn] isAvailable: $isAvailable');
       if (!isAvailable) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -212,6 +230,12 @@ class _AppEntryPointState extends State<AppEntryPoint> {
         ],
       );
 
+      debugPrint('[AppleSignIn] Got credential!');
+      debugPrint('[AppleSignIn] givenName: ${credential.givenName}');
+      debugPrint('[AppleSignIn] familyName: ${credential.familyName}');
+      debugPrint('[AppleSignIn] email: ${credential.email}');
+      debugPrint('[AppleSignIn] userIdentifier: ${credential.userIdentifier}');
+
       final name = [
         credential.givenName ?? '',
         credential.familyName ?? '',
@@ -223,17 +247,27 @@ class _AppEntryPointState extends State<AppEntryPoint> {
       await prefs.setBool(_kWelcomeSeenKey, true);
       if (name.isNotEmpty) await prefs.setString('auth_user_name', name);
       if (email.isNotEmpty) await prefs.setString('auth_user_email', email);
+      // Always save the Apple user identifier
+      if (credential.userIdentifier != null) {
+        await prefs.setString('auth_apple_id', credential.userIdentifier!);
+      }
+
+      debugPrint('[AppleSignIn] Prefs saved, navigating to home...');
+      debugPrint('[AppleSignIn] mounted: $mounted');
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const HomeWebViewPage()),
         (route) => false,
       );
-    } catch (e) {
+      debugPrint('[AppleSignIn] Navigation done!');
+    } catch (e, stack) {
+      debugPrint('[AppleSignIn] ERROR: $e');
+      debugPrint('[AppleSignIn] Stack: $stack');
       if (!mounted) return;
-      // User cancelled — don't show error
       if (e is SignInWithAppleAuthorizationException &&
           e.code == AuthorizationErrorCode.canceled) {
+        debugPrint('[AppleSignIn] User cancelled');
         return;
       }
       ScaffoldMessenger.of(context).showSnackBar(
@@ -655,7 +689,20 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         if (searchBtn && favoritesBtn && (searchBtn.compareDocumentPosition(favoritesBtn) & Node.DOCUMENT_POSITION_PRECEDING)) {
           mobileNav.insertBefore(searchBtn, favoritesBtn);
         }
+        // Replace favorites star icon with fav.png heart
+        if (favoritesBtn && !favoritesBtn.dataset.iconSwapped) {
+          favoritesBtn.dataset.iconSwapped = '1';
+          var iconEl = favoritesBtn.querySelector('.mobile-bottom-nav-icon');
+          if (iconEl) {
+            iconEl.textContent = '';
+            iconEl.innerHTML = '<img src="/assets/fav.png" style="width:22px;height:22px;object-fit:contain;" alt="Favoriler">';
+          }
+        }
       }
+
+      // Hide header language switch (managed from welcome screen)
+      var langSwitch = document.querySelector('.lang-switch');
+      if (langSwitch) { langSwitch.style.display = 'none'; }
 
       // Color the "arama" part of brand wordmark
       var wm = document.querySelector('.brand-wordmark');
