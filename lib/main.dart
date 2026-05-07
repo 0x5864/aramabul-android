@@ -754,9 +754,23 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.search-page .hero { padding-top: 2.5rem !important; }' +
           '.header-search-btn, .istanbul-discovery-primary-button, .istanbul-filter-nearby-panel-button, .settings-feedback-submit, .settings-signout, .store-badge { background: #deab6d !important; border-color: #deab6d !important; color: #000 !important; }' +
           '.header-search-btn:hover, .istanbul-discovery-primary-button:hover { background: #c9984f !important; }' +
+          '.istanbul-pagination-button { background: #deab6d !important; border-color: #deab6d !important; color: #000 !important; }' +
+          '.istanbul-pagination-current { background: #c9984f !important; border-color: #c9984f !important; color: #000 !important; }' +
           '.istanbul-results-mode { display: none !important; }' +
           '.istanbul-venue-distance { display: none !important; }';
         document.head.appendChild(style);
+      }
+
+      // Pagination: scroll to first card when page changes
+      var paginationNav = document.getElementById('pagination');
+      if (paginationNav && !paginationNav.dataset.scrollBound) {
+        paginationNav.dataset.scrollBound = '1';
+        paginationNav.addEventListener('click', function() {
+          setTimeout(function() {
+            var firstCard = document.querySelector('.istanbul-venue-card');
+            if (firstCard) { firstCard.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+          }, 300);
+        });
       }
 
       // Hide signin icon + 4-column grid
