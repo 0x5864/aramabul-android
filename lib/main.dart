@@ -720,9 +720,11 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-results-shell { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 8px !important; }' +
           '.istanbul-filter-card { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }' +
           '.istanbul-filter-location-box, .istanbul-filter-section-box { background: #f4dfc8 !important; border: 1px solid #e8d4b8 !important; border-radius: 8px !important; padding: 12px !important; margin-bottom: 8px !important; }' +
-          '.featured-venues-section { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; }' +
-          '.featured-venues-panel, .featured-venues-grid { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }' +
+          '.featured-venues-section { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; }' +
+          '.featured-venues-panel { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; }' +
+          '.featured-venues-grid { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; }' +
           '.content-guide, .home-empty-box, .home-subcategory-list { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; }' +
+          '.content-guide h2, .content-guide h3, .content-guide p, .content-guide li { color: #ffffff !important; }' +
           '.home-top-category-row { background: transparent !important; }' +
           '.istanbul-venue-card { background: #f4dfc8 !important; border-color: #f4dfc8 !important; }' +
           '.istanbul-results-grid { padding: 0 !important; }' +
@@ -781,9 +783,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           if (iconSvg) { iconSvg.style.display = 'none'; }
         }
 
-        // Force active nav icon color to #3c4b49
+        // Force active nav icon color to #3c4b49, non-active white
         mobileNav.querySelectorAll('.mobile-bottom-nav-btn').forEach(function(btn) {
-          var isActive = btn.classList.contains('active') || btn.dataset.mobileNav === 'home';
+          var isActive = btn.classList.contains('active');
           if (isActive) {
             btn.style.filter = 'brightness(0.25)';
             var label = btn.querySelector('.mobile-bottom-nav-label');
