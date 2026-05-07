@@ -708,100 +708,31 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       if (!document.getElementById('aramabul-app-css')) {
         var style = document.createElement('style');
         style.id = 'aramabul-app-css';
-        style.textContent = `
-          body {
-            background: #497676 !important;
-          }
-          .global-header-band {
-            display: none !important;
-          }
-          .hero {
-            padding-top: 0 !important;
-          }
-          .hero-content {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-            padding-top: 0 !important;
-          }
-
-          /* Remove outer shell containers — content sits on bg */
-          .istanbul-discovery-copy,
-          .istanbul-discovery-hero-card,
-          .istanbul-filter-card,
-          .istanbul-results-shell,
-          .venue-detail-main-card,
-          .venue-detail-side-card {
-            border: none !important;
-            background: transparent !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-          }
-
-          /* All venue/category/content cards bg #f4dfc8 */
-          .venue-card,
-          .istanbul-discovery-hero-label,
-          .istanbul-category-card,
-          .istanbul-filter-card-inner,
-          .istanbul-card,
-          .category-card,
-          .mvp-card,
-          .venue-detail-media,
-          .venue-detail-info-card,
-          .venue-detail-reviews-card {
-            background: #f4dfc8 !important;
-          }
-
-          /* Heading & breadcrumb text color #f4dfc8 */
-          .section-head h1,
-          .section-head h2,
-          .section-head h3,
-          .province-head h1,
-          .province-head h2,
-          .province-head h3,
-          .istanbul-discovery-copy h1,
-          .istanbul-discovery-copy h2,
-          .istanbul-discovery-kicker,
-          .istanbul-breadcrumb,
-          .istanbul-breadcrumb a,
-          .istanbul-breadcrumb a:visited,
-          .istanbul-breadcrumb span,
-          .istanbul-discovery-subline,
-          .istanbul-discovery-location-note {
-            color: #f4dfc8 !important;
-          }
-
-          /* Footer bg */
-          .mobile-bottom-nav {
-            background: #497676 !important;
-          }
-
-          /* Bottom text (footer area, copyright etc.) on bg */
-          .global-footer,
-          .global-footer-band {
-            background: transparent !important;
-            border: none !important;
-            color: #f4dfc8 !important;
-          }
-          .global-footer a,
-          .global-footer-band a {
-            color: #f4dfc8 !important;
-          }
-        `;
+        style.textContent = 
+          'body { background: #497676 !important; }' +
+          '.global-header-band { display: none !important; }' +
+          '.hero { padding-top: 0 !important; }' +
+          '.hero-content { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }' +
+          '.istanbul-discovery-copy, .istanbul-discovery-hero-card, .istanbul-filter-card, .istanbul-results-shell, .venue-detail-main-card, .venue-detail-side-card { border: none !important; background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }' +
+          '.istanbul-venue-card { background: #f4dfc8 !important; border-color: #f4dfc8 !important; }' +
+          '.home-subcat-chip { background: #f4dfc8 !important; border-color: #d4c4a8 !important; }' +
+          '.top-city-card, .category-home-card { background: #f4dfc8 !important; }' +
+          '.istanbul-discovery-hero-label { background: #f4dfc8 !important; }' +
+          '.venue-detail-media, .venue-detail-info, .venue-detail-reviews, .venue-detail-review-form { background: #f4dfc8 !important; border-color: #f4dfc8 !important; }' +
+          '.section-head h1, .section-head h2, .section-head h3, .province-head h1, .province-head h2, .province-head h3, .istanbul-discovery-copy h1, .istanbul-discovery-copy h2, .istanbul-discovery-kicker, .istanbul-breadcrumb, .istanbul-breadcrumb a, .istanbul-breadcrumb a:visited, .istanbul-breadcrumb span, .istanbul-discovery-subline, .istanbul-discovery-location-note { color: #f4dfc8 !important; }' +
+          '.mobile-bottom-nav { background: #497676 !important; }' +
+          '.global-footer, .global-footer-band, .footer-band { background: transparent !important; border: none !important; color: #f4dfc8 !important; }' +
+          '.global-footer a, .global-footer-band a, .footer-band a { color: #f4dfc8 !important; }';
         document.head.appendChild(style);
       }
 
-      // Hide signin icon + 4-column grid + brand coloring
+      // Hide signin icon + 4-column grid
       if (!document.getElementById('aramabul-app-nav-css')) {
         var navStyle = document.createElement('style');
         navStyle.id = 'aramabul-app-nav-css';
-        navStyle.textContent = `
-          .mobile-bottom-nav-btn[data-mobile-nav="signin"] { display: none !important; }
-          .mobile-bottom-nav-actions { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
-        `;
+        navStyle.textContent = 
+          '.mobile-bottom-nav-btn[data-mobile-nav="signin"] { display: none !important; }' +
+          '.mobile-bottom-nav-actions { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }';
         document.head.appendChild(navStyle);
       }
 
