@@ -728,7 +728,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             padding-top: 0 !important;
           }
 
-          /* Remove card outer containers — cards sit directly on bg */
+          /* Remove outer shell containers — content sits on bg */
           .istanbul-discovery-copy,
           .istanbul-discovery-hero-card,
           .istanbul-filter-card,
@@ -739,6 +739,20 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             background: transparent !important;
             box-shadow: none !important;
             border-radius: 0 !important;
+          }
+
+          /* All venue/category/content cards bg #f4dfc8 */
+          .venue-card,
+          .istanbul-discovery-hero-label,
+          .istanbul-category-card,
+          .istanbul-filter-card-inner,
+          .istanbul-card,
+          .category-card,
+          .mvp-card,
+          .venue-detail-media,
+          .venue-detail-info-card,
+          .venue-detail-reviews-card {
+            background: #f4dfc8 !important;
           }
 
           /* Heading & breadcrumb text color #f4dfc8 */
@@ -755,7 +769,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           .istanbul-breadcrumb a,
           .istanbul-breadcrumb a:visited,
           .istanbul-breadcrumb span,
-          .istanbul-discovery-subline {
+          .istanbul-discovery-subline,
+          .istanbul-discovery-location-note {
             color: #f4dfc8 !important;
           }
 
