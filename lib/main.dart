@@ -714,22 +714,22 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.hero { padding-top: 0 !important; }' +
           '.hero-content { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }' +
           '.istanbul-discovery-copy, .istanbul-discovery-hero-card, .istanbul-filter-card { border: none !important; background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }' +
-          '.home-category-band, .home-featured-band, .home-category-shell, .home-subcat-grid-wrap, .istanbul-results-shell { border: none !important; background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }' +
+          '.featured-venues-section, .featured-venues-panel, .featured-venues-grid { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; }' +
+          '.content-guide, .home-empty-box, .home-subcategory-list { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; }' +
+          '.home-top-category-row { background: transparent !important; }' +
           '.istanbul-venue-card { background: #f4dfc8 !important; border-color: #f4dfc8 !important; }' +
           '.home-subcat-chip { background: #f4dfc8 !important; border-color: #d4c4a8 !important; }' +
           '.top-city-card, .category-home-card { background: #f4dfc8 !important; }' +
           '.istanbul-discovery-hero-label { background: #f4dfc8 !important; }' +
+          '.istanbul-venue-tag { background: #f4dfc8 !important; border-color: #d4c4a8 !important; }' +
+          '.istanbul-filter-nearby-panel-button, .istanbul-discovery-primary-button { background: #deab6d !important; border-color: #deab6d !important; }' +
           '.venue-detail-main-card, .venue-detail-side-card { background: #f4dfc8 !important; border-color: #e8d4b8 !important; border-radius: 8px !important; }' +
           '.venue-detail-media, .venue-detail-info, .venue-detail-reviews, .venue-detail-review-form { background: #f4dfc8 !important; border-color: #f4dfc8 !important; }' +
           '.section-head h1, .section-head h2, .section-head h3, .province-head h1, .province-head h2, .province-head h3, .istanbul-discovery-copy h1, .istanbul-discovery-copy h2 { color: #cccccc !important; font-weight: 700 !important; }' +
           '.istanbul-discovery-kicker, .istanbul-breadcrumb, .istanbul-breadcrumb a, .istanbul-breadcrumb a:visited, .istanbul-breadcrumb span, .istanbul-discovery-subline, .istanbul-discovery-location-note { color: #cccccc !important; }' +
           '.mobile-bottom-nav { background: #497676 !important; }' +
-          '.mobile-bottom-nav-btn.is-active .mobile-bottom-nav-icon-svg { color: #3c4b49 !important; }' +
-          '.mobile-bottom-nav-btn.is-active .mobile-bottom-nav-label { color: #3c4b49 !important; }' +
-          '.mobile-bottom-nav-btn.is-active svg path { fill: #3c4b49 !important; }' +
-          '.mobile-bottom-nav-btn[aria-current] .mobile-bottom-nav-icon-svg { color: #3c4b49 !important; }' +
-          '.mobile-bottom-nav-btn[aria-current] .mobile-bottom-nav-label { color: #3c4b49 !important; }' +
-          '.mobile-bottom-nav-btn[aria-current] svg path { fill: #3c4b49 !important; }' +
+          '.mobile-bottom-nav-btn.active .mobile-bottom-nav-chip { filter: brightness(0.3) !important; }' +
+          '.mobile-bottom-nav-btn.active .mobile-bottom-nav-label { color: #3c4b49 !important; }' +
           '.global-footer, .global-footer-band, .footer-band { background: transparent !important; border: none !important; color: #cccccc !important; }' +
           '.global-footer a, .global-footer-band a, .footer-band a { color: #cccccc !important; }';
         document.head.appendChild(style);
@@ -771,14 +771,11 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
         // Force active nav icon color to #3c4b49
         mobileNav.querySelectorAll('.mobile-bottom-nav-btn').forEach(function(btn) {
-          var isActive = btn.classList.contains('is-active') || btn.hasAttribute('aria-current') || btn.dataset.mobileNav === 'home';
+          var isActive = btn.classList.contains('active') || btn.dataset.mobileNav === 'home';
           if (isActive) {
-            var svgPaths = btn.querySelectorAll('svg path');
-            svgPaths.forEach(function(p) { p.setAttribute('fill', '#3c4b49'); p.setAttribute('stroke', '#3c4b49'); });
+            btn.style.filter = 'brightness(0.25)';
             var label = btn.querySelector('.mobile-bottom-nav-label');
             if (label) { label.style.color = '#3c4b49'; }
-            var svgEl = btn.querySelector('.mobile-bottom-nav-icon-svg');
-            if (svgEl) { svgEl.style.color = '#3c4b49'; }
           }
         });
       }
