@@ -715,11 +715,17 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.global-header-band { display: none !important; }' +
           '.hero { padding-top: 0 !important; }' +
           '.hero-content { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }' +
-          '.istanbul-discovery-copy, .istanbul-discovery-hero-card, .istanbul-filter-card { border: none !important; background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }' +
-          '.featured-venues-section, .featured-venues-panel, .featured-venues-grid { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; }' +
+          '.istanbul-discovery-shell { background: transparent !important; }' +
+          '.istanbul-discovery-copy, .istanbul-discovery-hero-card { border: none !important; background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }' +
+          '.istanbul-results-shell { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 8px !important; }' +
+          '.istanbul-filter-card { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }' +
+          '.istanbul-filter-location-box, .istanbul-filter-section-box { background: #f4dfc8 !important; border: 1px solid #e8d4b8 !important; border-radius: 8px !important; padding: 12px !important; margin-bottom: 8px !important; }' +
+          '.featured-venues-section { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 8px !important; }' +
+          '.featured-venues-panel, .featured-venues-grid { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }' +
           '.content-guide, .home-empty-box, .home-subcategory-list { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; }' +
           '.home-top-category-row { background: transparent !important; }' +
-          '.istanbul-venue-card { background: #f4dfc8 !important; border-color: #f4dfc8 !important; }' +
+          '.istanbul-venue-card { background: #f4dfc8 !important; border-color: #f4dfc8 !important; width: 100% !important; max-width: 100% !important; }' +
+          '.istanbul-results-grid { padding: 0 !important; }' +
           '.home-subcat-chip { background: #f4dfc8 !important; border-color: #d4c4a8 !important; }' +
           '.top-city-card, .category-home-card { background: #f4dfc8 !important; }' +
           '.istanbul-discovery-hero-label { background: #f4dfc8 !important; }' +
@@ -729,11 +735,13 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.venue-detail-media, .venue-detail-info, .venue-detail-reviews, .venue-detail-review-form { background: #f4dfc8 !important; border-color: #f4dfc8 !important; }' +
           '.section-head h1, .section-head h2, .section-head h3, .province-head h1, .province-head h2, .province-head h3, .istanbul-discovery-copy h1, .istanbul-discovery-copy h2 { color: #cccccc !important; font-weight: 700 !important; margin-bottom: 0.75rem !important; }' +
           '.istanbul-discovery-kicker, .istanbul-breadcrumb, .istanbul-breadcrumb a, .istanbul-breadcrumb a:visited, .istanbul-breadcrumb span, .istanbul-discovery-subline, .istanbul-discovery-location-note { color: #cccccc !important; }' +
+          '.istanbul-results-meta, .istanbul-results-state { color: #cccccc !important; }' +
           '.mobile-bottom-nav { background: #497676 !important; }' +
           '.mobile-bottom-nav-btn.active .mobile-bottom-nav-chip { filter: brightness(0.3) !important; }' +
           '.mobile-bottom-nav-btn.active .mobile-bottom-nav-label { color: #3c4b49 !important; }' +
-          '.global-footer, .global-footer-band, .footer-band { background: transparent !important; border: none !important; color: #cccccc !important; }' +
-          '.global-footer a, .global-footer-band a, .footer-band a { color: #cccccc !important; }';
+          '.global-footer, .global-footer-band, .footer-band, .yr-footer { background: transparent !important; border: none !important; color: #cccccc !important; }' +
+          '.global-footer a, .global-footer-band a, .footer-band a, .yr-footer a { color: #cccccc !important; }' +
+          '.yr-footer h4 { color: #cccccc !important; }';
         document.head.appendChild(style);
       }
 
