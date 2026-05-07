@@ -709,6 +709,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         var style = document.createElement('style');
         style.id = 'aramabul-app-css';
         style.textContent = 
+          '@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap");' +
+          'body, * { font-family: "Noto Sans", sans-serif !important; }' +
           'body { background: #497676 !important; }' +
           '.global-header-band { display: none !important; }' +
           '.hero { padding-top: 0 !important; }' +
@@ -725,7 +727,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-filter-nearby-panel-button, .istanbul-discovery-primary-button { background: #deab6d !important; border-color: #deab6d !important; }' +
           '.venue-detail-main-card, .venue-detail-side-card { background: #f4dfc8 !important; border-color: #e8d4b8 !important; border-radius: 8px !important; }' +
           '.venue-detail-media, .venue-detail-info, .venue-detail-reviews, .venue-detail-review-form { background: #f4dfc8 !important; border-color: #f4dfc8 !important; }' +
-          '.section-head h1, .section-head h2, .section-head h3, .province-head h1, .province-head h2, .province-head h3, .istanbul-discovery-copy h1, .istanbul-discovery-copy h2 { color: #cccccc !important; font-weight: 700 !important; }' +
+          '.section-head h1, .section-head h2, .section-head h3, .province-head h1, .province-head h2, .province-head h3, .istanbul-discovery-copy h1, .istanbul-discovery-copy h2 { color: #cccccc !important; font-weight: 700 !important; margin-bottom: 0.75rem !important; }' +
           '.istanbul-discovery-kicker, .istanbul-breadcrumb, .istanbul-breadcrumb a, .istanbul-breadcrumb a:visited, .istanbul-breadcrumb span, .istanbul-discovery-subline, .istanbul-discovery-location-note { color: #cccccc !important; }' +
           '.mobile-bottom-nav { background: #497676 !important; }' +
           '.mobile-bottom-nav-btn.active .mobile-bottom-nav-chip { filter: brightness(0.3) !important; }' +
