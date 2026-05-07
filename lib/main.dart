@@ -14,6 +14,7 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'welcome_screen.dart';
 
@@ -40,6 +41,8 @@ String _globalAppLanguage = 'TR';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Initialize AdMob SDK
+  await MobileAds.instance.initialize();
   // Load saved language
   final prefs = await SharedPreferences.getInstance();
   final savedLang = prefs.getString('app_language');
@@ -565,6 +568,17 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   bool _isOffline = false;
 
   // ---------------------------------------------------------------------------
+  // AdMob
+  // ---------------------------------------------------------------------------
+  static const String _bannerAdUnitId = 'ca-app-pub-3016888060216617/1160159725';
+  static const String _interstitialAdUnitId = 'ca-app-pub-3016888060216617/4706248955';
+  BannerAd? _bannerAd;
+  bool _isBannerReady = false;
+  InterstitialAd? _interstitialAd;
+  int _pageNavigationCount = 0;
+  static const int _interstitialInterval = 5; // Show interstitial every N pages
+
+  // ---------------------------------------------------------------------------
   // URL helpers
   // ---------------------------------------------------------------------------
 
@@ -925,6 +939,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     super.initState();
 
     _startConnectivityWatch();
+    _loadBannerAd();
+    _loadInterstitialAd();
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -945,6 +961,11 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             if (!mounted) return;
             // Re-inject to ensure all styles are applied
             _injectAppFlag();
+            // Track page navigations for interstitial ads
+            _pageNavigationCount++;
+            if (_pageNavigationCount > 1 && _pageNavigationCount % _interstitialInterval == 0) {
+              _showInterstitialAd();
+            }
             // Small delay to let CSS paint before revealing
             Future.delayed(const Duration(milliseconds: 150), () {
               if (!mounted) return;
@@ -1003,9 +1024,80 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     _loadInitialPage();
   }
 
+  // ---------------------------------------------------------------------------
+  // AdMob: Banner
+  // ---------------------------------------------------------------------------
+  void _loadBannerAd() {
+    _bannerAd = BannerAd(
+      adUnitId: _bannerAdUnitId,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          if (!mounted) return;
+          setState(() => _isBannerReady = true);
+          debugPrint('[AdMob] Banner loaded');
+        },
+        onAdFailedToLoad: (ad, error) {
+          debugPrint('[AdMob] Banner failed: ${error.message}');
+          ad.dispose();
+          _bannerAd = null;
+          _isBannerReady = false;
+          // Retry after 60 seconds
+          Future.delayed(const Duration(seconds: 60), () {
+            if (mounted) _loadBannerAd();
+          });
+        },
+      ),
+    )..load();
+  }
+
+  // ---------------------------------------------------------------------------
+  // AdMob: Interstitial
+  // ---------------------------------------------------------------------------
+  void _loadInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: _interstitialAdUnitId,
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          _interstitialAd = ad;
+          debugPrint('[AdMob] Interstitial loaded');
+        },
+        onAdFailedToLoad: (error) {
+          debugPrint('[AdMob] Interstitial failed: ${error.message}');
+          _interstitialAd = null;
+          // Retry after 60 seconds
+          Future.delayed(const Duration(seconds: 60), () {
+            if (mounted) _loadInterstitialAd();
+          });
+        },
+      ),
+    );
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd == null) return;
+    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (ad) {
+        ad.dispose();
+        _loadInterstitialAd(); // Pre-load next one
+      },
+      onAdFailedToShowFullScreenContent: (ad, error) {
+        debugPrint('[AdMob] Interstitial show failed: ${error.message}');
+        ad.dispose();
+        _loadInterstitialAd();
+      },
+    );
+    _interstitialAd!.show();
+    _interstitialAd = null;
+  }
+
   @override
   void dispose() {
     _connectivitySub.cancel();
+    _bannerAd?.dispose();
+    _interstitialAd?.dispose();
     super.dispose();
   }
 
@@ -1140,6 +1232,14 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                 ],
               ),
             ),
+            // AdMob Banner Ad
+            if (_isBannerReady && _bannerAd != null)
+              Container(
+                color: const Color(0xFF497676),
+                width: double.infinity,
+                height: _bannerAd!.size.height.toDouble(),
+                child: AdWidget(ad: _bannerAd!),
+              ),
           ],
         ),
       ),
