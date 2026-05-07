@@ -561,6 +561,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   int _progress = 0;
   String? _lastError;
   bool _hasLoadedAtLeastOnce = false;
+  bool _isPageTransitioning = false;
   bool _isOffline = false;
 
   // ---------------------------------------------------------------------------
@@ -924,17 +925,25 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             setState(() {
               _isLoading = true;
               _lastError = null;
+              _isPageTransitioning = true;
             });
+            // Early CSS injection to minimize flash of unstyled content
+            _injectAppFlag();
           },
           onPageFinished: (_) {
             if (!mounted) return;
-            setState(() {
-              _isLoading = false;
-              _lastError = null;
-              _hasLoadedAtLeastOnce = true;
-            });
-            // Inject the app flag every time a page finishes loading.
+            // Re-inject to ensure all styles are applied
             _injectAppFlag();
+            // Small delay to let CSS paint before revealing
+            Future.delayed(const Duration(milliseconds: 150), () {
+              if (!mounted) return;
+              setState(() {
+                _isLoading = false;
+                _lastError = null;
+                _hasLoadedAtLeastOnce = true;
+                _isPageTransitioning = false;
+              });
+            });
           },
           onProgress: (value) {
             if (!mounted) return;
@@ -1108,6 +1117,15 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                 children: [
                   WebViewWidget(controller: _controller),
                   if (_lastError != null) _buildErrorOverlay(),
+                  // Theme overlay to prevent flash of unstyled content
+                  if (_isPageTransitioning && _hasLoadedAtLeastOnce)
+                    Positioned.fill(
+                      child: AnimatedOpacity(
+                        opacity: _isPageTransitioning ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 200),
+                        child: Container(color: const Color(0xFF497676)),
+                      ),
+                    ),
                 ],
               ),
             ),
