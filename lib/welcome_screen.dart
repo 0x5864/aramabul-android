@@ -82,8 +82,8 @@ class WelcomeScreen extends StatelessWidget {
                       // App logo — pin with magnifying glass
                       Image.asset(
                         'assets/welcome/app_logo.png',
-                        width: 110,
-                        height: 110,
+                        width: 132,
+                        height: 132,
                       ),
                       const SizedBox(height: 12),
                       Text(
@@ -232,11 +232,11 @@ class WelcomeScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             _LangChip(label: 'TR', isSelected: true, onTap: () => onContinue('lang_tr')),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 4),
                             _LangChip(label: 'EN', isSelected: false, onTap: () => onContinue('lang_en')),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 4),
                             _LangChip(label: 'DE', isSelected: false, onTap: () => onContinue('lang_de')),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: 4),
                             _LangChip(label: 'RU', isSelected: false, onTap: () => onContinue('lang_ru')),
                           ],
                         ),
@@ -475,11 +475,11 @@ class _LangChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 48,
-        height: 32,
+        width: 40,
+        height: 40,
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF093827) : Colors.white,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(6),
           border: Border.all(
             color: isSelected
                 ? const Color(0xFF093827)

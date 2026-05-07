@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -174,6 +175,35 @@ class _AppEntryPointState extends State<AppEntryPoint> {
     }
   }
 
+  /// Register social login user with backend
+  Future<void> _registerSocialLogin({
+    required String provider,
+    required String email,
+    required String name,
+    String? providerId,
+  }) async {
+    try {
+      final client = HttpClient();
+      final request = await client.postUrl(
+        Uri.parse('https://aramabul.com/api/auth/social-login'),
+      );
+      request.headers.set('Content-Type', 'application/json');
+      request.write(jsonEncode({
+        'provider': provider,
+        'email': email,
+        'name': name,
+        'providerId': providerId ?? '',
+      }));
+      final response = await request.close();
+      final body = await response.transform(utf8.decoder).join();
+      debugPrint('[SocialLogin] $provider -> ${response.statusCode}: $body');
+      client.close();
+    } catch (e) {
+      debugPrint('[SocialLogin] Backend registration failed: $e');
+      // Don't block login — just log the error
+    }
+  }
+
   Future<void> _handleGoogleSignIn() async {
     try {
       await GoogleSignIn.instance.initialize(
@@ -190,6 +220,14 @@ class _AppEntryPointState extends State<AppEntryPoint> {
       await prefs.setBool(_kWelcomeSeenKey, true);
       await prefs.setString('auth_user_name', name);
       await prefs.setString('auth_user_email', email);
+
+      // Register with backend (fire-and-forget)
+      _registerSocialLogin(
+        provider: 'google',
+        email: email,
+        name: name,
+        providerId: account.id,
+      );
 
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
@@ -251,6 +289,14 @@ class _AppEntryPointState extends State<AppEntryPoint> {
       if (credential.userIdentifier != null) {
         await prefs.setString('auth_apple_id', credential.userIdentifier!);
       }
+
+      // Register with backend (fire-and-forget)
+      _registerSocialLogin(
+        provider: 'apple',
+        email: email,
+        name: name,
+        providerId: credential.userIdentifier,
+      );
 
       debugPrint('[AppleSignIn] Prefs saved, navigating to home...');
       debugPrint('[AppleSignIn] mounted: $mounted');
@@ -692,11 +738,17 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         // Replace favorites star icon with fav.png heart
         if (favoritesBtn && !favoritesBtn.dataset.iconSwapped) {
           favoritesBtn.dataset.iconSwapped = '1';
-          var iconEl = favoritesBtn.querySelector('.mobile-bottom-nav-icon');
-          if (iconEl) {
-            iconEl.textContent = '';
-            iconEl.innerHTML = '<img src="/assets/fav.png" style="width:22px;height:22px;object-fit:contain;" alt="Favoriler">';
+          var chip = favoritesBtn.querySelector('.mobile-bottom-nav-chip');
+          if (chip) { chip.classList.remove('icon-load-failed'); }
+          var iconImg = favoritesBtn.querySelector('.mobile-bottom-nav-icon-img');
+          if (iconImg) {
+            iconImg.src = 'https://aramabul.com/assets/fav.png';
+            iconImg.style.display = 'block';
+            iconImg.style.width = '22px';
+            iconImg.style.height = '22px';
           }
+          var iconSvg = favoritesBtn.querySelector('.mobile-bottom-nav-icon-svg');
+          if (iconSvg) { iconSvg.style.display = 'none'; }
         }
       }
 
@@ -905,7 +957,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
     // Match status bar to the web header color
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Color(0xFFFDEFD6),
+      statusBarColor: Color(0xFFFBF5DF),
       statusBarIconBrightness: Brightness.dark,
     ));
 
