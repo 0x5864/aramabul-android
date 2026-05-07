@@ -35,8 +35,17 @@ const String kAppVersion = '1.2.0';
 
 const String _kWelcomeSeenKey = 'welcome_seen';
 
-void main() {
+/// Global app language selected on welcome screen (e.g. 'TR', 'EN', 'DE', 'RU')
+String _globalAppLanguage = 'TR';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Load saved language
+  final prefs = await SharedPreferences.getInstance();
+  final savedLang = prefs.getString('app_language');
+  if (savedLang != null && savedLang.isNotEmpty) {
+    _globalAppLanguage = savedLang.toUpperCase();
+  }
   runApp(const AramaBulApp());
 }
 
@@ -160,6 +169,8 @@ class _AppEntryPointState extends State<AppEntryPoint> {
             duration: const Duration(seconds: 1),
           ),
         );
+        // Store globally so HomeWebViewPage can use it
+        _globalAppLanguage = langCode.toUpperCase();
         break;
 
       default:
@@ -752,9 +763,21 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         }
       }
 
-      // Hide header language switch (managed from welcome screen)
+      // Hide header language switch and apply selected language
       var langSwitch = document.querySelector('.lang-switch');
       if (langSwitch) { langSwitch.style.display = 'none'; }
+
+      // Apply app language to website
+      var appLang = '$_globalAppLanguage';
+      if (appLang && appLang !== 'TR') {
+        window.ARAMABUL_CURRENT_LANGUAGE = appLang;
+        // Click the matching lang option to trigger native site translation
+        var langBtn = document.querySelector('[data-lang-option="' + appLang + '"]');
+        if (langBtn && !document.body.dataset.appLangApplied) {
+          document.body.dataset.appLangApplied = '1';
+          langBtn.click();
+        }
+      }
 
       // Color the "arama" part of brand wordmark
       var wm = document.querySelector('.brand-wordmark');

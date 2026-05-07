@@ -21,93 +21,76 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // --- Background gradient ---
+          // --- Background ---
           Container(
             color: const Color(0xFF093827),
-          ),
-
-          // --- Decorative circles ---
-          Positioned(
-            top: -40,
-            right: -30,
-            child: Container(
-              width: 180,
-              height: 180,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.04),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 100,
-            right: 50,
-            child: Container(
-              width: 90,
-              height: 90,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.03),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 40,
-            left: -50,
-            child: Container(
-              width: 140,
-              height: 140,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.025),
-              ),
-            ),
           ),
 
           // --- Content ---
           Column(
             children: [
-              // --- Hero header ---
+              // --- Hero header with forest background ---
               SizedBox(
-                height: screenHeight * 0.36,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    top: topPadding + 24,
-                    left: 20,
-                    right: 32,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // App logo — pin with magnifying glass
-                      Image.asset(
-                        'assets/welcome/app_logo.png',
-                        width: 132,
-                        height: 132,
+                height: screenHeight * 0.32,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // Forest background image
+                    ClipRRect(
+                      child: Image.asset(
+                        'assets/welcome/forest.jpg',
+                        fit: BoxFit.cover,
                       ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Merhaba',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 34,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.white,
-                          letterSpacing: -0.3,
-                          height: 1.1,
+                    ),
+                    // Dark overlay for text readability
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            const Color(0xFF093827).withValues(alpha: 0.5),
+                            const Color(0xFF093827).withValues(alpha: 0.85),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "AramaBul'a ho\u015fgeldiniz!",
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.white70,
-                          height: 1.4,
-                        ),
+                    ),
+                    // Text content
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: topPadding + 24,
+                        left: 24,
+                        right: 32,
+                        bottom: 24,
                       ),
-                    ],
-                  ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Merhaba',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 34,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white,
+                              letterSpacing: -0.3,
+                              height: 1.1,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "AramaBul'a ho\u015fgeldiniz!",
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white70,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
 
@@ -227,22 +210,6 @@ class WelcomeScreen extends StatelessWidget {
 
                         const SizedBox(height: 24),
 
-                        // --- Language selector ---
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _LangChip(label: 'TR', isSelected: true, onTap: () => onContinue('lang_tr')),
-                            const SizedBox(width: 4),
-                            _LangChip(label: 'EN', isSelected: false, onTap: () => onContinue('lang_en')),
-                            const SizedBox(width: 4),
-                            _LangChip(label: 'DE', isSelected: false, onTap: () => onContinue('lang_de')),
-                            const SizedBox(width: 4),
-                            _LangChip(label: 'RU', isSelected: false, onTap: () => onContinue('lang_ru')),
-                          ],
-                        ),
-
-                        const SizedBox(height: 24),
-
                         // --- Policy text ---
                         Text(
                           'Devam ederek Gizlilik Politikası ve\nKullan\u0131m Ko\u015fullar\u0131n\u0131 kabul etmi\u015f olursunuz.',
@@ -275,6 +242,22 @@ class WelcomeScreen extends StatelessWidget {
                               label: 'Kullan\u0131m Ko\u015fullar\u0131',
                               onTap: () => onContinue('terms'),
                             ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // --- Language selector (bottom) ---
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _LangChip(label: 'TR', isSelected: true, onTap: () => onContinue('lang_tr')),
+                            const SizedBox(width: 4),
+                            _LangChip(label: 'EN', isSelected: false, onTap: () => onContinue('lang_en')),
+                            const SizedBox(width: 4),
+                            _LangChip(label: 'DE', isSelected: false, onTap: () => onContinue('lang_de')),
+                            const SizedBox(width: 4),
+                            _LangChip(label: 'RU', isSelected: false, onTap: () => onContinue('lang_ru')),
                           ],
                         ),
                       ],
@@ -491,7 +474,7 @@ class _LangChip extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 13,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w400,
               color: isSelected ? Colors.white : const Color(0xFF162123),
             ),
           ),
