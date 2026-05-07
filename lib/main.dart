@@ -277,6 +277,10 @@ class _AppEntryPointState extends State<AppEntryPoint> {
           AppleIDAuthorizationScopes.email,
           AppleIDAuthorizationScopes.fullName,
         ],
+        webAuthenticationOptions: WebAuthenticationOptions(
+          clientId: 'com.aramabul.app.signin',
+          redirectUri: Uri.parse('https://aramabul.com/api/auth/apple-callback'),
+        ),
       );
 
       debugPrint('[AppleSignIn] Got credential!');
