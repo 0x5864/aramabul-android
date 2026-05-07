@@ -702,12 +702,23 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   /// it is running inside the Android app.
   /// Also inject CSS overrides for app-specific visual fixes.
   Future<void> _injectAppFlag() async {
+    // Read auth from SharedPreferences to sync with WebView
+    final prefs = await SharedPreferences.getInstance();
+    final authName = prefs.getString('auth_user_name') ?? '';
+    final authEmail = prefs.getString('auth_user_email') ?? '';
+    final authSessionJson = (authName.isNotEmpty && authEmail.isNotEmpty)
+        ? '{"name":"${authName.replaceAll('"', '\\"')}","email":"${authEmail.replaceAll('"', '\\"')}"}'
+        : '';
+
     await _controller.runJavaScript('''
       window.__ARAMABUL_APP__ = {
         platform: 'android',
         version: '$kAppVersion',
         isApp: true
       };
+
+      // Sync auth session from native app to WebView localStorage
+      ${authSessionJson.isNotEmpty ? "try { localStorage.setItem('aramabul.auth.session.v1', '$authSessionJson'); document.dispatchEvent(new CustomEvent('aramabul:authchange')); } catch(e) {}" : ""}
 
       // Inject app-specific CSS fixes
       if (!document.getElementById('aramabul-app-css')) {
