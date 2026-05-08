@@ -227,14 +227,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                               size: 26,
                               onTap: () => widget.onContinue('google_signin'),
                             ),
-                            const SizedBox(width: 20),
-                            // Apple
-                            _SocialButton(
-                              icon: Icons.apple_rounded,
-                              iconSize: 30,
-                              color: const Color(0xFF000000),
-                              onTap: () => widget.onContinue('apple_signin'),
-                            ),
                           ],
                         ),
                         const SizedBox(height: 8),
