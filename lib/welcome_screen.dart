@@ -89,7 +89,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         children: [
           // --- Background ---
           Container(
-            color: const Color(0xFF093827),
+            color: const Color(0xFF729875),
           ),
 
           // --- Content ---
@@ -115,8 +115,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            const Color(0xFF093827).withValues(alpha: 0.5),
-                            const Color(0xFF093827).withValues(alpha: 0.85),
+                            const Color(0xFF729875).withValues(alpha: 0.5),
+                            const Color(0xFF729875).withValues(alpha: 0.85),
                           ],
                         ),
                       ),
@@ -165,7 +165,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 child: Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
-                    color: Color(0xFFFFFAED),
+                    color: Color(0xFF729875),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(32),
                       topRight: Radius.circular(32),
@@ -181,8 +181,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           label: _t['login']!,
                           icon: Icons.login_rounded,
                           gradient: const [
-                            Color(0xFF093827),
-                            Color(0xFF13690C),
+                            Color(0xFF729875),
+                            Color(0xFF425921),
                           ],
                           onTap: () => widget.onContinue('login'),
                         ),
@@ -267,7 +267,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
-                                  color: Color(0xFF13690C),
+                                  color: Color(0xFF425921),
                                 ),
                               ),
                             ),
@@ -500,7 +500,7 @@ class _PolicyLink extends StatelessWidget {
         label,
         style: const TextStyle(
           fontSize: 13,
-          color: Color(0xFF13690C),
+          color: Color(0xFF425921),
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -527,11 +527,11 @@ class _LangChip extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF093827) : Colors.white,
+          color: isSelected ? const Color(0xFF729875) : Colors.white,
           borderRadius: BorderRadius.circular(6),
           border: Border.all(
             color: isSelected
-                ? const Color(0xFF093827)
+                ? const Color(0xFF729875)
                 : const Color(0xFFB8C8DC).withValues(alpha: 0.6),
           ),
         ),
