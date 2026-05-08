@@ -527,11 +527,11 @@ class _LangChip extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF729875) : Colors.white,
+          color: isSelected ? const Color(0xFF425921) : Colors.white,
           borderRadius: BorderRadius.circular(6),
           border: Border.all(
             color: isSelected
-                ? const Color(0xFF729875)
+                ? const Color(0xFF425921)
                 : const Color(0xFFB8C8DC).withValues(alpha: 0.6),
           ),
         ),
