@@ -576,7 +576,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   bool _isBannerReady = false;
   InterstitialAd? _interstitialAd;
   int _pageNavigationCount = 0;
-  static const int _interstitialInterval = 5; // Show interstitial every N pages
+  static const int _interstitialInterval = 10; // Show interstitial every N pages
 
   // ---------------------------------------------------------------------------
   // URL helpers
@@ -815,6 +815,49 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active { background: rgba(9,56,38,0.08) !important; color: #093826 !important; font-weight: 500 !important; }';
         document.head.appendChild(style);
       }
+
+      // Force district dropdown button visibility via inline styles
+      // Use retry + MutationObserver because buttons may not exist yet when onPageFinished fires
+      (function fixDropdownButtons() {
+        function applyFix() {
+          var btns = document.querySelectorAll('.kesfet-category-dropdown-btn');
+          if (!btns.length) return false;
+          for (var i = 0; i < btns.length; i++) {
+            var b = btns[i];
+            if (b.dataset.appFixed) continue;
+            b.dataset.appFixed = '1';
+            b.style.setProperty('display', 'flex', 'important');
+            b.style.setProperty('background', '#ffffff', 'important');
+            b.style.setProperty('color', '#011d36', 'important');
+            b.style.setProperty('border', '1px solid rgba(164,179,181,0.82)', 'important');
+            b.style.setProperty('border-radius', '6px', 'important');
+            b.style.setProperty('padding', '0.5rem 0.65rem', 'important');
+            b.style.setProperty('width', '100%', 'important');
+            b.style.setProperty('justify-content', 'space-between', 'important');
+            b.style.setProperty('align-items', 'center', 'important');
+            b.style.setProperty('font-size', '0.84rem', 'important');
+            b.style.setProperty('box-sizing', 'border-box', 'important');
+            b.style.setProperty('cursor', 'pointer', 'important');
+            b.style.setProperty('min-height', '2.1rem', 'important');
+          }
+          return true;
+        }
+        // Try immediately
+        applyFix();
+        // Retry every 300ms for up to 5 seconds
+        var attempts = 0;
+        var timer = setInterval(function() {
+          attempts++;
+          applyFix();
+          if (attempts >= 16) clearInterval(timer);
+        }, 300);
+        // Also use MutationObserver for dynamic elements
+        if (window.MutationObserver) {
+          var obs = new MutationObserver(function() { applyFix(); });
+          obs.observe(document.body || document.documentElement, { childList: true, subtree: true });
+          setTimeout(function() { obs.disconnect(); }, 8000);
+        }
+      })();
 
       // Pagination: scroll to first card when page changes
       var paginationNav = document.getElementById('pagination');
