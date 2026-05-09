@@ -796,7 +796,11 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-venue-distance::before { background-color: transparent !important; }' +
           '.istanbul-favorite-button { background: #f4f5f5 !important; border: 1px solid #dcdede !important; color: #011d36 !important; border-radius: 4px !important; }' +
           '#favoritesTitle { color: #093826 !important; }' +
-          '.istanbul-results-head h2 { color: #093826 !important; }';
+          '.istanbul-results-head h2 { color: #093826 !important; }' +
+          '.kesfet-category-dropdown-options { gap: 0 !important; padding: 0 !important; margin: 0 !important; }' +
+          '.kesfet-category-dropdown-options .istanbul-filter-chip, .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box { border-radius: 0 !important; border: none !important; border-bottom: 1px solid rgba(164,179,181,0.35) !important; background: transparent !important; padding: 0.56rem 0.65rem !important; transition: background 0.15s ease !important; }' +
+          '.kesfet-category-dropdown-options .istanbul-filter-chip:last-child, .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:last-child { border-bottom: none !important; }' +
+          '.kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active { background: rgba(9,56,38,0.08) !important; color: #093826 !important; font-weight: 500 !important; }';
         document.head.appendChild(style);
       }
 
