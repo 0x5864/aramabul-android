@@ -742,7 +742,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");' +
           'body, * { font-family: "Plus Jakarta Sans", sans-serif !important; }' +
           'body { background: #729875 !important; }' +
-          '.global-header-band { display: none !important; }' +
+          '.global-header-band { display: none !important; height: 0 !important; overflow: hidden !important; font-size: 0 !important; line-height: 0 !important; }' +
+          '.global-topline { display: none !important; }' +
+          '.texture { font-size: 0 !important; line-height: 0 !important; }' +
           '.hero { padding-top: 0 !important; }' +
           '.hero-content { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }' +
           '.istanbul-discovery-shell { background: transparent !important; }' +
@@ -751,6 +753,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-filter-card { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; overflow: visible !important; }' +
           '.istanbul-filter-body, .istanbul-filter-yeme-icme-sidebar, .istanbul-filter-yeme-icme-sidebar--gezi-two-up { overflow: visible !important; }' +
           '.istanbul-filter-location-box, .istanbul-filter-section-box { background: #d5e8d3 !important; border: 1px solid #c2d8c0 !important; border-radius: 4px !important; padding: 12px !important; margin-bottom: 8px !important; overflow: visible !important; position: relative !important; z-index: 100 !important; }' +
+          '.kesfet-category-dropdown-btn, .lang-switch-btn { display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; background: #ffffff !important; color: #011d36 !important; border: 1px solid rgba(164,179,181,0.82) !important; border-radius: 6px !important; padding: 0.5rem 0.65rem !important; font-size: 0.84rem !important; cursor: pointer !important; box-sizing: border-box !important; }' +
+          '.istanbul-filter-field { display: block !important; margin-bottom: 6px !important; }' +
+          '.istanbul-filter-field > span { display: block !important; margin-bottom: 4px !important; font-size: 0.82rem !important; color: #011d36 !important; }' +
           '.istanbul-filter-location-box .kesfet-category-dropdown, .istanbul-filter-section-box .kesfet-category-dropdown { position: relative !important; z-index: 1200 !important; }' +
           '.kesfet-category-dropdown-menu { position: absolute !important; left: 0 !important; top: calc(100% + 4px) !important; width: max-content !important; min-width: 100% !important; max-width: calc(100vw - 24px) !important; background: #ffffff !important; border: 1px solid #c2d8c0 !important; border-radius: 6px !important; box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important; z-index: 1200 !important; overflow-y: auto !important; max-height: 50vh !important; display: flex !important; flex-direction: column !important; padding: 0 !important; }' +
           '.kesfet-category-dropdown-menu[hidden] { display: none !important; }' +
