@@ -768,7 +768,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-filter-nearby-panel-button, .istanbul-discovery-primary-button { background: #425921 !important; border-color: #425921 !important; color: #fff !important; }' +
           '.venue-detail-main-card, .venue-detail-side-card { background: #d5e8d3 !important; border-color: #c2d8c0 !important; border-radius: 4px !important; }' +
           '.venue-detail-media, .venue-detail-info, .venue-detail-reviews, .venue-detail-review-form { background: #d5e8d3 !important; border-color: #d5e8d3 !important; }' +
-          '.section-head h1, .section-head h2, .section-head h3, .province-head h1, .province-head h2, .province-head h3, .istanbul-discovery-copy h1, .istanbul-discovery-copy h2 { color: #ffffff !important; font-weight: 700 !important; margin-bottom: 0.75rem !important; }' +
+          '.section-head h1, .section-head h2, .section-head h3, .province-head h1, .province-head h2, .province-head h3, .istanbul-discovery-copy h1, .istanbul-discovery-copy h2 { color: #093826 !important; font-weight: 700 !important; margin-bottom: 0.75rem !important; }' +
           '.istanbul-discovery-kicker, .istanbul-breadcrumb, .istanbul-breadcrumb a, .istanbul-breadcrumb a:visited, .istanbul-breadcrumb span, .istanbul-discovery-subline, .istanbul-discovery-location-note { color: #ffffff !important; }' +
           '.istanbul-results-meta, .istanbul-results-state { color: #ffffff !important; }' +
           '.mobile-bottom-nav { background: #729875 !important; }' +
@@ -795,8 +795,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-venue-distance { background: transparent !important; }' +
           '.istanbul-venue-distance::before { background-color: transparent !important; }' +
           '.istanbul-favorite-button { background: #f4f5f5 !important; border: 1px solid #dcdede !important; color: #011d36 !important; border-radius: 4px !important; }' +
-          '#favoritesTitle { color: #ffffff !important; }' +
-          '.istanbul-results-head h2 { color: #ffffff !important; }';
+          '#favoritesTitle { color: #093826 !important; }' +
+          '.istanbul-results-head h2 { color: #093826 !important; }';
         document.head.appendChild(style);
       }
 
