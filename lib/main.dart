@@ -775,6 +775,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-results-grid { padding: 0 !important; }' +
           '.home-subcat-chip { background: #d5e8d3 !important; border-color: #c2d8c0 !important; }' +
           '.top-city-card, .category-home-card { background: #d5e8d3 !important; }' +
+          '.top-city-name { font-size: 0.8rem !important; font-weight: 400 !important; }' +
           '.istanbul-discovery-hero-label { background: #d5e8d3 !important; }' +
           '.istanbul-venue-tag { background: #d5e8d3 !important; border-color: #c2d8c0 !important; }' +
           '.istanbul-filter-nearby-panel-button, .istanbul-discovery-primary-button { background: #425921 !important; border-color: #425921 !important; color: #fff !important; }' +
