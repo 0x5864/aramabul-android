@@ -752,7 +752,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-results-shell { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 8px !important; }' +
           '.istanbul-filter-card { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; overflow: visible !important; }' +
           '.istanbul-filter-body, .istanbul-filter-yeme-icme-sidebar, .istanbul-filter-yeme-icme-sidebar--gezi-two-up { overflow: visible !important; }' +
-          '.istanbul-filter-location-box, .istanbul-filter-section-box { background: #d5e8d3 !important; border: 1px solid #c2d8c0 !important; border-radius: 4px !important; padding: 12px !important; margin-bottom: 8px !important; overflow: visible !important; position: relative !important; z-index: 100 !important; }' +
+          '.istanbul-filter-location-box, .istanbul-filter-section-box { background: #d5e8d3 !important; border: 1px solid #c2d8c0 !important; border-radius: 4px !important; padding: 12px !important; margin-bottom: 8px !important; overflow: visible !important; position: relative !important; }' +
+          '.istanbul-filter-location-box { z-index: 200 !important; }' +
+          '.istanbul-filter-section-box { z-index: 100 !important; }' +
           '.kesfet-category-dropdown-btn, .lang-switch-btn { display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; background: #ffffff !important; color: #011d36 !important; border: 1px solid rgba(164,179,181,0.82) !important; border-radius: 6px !important; padding: 0.5rem 0.65rem !important; font-size: 0.84rem !important; cursor: pointer !important; box-sizing: border-box !important; }' +
           '.istanbul-filter-field { display: block !important; margin-bottom: 6px !important; }' +
           '.istanbul-filter-field > span { display: block !important; margin-bottom: 4px !important; font-size: 0.82rem !important; color: #011d36 !important; }' +
