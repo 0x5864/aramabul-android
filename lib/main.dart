@@ -1006,6 +1006,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     _startConnectivityWatch();
     _loadBannerAd();
     _loadInterstitialAd();
+    // Request location permission early so WebView geolocation works immediately
+    _requestLocationPermission();
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
