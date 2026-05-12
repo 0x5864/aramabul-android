@@ -770,11 +770,13 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.home-subcategory-list { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0.5rem !important; }' +
           '.home-subcat-chip { border-radius: 8px !important; padding: 0.5rem 0.25rem !important; font-size: 0.8rem !important; }' +
           '.content-guide h2, .content-guide h3, .content-guide p, .content-guide li, .content-guide strong { color: #000 !important; }' +
-          '.home-top-category-row { background: transparent !important; }' +
+          '.home-top-category-row { background: transparent !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0.5rem !important; }' +
           '.istanbul-venue-card { background: #d5e8d3 !important; border-color: #d5e8d3 !important; }' +
           '.istanbul-results-grid { padding: 0 !important; }' +
           '.home-subcat-chip { background: #d5e8d3 !important; border-color: #c2d8c0 !important; }' +
-          '.top-city-card, .category-home-card { background: #d5e8d3 !important; }' +
+          '.category-home-card .top-city-thumb { display: none !important; }' +
+          '.top-city-card, .category-home-card { background: #d5e8d3 !important; border-radius: 8px !important; padding: 0.5rem 0.25rem !important; min-height: auto !important; aspect-ratio: auto !important; }' +
+          '.category-home-card .top-city-content { position: static !important; padding: 0 !important; text-align: center !important; }' +
           '.top-city-name { font-size: 0.8rem !important; font-weight: 400 !important; }' +
           '.istanbul-discovery-hero-label { background: #d5e8d3 !important; }' +
           '.istanbul-venue-tag { background: #d5e8d3 !important; border-color: #c2d8c0 !important; }' +
