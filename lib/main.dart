@@ -1041,6 +1041,16 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                 _isPageTransitioning = false;
               });
             });
+            // Trigger geolocation early so distance hints appear on category pages
+            Future.delayed(const Duration(milliseconds: 500), () {
+              _controller.runJavaScript('''
+                if (navigator.geolocation && typeof requestDistanceHints === 'function') {
+                  requestDistanceHints();
+                } else if (navigator.geolocation) {
+                  navigator.geolocation.getCurrentPosition(function(){}, function(){}, {timeout:5000, maximumAge:120000});
+                }
+              ''');
+            });
           },
           onProgress: (value) {
             if (!mounted) return;
