@@ -1,24 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap');
+
 :root {
-  --bg: #fffaed;
-  --paper: #fdefd6;
+  --bg: #729875;
+  --paper: #d5e8d3;
   --ink: #162123;
-  --accent: #c6542f;
-  --accent-strong: #9f3114;
-  --hover-blue: #1ea7ff;
-  --hover-blue-soft: rgba(30, 167, 255, 0.14);
+  --accent: #9dc79c;
+  --accent-strong: #7db37c;
+  --hover-blue: #9dc79c;
+  --hover-blue-soft: rgba(222, 171, 109, 0.14);
   --olive: #3f5b3d;
   --line: rgba(22, 33, 35, 0.14);
   --shadow: 0 20px 60px rgba(22, 33, 35, 0.12);
   --radius: 4px;
-  --ui-font-family: "Plus Jakarta Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --ui-font-family: "Plus Jakarta Sans", "Raleway", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --ui-font-size: 14px;
   --link-base: #011d36;
-  --link-hover: #0281c2;
-  --mobile-nav-bg: #20364d;
+  --link-hover: #176f13;
+  --mobile-nav-bg: #729875;
   --mobile-nav-border: transparent;
   --mobile-nav-shadow: 0 -10px 24px rgba(10, 18, 28, 0.28);
   --mobile-nav-icon: #ffffff;
-  --mobile-nav-icon-active: #2599ef;
+  --mobile-nav-icon-active: #d5e8d3;
   --mobile-nav-icon-size: 26.4px;
   --mobile-nav-chip-size: 40px;
   --mobile-nav-chip-bg: transparent;
@@ -26,19 +29,19 @@
   --mobile-nav-chip-active-bg: transparent;
   --mobile-nav-chip-active-border: transparent;
   --mobile-nav-icon-filter: brightness(0) invert(1);
-  --mobile-nav-icon-active-filter: brightness(0) saturate(100%) invert(56%) sepia(90%) saturate(2878%) hue-rotate(184deg) brightness(98%) contrast(88%);
-  --mobile-search-bg: rgba(7, 18, 36, 0.96);
-  --mobile-search-border: rgba(138, 168, 224, 0.32);
-  --mobile-search-input-bg: rgba(12, 29, 57, 0.95);
-  --mobile-search-input-border: rgba(138, 168, 224, 0.3);
+  --mobile-nav-icon-active-filter: brightness(0) saturate(100%) invert(85%) sepia(20%) saturate(500%) hue-rotate(340deg) brightness(105%);
+  --mobile-search-bg: rgba(40, 80, 80, 0.96);
+  --mobile-search-border: rgba(244, 223, 200, 0.32);
+  --mobile-search-input-bg: rgba(30, 60, 60, 0.95);
+  --mobile-search-input-border: rgba(244, 223, 200, 0.3);
   --mobile-search-input-text: #ecf4ff;
-  --mobile-search-submit-bg: linear-gradient(160deg, #3073ff, #2258cb);
-  --mobile-search-submit-border: rgba(83, 141, 255, 0.5);
-  --mobile-search-submit-text: #ffffff;
+  --mobile-search-submit-bg: linear-gradient(160deg, #9dc79c, #7db37c);
+  --mobile-search-submit-border: rgba(222, 171, 109, 0.5);
+  --mobile-search-submit-text: #000000;
   --box-border: #a4b3b5;
   --box-text: #011d36;
-  --box-hover-text: #0281c2;
-  --box-hover-soft: rgba(255, 163, 180, 0.16);
+  --box-hover-text: #9dc79c;
+  --box-hover-soft: rgba(222, 171, 109, 0.16);
   --content-offset: clamp(2.2rem, 4vw, 3rem);
   --header-line-start: calc(var(--content-offset) - 0.52rem);
 }
@@ -207,7 +210,7 @@ main {
   padding-inline-end: max(calc((100vw - 1220px) / 2), 1.2rem);
   padding-bottom: 0.38rem;
   border-bottom: 1px solid #b8c8dc;
-  background: #fdefd6;
+  background: #729875;
 }
 
 .global-topbar::after {
@@ -215,7 +218,7 @@ main {
 }
 
 .global-topbar .brand-wordmark {
-  font-family: Inter, sans-serif;
+  font-family: var(--ui-font-family);
   font-style: normal;
   font-size: clamp(2.05rem, 3.45vw, 3.05rem);
   font-weight: 800;
@@ -543,7 +546,7 @@ main {
 }
 
 .brand-wordmark {
-  font-family: Inter, sans-serif;
+  font-family: var(--ui-font-family);
   font-style: normal;
   font-weight: 800;
   font-size: clamp(2.05rem, 3.45vw, 3.05rem);
@@ -558,16 +561,16 @@ main {
 }
 
 .brand-wordmark-search {
-  color: #011d36;
+  color: #093827;
 }
 
 .brand-wordmark-rest {
-  color: inherit;
+  color: #093826 !important;
 }
 
 .brand-logo {
-  width: 3.25rem;
-  height: 3.25rem;
+  width: 7.1rem;
+  height: 7.1rem;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -637,7 +640,6 @@ main {
   top: 100%;
   right: 0;
   width: auto;
-  min-width: 178px;
   border: 1px solid rgba(22, 33, 35, 0.16);
   border-radius: 8px;
   background: #ffffff;
@@ -1107,11 +1109,17 @@ main > * {
 
 .content-page-shell {
   display: grid;
-  gap: 0.5rem;
+  gap: 0;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
 }
 
+
 .content-page-hero {
-  padding: 0 0 0.2rem;
+  background: #d5e8d3;
+  border-radius: 4px 4px 0 0;
+  padding: 1.5rem 1.75rem 0.5rem;
 }
 
 .content-page-hero[hidden] {
@@ -1143,6 +1151,9 @@ main > * {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.35rem;
+  background: #d5e8d3;
+  border-radius: 0 0 4px 4px;
+  padding: 0 1.75rem 1.5rem;
 }
 
 .content-page-grid[hidden] {
@@ -1150,7 +1161,7 @@ main > * {
 }
 
 .content-page-card {
-  border: 0;
+  border: none;
   border-radius: 0;
   background: transparent;
   padding: 0;
@@ -3442,10 +3453,10 @@ body.nearby-venues-open {
 
 .yr-footer {
   margin-top: auto;
-  background: #011d36;
+  background: transparent !important;
   color: rgba(235, 244, 255, 0.9);
   position: relative;
-  z-index: 2;
+  z-index: 1;
 }
 
 .yr-footer-inner {
@@ -3505,7 +3516,7 @@ body.nearby-venues-open {
   min-width: 180px;
   border-radius: 12px;
   border: 1px solid #a4b3b5;
-  background: #0f1113;
+  background: #0f2d1f;
   color: #ffffff !important;
   padding: 0.45rem 0.75rem;
   margin-bottom: 0.5rem;
@@ -3924,7 +3935,7 @@ body.nearby-venues-open {
   }
 
   body {
-    background: #dfdfdf;
+    background: var(--bg);
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 86px);
     --content-offset: 1.2rem;
     --header-line-start: 0.72rem;
@@ -6614,6 +6625,13 @@ body.mobile-chrome-browser.mobile-force-layout .brand-wordmark {
   line-height: 1.5;
 }
 
+.venue-detail-side-distance {
+  margin: 0.25rem 0 0;
+  color: #093826;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
 .venue-detail-contact-item {
   padding: 0.1rem 0;
 }
@@ -7272,8 +7290,7 @@ body.saglik-page
   padding: 1rem 1rem 1.05rem;
   border: 1px solid rgba(185, 196, 202, 0.95);
   border-radius: 10px;
-  background: #fbfcfd;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.85) inset;
+  background: #d5e8d3;
 }
 
 .istanbul-filter-location-box-title {
@@ -7292,8 +7309,7 @@ body.saglik-page
   padding: 1rem 1rem 1.05rem;
   border: 1px solid rgba(185, 196, 202, 0.95);
   border-radius: 10px;
-  background: #fbfcfd;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.85) inset;
+  background: #d5e8d3;
   min-width: 0;
 }
 
@@ -7903,11 +7919,11 @@ body.saglik-page .kesfet-category-dropdown-options {
   width: max-content;
   min-width: 100%;
   box-sizing: border-box;
-  gap: 0.24rem;
+  gap: 0;
   max-height: min(44vh, 17rem);
   overflow-y: auto;
-  padding: 0.04rem 0.12rem 0.04rem 0.04rem;
-  margin: 0 -0.08rem 0 0;
+  padding: 0;
+  margin: 0;
 }
 
 body.yeme-icme-page .kesfet-category-dropdown-options .istanbul-filter-chip,
@@ -7930,10 +7946,32 @@ body.saglik-page .kesfet-category-dropdown-options .istanbul-filter-chip {
   font-weight: 400;
   letter-spacing: normal;
   line-height: 1.2;
-  padding: 0.48rem 0.52rem;
-  border-radius: 6px;
+  padding: 0.56rem 0.65rem;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid rgba(164, 179, 181, 0.35);
+  background: transparent;
   flex: 0 0 auto;
   box-sizing: border-box;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+body.yeme-icme-page .kesfet-category-dropdown-options .istanbul-filter-chip:last-child,
+body.gezi-page .kesfet-category-dropdown-options .istanbul-filter-chip:last-child,
+body.hizmetler-page .kesfet-category-dropdown-options .istanbul-filter-chip:last-child,
+body.kultur-page .kesfet-category-dropdown-options .istanbul-filter-chip:last-child,
+body.sanat-page .kesfet-category-dropdown-options .istanbul-filter-chip:last-child,
+body.saglik-page .kesfet-category-dropdown-options .istanbul-filter-chip:last-child {
+  border-bottom: none;
+}
+
+body.yeme-icme-page .kesfet-category-dropdown-options .istanbul-filter-chip:hover:not(.is-active),
+body.gezi-page .kesfet-category-dropdown-options .istanbul-filter-chip:hover:not(.is-active),
+body.hizmetler-page .kesfet-category-dropdown-options .istanbul-filter-chip:hover:not(.is-active),
+body.kultur-page .kesfet-category-dropdown-options .istanbul-filter-chip:hover:not(.is-active),
+body.sanat-page .kesfet-category-dropdown-options .istanbul-filter-chip:hover:not(.is-active),
+body.saglik-page .kesfet-category-dropdown-options .istanbul-filter-chip:hover:not(.is-active) {
+  background: rgba(213, 232, 211, 0.45);
 }
 
 body.yeme-icme-page .kesfet-category-dropdown-options .istanbul-filter-chip.is-active,
@@ -7965,10 +8003,32 @@ body.saglik-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box
   font-weight: 400;
   letter-spacing: normal;
   line-height: 1.2;
-  padding: 0.48rem 0.52rem;
-  border-radius: 6px;
+  padding: 0.56rem 0.65rem;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid rgba(164, 179, 181, 0.35);
+  background: transparent;
   flex: 0 0 auto;
   box-sizing: border-box;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+body.yeme-icme-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:last-child,
+body.gezi-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:last-child,
+body.hizmetler-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:last-child,
+body.kultur-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:last-child,
+body.sanat-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:last-child,
+body.saglik-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:last-child {
+  border-bottom: none;
+}
+
+body.yeme-icme-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:hover:not(.is-active),
+body.gezi-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:hover:not(.is-active),
+body.hizmetler-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:hover:not(.is-active),
+body.kultur-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:hover:not(.is-active),
+body.sanat-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:hover:not(.is-active),
+body.saglik-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:hover:not(.is-active) {
+  background: rgba(213, 232, 211, 0.45);
 }
 
 body.yeme-icme-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active,
@@ -7978,6 +8038,8 @@ body.kultur-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box
 body.sanat-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active,
 body.saglik-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active {
   font-weight: 500;
+  background: rgba(9, 56, 38, 0.08);
+  color: #093826;
 }
 
 /* Hizmetler keşfet: Kategori + 3 tür; en uzun metin kadar geniş, üç kutu eşit, satırı doldurmaz */
@@ -8460,12 +8522,19 @@ body.yeme-icme-page .istanbul-results-grid {
 .istanbul-venue-card {
   border: 1px solid rgba(210, 216, 219, 0.9);
   border-radius: 4px;
-  background: var(--paper);
-  padding: 0.95rem;
+  background: #d5e8d3;
+  padding: 0.7rem;
   display: grid;
-  gap: 0.68rem;
+  gap: 0.45rem;
   box-shadow: 0 8px 16px rgba(27, 32, 41, 0.05);
   cursor: pointer;
+}
+
+.istanbul-venue-card .istanbul-venue-address,
+.istanbul-venue-card .istanbul-venue-meta,
+.istanbul-venue-card .istanbul-venue-pill-row,
+.istanbul-venue-card .istanbul-venue-actions {
+  display: none;
 }
 
 .istanbul-venue-media {
@@ -9142,7 +9211,7 @@ body.yeme-icme-page .istanbul-results-grid {
 .istanbul-pagination-current {
   color: #011d36;
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 400;
 }
 
 .venue-detail-layout {
@@ -9393,8 +9462,9 @@ body.yeme-icme-page .istanbul-results-grid {
 }
 
 .admin-panel-nav-card.is-active {
-  border-color: rgba(17, 43, 76, 0.46);
-  background: rgba(248, 251, 255, 0.96);
+  border-color: #093826;
+  background: #093826;
+  color: #ffffff;
 }
 
 .admin-panel-nav-title {
@@ -9402,6 +9472,10 @@ body.yeme-icme-page .istanbul-results-grid {
   font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.25;
+}
+
+.admin-panel-nav-card.is-active .admin-panel-nav-title {
+  color: #ffffff;
 }
 
 .admin-venues-list-card,
@@ -9530,6 +9604,18 @@ body.yeme-icme-page .istanbul-results-grid {
   gap: 0.82rem;
 }
 
+body.admin-venue-editor-page input,
+body.admin-venue-editor-page select,
+body.admin-venue-editor-page textarea {
+  background-color: #ffffff;
+}
+
+body.admin-venue-editor-page .admin-venues-list-card,
+body.admin-venue-editor-page .admin-venue-form-card,
+body.admin-venue-editor-page .admin-review-moderation-card {
+  background: #eef6f1;
+}
+
 .admin-venue-field-wide {
   grid-column: 1 / -1;
 }
@@ -9557,6 +9643,7 @@ body.yeme-icme-page .istanbul-results-grid {
 }
 
 .admin-session-chip {
+  display: none;
   border: 1px solid rgba(188, 195, 198, 0.88);
   background: rgba(255, 255, 255, 0.82);
   border-radius: 999px;
@@ -9867,7 +9954,8 @@ body.admin-venue-editor-page {
 /* Sol liste sütunu */
 
 body.admin-venue-editor-page .admin-venues-list-card .istanbul-discovery-kicker {
-  font-size: var(--admin-venues-list-kicker);
+  font-size: 1.3rem;
+  color: #093826 !important;
 }
 
 body.admin-venue-editor-page .admin-venues-list-card .admin-venues-title {
@@ -9947,7 +10035,13 @@ body.admin-venue-editor-page .admin-venues-list-card .admin-venue-badge {
 
 /* Sağ form sütunu (sol ile aynı ölçek) */
 body.admin-venue-editor-page .admin-venue-form-card .istanbul-discovery-kicker {
-  font-size: var(--admin-venues-list-kicker);
+  font-size: 1.3rem;
+  color: #093826 !important;
+}
+
+body.admin-venue-editor-page .admin-review-moderation-card .istanbul-discovery-kicker {
+  font-size: 1.3rem;
+  color: #093826 !important;
 }
 
 body.admin-venue-editor-page .admin-venue-form-card .admin-venues-title {
@@ -10618,6 +10712,53 @@ button.admin-content-model-geo-neighborhood.is-active {
   }
 }
 
+/* Homepage Subcategory Grid */
+.home-subcategory-grid {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: 0 clamp(0.9rem, 2.5vw, 1.35rem);
+  box-sizing: border-box;
+}
+
+.home-subcategory-box {
+  border: 1px solid rgba(17, 35, 44, 0.12);
+  border-radius: 12px;
+  background: #ffffff;
+  padding: clamp(0.85rem, 2vw, 1.15rem);
+  box-shadow: 0 4px 28px rgba(15, 35, 52, 0.07);
+}
+
+.home-subcategory-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.25rem;
+}
+
+.home-subcat-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.21rem 0.42rem;
+  border: 1px solid rgba(9, 56, 39, 0.2);
+  border-radius: 20px;
+  background: #d5e8d3;
+  color: #093827;
+  font-size: 0.82rem;
+  font-weight: 400;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  transition: color 0.16s ease;
+}
+
+.home-subcat-chip:hover,
+.home-subcat-chip:focus-visible {
+  color: #065a2e;
+  outline: none;
+}
+
 /* Featured Venues Section */
 .featured-venues-section {
   padding: clamp(2rem, 5vw, 4rem) 0;
@@ -10915,6 +11056,10 @@ button.admin-content-model-geo-neighborhood.is-active {
   line-height: 1.7;
   color: #1a2a3a;
 }
+
+.home-empty-box {
+  min-height: 80px;
+}
 .content-guide h2 {
   font-size: 1.35rem;
   font-weight: 700;
@@ -10970,5 +11115,850 @@ button.admin-content-model-geo-neighborhood.is-active {
     margin-top: 1rem;
     margin-bottom: 1rem;
     padding: 1.2rem 1rem;
+  }
+}
+
+/* ==========================================================================
+   ARAMABUL DESIGN SYSTEM v2 — Teal + Cream + Gold
+   Applied from Android app design to web for brand consistency.
+   ========================================================================== */
+
+/* --- Global: all boxes 4px corners --- */
+.istanbul-venue-card,
+.istanbul-venue-card-inner,
+.istanbul-filter-card,
+.istanbul-filter-section-box,
+.istanbul-filter-location-box,
+.istanbul-filter-inline-search,
+.content-guide,
+.venue-detail-main-card,
+.venue-detail-side-card,
+.venue-detail-media,
+.venue-detail-info,
+.venue-detail-reviews,
+.venue-detail-review-form,
+.top-city-card,
+.category-home-card,
+.home-subcat-chip,
+.istanbul-venue-tag,
+.istanbul-discovery-hero-label,
+.kesfet-category-dropdown-menu,
+.lang-switch-menu,
+.card-share-menu,
+.istanbul-discovery-primary-button,
+.header-search-input,
+.header-search-btn,
+.store-badge,
+.brand-logo {
+  border-radius: 4px !important;
+}
+
+.desktop-auth-links .lang-switch-option,
+.lang-switch-menu .lang-switch-option {
+  color: #1a4a2e !important;
+  font-weight: 600 !important;
+}
+
+.desktop-auth-links .lang-switch-option.active,
+.lang-switch-menu .lang-switch-option.active {
+  background: #d5e8d3 !important;
+  border-color: #1a4a2e !important;
+  color: #1a4a2e !important;
+}
+
+/* --- Cards & Panels --- */
+.istanbul-venue-card,
+.istanbul-venue-card-inner {
+  background: #d5e8d3 !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.istanbul-discovery-hero-label,
+.home-subcat-chip {
+  background: #d5e8d3 !important;
+  border: 1px solid #b8d4b6 !important;
+}
+
+.istanbul-venue-tag,
+.venue-detail-tag,
+.venue-detail-meta-pill,
+.venue-detail-chip {
+  background: #f4f5f5 !important;
+  border: 1px solid #dcdede !important;
+  font-family: var(--ui-font-family) !important;
+  font-size: 0.82rem !important;
+  font-weight: 400 !important;
+  color: #011d36 !important;
+  border-radius: 4px !important;
+  padding: 0.36rem 0.62rem !important;
+}
+
+.top-city-card,
+.category-home-card {
+  background: #d5e8d3 !important;
+}
+
+.venue-detail-main-card,
+.venue-detail-side-card {
+  background: #d5e8d3 !important;
+  border: none !important;
+  border-radius: 4px !important;
+}
+
+.venue-detail-media,
+.venue-detail-info,
+.venue-detail-reviews,
+.venue-detail-review-form {
+  background: #d5e8d3 !important;
+  border: none !important;
+}
+
+.settings-card,
+.settings-panel-card,
+.settings-sidebar-card {
+  background: #d5e8d3 !important;
+  border-color: #c2d8c0 !important;
+  border-radius: 4px !important;
+}
+
+.istanbul-filter-location-box,
+.istanbul-filter-section-box {
+  background: #d5e8d3 !important;
+  border: 1px solid #c2d8c0 !important;
+  border-radius: 4px !important;
+  padding: 12px !important;
+  margin-bottom: 8px !important;
+}
+
+.content-guide {
+  background: #d5e8d3 !important;
+  border: none !important;
+  border-radius: 4px !important;
+}
+
+.content-guide h2,
+.content-guide h3,
+.content-guide p,
+.content-guide li,
+.content-guide strong {
+  color: #000 !important;
+}
+
+/* --- Transparent shells on teal background --- */
+.hero-content {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.istanbul-discovery-shell,
+.istanbul-discovery-copy,
+.istanbul-discovery-hero-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.istanbul-results-shell {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+.istanbul-filter-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+.featured-venues-section {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 0 1rem 0 !important;
+}
+
+.featured-venues-panel {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+.featured-venues-grid {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  gap: 0.72rem !important;
+}
+
+.home-empty-box,
+.content-guide.home-empty-box {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 1rem 0 0 0 !important;
+  border-radius: 0 !important;
+  min-height: 0 !important;
+  display: block !important;
+}
+
+.home-empty-box .home-subcategory-list {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.home-top-category-row {
+  background: transparent !important;
+}
+
+.settings-shell,
+.settings-layout {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.search-page-shell {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* --- White headings on teal --- */
+.section-head h1,
+.section-head h2,
+.section-head h3,
+.province-head h1,
+.province-head h2,
+.province-head h3,
+.istanbul-discovery-copy h1,
+.istanbul-discovery-copy h2 {
+  color: #093826 !important;
+  font-weight: 700 !important;
+}
+
+.istanbul-discovery-kicker,
+.istanbul-breadcrumb,
+.istanbul-breadcrumb a,
+.istanbul-breadcrumb a:visited,
+.istanbul-breadcrumb span,
+.istanbul-discovery-subline,
+.istanbul-discovery-location-note {
+  color: #ffffff !important;
+}
+
+.istanbul-results-meta {
+  color: #ffffff !important;
+}
+
+.istanbul-results-state {
+  display: none !important;
+}
+
+.istanbul-results-head h2,
+#favoritesTitle {
+  color: #ffffff !important;
+}
+
+/* --- CTA Buttons --- */
+.header-search-btn,
+.istanbul-discovery-primary-button,
+.istanbul-filter-nearby-panel-button,
+.settings-feedback-submit,
+.settings-signout {
+  background: #425921 !important;
+  border-color: #425921 !important;
+  color: #fff !important;
+}
+
+.store-badge {
+  background: #0f2d1f !important;
+  border-color: #0f2d1f !important;
+  color: #fff !important;
+}
+
+.istanbul-favorite-button {
+  background: #f4f5f5 !important;
+  border: 1px solid #dcdede !important;
+  color: #011d36 !important;
+  font-family: var(--ui-font-family) !important;
+  font-size: 0.82rem !important;
+  font-weight: 400 !important;
+  border-radius: 4px !important;
+  padding: 0.36rem 0.62rem !important;
+}
+
+.header-search-btn:hover,
+.istanbul-discovery-primary-button:hover,
+.istanbul-filter-nearby-panel-button:hover {
+  background: #354a1a !important;
+}
+
+.istanbul-favorite-button:hover {
+  background: #e8e9e9 !important;
+}
+
+.istanbul-pagination-button {
+  background: #425921 !important;
+  border-color: #425921 !important;
+  color: #fff !important;
+}
+
+.istanbul-pagination-current {
+  background: transparent !important;
+  border-color: transparent !important;
+  color: inherit !important;
+  font-weight: 400 !important;
+}
+
+/* --- Footer: teal branded --- */
+.yr-footer {
+  background: transparent !important;
+  border: none !important;
+  color: #ffffff !important;
+}
+
+.yr-footer h4,
+.yr-footer-col a,
+.yr-footer-col a:visited,
+.yr-footer-bottom p {
+  color: #ffffff !important;
+}
+
+.yr-footer-col a:hover {
+  color: #9dc79c !important;
+}
+
+/* --- Settings form inputs: white background --- */
+.settings-feedback-field input,
+.settings-feedback-field textarea,
+.settings-feedback-field select,
+.settings-signup-field input,
+.settings-feedback-phone-group input {
+  background: #fff !important;
+  color: #000 !important;
+}
+
+/* --- Header band & topbar: match logo (#729875) --- */
+.global-header-band {
+  background: #729875 !important;
+  border-bottom-color: rgba(255,255,255,0.1) !important;
+}
+
+.global-topbar {
+  background: #729875 !important;
+  border-bottom: none !important;
+}
+
+.global-topbar .brand-wordmark,
+.global-header-band .header-logo-text {
+  color: #ffffff !important;
+}
+
+.global-topbar .brand-wordmark-rest {
+  color: #093826 !important;
+}
+
+.global-topbar .brand-wordmark-search {
+  color: #d5e8d3 !important;
+}
+
+.brand-logo {
+  border-radius: 8px;
+}
+
+/* Desktop auth links & header icons: white */
+.desktop-auth-links a,
+.desktop-auth-links button,
+.desktop-lang-switch .lang-switch-btn {
+  color: #ffffff !important;
+}
+
+.global-topbar .header-icon,
+.global-topbar .header-action-icon,
+.global-topbar .desktop-auth-link-image,
+.global-topbar .desktop-favorites-icon,
+.global-topbar .lang-switch-code[src],
+.global-topbar img[src*="fav.png"],
+.global-topbar img[src*="ayar1.png"],
+.global-topbar img[src*="ayar.png"],
+.global-topbar img[src*="dil.png"],
+.global-topbar img[src*="giris.png"] {
+  filter: brightness(0) invert(1) !important;
+}
+
+.global-topline {
+  background: #729875 !important;
+  border: none !important;
+}
+
+.global-topline-inner,
+.global-topline-inner a,
+.global-topline-inner a:visited,
+.global-topline-inner span {
+  color: #ffffff !important;
+}
+
+.global-topline-inner a:hover {
+  color: #9dc79c !important;
+}
+
+/* --- Mobile bottom nav: teal --- */
+.mobile-bottom-nav {
+  background: #729875 !important;
+}
+
+.mobile-bottom-nav-btn .mobile-bottom-nav-label {
+  color: #ffffff !important;
+}
+
+/* --- Favorites Page: match Android design --- */
+.favorites-page-shell {
+  padding-top: 0.5rem !important;
+}
+
+.favorites-page-title {
+  color: #ffffff !important;
+  font-size: 1.8rem !important;
+  font-weight: 700 !important;
+  margin: 0.5rem 0 0.25rem !important;
+  text-align: left !important;
+}
+
+.favorites-meta {
+  color: rgba(255,255,255,0.85) !important;
+  font-size: 0.95rem !important;
+  margin-bottom: 1rem !important;
+  text-align: left !important;
+}
+
+.favorites-results-head {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+}
+
+.favorites-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 0.75rem !important;
+}
+
+@media (max-width: 900px) {
+  .favorites-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 500px) {
+  .favorites-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.favorites-grid .istanbul-venue-card {
+  background: #d5e8d3 !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 1rem !important;
+}
+
+.favorites-grid .istanbul-venue-eyebrow {
+  color: #555 !important;
+  font-size: 0.85rem !important;
+}
+
+.favorites-grid .istanbul-venue-title-link {
+  color: #162123 !important;
+  font-weight: 600 !important;
+  font-size: 1.05rem !important;
+}
+
+.favorites-grid .istanbul-favorite-button.is-active {
+  background: #9dc79c !important;
+  border-color: #9dc79c !important;
+  color: #000 !important;
+  border-radius: 20px !important;
+  padding: 0.35rem 1rem !important;
+  font-weight: 600 !important;
+}
+
+.favorites-grid .istanbul-venue-map-link {
+  color: #9dc79c !important;
+}
+
+/* ================================================================== */
+/* Topbar inline search form                                          */
+/* ================================================================== */
+.topbar-search-form {
+  flex: 1 1 auto;
+  max-width: 420px;
+  margin-left: auto;
+}
+
+.topbar-search-form .header-search-input {
+  border-radius: 8px 0 0 8px;
+}
+
+.topbar-search-form .header-search-btn {
+  border-radius: 0 8px 8px 0;
+}
+
+/* ================================================================== */
+/* Business Highlight CTA + Modal                                     */
+/* ==================================================================  */
+
+/* CTA wrapper */
+.bh-cta-wrap {
+  margin-top: 0;
+}
+
+.bh-cta-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: none;
+  border-radius: 10px;
+  background: #093826;
+  color: #9dc79c;
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  text-align: left;
+  line-height: 1.35;
+}
+
+.bh-cta-button:hover {
+  background: #0b4a33;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(9, 56, 38, 0.25);
+}
+
+.bh-cta-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.bh-cta-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  color: #9dc79c;
+}
+
+.bh-cta-label {
+  flex: 1 1 auto;
+}
+
+.bh-cta-arrow {
+  flex-shrink: 0;
+  font-size: 1rem;
+  opacity: 0.6;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.bh-cta-button:hover .bh-cta-arrow {
+  transform: translateX(3px);
+  opacity: 1;
+}
+
+/* Modal overlay */
+.bh-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  transition: background 0.28s ease;
+  overflow-y: auto;
+}
+
+.bh-modal-overlay.is-visible {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+/* Modal box */
+.bh-modal {
+  background: #e8f5e9;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(9, 56, 38, 0.08);
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: translateY(20px) scale(0.97);
+  opacity: 0;
+  transition: transform 0.28s ease, opacity 0.28s ease;
+}
+
+.bh-modal-overlay.is-visible .bh-modal {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* Modal header */
+.bh-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem 0.75rem;
+  border-bottom: 1px solid rgba(9, 56, 38, 0.08);
+}
+
+.bh-modal-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #093826;
+  margin: 0;
+}
+
+.bh-modal-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: rgba(9, 56, 38, 0.06);
+  border-radius: 8px;
+  color: #093826;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+
+.bh-modal-close:hover {
+  background: rgba(9, 56, 38, 0.14);
+}
+
+/* Form */
+.bh-form {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.bh-form-intro {
+  font-size: 0.82rem;
+  color: #4a5c57;
+  line-height: 1.5;
+  margin: 0 0 1.25rem;
+}
+
+.bh-field {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.bh-field-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #093826;
+  margin-bottom: 0.35rem;
+}
+
+.bh-field-label abbr {
+  color: #c0392b;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.bh-field-optional {
+  font-weight: 400;
+  color: #7a8c87;
+  font-size: 0.78rem;
+}
+
+.bh-input {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1.5px solid rgba(9, 56, 38, 0.18);
+  border-radius: 8px;
+  background: #fff;
+  color: #011d36;
+  font-family: inherit;
+  font-size: 0.88rem;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  box-sizing: border-box;
+}
+
+.bh-input::placeholder {
+  color: #a0b0ab;
+}
+
+.bh-input:focus {
+  outline: none;
+  border-color: #093826;
+  box-shadow: 0 0 0 3px rgba(9, 56, 38, 0.1);
+}
+
+/* Actions */
+.bh-form-actions {
+  margin-top: 1.25rem;
+}
+
+.bh-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  background: #093826;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.12s ease;
+}
+
+.bh-submit-btn:hover:not(:disabled) {
+  background: #0b4a33;
+  transform: translateY(-1px);
+}
+
+.bh-submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.bh-submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.bh-submit-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: bhSpin 0.6s linear infinite;
+}
+
+@keyframes bhSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Messages */
+.bh-form-message {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  font-weight: 500;
+}
+
+.bh-form-message--error {
+  background: rgba(192, 57, 43, 0.08);
+  color: #c0392b;
+  border: 1px solid rgba(192, 57, 43, 0.15);
+}
+
+.bh-form-message--success {
+  background: rgba(9, 56, 38, 0.08);
+  color: #093826;
+  border: 1px solid rgba(9, 56, 38, 0.15);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .bh-modal {
+    max-width: 100%;
+    border-radius: 14px;
+  }
+
+  .bh-modal-header {
+    padding: 1rem 1.15rem 0.65rem;
+  }
+
+  .bh-form {
+    padding: 1rem 1.15rem 1.25rem;
+  }
+}
+
+/* ================================================================== */
+/* Homepage Topbar Search                                              */
+/* ================================================================== */
+.topbar-search-form {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-width: 480px;
+  margin: 0 1.5rem;
+}
+
+.topbar-search-form .header-search-input {
+  flex: 1;
+  min-height: 38px;
+  font-size: 0.88rem;
+  border-radius: 8px 0 0 8px;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-right: none;
+  padding: 0.4rem 0.85rem;
+  background: rgba(255,255,255,0.95);
+  color: #011d36;
+}
+
+.topbar-search-form .header-search-input::placeholder {
+  color: #7a8a96;
+  font-size: 0.82rem;
+}
+
+.topbar-search-form .header-search-btn {
+  min-height: 38px;
+  border-radius: 0 8px 8px 0;
+  padding: 0.4rem 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: #093827;
+  color: #fff;
+  border: 1px solid #093827;
+  cursor: pointer;
+}
+
+.topbar-search-form .header-search-btn:hover {
+  background: #0b4d35;
+}
+
+@media (max-width: 600px) {
+  .topbar-search-form {
+    max-width: none;
+    margin: 0 0.5rem;
+  }
+  .topbar-search-form .header-search-input {
+    min-height: 34px;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.65rem;
+  }
+  .topbar-search-form .header-search-btn {
+    min-height: 34px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
   }
 }

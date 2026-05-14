@@ -100,12 +100,10 @@
       "DOMContentLoaded",
       () => {
         ensureAdsenseTag();
-        injectLink();
       },
       { once: true },
     );
   } else {
     ensureAdsenseTag();
-    injectLink();
   }
 })();

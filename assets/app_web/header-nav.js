@@ -1147,7 +1147,6 @@
             <button class="lang-switch-option" data-lang-option="EN" type="button" aria-pressed="false">EN</button>
             <button class="lang-switch-option" data-lang-option="DE" type="button" aria-pressed="false">DE</button>
             <button class="lang-switch-option" data-lang-option="RU" type="button" aria-pressed="false">RU</button>
-            <button class="lang-switch-option" data-lang-option="ZH" type="button" aria-pressed="false">ZH</button>
           </div>
         </div>
         <a
@@ -1252,19 +1251,19 @@
             </svg>
           </span>
         </button>
+        <button class="mobile-bottom-nav-btn" data-mobile-nav="favorites" type="button" aria-label="${labels.favorites}" title="${labels.favorites}">
+          <span class="mobile-bottom-nav-chip" aria-hidden="true">
+            <img class="mobile-bottom-nav-icon-img" src="assets/fav-footer.png" alt="" />
+            <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m12 20.2-6.3-3.3 1.2-7L12 4.8l5.1 5.1 1.2 7z"></path>
+            </svg>
+          </span>
+        </button>
         <button class="mobile-bottom-nav-btn" data-mobile-nav="search" type="button" aria-label="${labels.search}" title="${labels.search}">
           <span class="mobile-bottom-nav-chip icon-load-failed" aria-hidden="true">
             <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="11" cy="11" r="6.5"></circle>
               <path d="m16 16 4.5 4.5"></path>
-            </svg>
-          </span>
-        </button>
-        <button class="mobile-bottom-nav-btn" data-mobile-nav="favorites" type="button" aria-label="${labels.favorites}" title="${labels.favorites}">
-          <span class="mobile-bottom-nav-chip" aria-hidden="true">
-            <img class="mobile-bottom-nav-icon-img" src="assets/fav.png?v=20260506" alt="" />
-            <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="m12 20.2-6.3-3.3 1.2-7L12 4.8l5.1 5.1 1.2 7z"></path>
             </svg>
           </span>
         </button>
@@ -1528,4 +1527,25 @@
   } else {
     autoCreateMobileBottomNav();
   }
+
+  // --- Auto-open auth modal based on URL hash (#login / #register / #signup) ---
+  function checkHashForAuthModal() {
+    const hash = window.location.hash.toLowerCase().replace(/^#/, "");
+    if (hash === "login") {
+      openAuthModal("login");
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    } else if (hash === "register" || hash === "signup") {
+      openAuthModal("signup");
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", checkHashForAuthModal, { once: true });
+  } else {
+    // Small delay to let the modal DOM initialize
+    setTimeout(checkHashForAuthModal, 300);
+  }
+
+  window.addEventListener("hashchange", checkHashForAuthModal);
 })();

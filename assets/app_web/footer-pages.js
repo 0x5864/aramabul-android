@@ -170,7 +170,88 @@
       "Kategoriler, kullanıcı ihtiyacına göre; yeme-içme, gezi, hizmet, sağlık, kültür ve sanat başlıkları altında oluşturulmuştur. Mekân listeleri karar vermeyi hızlandıracak ihtiyaca göre filtrelenerek, sade ve kullanıcı dostu bir biçimde sunulur.":
         "Categories are organized under food & drink, travel, services, health, culture, and art. Place lists are filtered by need and presented in a simple, user-friendly way.",
       "Seçtiğiniz mekanın, adres, telefon, varsa web sitesi ve Instagram sayfası bilgileri, haritadaki yeri ve Google veri tabanındaki kullanıcıların değerlendirme puan ve adetleri ile son üç adet yorum gibi ayrıntılı bilgileri gösterilir.":
-        "It shows detailed information such as address, phone, website and Instagram page (if available), map location, Google user ratings and the latest three reviews."
+        "It shows detailed information such as address, phone, website and Instagram page (if available), map location, Google user ratings and the latest three reviews.",
+      "Gizlilik Politikası": "Privacy Policy",
+      "Son güncelleme: 8 Mayıs 2026\n\nAramaBul (\"biz\", \"platform\" veya \"site\") olarak kişisel verilerinizin korunmasına büyük önem veriyoruz. Bu gizlilik politikası, aramabul.com adresini ziyaret ettiğinizde hangi bilgilerin toplandığını, nasıl kullanıldığını ve haklarınızı açıklamaktadır.":
+        "Last updated: May 8, 2026\n\nAt AramaBul (\"we\", \"platform\" or \"site\"), we take your personal data protection very seriously. This privacy policy explains what information is collected when you visit aramabul.com, how it is used, and your rights.",
+      "1. Toplanan Bilgiler": "1. Information Collected",
+      "Otomatik olarak toplanan bilgiler: Sitemizi ziyaret ettiğinizde IP adresiniz, tarayıcı türünüz, işletim sisteminiz, ziyaret ettiğiniz sayfalar, ziyaret saatleri ve süreleri gibi bilgiler otomatik olarak kaydedilir.":
+        "Automatically collected information: When you visit our site, your IP address, browser type, operating system, pages visited, visit times and durations are automatically recorded.",
+      "Hesap bilgileri: Hesap oluşturduğunuzda e-posta adresiniz, görünen adınız ve şifreniz (şifrelenmiş olarak) saklanır.":
+        "Account information: When you create an account, your email address, display name and password (encrypted) are stored.",
+      "Çerezler: Oturum yönetimi, tercih hatırlama ve analitik amaçlı çerezler kullanılmaktadır. Detaylar için Çerez Politikası sayfamızı inceleyiniz.":
+        "Cookies: Cookies are used for session management, preference recall and analytics purposes. Please see our Cookie Policy page for details.",
+      "2. Bilgilerin Kullanım Amaçları": "2. Purposes of Information Use",
+      "Toplanan bilgiler aşağıdaki amaçlarla kullanılır:": "Collected information is used for the following purposes:",
+      "Hizmetlerimizi sunmak ve iyileştirmek": "To provide and improve our services",
+      "Kullanıcı deneyimini kişiselleştirmek": "To personalize the user experience",
+      "Site güvenliğini sağlamak ve kötüye kullanımı önlemek": "To ensure site security and prevent abuse",
+      "Yasal yükümlülüklerimizi yerine getirmek": "To fulfill our legal obligations",
+      "İstatistiksel analizler ve performans ölçümleri yapmak": "To perform statistical analysis and performance measurements",
+      "3. Üçüncü Taraf Hizmetleri": "3. Third-Party Services",
+      "Sitemizde aşağıdaki üçüncü taraf hizmetleri kullanılmaktadır:": "The following third-party services are used on our site:",
+      "Google AdSense: Reklam sunmak amacıyla çerezler kullanır. Google'ın gizlilik politikası için: policies.google.com/privacy":
+        "Google AdSense: Uses cookies for ad serving. For Google's privacy policy: policies.google.com/privacy",
+      "Google Maps Platform: Mekan bilgileri ve harita verileri için kullanılır.": "Google Maps Platform: Used for venue information and map data.",
+      "Google Fonts: Yazı tipi sunumu için kullanılır.": "Google Fonts: Used for font delivery.",
+      "3a. Mobil Uygulama": "3a. Mobile App",
+      "AramaBul mobil uygulaması, yakınındaki mekanları gösterebilmek için cihazınızın konum bilgisine erişim izni isteyebilir. Konum bilginiz yalnızca yakındaki mekanları listeleme amacıyla kullanılır ve sunucularımızda saklanmaz.":
+        "The AramaBul mobile app may request access to your device's location to show nearby venues. Your location is used only for listing nearby venues and is not stored on our servers.",
+      "Mobil uygulama, web sitemizi bir WebView aracılığıyla görüntüler. Web sitemizdeki gizlilik uygulamalarının tümü mobil uygulama için de geçerlidir.":
+        "The mobile app displays our website through a WebView. All privacy practices on our website also apply to the mobile app.",
+      "4. Veri Paylaşımı": "4. Data Sharing",
+      "Kişisel verileriniz, yasal zorunluluklar dışında üçüncü taraflarla satılmaz, kiralanmaz veya paylaşılmaz. Yalnızca hizmet sağlayıcılarımızla (sunucu, analitik) sınırlı ve gerekli ölçüde paylaşım yapılır.":
+        "Your personal data is not sold, rented or shared with third parties except for legal obligations. Sharing is limited and necessary only with our service providers (server, analytics).",
+      "5. Veri Güvenliği": "5. Data Security",
+      "Verilerinizi korumak için endüstri standardı güvenlik önlemleri (SSL şifreleme, şifre hashleme, güvenlik duvarları) uygulanmaktadır. Ancak internet üzerinden hiçbir veri iletimi %100 güvenli değildir.":
+        "Industry-standard security measures (SSL encryption, password hashing, firewalls) are applied to protect your data. However, no data transmission over the internet is 100% secure.",
+      "6. Haklarınız": "6. Your Rights",
+      "6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında aşağıdaki haklara sahipsiniz:":
+        "Under the Personal Data Protection Law (KVKK) No. 6698, you have the following rights:",
+      "Kişisel verilerinizin işlenip işlenmediğini öğrenme": "To learn whether your personal data is being processed",
+      "Verilerinizin düzeltilmesini veya silinmesini talep etme": "To request correction or deletion of your data",
+      "Verilerinizin hangi amaçla kullanıldığını öğrenme": "To learn for what purpose your data is used",
+      "Verilerinizin üçüncü kişilere aktarılıp aktarılmadığını öğrenme": "To learn whether your data is transferred to third parties",
+      "7. Politika Değişiklikleri": "7. Policy Changes",
+      "Bu gizlilik politikası zaman zaman güncellenebilir. Değişiklikler bu sayfada yayımlanır. Siteyi kullanmaya devam etmeniz, güncellenmiş politikayı kabul ettiğiniz anlamına gelir.":
+        "This privacy policy may be updated from time to time. Changes are published on this page. Continuing to use the site means you accept the updated policy.",
+      "8. İletişim": "8. Contact",
+      "Gizlilik politikamızla ilgili sorularınız için: info@aramabul.com": "For questions about our privacy policy: info@aramabul.com",
+      "Bu haklarınızı kullanmak için İletişim sayfamızdan bize ulaşabilirsiniz.": "You can contact us via our Contact page to exercise these rights.",
+      "Çerez Politikası": "Cookie Policy",
+      "Bu çerez politikası, aramabul.com web sitesinde (\"Platform\") kullanılan çerezler hakkında bilgi vermektedir.":
+        "This cookie policy provides information about the cookies used on the aramabul.com website (\"Platform\").",
+      "1. Çerez Nedir?": "1. What is a Cookie?",
+      "Çerezler, web siteleri tarafından tarayıcınıza yerleştirilen küçük metin dosyalarıdır. Çerezler, siteyi tekrar ziyaret ettiğinizde sizi tanımak, tercihlerinizi hatırlamak ve size daha iyi bir deneyim sunmak için kullanılır.":
+        "Cookies are small text files placed in your browser by websites. They are used to recognize you when you revisit the site, remember your preferences and provide a better experience.",
+      "2. Kullanılan Çerez Türleri": "2. Cookie Types Used",
+      "Zorunlu çerezler: Platformun düzgün çalışması için gereklidir. Oturum yönetimi ve güvenlik doğrulaması gibi temel işlevleri sağlar. Bu çerezler devre dışı bırakılamaz.":
+        "Required cookies: Necessary for the platform to function properly. They provide basic functions such as session management and security verification. These cookies cannot be disabled.",
+      "Tercih çerezleri: Dil tercihi, tema seçimi ve favori mekanlar gibi kullanıcı tercihlerini hatırlamak için kullanılır.":
+        "Preference cookies: Used to remember user preferences such as language, theme selection and favorite venues.",
+      "Analitik çerezler: Ziyaretçi istatistiklerini toplamak, sayfa performansını ölçmek ve kullanıcı deneyimini iyileştirmek amacıyla kullanılır.":
+        "Analytics cookies: Used to collect visitor statistics, measure page performance and improve user experience.",
+      "Reklam çerezleri: Google AdSense tarafından kullanıcıya uygun reklamlar göstermek amacıyla kullanılır. Bu çerezler üçüncü taraf çerezleridir.":
+        "Advertising cookies: Used by Google AdSense to show relevant ads to users. These are third-party cookies.",
+      "3. Üçüncü Taraf Çerezleri": "3. Third-Party Cookies",
+      "Google AdSense: Reklam kişiselleştirme ve ölçüm amacıyla çerez kullanır.":
+        "Google AdSense: Uses cookies for ad personalization and measurement.",
+      "Google Fonts: Yazı tipi sunumu sırasında teknik çerezler kullanılabilir.":
+        "Google Fonts: Technical cookies may be used during font delivery.",
+      "Kişiselleştirilmiş reklam tercihlerinizi yönetmek için Google Reklam Ayarları sayfasını ziyaret edebilirsiniz.":
+        "You can visit the Google Ad Settings page to manage your personalized ad preferences.",
+      "4. Çerezleri Yönetme": "4. Managing Cookies",
+      "Tarayıcı ayarlarınızdan çerezleri yönetebilir veya silebilirsiniz. Ancak çerezleri devre dışı bırakmanız, platformun bazı özelliklerinin düzgün çalışmamasına neden olabilir.":
+        "You can manage or delete cookies from your browser settings. However, disabling cookies may cause some features of the platform to not work properly.",
+      "Chrome: Ayarlar → Gizlilik ve Güvenlik → Çerezler": "Chrome: Settings → Privacy and Security → Cookies",
+      "Firefox: Ayarlar → Gizlilik ve Güvenlik → Çerezler": "Firefox: Settings → Privacy and Security → Cookies",
+      "Safari: Tercihler → Gizlilik → Çerezleri Yönet": "Safari: Preferences → Privacy → Manage Cookies",
+      "Edge: Ayarlar → Gizlilik → Çerezler": "Edge: Settings → Privacy → Cookies",
+      "5. Değişiklikler": "5. Changes",
+      "Bu çerez politikası zaman zaman güncellenebilir. Güncellemeler bu sayfada yayımlanır.":
+        "This cookie policy may be updated from time to time. Updates are published on this page.",
+      "6. İletişim": "6. Contact",
+      "Çerez politikamızla ilgili sorularınız için: info@aramabul.com": "For questions about our cookie policy: info@aramabul.com"
     },
     RU: {
       "İş ortaklığı": "Партнерство",
@@ -312,7 +393,88 @@
       "Kategoriler, kullanıcı ihtiyacına göre; yeme-içme, gezi, hizmet, sağlık, kültür ve sanat başlıkları altında oluşturulmuştur. Mekân listeleri karar vermeyi hızlandıracak ihtiyaca göre filtrelenerek, sade ve kullanıcı dostu bir biçimde sunulur.":
         "Категории: еда и напитки, путешествия, услуги, здоровье, культура и искусство. Списки мест фильтруются по потребностям и представлены в удобном виде.",
       "Seçtiğiniz mekanın, adres, telefon, varsa web sitesi ve Instagram sayfası bilgileri, haritadaki yeri ve Google veri tabanındaki kullanıcıların değerlendirme puan ve adetleri ile son üç adet yorum gibi ayrıntılı bilgileri gösterilir.":
-        "Показывает подробную информацию: адрес, телефон, сайт, страницу Instagram (при наличии), расположение на карте, рейтинг Google и последние три отзыва."
+        "Показывает подробную информацию: адрес, телефон, сайт, страницу Instagram (при наличии), расположение на карте, рейтинг Google и последние три отзыва.",
+      "Gizlilik Politikası": "Политика конфиденциальности",
+      "Son güncelleme: 8 Mayıs 2026\n\nAramaBul (\"biz\", \"platform\" veya \"site\") olarak kişisel verilerinizin korunmasına büyük önem veriyoruz. Bu gizlilik politikası, aramabul.com adresini ziyaret ettiğinizde hangi bilgilerin toplandığını, nasıl kullanıldığını ve haklarınızı açıklamaktadır.":
+        "Последнее обновление: 8 мая 2026\n\nМы в AramaBul серьёзно относимся к защите ваших персональных данных. Эта политика объясняет, какие данные собираются при посещении aramabul.com, как они используются и какие у вас есть права.",
+      "1. Toplanan Bilgiler": "1. Собираемые данные",
+      "Otomatik olarak toplanan bilgiler: Sitemizi ziyaret ettiğinizde IP adresiniz, tarayıcı türünüz, işletim sisteminiz, ziyaret ettiğiniz sayfalar, ziyaret saatleri ve süreleri gibi bilgiler otomatik olarak kaydedilir.":
+        "Автоматически собираемые данные: при посещении сайта автоматически записываются IP-адрес, тип браузера, ОС, посещённые страницы, время и длительность визитов.",
+      "Hesap bilgileri: Hesap oluşturduğunuzda e-posta adresiniz, görünen adınız ve şifreniz (şifrelenmiş olarak) saklanır.":
+        "Данные аккаунта: при создании аккаунта сохраняются email, отображаемое имя и пароль (в зашифрованном виде).",
+      "Çerezler: Oturum yönetimi, tercih hatırlama ve analitik amaçlı çerezler kullanılmaktadır. Detaylar için Çerez Politikası sayfamızı inceleyiniz.":
+        "Cookie: используются для управления сессиями, сохранения предпочтений и аналитики. Подробнее — на странице Политики Cookie.",
+      "2. Bilgilerin Kullanım Amaçları": "2. Цели использования данных",
+      "Toplanan bilgiler aşağıdaki amaçlarla kullanılır:": "Собранные данные используются в следующих целях:",
+      "Hizmetlerimizi sunmak ve iyileştirmek": "Предоставлять и улучшать наши услуги",
+      "Kullanıcı deneyimini kişiselleştirmek": "Персонализировать пользовательский опыт",
+      "Site güvenliğini sağlamak ve kötüye kullanımı önlemek": "Обеспечивать безопасность сайта и предотвращать злоупотребления",
+      "Yasal yükümlülüklerimizi yerine getirmek": "Выполнять наши юридические обязательства",
+      "İstatistiksel analizler ve performans ölçümleri yapmak": "Проводить статистический анализ и измерение производительности",
+      "3. Üçüncü Taraf Hizmetleri": "3. Сторонние сервисы",
+      "Sitemizde aşağıdaki üçüncü taraf hizmetleri kullanılmaktadır:": "На нашем сайте используются следующие сторонние сервисы:",
+      "Google AdSense: Reklam sunmak amacıyla çerezler kullanır. Google'ın gizlilik politikası için: policies.google.com/privacy":
+        "Google AdSense: использует cookie для показа рекламы. Политика конфиденциальности Google: policies.google.com/privacy",
+      "Google Maps Platform: Mekan bilgileri ve harita verileri için kullanılır.": "Google Maps Platform: используется для данных о местах и картах.",
+      "Google Fonts: Yazı tipi sunumu için kullanılır.": "Google Fonts: используется для загрузки шрифтов.",
+      "3a. Mobil Uygulama": "3a. Мобильное приложение",
+      "AramaBul mobil uygulaması, yakınındaki mekanları gösterebilmek için cihazınızın konum bilgisine erişim izni isteyebilir. Konum bilginiz yalnızca yakındaki mekanları listeleme amacıyla kullanılır ve sunucularımızda saklanmaz.":
+        "Мобильное приложение AramaBul может запрашивать доступ к местоположению для показа ближайших мест. Данные о местоположении используются только для этой цели и не хранятся на наших серверах.",
+      "Mobil uygulama, web sitemizi bir WebView aracılığıyla görüntüler. Web sitemizdeki gizlilik uygulamalarının tümü mobil uygulama için de geçerlidir.":
+        "Мобильное приложение отображает наш сайт через WebView. Все правила конфиденциальности сайта распространяются и на приложение.",
+      "4. Veri Paylaşımı": "4. Передача данных",
+      "Kişisel verileriniz, yasal zorunluluklar dışında üçüncü taraflarla satılmaz, kiralanmaz veya paylaşılmaz. Yalnızca hizmet sağlayıcılarımızla (sunucu, analitik) sınırlı ve gerekli ölçüde paylaşım yapılır.":
+        "Ваши данные не продаются, не сдаются в аренду и не передаются третьим лицам, кроме случаев, предусмотренных законом.",
+      "5. Veri Güvenliği": "5. Безопасность данных",
+      "Verilerinizi korumak için endüstri standardı güvenlik önlemleri (SSL şifreleme, şifre hashleme, güvenlik duvarları) uygulanmaktadır. Ancak internet üzerinden hiçbir veri iletimi %100 güvenli değildir.":
+        "Для защиты данных применяются стандартные меры безопасности (SSL, хеширование паролей, файрволы). Однако ни одна передача данных через интернет не является на 100% безопасной.",
+      "6. Haklarınız": "6. Ваши права",
+      "6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında aşağıdaki haklara sahipsiniz:":
+        "В соответствии с Законом о защите персональных данных (KVKK) № 6698 вы имеете следующие права:",
+      "Kişisel verilerinizin işlenip işlenmediğini öğrenme": "Узнать, обрабатываются ли ваши данные",
+      "Verilerinizin düzeltilmesini veya silinmesini talep etme": "Запросить исправление или удаление данных",
+      "Verilerinizin hangi amaçla kullanıldığını öğrenme": "Узнать, для каких целей используются ваши данные",
+      "Verilerinizin üçüncü kişilere aktarılıp aktarılmadığını öğrenme": "Узнать, передаются ли ваши данные третьим лицам",
+      "7. Politika Değişiklikleri": "7. Изменения политики",
+      "Bu gizlilik politikası zaman zaman güncellenebilir. Değişiklikler bu sayfada yayımlanır. Siteyi kullanmaya devam etmeniz, güncellenmiş politikayı kabul ettiğiniz anlamına gelir.":
+        "Эта политика может обновляться. Изменения публикуются на этой странице. Продолжая пользоваться сайтом, вы принимаете обновлённую политику.",
+      "8. İletişim": "8. Контакты",
+      "Gizlilik politikamızla ilgili sorularınız için: info@aramabul.com": "По вопросам конфиденциальности: info@aramabul.com",
+      "Bu haklarınızı kullanmak için İletişim sayfamızdan bize ulaşabilirsiniz.": "Для реализации ваших прав свяжитесь с нами через страницу Контакты.",
+      "Çerez Politikası": "Политика Cookie",
+      "Bu çerez politikası, aramabul.com web sitesinde (\"Platform\") kullanılan çerezler hakkında bilgi vermektedir.":
+        "Эта политика Cookie содержит информацию о файлах cookie, используемых на сайте aramabul.com.",
+      "1. Çerez Nedir?": "1. Что такое Cookie?",
+      "Çerezler, web siteleri tarafından tarayıcınıza yerleştirilen küçük metin dosyalarıdır. Çerezler, siteyi tekrar ziyaret ettiğinizde sizi tanımak, tercihlerinizi hatırlamak ve size daha iyi bir deneyim sunmak için kullanılır.":
+        "Cookie — это небольшие текстовые файлы, размещаемые в вашем браузере. Они используются для распознавания вас при повторном визите, запоминания предпочтений и улучшения опыта.",
+      "2. Kullanılan Çerez Türleri": "2. Типы используемых Cookie",
+      "Zorunlu çerezler: Platformun düzgün çalışması için gereklidir. Oturum yönetimi ve güvenlik doğrulaması gibi temel işlevleri sağlar. Bu çerezler devre dışı bırakılamaz.":
+        "Обязательные cookie: необходимы для корректной работы платформы. Обеспечивают управление сессиями и проверку безопасности. Эти cookie нельзя отключить.",
+      "Tercih çerezleri: Dil tercihi, tema seçimi ve favori mekanlar gibi kullanıcı tercihlerini hatırlamak için kullanılır.":
+        "Cookie предпочтений: используются для запоминания языка, темы и избранных мест.",
+      "Analitik çerezler: Ziyaretçi istatistiklerini toplamak, sayfa performansını ölçmek ve kullanıcı deneyimini iyileştirmek amacıyla kullanılır.":
+        "Аналитические cookie: используются для сбора статистики, измерения производительности и улучшения опыта.",
+      "Reklam çerezleri: Google AdSense tarafından kullanıcıya uygun reklamlar göstermek amacıyla kullanılır. Bu çerezler üçüncü taraf çerezleridir.":
+        "Рекламные cookie: используются Google AdSense для показа релевантной рекламы. Это сторонние cookie.",
+      "3. Üçüncü Taraf Çerezleri": "3. Сторонние Cookie",
+      "Google AdSense: Reklam kişiselleştirme ve ölçüm amacıyla çerez kullanır.":
+        "Google AdSense: использует cookie для персонализации и измерения рекламы.",
+      "Google Fonts: Yazı tipi sunumu sırasında teknik çerezler kullanılabilir.":
+        "Google Fonts: при загрузке шрифтов могут использоваться технические cookie.",
+      "Kişiselleştirilmiş reklam tercihlerinizi yönetmek için Google Reklam Ayarları sayfasını ziyaret edebilirsiniz.":
+        "Для управления персонализированной рекламой посетите страницу настроек рекламы Google.",
+      "4. Çerezleri Yönetme": "4. Управление Cookie",
+      "Tarayıcı ayarlarınızdan çerezleri yönetebilir veya silebilirsiniz. Ancak çerezleri devre dışı bırakmanız, platformun bazı özelliklerinin düzgün çalışmamasına neden olabilir.":
+        "Вы можете управлять cookie или удалять их в настройках браузера. Однако отключение cookie может повлиять на работу некоторых функций.",
+      "Chrome: Ayarlar → Gizlilik ve Güvenlik → Çerezler": "Chrome: Настройки → Конфиденциальность → Cookie",
+      "Firefox: Ayarlar → Gizlilik ve Güvenlik → Çerezler": "Firefox: Настройки → Конфиденциальность → Cookie",
+      "Safari: Tercihler → Gizlilik → Çerezleri Yönet": "Safari: Настройки → Конфиденциальность → Управление Cookie",
+      "Edge: Ayarlar → Gizlilik → Çerezler": "Edge: Настройки → Конфиденциальность → Cookie",
+      "5. Değişiklikler": "5. Изменения",
+      "Bu çerez politikası zaman zaman güncellenebilir. Güncellemeler bu sayfada yayımlanır.":
+        "Эта политика Cookie может обновляться. Обновления публикуются на этой странице.",
+      "6. İletişim": "6. Контакты",
+      "Çerez politikamızla ilgili sorularınız için: info@aramabul.com": "По вопросам политики Cookie: info@aramabul.com"
     },
     DE: {
       "İş ortaklığı": "Partnerschaft",
@@ -454,7 +616,88 @@
       "Kategoriler, kullanıcı ihtiyacına göre; yeme-içme, gezi, hizmet, sağlık, kültür ve sanat başlıkları altında oluşturulmuştur. Mekân listeleri karar vermeyi hızlandıracak ihtiyaca göre filtrelenerek, sade ve kullanıcı dostu bir biçimde sunulur.":
         "Die Kategorien sind in Essen & Trinken, Reise, Dienstleistungen, Gesundheit, Kultur und Kunst unterteilt. Ortslisten werden nach Bedarf gefiltert und übersichtlich dargestellt.",
       "Seçtiğiniz mekanın, adres, telefon, varsa web sitesi ve Instagram sayfası bilgileri, haritadaki yeri ve Google veri tabanındaki kullanıcıların değerlendirme puan ve adetleri ile son üç adet yorum gibi ayrıntılı bilgileri gösterilir.":
-        "Es zeigt detaillierte Informationen wie Adresse, Telefon, Website und Instagram-Seite (falls vorhanden), Kartenstandort, Google-Bewertungen und die letzten drei Rezensionen."
+        "Es zeigt detaillierte Informationen wie Adresse, Telefon, Website und Instagram-Seite (falls vorhanden), Kartenstandort, Google-Bewertungen und die letzten drei Rezensionen.",
+      "Gizlilik Politikası": "Datenschutzrichtlinie",
+      "Son güncelleme: 8 Mayıs 2026\n\nAramaBul (\"biz\", \"platform\" veya \"site\") olarak kişisel verilerinizin korunmasına büyük önem veriyoruz. Bu gizlilik politikası, aramabul.com adresini ziyaret ettiğinizde hangi bilgilerin toplandığını, nasıl kullanıldığını ve haklarınızı açıklamaktadır.":
+        "Letzte Aktualisierung: 8. Mai 2026\n\nBei AramaBul nehmen wir den Schutz Ihrer persönlichen Daten sehr ernst. Diese Datenschutzrichtlinie erklärt, welche Daten beim Besuch von aramabul.com erhoben werden, wie sie verwendet werden und welche Rechte Sie haben.",
+      "1. Toplanan Bilgiler": "1. Erhobene Daten",
+      "Otomatik olarak toplanan bilgiler: Sitemizi ziyaret ettiğinizde IP adresiniz, tarayıcı türünüz, işletim sisteminiz, ziyaret ettiğiniz sayfalar, ziyaret saatleri ve süreleri gibi bilgiler otomatik olarak kaydedilir.":
+        "Automatisch erhobene Daten: Beim Besuch unserer Website werden IP-Adresse, Browsertyp, Betriebssystem, besuchte Seiten, Besuchszeiten und -dauer automatisch erfasst.",
+      "Hesap bilgileri: Hesap oluşturduğunuzda e-posta adresiniz, görünen adınız ve şifreniz (şifrelenmiş olarak) saklanır.":
+        "Kontodaten: Bei der Kontoerstellung werden E-Mail, Anzeigename und Passwort (verschlüsselt) gespeichert.",
+      "Çerezler: Oturum yönetimi, tercih hatırlama ve analitik amaçlı çerezler kullanılmaktadır. Detaylar için Çerez Politikası sayfamızı inceleyiniz.":
+        "Cookies: Cookies werden für Sitzungsverwaltung, Einstellungen und Analysen verwendet. Details finden Sie auf unserer Cookie-Richtlinienseite.",
+      "2. Bilgilerin Kullanım Amaçları": "2. Zwecke der Datenverwendung",
+      "Toplanan bilgiler aşağıdaki amaçlarla kullanılır:": "Die erhobenen Daten werden für folgende Zwecke verwendet:",
+      "Hizmetlerimizi sunmak ve iyileştirmek": "Unsere Dienste bereitstellen und verbessern",
+      "Kullanıcı deneyimini kişiselleştirmek": "Das Nutzererlebnis personalisieren",
+      "Site güvenliğini sağlamak ve kötüye kullanımı önlemek": "Die Sicherheit der Website gewährleisten und Missbrauch verhindern",
+      "Yasal yükümlülüklerimizi yerine getirmek": "Unsere gesetzlichen Pflichten erfüllen",
+      "İstatistiksel analizler ve performans ölçümleri yapmak": "Statistische Analysen und Leistungsmessungen durchführen",
+      "3. Üçüncü Taraf Hizmetleri": "3. Drittanbieter-Dienste",
+      "Sitemizde aşağıdaki üçüncü taraf hizmetleri kullanılmaktadır:": "Auf unserer Website werden folgende Drittanbieter-Dienste genutzt:",
+      "Google AdSense: Reklam sunmak amacıyla çerezler kullanır. Google'ın gizlilik politikası için: policies.google.com/privacy":
+        "Google AdSense: Verwendet Cookies zur Anzeigenschaltung. Googles Datenschutzrichtlinie: policies.google.com/privacy",
+      "Google Maps Platform: Mekan bilgileri ve harita verileri için kullanılır.": "Google Maps Platform: Wird für Ortsinformationen und Kartendaten verwendet.",
+      "Google Fonts: Yazı tipi sunumu için kullanılır.": "Google Fonts: Wird für die Schriftbereitstellung verwendet.",
+      "3a. Mobil Uygulama": "3a. Mobile App",
+      "AramaBul mobil uygulaması, yakınındaki mekanları gösterebilmek için cihazınızın konum bilgisine erişim izni isteyebilir. Konum bilginiz yalnızca yakındaki mekanları listeleme amacıyla kullanılır ve sunucularımızda saklanmaz.":
+        "Die AramaBul-App kann auf Ihren Standort zugreifen, um nahe Orte anzuzeigen. Ihr Standort wird nur dafür verwendet und nicht auf unseren Servern gespeichert.",
+      "Mobil uygulama, web sitemizi bir WebView aracılığıyla görüntüler. Web sitemizdeki gizlilik uygulamalarının tümü mobil uygulama için de geçerlidir.":
+        "Die mobile App zeigt unsere Website über eine WebView an. Alle Datenschutzpraktiken der Website gelten auch für die App.",
+      "4. Veri Paylaşımı": "4. Datenweitergabe",
+      "Kişisel verileriniz, yasal zorunluluklar dışında üçüncü taraflarla satılmaz, kiralanmaz veya paylaşılmaz. Yalnızca hizmet sağlayıcılarımızla (sunucu, analitik) sınırlı ve gerekli ölçüde paylaşım yapılır.":
+        "Ihre Daten werden nicht verkauft, vermietet oder an Dritte weitergegeben, es sei denn, es besteht eine gesetzliche Pflicht.",
+      "5. Veri Güvenliği": "5. Datensicherheit",
+      "Verilerinizi korumak için endüstri standardı güvenlik önlemleri (SSL şifreleme, şifre hashleme, güvenlik duvarları) uygulanmaktadır. Ancak internet üzerinden hiçbir veri iletimi %100 güvenli değildir.":
+        "Zum Schutz Ihrer Daten werden branchenübliche Sicherheitsmaßnahmen (SSL, Passwort-Hashing, Firewalls) eingesetzt. Keine Datenübertragung im Internet ist jedoch zu 100% sicher.",
+      "6. Haklarınız": "6. Ihre Rechte",
+      "6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında aşağıdaki haklara sahipsiniz:":
+        "Gemäß dem Datenschutzgesetz (KVKK) Nr. 6698 haben Sie folgende Rechte:",
+      "Kişisel verilerinizin işlenip işlenmediğini öğrenme": "Zu erfahren, ob Ihre Daten verarbeitet werden",
+      "Verilerinizin düzeltilmesini veya silinmesini talep etme": "Berichtigung oder Löschung Ihrer Daten verlangen",
+      "Verilerinizin hangi amaçla kullanıldığını öğrenme": "Zu erfahren, zu welchem Zweck Ihre Daten verwendet werden",
+      "Verilerinizin üçüncü kişilere aktarılıp aktarılmadığını öğrenme": "Zu erfahren, ob Ihre Daten an Dritte weitergegeben werden",
+      "7. Politika Değişiklikleri": "7. Richtlinienänderungen",
+      "Bu gizlilik politikası zaman zaman güncellenebilir. Değişiklikler bu sayfada yayımlanır. Siteyi kullanmaya devam etmeniz, güncellenmiş politikayı kabul ettiğiniz anlamına gelir.":
+        "Diese Richtlinie kann aktualisiert werden. Änderungen werden auf dieser Seite veröffentlicht.",
+      "8. İletişim": "8. Kontakt",
+      "Gizlilik politikamızla ilgili sorularınız için: info@aramabul.com": "Bei Fragen zum Datenschutz: info@aramabul.com",
+      "Bu haklarınızı kullanmak için İletişim sayfamızdan bize ulaşabilirsiniz.": "Kontaktieren Sie uns über unsere Kontaktseite, um Ihre Rechte auszuüben.",
+      "Çerez Politikası": "Cookie-Richtlinie",
+      "Bu çerez politikası, aramabul.com web sitesinde (\"Platform\") kullanılan çerezler hakkında bilgi vermektedir.":
+        "Diese Cookie-Richtlinie informiert über die auf aramabul.com verwendeten Cookies.",
+      "1. Çerez Nedir?": "1. Was ist ein Cookie?",
+      "Çerezler, web siteleri tarafından tarayıcınıza yerleştirilen küçük metin dosyalarıdır. Çerezler, siteyi tekrar ziyaret ettiğinizde sizi tanımak, tercihlerinizi hatırlamak ve size daha iyi bir deneyim sunmak için kullanılır.":
+        "Cookies sind kleine Textdateien, die von Websites in Ihrem Browser gespeichert werden. Sie dienen dazu, Sie wiederzuerkennen, Einstellungen zu merken und ein besseres Erlebnis zu bieten.",
+      "2. Kullanılan Çerez Türleri": "2. Verwendete Cookie-Typen",
+      "Zorunlu çerezler: Platformun düzgün çalışması için gereklidir. Oturum yönetimi ve güvenlik doğrulaması gibi temel işlevleri sağlar. Bu çerezler devre dışı bırakılamaz.":
+        "Erforderliche Cookies: Notwendig für die ordnungsgemäße Funktion der Plattform. Sie ermöglichen Sitzungsverwaltung und Sicherheitsprüfung und können nicht deaktiviert werden.",
+      "Tercih çerezleri: Dil tercihi, tema seçimi ve favori mekanlar gibi kullanıcı tercihlerini hatırlamak için kullanılır.":
+        "Präferenz-Cookies: Zum Speichern von Sprache, Design und Lieblingsorten.",
+      "Analitik çerezler: Ziyaretçi istatistiklerini toplamak, sayfa performansını ölçmek ve kullanıcı deneyimini iyileştirmek amacıyla kullanılır.":
+        "Analyse-Cookies: Zum Sammeln von Besucherstatistiken, Leistungsmessung und Verbesserung des Nutzererlebnisses.",
+      "Reklam çerezleri: Google AdSense tarafından kullanıcıya uygun reklamlar göstermek amacıyla kullanılır. Bu çerezler üçüncü taraf çerezleridir.":
+        "Werbe-Cookies: Von Google AdSense zur Anzeige relevanter Werbung verwendet. Dies sind Drittanbieter-Cookies.",
+      "3. Üçüncü Taraf Çerezleri": "3. Drittanbieter-Cookies",
+      "Google AdSense: Reklam kişiselleştirme ve ölçüm amacıyla çerez kullanır.":
+        "Google AdSense: Verwendet Cookies zur Personalisierung und Messung von Werbung.",
+      "Google Fonts: Yazı tipi sunumu sırasında teknik çerezler kullanılabilir.":
+        "Google Fonts: Bei der Schriftbereitstellung können technische Cookies verwendet werden.",
+      "Kişiselleştirilmiş reklam tercihlerinizi yönetmek için Google Reklam Ayarları sayfasını ziyaret edebilirsiniz.":
+        "Besuchen Sie die Google-Anzeigeneinstellungen, um Ihre personalisierten Werbeeinstellungen zu verwalten.",
+      "4. Çerezleri Yönetme": "4. Cookies verwalten",
+      "Tarayıcı ayarlarınızdan çerezleri yönetebilir veya silebilirsiniz. Ancak çerezleri devre dışı bırakmanız, platformun bazı özelliklerinin düzgün çalışmamasına neden olabilir.":
+        "Sie können Cookies in Ihren Browsereinstellungen verwalten oder löschen. Das Deaktivieren kann jedoch einige Funktionen beeinträchtigen.",
+      "Chrome: Ayarlar → Gizlilik ve Güvenlik → Çerezler": "Chrome: Einstellungen → Datenschutz → Cookies",
+      "Firefox: Ayarlar → Gizlilik ve Güvenlik → Çerezler": "Firefox: Einstellungen → Datenschutz → Cookies",
+      "Safari: Tercihler → Gizlilik → Çerezleri Yönet": "Safari: Einstellungen → Datenschutz → Cookies verwalten",
+      "Edge: Ayarlar → Gizlilik → Çerezler": "Edge: Einstellungen → Datenschutz → Cookies",
+      "5. Değişiklikler": "5. Änderungen",
+      "Bu çerez politikası zaman zaman güncellenebilir. Güncellemeler bu sayfada yayımlanır.":
+        "Diese Cookie-Richtlinie kann aktualisiert werden. Aktualisierungen werden auf dieser Seite veröffentlicht.",
+      "6. İletişim": "6. Kontakt",
+      "Çerez politikamızla ilgili sorularınız için: info@aramabul.com": "Bei Fragen zur Cookie-Richtlinie: info@aramabul.com"
     },
     ZH: {
       "İş ortaklığı": "合作伙伴",
@@ -872,25 +1115,80 @@
     gizlilik: {
       eyebrow: "Yasal",
       title: "Gizlilik Politikası",
-      lead: "Gizlilik yaklaşımımız, gereksiz veri toplamadan temel hizmeti açık biçimde sunmaktır.",
+      lead: "Son güncelleme: 8 Mayıs 2026\n\nAramaBul (\"biz\", \"platform\" veya \"site\") olarak kişisel verilerinizin korunmasına büyük önem veriyoruz. Bu gizlilik politikası, aramabul.com adresini ziyaret ettiğinizde hangi bilgilerin toplandığını, nasıl kullanıldığını ve haklarınızı açıklamaktadır.",
       cards: [
         {
-          title: "Topladığımız veriler",
+          title: "1. Toplanan Bilgiler",
           paragraphs: [
-            "Hesap alanı kullanılırsa temel profil bilgileri tutulabilir.",
-            "Yerel ayarlar ve dil tercihi gibi küçük bilgiler cihaz tarafında saklanabilir.",
+            "Otomatik olarak toplanan bilgiler: Sitemizi ziyaret ettiğinizde IP adresiniz, tarayıcı türünüz, işletim sisteminiz, ziyaret ettiğiniz sayfalar, ziyaret saatleri ve süreleri gibi bilgiler otomatik olarak kaydedilir.",
+            "Hesap bilgileri: Hesap oluşturduğunuzda e-posta adresiniz, görünen adınız ve şifreniz (şifrelenmiş olarak) saklanır.",
+            "Çerezler: Oturum yönetimi, tercih hatırlama ve analitik amaçlı çerezler kullanılmaktadır. Detaylar için Çerez Politikası sayfamızı inceleyiniz.",
           ],
         },
         {
-          title: "Toplamadığımız şeyler",
+          title: "2. Bilgilerin Kullanım Amaçları",
           paragraphs: [
-            "Gereksiz kişisel profil verisi, ilgisiz belge veya kapsam dışı hassas bilgi istemeyiz.",
+            "Toplanan bilgiler aşağıdaki amaçlarla kullanılır:",
+          ],
+          bullets: [
+            "Hizmetlerimizi sunmak ve iyileştirmek",
+            "Kullanıcı deneyimini kişiselleştirmek",
+            "Site güvenliğini sağlamak ve kötüye kullanımı önlemek",
+            "Yasal yükümlülüklerimizi yerine getirmek",
+            "İstatistiksel analizler ve performans ölçümleri yapmak",
           ],
         },
         {
-          title: "Paylaşım ilkesi",
+          title: "3. Üçüncü Taraf Hizmetleri",
           paragraphs: [
-            "Yasal zorunluluk olmadıkça kullanıcı verisini açık ve sınırsız biçimde üçüncü taraflara açmayız.",
+            "Sitemizde aşağıdaki üçüncü taraf hizmetleri kullanılmaktadır:",
+            "Google AdSense: Reklam sunmak amacıyla çerezler kullanır. Google'ın gizlilik politikası için: policies.google.com/privacy",
+            "Google Maps Platform: Mekan bilgileri ve harita verileri için kullanılır.",
+            "Google Fonts: Yazı tipi sunumu için kullanılır.",
+          ],
+        },
+        {
+          title: "3a. Mobil Uygulama",
+          paragraphs: [
+            "AramaBul mobil uygulaması, yakınındaki mekanları gösterebilmek için cihazınızın konum bilgisine erişim izni isteyebilir. Konum bilginiz yalnızca yakındaki mekanları listeleme amacıyla kullanılır ve sunucularımızda saklanmaz.",
+            "Mobil uygulama, web sitemizi bir WebView aracılığıyla görüntüler. Web sitemizdeki gizlilik uygulamalarının tümü mobil uygulama için de geçerlidir.",
+          ],
+        },
+        {
+          title: "4. Veri Paylaşımı",
+          paragraphs: [
+            "Kişisel verileriniz, yasal zorunluluklar dışında üçüncü taraflarla satılmaz, kiralanmaz veya paylaşılmaz. Yalnızca hizmet sağlayıcılarımızla (sunucu, analitik) sınırlı ve gerekli ölçüde paylaşım yapılır.",
+          ],
+        },
+        {
+          title: "5. Veri Güvenliği",
+          paragraphs: [
+            "Verilerinizi korumak için endüstri standardı güvenlik önlemleri (SSL şifreleme, şifre hashleme, güvenlik duvarları) uygulanmaktadır. Ancak internet üzerinden hiçbir veri iletimi %100 güvenli değildir.",
+          ],
+        },
+        {
+          title: "6. Haklarınız",
+          paragraphs: [
+            "6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamında aşağıdaki haklara sahipsiniz:",
+          ],
+          bullets: [
+            "Kişisel verilerinizin işlenip işlenmediğini öğrenme",
+            "Verilerinizin düzeltilmesini veya silinmesini talep etme",
+            "Verilerinizin hangi amaçla kullanıldığını öğrenme",
+            "Verilerinizin üçüncü kişilere aktarılıp aktarılmadığını öğrenme",
+          ],
+        },
+        {
+          title: "7. Politika Değişiklikleri",
+          paragraphs: [
+            "Bu gizlilik politikası zaman zaman güncellenebilir. Değişiklikler bu sayfada yayımlanır. Siteyi kullanmaya devam etmeniz, güncellenmiş politikayı kabul ettiğiniz anlamına gelir.",
+          ],
+        },
+        {
+          title: "8. İletişim",
+          paragraphs: [
+            "Gizlilik politikamızla ilgili sorularınız için: info@aramabul.com",
+            "Bu haklarınızı kullanmak için İletişim sayfamızdan bize ulaşabilirsiniz.",
           ],
         },
       ],
@@ -919,46 +1217,53 @@
     cerez: {
       eyebrow: "Yasal",
       title: "Çerez Politikası",
-      lead: "Bu sayfa, sitemizde kullanılan çerezlerin ne işe yaradığını, ne kadar süre kaldığını ve tercihlerini nasıl yönetebileceğini sade dille açıklar.",
+      lead: "Bu çerez politikası, aramabul.com web sitesinde (\"Platform\") kullanılan çerezler hakkında bilgi vermektedir.",
       cards: [
         {
-          title: "Çerez nedir?",
+          title: "1. Çerez Nedir?",
           paragraphs: [
-            "Çerezler, ziyaret sırasında tarayıcına bırakılan küçük veri dosyalarıdır.",
-            "Bazı ayarlar ise çerez yerine tarayıcının yerel kayıt alanında tutulabilir. Amaç, siteyi her seferinde baştan kurmadan daha düzenli çalıştırmaktır.",
+            "Çerezler, web siteleri tarafından tarayıcınıza yerleştirilen küçük metin dosyalarıdır. Çerezler, siteyi tekrar ziyaret ettiğinizde sizi tanımak, tercihlerinizi hatırlamak ve size daha iyi bir deneyim sunmak için kullanılır.",
           ],
         },
         {
-          title: "Kullandığımız başlıca türler",
+          title: "2. Kullanılan Çerez Türleri",
+          paragraphs: [
+            "Zorunlu çerezler: Platformun düzgün çalışması için gereklidir. Oturum yönetimi ve güvenlik doğrulaması gibi temel işlevleri sağlar. Bu çerezler devre dışı bırakılamaz.",
+            "Tercih çerezleri: Dil tercihi, tema seçimi ve favori mekanlar gibi kullanıcı tercihlerini hatırlamak için kullanılır.",
+            "Analitik çerezler: Ziyaretçi istatistiklerini toplamak, sayfa performansını ölçmek ve kullanıcı deneyimini iyileştirmek amacıyla kullanılır.",
+            "Reklam çerezleri: Google AdSense tarafından kullanıcıya uygun reklamlar göstermek amacıyla kullanılır. Bu çerezler üçüncü taraf çerezleridir.",
+          ],
+        },
+        {
+          title: "3. Üçüncü Taraf Çerezleri",
+          paragraphs: [
+            "Google AdSense: Reklam kişiselleştirme ve ölçüm amacıyla çerez kullanır.",
+            "Google Fonts: Yazı tipi sunumu sırasında teknik çerezler kullanılabilir.",
+            "Kişiselleştirilmiş reklam tercihlerinizi yönetmek için Google Reklam Ayarları sayfasını ziyaret edebilirsiniz.",
+          ],
+        },
+        {
+          title: "4. Çerezleri Yönetme",
+          paragraphs: [
+            "Tarayıcı ayarlarınızdan çerezleri yönetebilir veya silebilirsiniz. Ancak çerezleri devre dışı bırakmanız, platformun bazı özelliklerinin düzgün çalışmamasına neden olabilir.",
+          ],
           bullets: [
-            "Zorunlu çerezler: oturum, güvenlik ve temel sayfa akışı için",
-            "Tercih çerezleri: dil, tema ve benzer seçimleri hatırlamak için",
-            "Ölçüm çerezleri: hangi alanların daha çok kullanıldığını anlamak için",
-            "Üçüncü taraf çerezleri: harici bir araç kullanılırsa o hizmetin teknik kaydı için",
+            "Chrome: Ayarlar → Gizlilik ve Güvenlik → Çerezler",
+            "Firefox: Ayarlar → Gizlilik ve Güvenlik → Çerezler",
+            "Safari: Tercihler → Gizlilik → Çerezleri Yönet",
+            "Edge: Ayarlar → Gizlilik → Çerezler",
           ],
         },
         {
-          title: "Hangi amaçlarla kullanılır?",
-          bullets: [
-            "Dil tercihini hatırlamak",
-            "Tema seçimini korumak",
-            "Oturum akışını yönetmek",
-            "Sayfa hatalarını ve performans sorunlarını görmek",
-            "Kötüye kullanımı sınırlamaya yardımcı olmak",
-          ],
-        },
-        {
-          title: "Saklama süresi ve üçüncü taraflar",
+          title: "5. Değişiklikler",
           paragraphs: [
-            "Bazı çerezler sadece oturum açıkken kalır, bazıları ise belirli bir süre cihazında tutulur. Süre, çerezin amacına göre değişir.",
-            "Harici bir analiz, giriş veya medya aracı kullanılırsa ilgili hizmet kendi çerezini oluşturabilir. Bu durumda o hizmetin kendi politikası da devreye girer.",
+            "Bu çerez politikası zaman zaman güncellenebilir. Güncellemeler bu sayfada yayımlanır.",
           ],
         },
         {
-          title: "Kontrol sende",
+          title: "6. İletişim",
           paragraphs: [
-            "Tarayıcı ayarlarından çerezleri silebilir, engelleyebilir veya sadece belirli siteler için izin verebilirsin.",
-            "Çerezleri kapatman halinde bazı tercih alanları sıfırlanabilir ve bazı sayfa işlevleri beklenen gibi çalışmayabilir.",
+            "Çerez politikamızla ilgili sorularınız için: info@aramabul.com",
           ],
         },
       ],

@@ -490,6 +490,137 @@
   applyTheme(readTheme());
   renderAccount();
 
+  // -------------------------------------------------------------------------
+  // Account Deletion
+  // -------------------------------------------------------------------------
+  const accountDeleteBtn = document.querySelector("#accountDeleteBtn");
+  const accountDeleteModal = document.querySelector("#accountDeleteModal");
+  const accountDeleteCancel = document.querySelector("#accountDeleteCancel");
+  const accountDeleteConfirm = document.querySelector("#accountDeleteConfirm");
+  const accountDeleteConfirmEmail = document.querySelector("#accountDeleteConfirmEmail");
+  const accountDeleteMessage = document.querySelector("#accountDeleteMessage");
+
+  function showDeleteModal() {
+    if (accountDeleteModal) {
+      accountDeleteModal.classList.remove("is-hidden");
+      if (accountDeleteConfirmEmail) accountDeleteConfirmEmail.value = "";
+      if (accountDeleteMessage) accountDeleteMessage.textContent = "";
+    }
+  }
+
+  function hideDeleteModal() {
+    if (accountDeleteModal) {
+      accountDeleteModal.classList.add("is-hidden");
+      if (accountDeleteConfirmEmail) accountDeleteConfirmEmail.value = "";
+      if (accountDeleteMessage) accountDeleteMessage.textContent = "";
+    }
+  }
+
+  if (accountDeleteBtn) {
+    accountDeleteBtn.addEventListener("click", () => {
+      const session = readSession();
+      if (!session) {
+        setMessage(translateUi("Hesap silmek için önce giriş yapmalısın."), true);
+        return;
+      }
+      showDeleteModal();
+    });
+  }
+
+  if (accountDeleteCancel) {
+    accountDeleteCancel.addEventListener("click", hideDeleteModal);
+  }
+
+  // Close modal on backdrop click
+  if (accountDeleteModal) {
+    accountDeleteModal.addEventListener("click", (e) => {
+      if (e.target === accountDeleteModal) hideDeleteModal();
+    });
+  }
+
+  if (accountDeleteConfirm) {
+    accountDeleteConfirm.addEventListener("click", async () => {
+      const session = readSession();
+      if (!session) {
+        hideDeleteModal();
+        return;
+      }
+
+      const typedEmail = normalizeEmail(
+        accountDeleteConfirmEmail instanceof HTMLInputElement ? accountDeleteConfirmEmail.value : ""
+      );
+      const sessionEmail = normalizeEmail(session.email);
+
+      if (!typedEmail || typedEmail !== sessionEmail) {
+        if (accountDeleteMessage) {
+          accountDeleteMessage.textContent = translateUi("E-posta adresi eşleşmiyor. Lütfen doğru e-postayı girin.");
+        }
+        return;
+      }
+
+      // Disable button during request
+      accountDeleteConfirm.disabled = true;
+      accountDeleteConfirm.textContent = translateUi("Siliniyor...");
+
+      try {
+        const response = await fetch("/api/auth/delete-account", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            email: sessionEmail,
+            confirmDelete: true,
+          }),
+        });
+
+        const payload = await response.json().catch(() => ({}));
+
+        if (!response.ok || !payload?.ok) {
+          const errorMsg = payload?.message === "user_not_found"
+            ? "Kullanıcı bulunamadı."
+            : "Hesap silinemedi. Lütfen daha sonra tekrar deneyin.";
+          if (accountDeleteMessage) {
+            accountDeleteMessage.textContent = translateUi(errorMsg);
+          }
+          accountDeleteConfirm.disabled = false;
+          accountDeleteConfirm.textContent = translateUi("Kalıcı Olarak Sil");
+          return;
+        }
+
+        // Clear local session
+        writeStorageValue(AUTH_SESSION_KEY, "");
+        writeStorageValue(AUTH_USERS_KEY, "[]");
+        dispatchCompatEvent("aramabul:authchange");
+
+        hideDeleteModal();
+
+        // Notify native app if running inside one
+        try {
+          if (window.AramaBulIOS) {
+            window.AramaBulIOS.postMessage(JSON.stringify({ action: "accountDeleted" }));
+          }
+          if (window.AramaBulAndroid) {
+            window.AramaBulAndroid.postMessage(JSON.stringify({ action: "accountDeleted" }));
+          }
+        } catch (_e) {}
+
+        // Show success then redirect
+        setMessage(translateUi("Hesabınız başarıyla silindi. Ana sayfaya yönlendiriliyorsunuz..."));
+        setTimeout(() => {
+          window.location.assign("index.html");
+        }, 2000);
+      } catch (_error) {
+        if (accountDeleteMessage) {
+          accountDeleteMessage.textContent = translateUi("Bağlantı hatası. Lütfen tekrar deneyin.");
+        }
+        accountDeleteConfirm.disabled = false;
+        accountDeleteConfirm.textContent = translateUi("Kalıcı Olarak Sil");
+      }
+    });
+  }
+
   const syncAccount = () => {
     renderAccount();
   };

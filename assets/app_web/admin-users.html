@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d2032" />
+    <title>Admin Kullanıcılar | AramaBul</title>
+    <meta name="description" content="Kayıtlı kullanıcıları yönet." />
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260508b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260508b" />
+    <link rel="apple-touch-icon" href="assets/favicon.png?v=20260508b" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260508-footer-fix" />
+    <style>
+      .admin-users-card {
+        background: var(--paper);
+        border: 1px solid rgba(185, 196, 202, 0.95);
+        border-radius: 10px;
+        padding: 1.5rem;
+        width: 100%;
+      }
+      .admin-users-stats {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+      }
+      .admin-users-stat {
+        background: #fbf5df;
+        border: 1px solid rgba(9, 56, 39, 0.15);
+        border-radius: 8px;
+        padding: 0.75rem 1.25rem;
+        text-align: center;
+        min-width: 100px;
+      }
+      .admin-users-stat-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #093827;
+        display: block;
+      }
+      .admin-users-stat-label {
+        font-size: 0.78rem;
+        color: #5a6b7a;
+        font-weight: 600;
+      }
+      .admin-users-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
+      .admin-users-table th {
+        text-align: left;
+        font-weight: 700;
+        color: #093827;
+        padding: 0.6rem 0.8rem;
+        border-bottom: 2px solid #093827;
+        white-space: nowrap;
+      }
+      .admin-users-table td {
+        padding: 0.55rem 0.8rem;
+        border-bottom: 1px solid rgba(185, 196, 202, 0.5);
+        color: #1a2a3a;
+      }
+      .admin-users-table tr:hover td {
+        background: rgba(9, 56, 39, 0.03);
+      }
+      .admin-users-badge {
+        display: inline-block;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.15rem 0.55rem;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
+      .admin-users-badge-google { background: #e8f5e9; color: #2e7d32; }
+      .admin-users-badge-apple { background: #f3e5f5; color: #6a1b9a; }
+      .admin-users-badge-email { background: #e3f2fd; color: #1565c0; }
+      .admin-users-badge-admin { background: #fff3e0; color: #e65100; }
+      .admin-users-badge-user { background: #eceff1; color: #455a64; }
+      .admin-users-badge-active { background: #c8e6c9; color: #1b5e20; }
+      .admin-users-badge-inactive { background: #ffcdd2; color: #b71c1c; }
+      .admin-pv-section {
+        background: var(--paper);
+        border: 1px solid rgba(185, 196, 202, 0.95);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      .admin-pv-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #093827;
+        margin: 0 0 1rem;
+      }
+      .admin-pv-stats {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+      }
+      .admin-pv-stat {
+        background: #e8f5e9;
+        border: 1px solid rgba(9, 56, 39, 0.15);
+        border-radius: 8px;
+        padding: 0.75rem 1.25rem;
+        text-align: center;
+        min-width: 110px;
+        flex: 1;
+      }
+      .admin-pv-stat-value {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #093827;
+        display: block;
+      }
+      .admin-pv-stat-label {
+        font-size: 0.75rem;
+        color: #5a6b7a;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .admin-pv-top {
+        margin-top: 0.5rem;
+      }
+      .admin-pv-top-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.4rem 0;
+        border-bottom: 1px solid rgba(185, 196, 202, 0.4);
+        font-size: 0.85rem;
+      }
+      .admin-pv-top-row:last-child { border-bottom: 0; }
+      .admin-pv-top-path { color: #093827; font-weight: 600; }
+      .admin-pv-top-count { color: #5a6b7a; font-weight: 700; }
+    </style>
+  </head>
+  <body class="venue-detail-page admin-venue-editor-page">
+    <div class="texture"></div>
+
+    <header class="global-header-band">
+      <nav class="topbar global-topbar">
+        <a class="brand" href="index.html" aria-label="aramabul">
+          <img class="brand-logo" src="assets/logo.png?v=20260508b" alt="aramabul logo" />
+          <span class="brand-wordmark"><span class="brand-wordmark-search">arama</span><span class="brand-wordmark-rest">bul</span></span>
+        </a>
+        <div class="istanbul-topbar-actions">
+          <span class="istanbul-topbar-link admin-session-chip" data-admin-session-name>Admin</span>
+          <button class="istanbul-topbar-link admin-logout-button" type="button" data-admin-logout>Çıkış yap</button>
+        </div>
+      </nav>
+      <div class="global-topline"></div>
+    </header>
+
+    <main class="hero venue-detail-shell">
+
+      <section class="admin-panel-nav" aria-label="Admin panel sayfaları">
+        <a class="admin-panel-nav-card" href="admin-venues.html">
+          <span class="admin-panel-nav-title">Yeme-İçme</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-gezi.html">
+          <span class="admin-panel-nav-title">Gezi</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-hizmetler.html">
+          <span class="admin-panel-nav-title">Hizmetler</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-saglik.html">
+          <span class="admin-panel-nav-title">Sağlık</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-kultur.html">
+          <span class="admin-panel-nav-title">Kültür</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-sanat.html">
+          <span class="admin-panel-nav-title">Sanat</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-content-model.html">
+          <span class="admin-panel-nav-title">İçerik Mimarisi</span>
+        </a>
+        <a class="admin-panel-nav-card is-active" href="admin-users.html" aria-current="page">
+          <span class="admin-panel-nav-title">Kullanıcılar</span>
+        </a>
+      </section>
+
+      <section class="admin-pv-section">
+        <p class="admin-pv-title">📊 Sayfa Görüntülenme</p>
+        <div id="adminPvStats" class="admin-pv-stats">
+          <div class="admin-pv-stat"><span class="admin-pv-stat-value">-</span><span class="admin-pv-stat-label">Yükleniyor...</span></div>
+        </div>
+        <div id="adminPvTop" class="admin-pv-top"></div>
+      </section>
+
+      <section class="admin-users-card">
+        <div class="admin-venues-toolbar">
+          <div>
+            <p class="istanbul-discovery-kicker">Kayıtlı Kullanıcılar</p>
+          </div>
+          <button id="adminUsersRefreshButton" class="istanbul-filter-reset" type="button">Yenile</button>
+        </div>
+
+        <div id="adminUsersStats" class="admin-users-stats"></div>
+
+        <div id="adminUsersState" class="istanbul-results-state">Kullanıcılar getiriliyor...</div>
+
+        <div id="adminUsersTableWrap" hidden>
+          <table class="admin-users-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Ad</th>
+                <th>E-posta</th>
+                <th>Giriş Yöntemi</th>
+                <th>Rol</th>
+                <th>Durum</th>
+                <th>Kayıt Tarihi</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersList"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="admin-auth.js?v=20260410-admin-auth-02"></script>
+    <script>
+    (function () {
+      "use strict";
+
+      const API_BASE = window.location.origin;
+
+      function getAdminCookie() {
+        const match = document.cookie.match(/(?:^|;\s*)aramabul_admin_session=([^;]+)/);
+        return match ? decodeURIComponent(match[1]) : "";
+      }
+
+      /* ── Page view stats ── */
+      async function loadPageStats() {
+        try {
+          const res = await fetch(`${API_BASE}/api/admin/page-stats`, {
+            credentials: "include",
+          });
+          if (!res.ok) return;
+          const data = await res.json();
+          if (!data.ok) return;
+
+          const s = data.stats;
+          document.getElementById("adminPvStats").innerHTML = `
+            <div class="admin-pv-stat"><span class="admin-pv-stat-value">${s.today.toLocaleString("tr-TR")}</span><span class="admin-pv-stat-label">Bugün</span></div>
+            <div class="admin-pv-stat"><span class="admin-pv-stat-value">${s.week.toLocaleString("tr-TR")}</span><span class="admin-pv-stat-label">Bu Hafta</span></div>
+            <div class="admin-pv-stat"><span class="admin-pv-stat-value">${s.month.toLocaleString("tr-TR")}</span><span class="admin-pv-stat-label">Bu Ay</span></div>
+            <div class="admin-pv-stat"><span class="admin-pv-stat-value">${s.total.toLocaleString("tr-TR")}</span><span class="admin-pv-stat-label">Toplam</span></div>
+          `;
+
+          if (data.topPages && data.topPages.length) {
+            document.getElementById("adminPvTop").innerHTML =
+              `<p style="font-weight:700;font-size:0.85rem;color:#093827;margin:0.5rem 0">En Çok Ziyaret Edilen (30 gün)</p>` +
+              data.topPages.map(p =>
+                `<div class="admin-pv-top-row"><span class="admin-pv-top-path">${p.path}</span><span class="admin-pv-top-count">${p.views.toLocaleString("tr-TR")}</span></div>`
+              ).join("");
+          }
+        } catch (err) {
+          console.error("Page stats error:", err);
+        }
+      }
+
+      loadPageStats();
+      const stateEl = document.getElementById("adminUsersState");
+      const tableWrap = document.getElementById("adminUsersTableWrap");
+      const tbody = document.getElementById("adminUsersList");
+      const statsEl = document.getElementById("adminUsersStats");
+      const refreshBtn = document.getElementById("adminUsersRefreshButton");
+
+
+
+      function formatDate(iso) {
+        if (!iso) return "-";
+        const d = new Date(iso);
+        return d.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+      }
+
+      function providerBadge(provider) {
+        const cls = `admin-users-badge admin-users-badge-${provider || "email"}`;
+        const labels = { google: "Google", apple: "Apple", email: "E-posta" };
+        return `<span class="${cls}">${labels[provider] || provider || "E-posta"}</span>`;
+      }
+
+      function roleBadge(role) {
+        const cls = `admin-users-badge admin-users-badge-${role}`;
+        return `<span class="${cls}">${role === "admin" ? "Admin" : "Kullanıcı"}</span>`;
+      }
+
+      function statusBadge(isActive) {
+        return isActive
+          ? `<span class="admin-users-badge admin-users-badge-active">Aktif</span>`
+          : `<span class="admin-users-badge admin-users-badge-inactive">Pasif</span>`;
+      }
+
+      async function loadUsers() {
+        stateEl.textContent = "Kullanıcılar getiriliyor...";
+        stateEl.hidden = false;
+        tableWrap.hidden = true;
+        statsEl.innerHTML = "";
+
+        try {
+          const token = getAdminCookie();
+          const res = await fetch(`${API_BASE}/api/admin/users`, {
+            headers: { "Cookie": `aramabul_admin_session=${token}` },
+            credentials: "include",
+          });
+
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error?.message || "API hatası");
+
+          const users = data.users || [];
+
+          // Stats
+          const total = users.length;
+          const googleCount = users.filter(u => u.authProvider === "google").length;
+          const appleCount = users.filter(u => u.authProvider === "apple").length;
+          const emailCount = users.filter(u => !u.authProvider || u.authProvider === "email").length;
+          const adminCount = users.filter(u => u.role === "admin").length;
+
+          statsEl.innerHTML = `
+            <div class="admin-users-stat"><span class="admin-users-stat-value">${total}</span><span class="admin-users-stat-label">Toplam</span></div>
+            <div class="admin-users-stat"><span class="admin-users-stat-value">${googleCount}</span><span class="admin-users-stat-label">Google</span></div>
+            <div class="admin-users-stat"><span class="admin-users-stat-value">${appleCount}</span><span class="admin-users-stat-label">Apple</span></div>
+            <div class="admin-users-stat"><span class="admin-users-stat-value">${emailCount}</span><span class="admin-users-stat-label">E-posta</span></div>
+            <div class="admin-users-stat"><span class="admin-users-stat-value">${adminCount}</span><span class="admin-users-stat-label">Admin</span></div>
+          `;
+
+          // Table
+          tbody.innerHTML = "";
+          for (const user of users) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${user.id}</td>
+              <td>${user.displayName || "-"}</td>
+              <td>${user.email}</td>
+              <td>${providerBadge(user.authProvider)}</td>
+              <td>${roleBadge(user.role)}</td>
+              <td>${statusBadge(user.isActive)}</td>
+              <td>${formatDate(user.createdAt)}</td>
+            `;
+            tbody.appendChild(tr);
+          }
+
+          stateEl.hidden = true;
+          tableWrap.hidden = false;
+        } catch (err) {
+          stateEl.textContent = `Hata: ${err.message}`;
+          stateEl.hidden = false;
+          tableWrap.hidden = true;
+        }
+      }
+
+      refreshBtn.addEventListener("click", loadUsers);
+
+      // Auto-load on page ready
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", () => setTimeout(loadUsers, 300));
+      } else {
+        setTimeout(loadUsers, 300);
+      }
+    })();
+    </script>
+  </body>
+</html>

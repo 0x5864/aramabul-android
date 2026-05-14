@@ -88,7 +88,7 @@
 
     grid.hidden = false;
     stateNode.hidden = true;
-    titleNode.textContent = "Kaydettiğin mekanlar";
+    titleNode.textContent = "Favorilerim";
     metaNode.textContent = `${formatCount(items.length)} mekan kayıtlı`;
 
     items.forEach((item) => {

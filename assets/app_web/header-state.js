@@ -7,7 +7,6 @@
     EN: { htmlLang: "en" },
     RU: { htmlLang: "ru" },
     DE: { htmlLang: "de" },
-    ZH: { htmlLang: "zh" },
   };
   const DEFAULT_THEME = "dark";
   const HOVER_CLOSE_DELAY_MS = 180;

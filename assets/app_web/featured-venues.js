@@ -1,9 +1,18 @@
 "use strict";
 
 class FeaturedVenues {
+  t(key) {
+    const headerI18n = window.ARAMABUL_HEADER_I18N;
+    if (headerI18n && typeof headerI18n.getStaticUiTranslation === "function") {
+      return headerI18n.getStaticUiTranslation(key) || key;
+    }
+    return key;
+  }
+
   constructor() {
     this.userLocation = null;
     this.geoStatus = null;
+    this.favoriteIds = new Set();
     this.featuredVenues = {
       mostCommented: null,
       highestRated: null,
@@ -15,8 +24,83 @@ class FeaturedVenues {
   async init() {
     this.bindShareMenus();
     this.bindFeaturedCardOpenDetail();
+    this.bindFavoriteButtons();
     await this.loadStaticFeaturedCards();
+    await this.loadFavoriteIds();
     this.requestLocationForDistances();
+  }
+
+  bindFavoriteButtons() {
+    const grid = document.querySelector(".featured-venues-grid");
+    if (!grid) return;
+    grid.addEventListener("click", async (event) => {
+      const btn = event.target instanceof Element ? event.target.closest(".istanbul-favorite-button") : null;
+      if (!btn) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const card = btn.closest(".istanbul-venue-card");
+      if (!card || !card.venue || !card.venue.id) return;
+      btn.disabled = true;
+      try {
+        await this.toggleFavorite(card.venue.id, btn);
+      } catch (e) {
+        console.warn("Favori hatası:", e);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  }
+
+  async toggleFavorite(venueId, btn) {
+    const key = String(venueId);
+    const isFav = this.favoriteIds.has(key);
+    const response = await fetch(`/api/mvp/favorites/${encodeURIComponent(venueId)}`, {
+      method: isFav ? "DELETE" : "POST",
+      headers: { Accept: "application/json" },
+    });
+    if (!response.ok) throw new Error("Favori işlemi başarısız.");
+    if (isFav) {
+      this.favoriteIds.delete(key);
+    } else {
+      this.favoriteIds.add(key);
+    }
+    this.updateFavoriteButton(btn, key);
+  }
+
+  async loadFavoriteIds() {
+    const allVenues = Object.values(this.featuredVenues).filter(Boolean);
+    const ids = allVenues.map((v) => v.id).filter((id) => id != null);
+    if (!ids.length) return;
+    try {
+      const params = new URLSearchParams();
+      params.set("venueIds", ids.join(","));
+      const response = await fetch(`/api/mvp/favorites/ids?${params.toString()}`, {
+        headers: { Accept: "application/json" },
+      });
+      if (!response.ok) return;
+      const payload = await response.json();
+      this.favoriteIds = new Set(
+        Array.isArray(payload.ids) ? payload.ids.map((id) => String(id)) : []
+      );
+      this.syncAllFavoriteButtons();
+    } catch (_e) { /* ignore */ }
+  }
+
+  syncAllFavoriteButtons() {
+    const grid = document.querySelector(".featured-venues-grid");
+    if (!grid) return;
+    grid.querySelectorAll(".istanbul-venue-card").forEach((card) => {
+      const btn = card.querySelector(".istanbul-favorite-button");
+      if (!btn || !card.venue) return;
+      this.updateFavoriteButton(btn, String(card.venue.id));
+    });
+  }
+
+  updateFavoriteButton(btn, venueId) {
+    const isFav = this.favoriteIds.has(String(venueId));
+    btn.textContent = isFav ? this.t("Kaydedildi") : this.t("Kaydet");
+    btn.classList.toggle("is-active", isFav);
+    btn.setAttribute("aria-pressed", isFav ? "true" : "false");
   }
 
   bindFeaturedCardOpenDetail() {
@@ -262,8 +346,8 @@ class FeaturedVenues {
     const address = card.querySelector(".istanbul-venue-address");
     const rating = card.querySelector(".istanbul-venue-rating");
     const budget = card.querySelector(".istanbul-venue-budget");
-    if (title) title.textContent = "Mekan alınamadı";
-    if (address) address.textContent = "Lütfen daha sonra tekrar dene.";
+    if (title) title.textContent = this.t("Mekan alınamadı");
+    if (address) address.textContent = this.t("Lütfen daha sonra tekrar dene.");
     if (rating) rating.textContent = "";
     if (budget) budget.textContent = "";
   }
@@ -282,38 +366,40 @@ class FeaturedVenues {
       this.applyVenueImage(imageEl, venue, options.placeholder);
     }
 
+    // Eyebrow gizle (kültür/hizmetler tarzı)
     const eyebrowEl = card.querySelector(".istanbul-venue-eyebrow");
     if (eyebrowEl) {
-      const mainCat = venue.mainCategoryName || "";
-      const subCat = venue.categoryName || venue.cuisine || "";
-      const eyebrowText = [mainCat, subCat].filter(Boolean).join(" › ");
-      eyebrowEl.textContent = eyebrowText || "";
-      eyebrowEl.hidden = !eyebrowText;
+      eyebrowEl.textContent = "";
+      eyebrowEl.hidden = true;
     }
 
     const titleLinkEl = card.querySelector(".istanbul-venue-title-link");
     if (titleLinkEl) {
-      titleLinkEl.textContent = venue.name || "Bilinmeyen mekan";
+      titleLinkEl.textContent = venue.name || this.t("Bilinmeyen mekan");
       titleLinkEl.href = options.placeholder ? "yeme-icme.html" : venueUrl;
     }
 
+    // Sadeleştirilmiş kart: adres, rating, bütçe, pill-row, actions gizleniyor
     const addressEl = card.querySelector(".istanbul-venue-address");
-    if (addressEl) {
-      addressEl.textContent = venue.address || "Adres bilgisi yok";
-    }
+    if (addressEl) addressEl.hidden = true;
 
     const ratingEl = card.querySelector(".istanbul-venue-rating");
-    if (ratingEl) {
-      ratingEl.textContent = options.placeholder ? "" : this.formatRating(venue);
-    }
+    if (ratingEl) ratingEl.hidden = true;
 
     const budgetEl = card.querySelector(".istanbul-venue-budget");
-    if (budgetEl) {
-      budgetEl.textContent = options.placeholder ? "" : this.formatBudgetLabel(venue.budget) || "Fiyat bilinmiyor";
-    }
+    if (budgetEl) budgetEl.hidden = true;
 
-    this.updateDistance(cardId, venue, Boolean(options.showDistance) && !options.placeholder);
+    const pillRow = card.querySelector(".istanbul-venue-pill-row");
+    if (pillRow) pillRow.hidden = true;
+
+    const actionsEl = card.querySelector(".istanbul-venue-actions");
+    if (actionsEl) actionsEl.hidden = true;
+
+    // Tag satırına ilçe, alt kategori ve mesafe ekleniyor
     this.updateTags(card, venue, Boolean(options.placeholder));
+
+    // Mesafe'yi tag satırına ekle
+    this.updateDistanceAsTag(card, venue, Boolean(options.showDistance) && !options.placeholder);
 
     this.updateShareLinks(card, venue, venueUrl, Boolean(options.placeholder));
 
@@ -327,14 +413,11 @@ class FeaturedVenues {
     }
   }
 
-  updateDistance(cardId, venue, shouldShow) {
-    const card = document.getElementById(cardId);
+  updateDistanceAsTag(card, venue, shouldShow) {
     const distanceEl = card ? card.querySelector(".istanbul-venue-distance") : null;
-    const actionsEl = card ? card.querySelector(".istanbul-venue-actions") : null;
-    const actionGroupEl = actionsEl ? actionsEl.querySelector(".istanbul-venue-action-group") : null;
-    if (!distanceEl) {
-      return;
-    }
+    const tagsEl = card ? card.querySelector(".istanbul-venue-tags") : null;
+    if (!distanceEl) return;
+
     if (!shouldShow) {
       distanceEl.hidden = true;
       return;
@@ -357,11 +440,18 @@ class FeaturedVenues {
     }
     distanceEl.textContent = text;
     distanceEl.hidden = false;
+    distanceEl.classList.add("istanbul-venue-tag");
 
-    if (actionsEl && distanceEl.parentElement !== actionsEl) {
-      actionsEl.insertBefore(distanceEl, actionGroupEl || actionsEl.firstChild);
-      actionsEl.classList.add("has-distance-chip");
+    // Tag satırına ekle
+    if (tagsEl && distanceEl.parentElement !== tagsEl) {
+      tagsEl.appendChild(distanceEl);
     }
+  }
+
+  updateDistance(cardId, venue, shouldShow) {
+    const card = document.getElementById(cardId);
+    if (!card) return;
+    this.updateDistanceAsTag(card, venue, shouldShow);
   }
 
   applyVenueImage(imageEl, venue, isPlaceholder) {
@@ -472,16 +562,18 @@ class FeaturedVenues {
     const count = Number(venue.userRatingCount) || 0;
     const stars = "★".repeat(Math.max(1, Math.min(5, Math.round(rating || 1))));
     const score = rating ? rating.toFixed(1).replace(".", ",") : "-";
-    const countText = count > 0 ? ` (${new Intl.NumberFormat("tr-TR").format(count)} yorum)` : "";
-    return `${stars} ${score} Google Puanı${countText}`;
+    const yorumLabel = this.t("yorum");
+    const puanLabel = this.t("Google Puanı");
+    const countText = count > 0 ? ` (${new Intl.NumberFormat("tr-TR").format(count)} ${yorumLabel})` : "";
+    return `${stars} ${score} ${puanLabel}${countText}`;
   }
 
   formatBudgetLabel(value) {
     const normalized = this.normalizeLookup(value);
     if (!normalized) return "";
-    if (normalized === "budget" || normalized === "₺" || normalized === "₺₺") return "Uygun";
-    if (normalized === "mid" || normalized === "₺₺₺") return "Makul";
-    if (normalized === "high" || normalized === "₺₺₺₺") return "Yüksek";
+    if (normalized === "budget" || normalized === "₺" || normalized === "₺₺") return this.t("Uygun");
+    if (normalized === "mid" || normalized === "₺₺₺") return this.t("Makul");
+    if (normalized === "high" || normalized === "₺₺₺₺") return this.t("Yüksek");
     return String(value || "");
   }
 
@@ -520,6 +612,10 @@ class FeaturedVenues {
 
 document.addEventListener("DOMContentLoaded", () => {
   if (document.body.classList.contains("home-page")) {
-    new FeaturedVenues();
+    const fv = new FeaturedVenues();
+    document.addEventListener("aramabul:languagechange", () => {
+      fv.syncAllFavoriteButtons();
+      fv.loadStaticFeaturedCards();
+    });
   }
 });

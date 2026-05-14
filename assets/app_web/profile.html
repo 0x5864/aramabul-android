@@ -7,16 +7,16 @@
     <title>AramaBul</title>
     <meta name="description" content="Hesap bilgilerin ve uygulama ayarların." />
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="icon" type="image/png" href="assets/favicon.png" />
-    <link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
-    <link rel="apple-touch-icon" href="assets/favicon.png" />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260508b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260508b" />
+    <link rel="apple-touch-icon" href="assets/favicon.png?v=20260508b" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260422-header-fav-desktop-01" />
+    <link rel="stylesheet" href="styles.css?v=20260508-footer-fix" />
     <link rel="stylesheet" href="profile.css?v=20260409-button-sync-03" />
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NHE1J9FWDG"></script>
@@ -33,8 +33,8 @@
     <header class="global-header-band" role="banner">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
-          <img class="brand-logo" src="assets/logo.png?v=20260504" alt="aramabul logo" />
-          <span class="brand-wordmark">aramabul</span>
+          <img class="brand-logo" src="assets/logo.png?v=20260508b" alt="aramabul logo" />
+          <span class="brand-wordmark"><span class="brand-wordmark-rest">arama</span><span class="brand-wordmark-search">bul</span></span>
         </a>
       </nav>
       <div class="global-topline">
@@ -210,6 +210,29 @@
                 <button id="accountSignupBtn" class="account-secondary-btn" type="button">Kayıt ol</button>
               </div>
             </form>
+
+            <hr style="border:none;border-top:1px solid #e0e0e0;margin:1.5rem 0 1rem;" />
+
+            <div style="padding-top:0.5rem;">
+              <h3 style="color:#011d36;font-size:0.95rem;margin-bottom:0.4rem;">Hesabımı Sil</h3>
+              <p style="font-size:0.85rem;color:#666;margin-bottom:0.75rem;">Hesabını kalıcı olarak silmek istiyorsan aşağıdaki butona bas. Bu işlem geri alınamaz.</p>
+              <div style="text-align:right;"><button id="accountDeleteBtn" type="button" style="background:#e74c3c;border:1px solid #c0392b;color:#fff;padding:0.45rem 1.1rem;border-radius:6px;font-size:0.85rem;font-weight:600;cursor:pointer;">Hesabımı Sil</button></div>
+            </div>
+
+            <!-- Account Deletion Confirmation Modal -->
+            <div id="accountDeleteModal" class="auth-modal is-hidden" style="z-index:100000;background:rgba(0,0,0,0.6);">
+              <div class="auth-modal-panel" style="max-width:420px;min-height:auto;padding:2rem;margin:auto;margin-top:20vh;border-radius:12px;background:#fffaed;">
+                <h3 style="color:#e74c3c;margin-bottom:1rem;font-size:1.2rem;">Hesap Silme Onayı</h3>
+                <p style="margin-bottom:1rem;font-size:0.9rem;color:#333;">Bu işlem geri alınamaz. Tüm verileriniz (yorumlar, favoriler, hesap bilgileri) kalıcı olarak silinecektir.</p>
+                <p style="margin-bottom:0.75rem;font-size:0.9rem;color:#333;">Onaylamak için e-posta adresinizi yazın:</p>
+                <input id="accountDeleteConfirmEmail" type="email" class="settings-signup-field" placeholder="E-posta adresiniz" style="width:100%;padding:0.6rem;border:1px solid #ccc;border-radius:6px;margin-bottom:1rem;font-size:0.9rem;" />
+                <p id="accountDeleteMessage" style="color:#e74c3c;font-size:0.85rem;margin-bottom:0.75rem;min-height:1.2em;"></p>
+                <div style="display:flex;gap:0.75rem;justify-content:flex-end;">
+                  <button id="accountDeleteCancel" type="button" style="padding:0.5rem 1.25rem;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;font-size:0.9rem;">Vazgeç</button>
+                  <button id="accountDeleteConfirm" type="button" style="padding:0.5rem 1.25rem;border:none;border-radius:6px;background:#e74c3c;color:#fff;cursor:pointer;font-size:0.9rem;font-weight:600;">Kalıcı Olarak Sil</button>
+                </div>
+              </div>
+            </div>
           </section>
 
           <section class="settings-card settings-panel-card account-editor-card" data-settings-panel="password" aria-label="Şifre değişikliği" data-i18n-aria-label="Şifre değişikliği" hidden>
@@ -352,15 +375,15 @@
 
           <section class="yr-footer-col">
             <h4>Yardım mı lazım?</h4>
-            <a href="sss.html">Sıkça Sorulan Sorular</a>
-            <a href="cerez-politikasi.html">Çerez Politikası</a>
+            <a href="sss.html">Sıkça Sorulan Sorular</a><a href="cerez-politikasi.html">Çerez Politikası</a>
+            
           </section>
 
           <section class="yr-footer-col">
             <h4>Kurumsal</h4>
             <a href="kullanim-kosullari.html">Kullanım Koşulları</a>
-            <a href="kvkk.html">Kişisel Verilerin Korunması</a>
-            <a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+            <a href="kvkk.html">Kişisel Verilerin Korunması</a><a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+            
           </section>
         </div>
 
@@ -378,11 +401,12 @@
     <script src="web-runtime.js?v=20260302-01"></script>
     <script src="header-state.js?v=20260302-01"></script>
   <script src="header-i18n.js?v=20260429-i18n-page-keys-01"></script>
-  <script src="header-nav.js?v=20260422-header-fav-desktop-01"></script>
+  <script src="header-nav.js?v=20260505-hash-auth-01"></script>
   <script src="header-shell.js?v=20260302-02"></script>
   <script src="header-search-ui.js?v=20260303-04"></script>
   <script src="header-search-data.js?v=20260420-search-db-06"></script>
     <script src="header-search.js?v=20260422-header-no-topbar-01"></script>
     <script src="profile.js?v=20260309-01"></script>
+    <script src="account-settings.js?v=20260309-01"></script>
   </body>
 </html>

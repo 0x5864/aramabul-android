@@ -1,6 +1,7 @@
 "use strict";
 
 (function initVenueDetailPage() {
+  const _t = window.ARAMABUL_HEADER_I18N?.getStaticUiTranslation || ((t) => t);
   const VENUES_LIST_CITY = "İstanbul";
 
   const content = document.getElementById("venueDetailContent");
@@ -52,10 +53,40 @@
   const xShareLinkNode = document.getElementById("venueDetailXShareLink");
   const copyShareButtonNode = document.getElementById("venueDetailCopyShareButton");
   const favoriteButtons = [document.getElementById("venueDetailFavoriteButton")].filter(Boolean);
+  const distanceNode = document.getElementById("venueDetailDistance");
   let activeShareData = null;
   let activeVenue = null;
   let activeVenueBaseReviews = [];
   let activeVenueRemoteReviews = [];
+
+  function computeVenueDistance(userLat, userLng, venue) {
+    const lat = Number(venue.latitude);
+    const lng = Number(venue.longitude);
+    if (!venue.latitude || !venue.longitude || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    if (lat < 35 || lat > 43 || lng < 25 || lng > 45) return null;
+    const toRad = (v) => (v * Math.PI) / 180;
+    const dLat = toRad(lat - userLat);
+    const dLon = toRad(lng - userLng);
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(userLat)) * Math.cos(toRad(lat)) * Math.sin(dLon / 2) ** 2;
+    const meters = 6371000 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    if (meters > 500000) return null;
+    return meters;
+  }
+
+  function showVenueDistance(venue) {
+    if (!distanceNode || !venue || !navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const meters = computeVenueDistance(pos.coords.latitude, pos.coords.longitude, venue);
+        if (meters == null) { distanceNode.hidden = true; return; }
+        const text = meters < 1000 ? `${Math.round(meters)} m` : `${(meters / 1000).toFixed(1).replace(".", ",")} km`;
+        distanceNode.textContent = `📍 ${text} uzaklıkta`;
+        distanceNode.hidden = false;
+      },
+      () => { distanceNode.hidden = true; },
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 120000 }
+    );
+  }
 
   // ── "Listeye dön" URL'ini belirle ──────────────────────────────
   const BACK_STORAGE_KEY = "aramabul:venue-list-return-url";
@@ -86,32 +117,35 @@
     return DEFAULT_BACK_URL;
   }
 
-  const DOMAIN_MAP = {
-    "yeme-icme.html": "Yeme-İçme",
-    "gezi.html": "Gezi",
-    "hizmetler.html": "Hizmetler",
-    "saglik.html": "Sağlık",
-    "kultur.html": "Kültür",
-    "sanat.html": "Sanat",
-  };
+  function getDomainMap() {
+    return {
+      "yeme-icme.html": _t("Yeme-İçme"),
+      "gezi.html": _t("Gezi"),
+      "hizmetler.html": _t("Hizmetler"),
+      "saglik.html": _t("Sağlık"),
+      "kultur.html": _t("Kültür"),
+      "sanat.html": _t("Sanat"),
+    };
+  }
 
   function updateBreadcrumbDomain(venue) {
     if (!breadcrumbDomain) {
       return;
     }
+    const domainMap = getDomainMap();
     // 1) venue domain membership — en güvenilir kaynak
     if (venue && Array.isArray(venue.domainKeys) && venue.domainKeys.length > 0) {
       const domainFile = venue.domainKeys[0] + ".html";
-      if (DOMAIN_MAP[domainFile]) {
-        breadcrumbDomain.textContent = DOMAIN_MAP[domainFile];
+      if (domainMap[domainFile]) {
+        breadcrumbDomain.textContent = domainMap[domainFile];
         breadcrumbDomain.href = domainFile;
         return;
       }
     }
     if (venue && venue.domainKey) {
       const domainFile = venue.domainKey + ".html";
-      if (DOMAIN_MAP[domainFile]) {
-        breadcrumbDomain.textContent = DOMAIN_MAP[domainFile];
+      if (domainMap[domainFile]) {
+        breadcrumbDomain.textContent = domainMap[domainFile];
         breadcrumbDomain.href = domainFile;
         return;
       }
@@ -121,16 +155,16 @@
     const ownOrigin = window.location.origin;
     if (ref && ref.startsWith(ownOrigin)) {
       const refPath = ref.replace(ownOrigin + "/", "").split("?")[0];
-      if (DOMAIN_MAP[refPath]) {
-        breadcrumbDomain.textContent = DOMAIN_MAP[refPath];
+      if (domainMap[refPath]) {
+        breadcrumbDomain.textContent = domainMap[refPath];
         breadcrumbDomain.href = refPath;
         return;
       }
     }
     // 3) sessionStorage back URL'den
     const stored = backUrl.split("?")[0];
-    if (DOMAIN_MAP[stored]) {
-      breadcrumbDomain.textContent = DOMAIN_MAP[stored];
+    if (domainMap[stored]) {
+      breadcrumbDomain.textContent = domainMap[stored];
       breadcrumbDomain.href = stored;
       return;
     }
@@ -138,14 +172,14 @@
     if (venue) {
       const src = String(venue.source || "").toLowerCase();
       if (src === "ktb" || src === "turob") {
-        breadcrumbDomain.textContent = "Gezi";
+        breadcrumbDomain.textContent = _t("Gezi");
         breadcrumbDomain.href = "gezi.html";
         return;
       }
       if (src === "osm") {
         const cuisine = String(venue.cuisine || "").toLowerCase();
         if (cuisine.includes("kuaför") || cuisine.includes("veteriner") || cuisine.includes("eczane")) {
-          breadcrumbDomain.textContent = "Hizmetler";
+          breadcrumbDomain.textContent = _t("Hizmetler");
           breadcrumbDomain.href = "hizmetler.html";
           return;
         }
@@ -201,13 +235,13 @@
       return "";
     }
     if (normalized === "budget" || normalized === "₺" || normalized === "₺₺") {
-      return "Uygun";
+      return _t("Uygun");
     }
     if (normalized === "mid" || normalized === "₺₺₺") {
-      return "Makul";
+      return _t("Makul");
     }
     if (normalized === "high" || normalized === "₺₺₺₺") {
-      return "Yüksek";
+      return _t("Yüksek");
     }
     return String(value || "");
   }
@@ -540,14 +574,14 @@
     reviewFormNode.addEventListener("submit", async (event) => {
       event.preventDefault();
       if (!activeVenue) {
-        setReviewFormStatus("Mekan bilgisi yüklenmeden yorum gönderilemez.", true);
+        setReviewFormStatus(_t("Mekan bilgisi yüklenmeden yorum gönderilemez."), true);
         return;
       }
 
       const text = String(reviewTextNode.value || "").trim();
       const author = String(reviewNameNode?.value || "").trim();
       if (text.length < 3) {
-        setReviewFormStatus("Lütfen kısa da olsa bir yorum yaz.", true);
+        setReviewFormStatus(_t("Lütfen kısa da olsa bir yorum yaz."), true);
         reviewTextNode.focus();
         return;
       }
@@ -560,13 +594,13 @@
       try {
         activeVenueRemoteReviews = await submitRemoteVenueReview(activeVenue, nextReview);
         reviewTextNode.value = "";
-        setReviewFormStatus("Yorumun onaya gönderildi.", false);
+        setReviewFormStatus(_t("Yorumun onaya gönderildi."), false);
         renderVenueReviews();
       } catch (_error) {
         const storedReviews = readStoredVenueReviews(activeVenue);
         writeStoredVenueReviews(activeVenue, [nextReview, ...storedReviews]);
         reviewTextNode.value = "";
-        setReviewFormStatus("Yorumun eklendi. Bağlantı yoksa bu cihazda saklanır.", false);
+        setReviewFormStatus(_t("Yorumun eklendi. Bağlantı yoksa bu cihazda saklanır."), false);
         renderVenueReviews();
       }
     });
@@ -734,12 +768,22 @@
     return "";
   }
 
-  function setImageSource(imageEl, src, alt) {
+  function getCategoryFallbackImage(venue) {
+    const cat = String((venue && (venue.cuisine || venue.categoryName)) || "").toLocaleLowerCase("tr");
+    if (cat.includes("berber") || cat.includes("barber")) return "assets/berber.jpeg";
+    if (cat.includes("kuaför") || cat.includes("kuafor")) return "assets/sac.png";
+    if (cat.includes("veteriner")) return "assets/veteriner.png";
+    if (cat.includes("akaryak")) return "assets/pompa.png";
+    if (cat.includes("eczane")) return "assets/eczane.png";
+    return "assets/yemek.png";
+  }
+
+  function setImageSource(imageEl, src, alt, fallback) {
     imageEl.src = src;
     imageEl.alt = alt;
     imageEl.onerror = () => {
       imageEl.onerror = null;
-      imageEl.src = "assets/yemek.png";
+      imageEl.src = fallback || "assets/yemek.png";
       imageEl.alt = alt;
     };
   }
@@ -1253,14 +1297,59 @@
     }
   }
 
+  async function checkFavoriteState(venueId) {
+    if (!venueId) return false;
+    try {
+      const params = new URLSearchParams();
+      params.set("venueIds", String(venueId));
+      const response = await fetch(`/api/mvp/favorites/ids?${params.toString()}`, {
+        headers: { Accept: "application/json" },
+      });
+      if (!response.ok) return false;
+      const payload = await response.json();
+      const ids = Array.isArray(payload.ids) ? payload.ids.map((id) => String(id)) : [];
+      return ids.includes(String(venueId));
+    } catch (_e) {
+      return false;
+    }
+  }
+
+  function updateFavoriteButtonsUI(isFavorite) {
+    favoriteButtons.forEach((btn) => {
+      btn.classList.toggle("is-favorite", isFavorite);
+      btn.classList.toggle("is-active", isFavorite);
+      btn.textContent = isFavorite ? _t("Kaydedildi") : _t("Kaydet");
+      btn.setAttribute("aria-pressed", isFavorite ? "true" : "false");
+    });
+  }
+
   function applyFavoriteButtons() {
+    if (!activeVenue || !activeVenue.id) return;
+
+    const venueId = activeVenue.id;
+
+    // Check initial state
+    checkFavoriteState(venueId).then((isFav) => {
+      updateFavoriteButtonsUI(isFav);
+    });
+
     favoriteButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const nextFavoriteState = !button.classList.contains("is-favorite");
-        favoriteButtons.forEach((target) => {
-          target.classList.toggle("is-favorite", nextFavoriteState);
-          target.textContent = nextFavoriteState ? "Kaydedildi" : "Kaydet";
-        });
+      button.addEventListener("click", async () => {
+        const isFavorite = button.classList.contains("is-favorite");
+        button.disabled = true;
+        try {
+          const response = await fetch(`/api/mvp/favorites/${encodeURIComponent(venueId)}`, {
+            method: isFavorite ? "DELETE" : "POST",
+            headers: { Accept: "application/json" },
+          });
+          if (response.ok) {
+            updateFavoriteButtonsUI(!isFavorite);
+          }
+        } catch (_e) {
+          // Silently fail
+        } finally {
+          button.disabled = false;
+        }
       });
     });
   }
@@ -1328,7 +1417,8 @@
       if (mediaNode && imageNode) {
         const photoUri = resolveVenueHeroPhotoUrl(venue);
         const alt = `${venue.name || "Mekan"} fotoğrafı`;
-        setImageSource(imageNode, photoUri || "assets/yemek.png", alt);
+        const fallback = getCategoryFallbackImage(venue);
+        setImageSource(imageNode, photoUri || fallback, alt, fallback);
         setElementVisibility(mediaNode, true);
         setElementVisibility(mediaPlaceholderNode, false);
       }
@@ -1359,12 +1449,21 @@
 
       setTextValue(addressNode, venue.address || "");
       setAnchorValue(phoneNode, venue.phone || "", "tel:");
-      setWebsiteInfoCell(websiteNode, normalizeUrl(venue.website));
+
+      const venueCategory = String(venue.cuisine || venue.categoryName || "").toLocaleLowerCase("tr");
+      const isKuaforOrBerber = venueCategory.includes("kuaför") || venueCategory.includes("kuafor") || venueCategory.includes("berber");
+      const websiteRow = websiteNode ? websiteNode.closest("div") || websiteNode.parentElement : null;
+      if (isKuaforOrBerber) {
+        if (websiteRow) websiteRow.hidden = true;
+      } else {
+        if (websiteRow) websiteRow.hidden = false;
+        setWebsiteInfoCell(websiteNode, normalizeUrl(venue.website));
+      }
       setInstagramInfoCell(instagramNode, normalizeUrl(venue.instagram));
 
       if (statusNode) {
         const statusText = String(venue.openingStatusText || "").trim();
-        const fallbackStatus = venue.isOpenNow === true ? "Açık" : venue.isOpenNow === false ? "Kapalı" : "";
+        const fallbackStatus = venue.isOpenNow === true ? _t("Açık") : venue.isOpenNow === false ? _t("Kapalı") : "";
         const nextStatus = statusText || fallbackStatus;
         statusNode.textContent = nextStatus;
         statusNode.hidden = !nextStatus;
@@ -1410,6 +1509,7 @@
       applySideLinks(venue);
       setupShare(venue);
       applyFavoriteButtons();
+      showVenueDistance(venue);
 
       setState("", true, false);
       return;

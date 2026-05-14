@@ -20,6 +20,8 @@
     { href: "dis-klinikleri.html", keywords: ["dis", "diş", "dis klinigi", "diş kliniği", "dentist"] },
     { href: "duraklar.html", keywords: ["durak", "duraklar", "otobus", "otobüs", "metro", "tramvay"] },
     { href: "otopark.html", keywords: ["otopark", "park"] },
+    { href: "kultur.html", keywords: ["kültür", "kultur", "müze", "muze", "tiyatro", "opera", "bale", "cami", "camiler"] },
+    { href: "sanat.html", keywords: ["sanat", "galeri", "galeriler", "sergi", "art"] },
   ];
   const FALLBACK_SCRIPTS = Object.freeze({
     ARAMABUL_FALLBACK_DATA: "data/fallback-data.js?v=20260302-01",
@@ -58,6 +60,13 @@
     { pageBase: "duraklar", dataPath: "data/duraklar.json", fallbacks: [] },
     { pageBase: "otopark", dataPath: "data/otopark.json", fallbacks: [] },
     { pageBase: "gezi", dataPath: "data/ktb-tesis-kayitlari-gezi.json", fallbacks: [], dynamicTypeEnabled: true },
+    { pageBase: "kultur", dataPath: "data/kultur-camiler.json", fallbacks: [] },
+    { pageBase: "kultur", dataPath: "data/kultur-devlet-tiyatrolari.json", fallbacks: [] },
+    { pageBase: "kultur", dataPath: "data/kultur-muzeler.json", fallbacks: [] },
+    { pageBase: "kultur", dataPath: "data/kultur-opera-bale.json", fallbacks: [] },
+    { pageBase: "kultur", dataPath: "data/kultur-ozel-tiyatrolar.json", fallbacks: [] },
+    { pageBase: "kultur", dataPath: "data/kultur-sehir-tiyatrolari.json", fallbacks: [] },
+    { pageBase: "sanat", dataPath: "data/sanat-galeriler.json", fallbacks: [] },
   ];
   const DISTRICT_ROUTE_PAGE_BASES = new Set([
     "yemek",
@@ -75,6 +84,8 @@
     "duraklar",
     "gezi",
     "otopark",
+    "kultur",
+    "sanat",
   ]);
   const CITY_ROUTE_PAGE_BASES = new Set([
     "yemek",
@@ -92,6 +103,8 @@
     "duraklar",
     "gezi",
     "otopark",
+    "kultur",
+    "sanat",
   ]);
   const API_BASE_URL = (() => {
     if (typeof window.ARAMABUL_API_BASE === "string" && window.ARAMABUL_API_BASE.trim()) {

@@ -7,16 +7,16 @@
     <title>Admin Mekanlar | AramaBul</title>
     <meta name="description" content="İstanbul MVP mekanlarını yönet." />
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="icon" type="image/png" href="assets/favicon.png" />
-    <link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
-    <link rel="apple-touch-icon" href="assets/favicon.png" />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260508b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260508b" />
+    <link rel="apple-touch-icon" href="assets/favicon.png?v=20260508b" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260423-review-moderation-01" />
+    <link rel="stylesheet" href="styles.css?v=20260508-footer-fix" />
   </head>
   <body class="venue-detail-page admin-venue-editor-page">
     <div class="texture"></div>
@@ -24,7 +24,7 @@
     <header class="global-header-band">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
-          <img class="brand-logo" src="assets/logo.png?v=20260504" alt="aramabul logo" />
+          <img class="brand-logo" src="assets/logo.png?v=20260508b" alt="aramabul logo" />
           <span class="brand-wordmark"><span class="brand-wordmark-search">arama</span><span class="brand-wordmark-rest">bul</span></span>
         </a>
         <div class="istanbul-topbar-actions">
@@ -59,6 +59,9 @@
         <a class="admin-panel-nav-card" href="admin-content-model.html">
           <span class="admin-panel-nav-title">İçerik Mimarisi</span>
         </a>
+        <a class="admin-panel-nav-card" href="admin-users.html">
+          <span class="admin-panel-nav-title">Kullanıcılar</span>
+        </a>
       </section>
 
 
@@ -66,7 +69,7 @@
         <aside class="admin-venues-list-card">
           <div class="admin-venues-toolbar">
             <div>
-              <p class="istanbul-discovery-kicker">Admin mekan listesi</p>
+              <p class="istanbul-discovery-kicker">Mekan listesi</p>
             </div>
             <button id="adminVenueNewButton" class="istanbul-discovery-primary-button" type="button">Yeni mekan</button>
           </div>
@@ -226,10 +229,7 @@
                 <input id="adminVenueNeighborhood" name="neighborhood" type="text" list="adminVenueNeighborhoodList" />
               </label>
 
-              <label class="istanbul-filter-field" hidden>
-                <span>Mutfak / tip</span>
-                <input id="adminVenueCuisine" name="cuisine" type="text" />
-              </label>
+              <input id="adminVenueCuisine" name="cuisine" type="hidden" />
 
               <label class="istanbul-filter-field">
                 <span>Bütçe</span>
@@ -441,6 +441,6 @@
     </template>
 
     <script src="admin-auth.js?v=20260410-admin-auth-02"></script>
-    <script src="admin-venues.js?v=20260506-admin-category-unify-04"></script>
+    <script src="admin-venues.js?v=20260423-review-moderation-01"></script>
   </body>
 </html>

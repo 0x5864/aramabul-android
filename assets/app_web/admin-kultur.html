@@ -7,16 +7,16 @@
     <title>Admin Kültür | AramaBul</title>
     <meta name="description" content="İstanbul Kültür dikeyi mekan kayıtlarını yönet." />
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="icon" type="image/png" href="assets/favicon.png" />
-    <link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
-    <link rel="apple-touch-icon" href="assets/favicon.png" />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260508b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260508b" />
+    <link rel="apple-touch-icon" href="assets/favicon.png?v=20260508b" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260422-admin-venue-editor-type-01" />
+    <link rel="stylesheet" href="styles.css?v=20260508-footer-fix" />
   </head>
   <body class="venue-detail-page admin-venue-editor-page">
     <div class="texture"></div>
@@ -24,7 +24,7 @@
     <header class="global-header-band">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
-          <img class="brand-logo" src="assets/logo.png?v=20260504" alt="aramabul logo" />
+          <img class="brand-logo" src="assets/logo.png?v=20260508b" alt="aramabul logo" />
           <span class="brand-wordmark"><span class="brand-wordmark-search">arama</span><span class="brand-wordmark-rest">bul</span></span>
         </a>
         <div class="istanbul-topbar-actions">
@@ -58,6 +58,9 @@
         </a>
         <a class="admin-panel-nav-card" href="admin-content-model.html">
           <span class="admin-panel-nav-title">İçerik Mimarisi</span>
+        </a>
+        <a class="admin-panel-nav-card" href="admin-users.html">
+          <span class="admin-panel-nav-title">Kullanıcılar</span>
         </a>
       </section>
 
@@ -223,7 +226,7 @@
                 <input id="adminKulturNeighborhood" name="neighborhood" type="text" list="adminKulturNeighborhoodList" />
               </label>
 
-              <label class="istanbul-filter-field" hidden>
+              <label class="istanbul-filter-field">
                 <span>Kültür türü / tip</span>
                 <input id="adminKulturCuisine" name="cuisine" type="text" />
               </label>
@@ -438,6 +441,6 @@
     </template>
 
     <script src="admin-auth.js?v=20260410-admin-auth-02"></script>
-    <script src="admin-kultur.js?v=20260506-admin-category-unify-04"></script>
+    <script src="admin-kultur.js?v=20260422-admin-kultur-01"></script>
   </body>
 </html>

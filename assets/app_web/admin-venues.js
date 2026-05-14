@@ -137,20 +137,6 @@
     photos: photoList,
   };
 
-  function hideLegacyCuisineField() {
-    if (!(fields.cuisine instanceof HTMLElement)) {
-      return;
-    }
-    fields.cuisine.value = "";
-    fields.cuisine.hidden = true;
-    fields.cuisine.disabled = true;
-    const fieldWrap = fields.cuisine.closest("label, .istanbul-filter-field");
-    if (fieldWrap instanceof HTMLElement) {
-      fieldWrap.hidden = true;
-      fieldWrap.style.display = "none";
-    }
-  }
-
   function setFormMessage(message, isError, details = []) {
     if (!message) {
       formMessageNode.hidden = true;
@@ -501,68 +487,6 @@
     return Number.isFinite(parsed) ? parsed : null;
   }
 
-  function normalizeCategoryLookupText(value) {
-    return String(value || "")
-      .trim()
-      .toLocaleLowerCase("tr")
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/ı/g, "i")
-      .replace(/[^a-z0-9]+/g, " ")
-      .trim();
-  }
-
-  function findCategoryIdByLegacyCuisine(value) {
-    const legacyCategory = normalizeCategoryLookupText(value);
-    if (!legacyCategory) {
-      return "";
-    }
-
-    const normalizedCategories = state.categories.map((item) => ({
-      item,
-      candidates: [item.name, item.key, item.slug]
-        .map(normalizeCategoryLookupText)
-        .filter(Boolean),
-    }));
-
-    const exactMatch = normalizedCategories.find(({ candidates }) => {
-      return candidates.some((candidate) => candidate === legacyCategory);
-    });
-    if (exactMatch) {
-      return String(exactMatch.item.id);
-    }
-
-    const legacyWords = legacyCategory.split(" ").filter((word) => word.length >= 3);
-    const fuzzyMatch = normalizedCategories.find(({ candidates }) => {
-      return candidates.some((candidate) => {
-        if (!candidate || legacyCategory.length < 4) {
-          return false;
-        }
-        return candidate.includes(legacyCategory)
-          || legacyCategory.includes(candidate)
-          || (legacyWords.length > 0 && legacyWords.every((word) => candidate.includes(word)));
-      });
-    });
-
-    return fuzzyMatch ? String(fuzzyMatch.item.id) : "";
-  }
-
-  function findCategoryIdForVenue(item) {
-    const directCategory = state.categories.find((category) => String(category.id) === String(item?.category?.id || ""));
-    if (directCategory) {
-      return String(directCategory.id);
-    }
-    return findCategoryIdByLegacyCuisine(item?.category?.name)
-      || findCategoryIdByLegacyCuisine(item?.cuisine)
-      || findCategoryIdByLegacyCuisine("Restoran")
-      || findCategoryIdByLegacyCuisine("Restoranlar");
-  }
-
-  function resolveVenueCategory(item) {
-    const categoryId = findCategoryIdForVenue(item);
-    return state.categories.find((category) => String(category.id) === categoryId) || null;
-  }
-
   function parseBooleanSelectValue(value, fallback = null) {
     if (value === "true") {
       return true;
@@ -627,8 +551,8 @@
       if (state.tableSort.key === "name") {
         comparison = String(left?.name || "").localeCompare(String(right?.name || ""), "tr");
       } else if (state.tableSort.key === "category") {
-        comparison = String(resolveVenueCategory(left)?.name || "").localeCompare(
-          String(resolveVenueCategory(right)?.name || ""),
+        comparison = String(left?.category?.name || left?.cuisine || "").localeCompare(
+          String(right?.category?.name || right?.cuisine || ""),
           "tr",
         );
       } else if (state.tableSort.key === "location") {
@@ -1186,7 +1110,6 @@
   }
 
   function resetForm() {
-    hideLegacyCuisineField();
     form.reset();
     fields.city.value = DEFAULT_ADMIN_CITY;
     fields.temporarilyClosed.value = "false";
@@ -1213,16 +1136,39 @@
     fields.name.focus();
   }
 
+  function syncCuisineFromCategory() {
+    const selectedId = fields.categoryId.value;
+    if (!selectedId) {
+      fields.cuisine.value = "";
+      return;
+    }
+    const cat = state.categories.find((c) => String(c.id) === selectedId);
+    fields.cuisine.value = cat ? (cat.name || "") : "";
+  }
+
   function fillForm(item) {
-    hideLegacyCuisineField();
     fields.name.value = item.name || "";
     fields.slug.value = item.slug || "";
     fields.city.value = item.city || DEFAULT_ADMIN_CITY;
     fields.district.value = item.district || "";
     fields.neighborhood.value = item.neighborhood || "";
     syncNeighborhoodDatalist(fields.district, formNeighborhoodDatalist);
-    fields.categoryId.value = findCategoryIdForVenue(item);
-    fields.cuisine.value = "";
+    fields.categoryId.value = item.category?.id ? String(item.category.id) : "";
+
+    // cuisine → category otomatik eşleşme: kategori yoksa cuisine'den bul
+    const cuisineValue = String(item.cuisine || "").trim();
+    if (!fields.categoryId.value && cuisineValue && state.categories.length) {
+      const cuisineLower = cuisineValue.toLocaleLowerCase("tr-TR");
+      const match = state.categories.find(
+        (cat) => String(cat.name || "").toLocaleLowerCase("tr-TR") === cuisineLower
+      );
+      if (match) {
+        fields.categoryId.value = String(match.id);
+      }
+    }
+    // Cuisine hidden alanı: seçili kategorinin adıyla doldur
+    syncCuisineFromCategory();
+
     fields.budget.value = item.budget || "";
     fields.rating.value = item.rating ?? "";
     fields.userRatingCount.value = item.userRatingCount ?? "";
@@ -1309,7 +1255,7 @@
       titleCell.appendChild(meta);
 
       const categoryCell = document.createElement("td");
-      categoryCell.textContent = resolveVenueCategory(item)?.name || "-";
+      categoryCell.textContent = item.category?.name || item.cuisine || "-";
 
       const locationCell = document.createElement("td");
       locationCell.textContent = [item.district, item.neighborhood].filter(Boolean).join(" / ") || item.city || "-";
@@ -1505,7 +1451,7 @@
       district: fields.district.value.trim(),
       neighborhood: fields.neighborhood.value.trim() || null,
       categoryId: normalizeNumber(fields.categoryId.value),
-      cuisine: null,
+      cuisine: fields.cuisine.value.trim() || null,
       budget: fields.budget.value || null,
       rating: normalizeNumber(fields.rating.value),
       userRatingCount: normalizeNumber(fields.userRatingCount.value),
@@ -1823,6 +1769,11 @@
       reloadVenueListFromFilters();
     });
 
+    // Kategori seçildiğinde cuisine hidden alanını güncelle
+    fields.categoryId.addEventListener("change", () => {
+      syncCuisineFromCategory();
+    });
+
     activeFilterSelect.addEventListener("change", () => {
       reloadVenueListFromFilters();
     });
@@ -2088,7 +2039,6 @@
     }
 
     window.AramaBulAdminAuth.bindSessionUi(session);
-    hideLegacyCuisineField();
     resetListPage();
     resetForm();
     await loadReferenceData();

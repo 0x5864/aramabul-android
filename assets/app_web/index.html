@@ -28,17 +28,19 @@
       content="İstanbul'da yeme-içme, gezi, hizmetler, sağlık, kültür ve sanat kategorilerinde yerel arama yap."
     />
     <meta name="twitter:image" content="https://aramabul.com/assets/logo.png" />
-    <link rel="icon" type="image/png" href="assets/favicon.png" />
-    <link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
-    <link rel="apple-touch-icon" href="assets/favicon.png" />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260508b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260508b" />
+    <link rel="apple-touch-icon" href="assets/favicon.png?v=20260508b" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260424-home-hero-title-nudge-01" />
+    <link rel="stylesheet" href="styles.css?v=20260508-footer-fix" />
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3016888060216617" crossorigin="anonymous"></script>
+    <script async src="https://fundingchoicesmessages.google.com/i/pub-3016888060216617?ers=1" nonce=""></script>
+    <script nonce="">(function(){function signalGooglefcPresent(){if(!window.frames["googlefcPresent"]){if(document.body){var a=document.createElement("iframe");a.style="width:0;height:0;border:none;z-index:-1000;left:-1000px;top:-1000px;";a.style.display="none";a.name="googlefcPresent";document.body.appendChild(a)}else{setTimeout(signalGooglefcPresent,0)}}}signalGooglefcPresent()})();</script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -84,21 +86,32 @@
     <header class="global-header-band">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
-          <img class="brand-logo" src="assets/logo.png?v=20260504" alt="aramabul logo" />
-          <span class="brand-wordmark">aramabul</span>
+          <img class="brand-logo" src="assets/logo.png?v=20260508b" alt="aramabul logo" />
+          <span class="brand-wordmark"><span class="brand-wordmark-rest">arama</span><span class="brand-wordmark-search">bul</span></span>
         </a>
+        <form class="header-search topbar-search-form" action="search.html" method="get" id="homeSearchForm">
+          <input
+            class="header-search-input"
+            type="search"
+            name="mekan"
+            id="homeSearchInput"
+            placeholder="Ne bulmak istersin? (ör. kafe, kuaför, müze...)"
+            autocomplete="off"
+            aria-label="Mekan ara"
+          />
+          <button class="header-search-btn" type="submit" aria-label="Ara">Bul</button>
+        </form>
       </nav>
+      <div class="global-topline"></div>
     </header>
 
     <main class="hero">
       <section class="section-head province-head">
         <div>
-          <h1 data-i18n-key="home.hero.title">İstanbul'da aradığın her şey burada!</h1>
-          <p data-i18n-key="home.hero.p1" style="margin:12px 0 4px;color:rgba(16,40,61,.82);font-size:1rem;line-height:1.4;">Aramabul, kullanıcının ihtiyaç duyduğu kategorideki mekana, "Yakındaki Mekanlar" seçimini yaparak veya istediği ilçe ve mahalle bilgisi seçerek hızlıca ulaşmasını sağlar.</p>
-          <p data-i18n-key="home.hero.p2" style="margin:0 0 4px;color:rgba(16,40,61,.72);font-size:.95rem;line-height:1.4;">Kategoriler, kullanıcı ihtiyacına göre; yeme-içme, gezi, hizmet, sağlık, kültür ve sanat başlıkları altında oluşturulmuştur. Mekân listeleri karar vermeyi hızlandıracak ihtiyaca göre filtrelenerek, sade ve kullanıcı dostu bir biçimde sunulur.</p>
-          <p data-i18n-key="home.hero.p3" style="margin:0;color:rgba(16,40,61,.72);font-size:.95rem;line-height:1.4;">Seçtiğiniz mekanın, adres, telefon, varsa web sitesi ve Instagram sayfası bilgileri, haritadaki yeri ve Google veri tabanındaki kullanıcıların değerlendirme puan ve sayıları ile son üç adet yorum gibi ayrıntılı bilgileri gösterir.</p>
+          <h1 data-i18n-key="home.hero.title">İstanbul'u keşfet!</h1>
         </div>
       </section>
+
 
       <section class="home-top-category-row" aria-label="Arama kategorileri">
         <a
@@ -147,6 +160,7 @@
           </span>
         </a>
       </section>
+
 
       <section class="featured-venues-section" aria-label="Rastgele mekanlar">
         <div class="featured-venues-panel">
@@ -324,47 +338,26 @@
         </div>
         </div>
 
+      <div class="content-guide home-empty-box" id="homeEmptyBox">
+        <div class="home-subcategory-list" id="homeSubcategoryChipList"></div>
+      </div>
+
       <section class="content-guide" aria-label="Aramabul Platform Rehberi">
-        <h2>Aramabul: İstanbul Mekan Keşif Platformu</h2>
-        <p>Aramabul, İstanbul'daki 29 binden fazla mekanı tek bir noktada toplayan yerel mekan keşif platformudur. Restorandan otele, kuaförden müzeye, eczaneden tiyatroya kadar altı farklı kategoride arama yapabilir, ilçe ve mahalle filtresiyle sonuçları daraltabilirsiniz. Platformun amacı, kullanıcıların ihtiyaçlarına en uygun mekanı en kısa sürede bulmalarını sağlamaktır.</p>
+        <h2 data-i18n-key="home.guide.title">İstanbul'da aradığın her şey burada!</h2>
+        <p data-i18n-key="home.guide.intro">Aramabul, İstanbul'daki 29 binden fazla mekanı tek bir noktada toplayan yerel mekan keşif platformudur. Kategoriler, kullanıcı ihtiyacına göre; yeme-içme, gezi, hizmet, sağlık, kültür ve sanat başlıkları altında oluşturulmuştur. Mekân listeleri karar vermeyi hızlandıracak ihtiyaca göre filtrelenerek, sade ve kullanıcı dostu bir biçimde sunulur.</p>
 
-        <div class="content-guide-stats">
-          <div class="content-guide-stat">
-            <strong>29.000+</strong>
-            <span>Kayıtlı mekan</span>
-          </div>
-          <div class="content-guide-stat">
-            <strong>39</strong>
-            <span>İlçe</span>
-          </div>
-          <div class="content-guide-stat">
-            <strong>70+</strong>
-            <span>Alt kategori</span>
-          </div>
-          <div class="content-guide-stat">
-            <strong>5</strong>
-            <span>Dil desteği</span>
-          </div>
-        </div>
+        <p data-i18n-key="home.guide.food"><strong>Yeme-İçme</strong> bölümünde, İstanbul'un her köşesindeki restoranlar, meyhaneler, kafeler ve pastaneler gibi mekanları keşfedin. Bütçe filtresiyle seçenekleri daraltın.</p>
+        <p data-i18n-key="home.guide.travel"><strong>Gezi</strong> bölümünde, oteller, butik oteller, pansiyonlar ve kamp alanları gibi gideceğiniz yerlerdeki pek çok seçeneklerini inceleyin.</p>
+        <p data-i18n-key="home.guide.services"><strong>Hizmetler</strong> bölümünde, kuaför, veteriner ve akaryakıt istasyonları gibi günlük yaşam hizmet noktalarını bulun.</p>
+        <p data-i18n-key="home.guide.health"><strong>Sağlık</strong> bölümünde, hastaneler, aile sağlık merkezleri, ve eczaneler gibi sağlık kuruluşlarına hızlıca ulaşın.</p>
+        <p data-i18n-key="home.guide.culture"><strong>Kültür</strong> bölümünde, müzeler, tarihi camiler, saraylar ve arkeolojik alanları keşfedin.</p>
+        <p data-i18n-key="home.guide.art"><strong>Sanat</strong> bölümünde ise, tiyatrolar, galeriler, konser salonları ve etkinlik mekanlarını listeleyin.</p>
 
-        <h3>Kategoriler</h3>
-        <p><strong>Yeme-İçme:</strong> İstanbul'un her köşesindeki kafeler, restoranlar, pastaneler ve meyhane gibi mekanları keşfedin. Bütçe filtresiyle seçenekleri daraltın.</p>
-        <p><strong>Gezi:</strong> Oteller, butik oteller, pansiyonlar ve kamp alanları gibi konaklama seçeneklerini inceleyin. Kültür ve Turizm Bakanlığı belgeli tesisler de bu bölümdedir.</p>
-        <p><strong>Hizmetler:</strong> Kuaför, eczane, veteriner, terzi ve tamir servisi gibi günlük yaşam hizmetlerini mahalle bazında bulun.</p>
-        <p><strong>Sağlık:</strong> Hastaneler, klinikler, diş hekimleri ve eczaneler gibi sağlık kuruluşlarına hızlıca ulaşın.</p>
-        <p><strong>Kültür:</strong> Müzeler, tarihi camiler, saraylar ve arkeolojik alanları keşfedin.</p>
-        <p><strong>Sanat:</strong> Tiyatrolar, galeriler, konser salonları ve etkinlik mekanlarını listeleyin.</p>
+        <h3 data-i18n-key="home.guide.howTitle">Nasıl Kullanılır?</h3>
+        <p data-i18n-key="home.guide.howText">Yukarıdaki kartlardan, ihtiyacınıza uygun kategoriyi seçin. Sonuçları belirli bir bölgeye daraltmak için ilçe ve mahalle seçimlerini kullanın veya konumunuzu paylaşarak size en yakın mekanları görün. Seçtiğiniz mekanın, adres, telefon, varsa web sitesi ve Instagram sayfası bilgileri ile haritadaki yeri ve Google veri tabanındaki kullanıcıların değerlendirme puan ve sayıları ile son üç adet yorum gibi ayrıntılı bilgileri gösterilir.</p>
 
-        <h3>Nasıl Kullanılır?</h3>
-        <ul>
-          <li><strong>Kategori seçin:</strong> Yukarıdaki kartlardan ihtiyacınıza uygun kategoriyi tıklayın.</li>
-          <li><strong>İlçe ve mahalle filtreleyin:</strong> Sonuçları belirli bir bölgeye daraltmak için ilçe ve mahalle seçimlerini kullanın.</li>
-          <li><strong>Yakındaki mekanlar:</strong> Konumunuzu paylaşarak size en yakın mekanları anında görün.</li>
-          <li><strong>Detay sayfası:</strong> Her mekanın adres, telefon, web sitesi, Instagram, harita konumu ve Google değerlendirmelerini inceleyin.</li>
-        </ul>
-
-        <h3>Neden Aramabul?</h3>
-        <p>Aramabul, arama sürecini ihtiyaçtan başlatır. Çoğu zaman kullanıcılar bir mekanın adını değil, ne aradıklarını bilir. Kategori bazlı filtreleme, konum desteği ve sade arayüz ile doğru mekana en kısa yoldan ulaşmayı hedefler. Tüm mekan bilgileri düzenli olarak güncellenmekte ve Google verileriyle zenginleştirilmektedir.</p>
+        <h3 data-i18n-key="home.guide.whyTitle">Neden Aramabul?</h3>
+        <p data-i18n-key="home.guide.whyText">Aramabul, arama sürecini ihtiyaçtan başlatır. Çoğu zaman kullanıcılar bir mekanın adını değil, ne aradıklarını bilir. Kategori bazlı filtreleme, konum desteği ve sade arayüz ile doğru mekana en kısa yoldan ulaşmayı hedefler. Tüm mekan bilgileri düzenli olarak güncellenmekte ve Google verileriyle zenginleştirilmektedir.</p>
       </section>
 
     </main>
@@ -393,15 +386,15 @@
 
           <section class="yr-footer-col">
             <h4>Yardım mı lazım?</h4>
-            <a href="sss.html">Sıkça Sorulan Sorular</a>
-            <a href="cerez-politikasi.html">Çerez Politikası</a>
+            <a href="sss.html">Sıkça Sorulan Sorular</a><a href="cerez-politikasi.html">Çerez Politikası</a>
+            
           </section>
 
           <section class="yr-footer-col">
             <h4>Kurumsal</h4>
             <a href="kullanim-kosullari.html">Kullanım Koşulları</a>
-            <a href="kvkk.html">Kişisel Verilerin Korunması</a>
-            <a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+            <a href="kvkk.html">Kişisel Verilerin Korunması</a><a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+            
           </section>
         </div>
 
@@ -415,12 +408,13 @@
     <script src="web-runtime.js?v=20260302-01"></script>
     <script src="header-state.js?v=20260302-01"></script>
   <script src="header-i18n.js?v=20260429-i18n-page-keys-01"></script>
-  <script src="header-nav.js?v=20260422-header-fav-desktop-01"></script>
+  <script src="header-nav.js?v=20260505-hash-auth-01"></script>
   <script src="header-shell.js?v=20260302-02"></script>
   <script src="header-search-ui.js?v=20260303-04"></script>
   <script src="header-search-data.js?v=20260420-search-db-06"></script>
     <script src="header-search.js?v=20260422-header-no-topbar-01"></script>
     <script src="featured-venues.js?v=20260424-featured-distance-01"></script>
+    <script src="home-subcategory-chips.js?v=20260506-dynamic-01"></script>
     <script src="adsense-privacy.js?v=20260429-01"></script>
   </body>
 </html>

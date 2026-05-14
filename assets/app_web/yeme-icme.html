@@ -28,17 +28,19 @@
       content="İstanbul'da yakınındaki veya hedefindeki kafe, restoran ve yeme-içme mekanlarını hızlıca keşfet."
     />
     <meta name="twitter:image" content="https://aramabul.com/assets/yemek.png" />
-    <link rel="icon" type="image/png" href="assets/favicon.png" />
-    <link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
-    <link rel="apple-touch-icon" href="assets/favicon.png" />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260508b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260508b" />
+    <link rel="apple-touch-icon" href="assets/favicon.png?v=20260508b" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260422-header-fav-desktop-01" />
+    <link rel="stylesheet" href="styles.css?v=20260508-footer-fix" />
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3016888060216617" crossorigin="anonymous"></script>
+    <script async src="https://fundingchoicesmessages.google.com/i/pub-3016888060216617?ers=1" nonce=""></script>
+    <script nonce="">(function(){function signalGooglefcPresent(){if(!window.frames["googlefcPresent"]){if(document.body){var a=document.createElement("iframe");a.style="width:0;height:0;border:none;z-index:-1000;left:-1000px;top:-1000px;";a.style.display="none";a.name="googlefcPresent";document.body.appendChild(a)}else{setTimeout(signalGooglefcPresent,0)}}}signalGooglefcPresent()})();</script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -72,9 +74,25 @@
     <header class="global-header-band">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
-          <img class="brand-logo" src="assets/logo.png?v=20260504" alt="aramabul logo" />
-          <span class="brand-wordmark">aramabul</span>
+          <img class="brand-logo" src="assets/logo.png?v=20260508b" alt="aramabul logo" />
+          <span class="brand-wordmark"><span class="brand-wordmark-rest">arama</span><span class="brand-wordmark-search">bul</span></span>
         </a>
+        <form
+          id="istanbulYemeIcmeSearchForm"
+          class="header-search topbar-search-form"
+          role="search"
+          aria-label="Yeme-içme listesinde ara"
+        >
+          <label class="visually-hidden" for="queryInput">Mekan ara</label>
+          <input
+            id="queryInput"
+            class="header-search-input"
+            type="search"
+            placeholder="Ne bulmamı istersin?"
+            autocomplete="off"
+          />
+          <button class="header-search-btn" type="submit">Bul</button>
+        </form>
       </nav>
       <div class="global-topline"></div>
     </header>
@@ -83,9 +101,6 @@
       <section class="section-head province-head" aria-label="Keşfet">
         <div>
           <h1 id="resultsTitle" class="istanbul-results-outside-title" data-i18n-key="shared.placesLoading">Mekanlar yükleniyor</h1>
-          <p data-i18n-key="yemeicme.hero.p1" style="margin:12px 0 4px;color:rgba(16,40,61,.82);font-size:1rem;line-height:1.4;">Yeme-İçme bölümü, keyifli bir zaman geçireceği, sevdikleriyle uygun bir buluşma yeri arayan kullanıcıların ihtiyaç duyduğu mekana, "Yakındaki Mekanlar" seçimini yaparak veya istediği ilçe ve mahalle bilgisi ile kısa yoldan ulaşmasını sağlar.</p>
-          <p data-i18n-key="yemeicme.hero.p2" style="margin:0 0 4px;color:rgba(16,40,61,.72);font-size:.95rem;line-height:1.4;">Mekân listeleri karar vermeyi hızlandıracak ihtiyaca göre filtrelenerek, sade ve kullanıcı dostu bir biçimde sunulmuştur.</p>
-          <p data-i18n-key="yemeicme.hero.p3" style="margin:0;color:rgba(16,40,61,.72);font-size:.95rem;line-height:1.4;">Seçtiğiniz mekanın, adres, telefon, varsa web sitesi ve Instagram sayfası bilgileri ile haritadaki yeri gibi ayrıntılı bilgileri gösterir.</p>
         </div>
       </section>
       <section class="istanbul-results-shell istanbul-results-shell--yeme-icme" aria-live="polite">
@@ -234,23 +249,12 @@
             </div>
 
             <div class="istanbul-filter-meta-column">
-              <div class="istanbul-filter-combined-search-row">
-                <form
-                  id="istanbulYemeIcmeSearchForm"
-                  class="header-search istanbul-filter-inline-search"
-                  role="search"
-                  aria-label="Yeme-içme listesinde ara"
-                >
-                  <label class="visually-hidden" for="queryInput">Mekan ara</label>
-                  <input
-                    id="queryInput"
-                    class="header-search-input"
-                    type="search"
-                    placeholder="Ne bulmamı istersin?"
-                    autocomplete="off"
-                  />
-                  <button class="header-search-btn" type="submit">Bul</button>
-                </form>
+              <div class="bh-cta-wrap">
+                <button type="button" class="bh-cta-button" id="bhCtaButton" aria-label="İşletme başvuru formunu aç">
+                  <span class="bh-cta-icon" aria-hidden="true">✦</span>
+                  <span class="bh-cta-label">İşletmenizi öne çıkarmak ister misiniz?</span>
+                  <span class="bh-cta-arrow" aria-hidden="true">→</span>
+                </button>
               </div>
 
               <div
@@ -271,7 +275,7 @@
         </section>
 
         <div class="istanbul-results-head istanbul-results-head--yeme-icme">
-          <p id="resultsMeta" class="istanbul-results-meta">Lütfen bekle.</p>
+          <p id="resultsMeta" class="istanbul-results-meta">Lütfen bekleyin.</p>
         </div>
 
         <div id="activeFilterPills" class="istanbul-active-pills" aria-label="Aktif filtreler"></div>
@@ -285,21 +289,18 @@
       </section>
 
       <section class="content-guide" aria-label="İstanbul Yeme-İçme Rehberi">
-        <h2>İstanbul Yeme-İçme Rehberi</h2>
-        <p>İstanbul, binlerce yıllık tarihiyle Doğu ile Batı mutfaklarının buluştuğu benzersiz bir gastronomi başkentidir. Boğaz kıyısında taze balıktan Kapalıçarşı sokaklarında geleneksel Türk kahvaltısına, meyhane kültüründen modern fine-dining deneyimlerine kadar geniş bir yelpaze sunar. Bu sayfa, İstanbul'un her köşesindeki yeme-içme mekanlarını keşfetmenize yardımcı olur.</p>
-        <h3>Popüler Mutfak Türleri</h3>
-        <p>İstanbul'da en çok tercih edilen mutfak türleri arasında geleneksel Türk mutfağı, balık restoranları, kebapçılar, kafeler ve pastaneler yer alır. Son yıllarda dünya mutfaklarına yönelik ilgi de artmış olup; İtalyan, Japon, Meksika ve Uzak Doğu mutfakları sunan mekanlar da büyük ilgi görmektedir.</p>
-        <h3>İlçelere Göre Öneriler</h3>
-        <p>Kadıköy, özellikle Moda ve Yeldeğirmeni semtleriyle bağımsız kafeler ve meyhane kültürünün merkezi olarak öne çıkar. Beyoğlu ve İstiklal Caddesi çevresinde uluslararası mutfaklar, tarihi mekanlar ve gece hayatı bir arada bulunur. Beşiktaş ve Bebek sahilinde deniz manzaralı restoranlar, Sarıyer'de Boğaz balıkçıları dikkat çeker. Anadolu yakasında Üsküdar ve Çengelköy semtlerinde ise otantik Türk kahvaltı mekanları tercih edilir.</p>
-        <h3>Mekan Seçerken Nelere Dikkat Etmeli?</h3>
-        <ul>
-          <li><strong>Google puanı ve yorum sayısı:</strong> 4,0 üzeri puana sahip ve en az 50 yorum alan mekanlar genellikle güvenilir bir tercih sunar.</li>
-          <li><strong>Bütçe filtresi:</strong> Aramabul'da uygun, makul ve yüksek bütçe seçenekleriyle arama yaparak beklentinize uygun mekanları kolayca bulabilirsiniz.</li>
-          <li><strong>Konum bilgisi:</strong> İlçe ve mahalle filtreleri sayesinde size en yakın veya gitmek istediğiniz bölgedeki mekanları listeleyebilirsiniz.</li>
-          <li><strong>Mekan türü:</strong> Kafe, restoran, meyhane, pastane gibi alt kategorilerle aramanızı daraltabilirsiniz.</li>
+        <h2 data-i18n-key="yemeicme.guide.title">İstanbul Yeme-İçme Rehberi</h2>
+        <p data-i18n-key="yemeicme.guide.intro">İstanbul, binlerce yıllık tarihiyle Doğu ile Batı mutfaklarının buluştuğu benzersiz bir gastronomi başkentidir. Boğaz kıyısında taze balıktan Kapalıçarşı sokaklarında geleneksel Türk kahvaltısına, meyhane kültüründen modern fine-dining deneyimlerine kadar geniş bir yelpaze sunar. İstanbul'da en çok tercih edilen mutfak türleri arasında geleneksel Türk mutfağı, balık restoranları, kebapçılar, kafeler ve pastaneler yer alır.</p>
+        <p data-i18n-key="yemeicme.guide.areas">Kadıköy'de, özellikle Moda, Fenerbahçe ve Bağdat Caddesi şık restoranlar, kafeler ve meyhane kültürünün merkezi olarak öne çıkar. Beyoğlu ve İstiklal Caddesi çevresinde yerel ve uluslararası mutfaklar, tarihi mekanlar ile gece hayatı bir arada bulunur. Beşiktaş ve Bebek sahilinde deniz manzaralı restoranlar, Sarıyer'de Boğaz balıkçıları dikkat çeker. Anadolu yakasında Üsküdar ve Çengelköy semtlerinde ise keyifli Türk kahvaltı mekanları yer alır.</p>
+        <h3 data-i18n-key="yemeicme.guide.tipsTitle">Mekan Seçerken Nelere Dikkat Etmeli?</h3>
+        <ul data-i18n-key="yemeicme.guide.tipsList">
+          <li>4,0 üzeri değerlendirme puana sahip ve en az 50 yorum alan mekanlar genellikle güvenilir bir tercih sunar.</li>
+          <li>Aramabul'da uygun, makul ve yüksek bütçe seçenekleriyle arama yaparak beklentinize uygun mekanları kolayca bulabilirsiniz.</li>
+          <li>İlçe ve mahalle filtreleri sayesinde size en yakın veya gitmek istediğiniz bölgedeki mekanları listeleyebilirsiniz.</li>
+          <li>Restoran, meyhane, pastane ve kafe gibi alt kategorilerle aramanızı daraltabilirsiniz.</li>
         </ul>
-        <h3>Aramabul ile Nasıl Keşfedersiniz?</h3>
-        <p>Aramabul, İstanbul genelindeki yeme-içme mekanlarını ilçe, mahalle, kategori ve bütçe filtrelerine göre listelemenizi sağlar. "Yakındaki Mekanlar" özelliği ile konumunuza en yakın seçenekleri anında görebilir, mekan detay sayfasından adres, telefon, web sitesi, Instagram ve Google haritası bilgilerine ulaşabilirsiniz.</p>
+        <h3 data-i18n-key="yemeicme.guide.searchTitle">Aramabul ile Nasıl Keşfedersiniz?</h3>
+        <p data-i18n-key="yemeicme.guide.searchText">Aramabul, keyifli bir zaman geçireceği veya sevdikleriyle uygun bir buluşma yeri arayan kullanıcıların ihtiyaç duyduğu mekana, "Yakındaki Mekanlar" seçimini yaparak veya istediği ilçe ve mahalle bilgisi ile kısa yoldan ulaşmasını sağlar. Seçtiğiniz mekanın, adres, telefon, varsa web sitesi ve Instagram sayfası bilgileri ile haritadaki yeri gibi ayrıntılı bilgileri gösterir.</p>
       </section>
     </main>
 
@@ -412,15 +413,15 @@
 
           <section class="yr-footer-col">
             <h4>Yardım mı lazım?</h4>
-            <a href="sss.html">Sıkça Sorulan Sorular</a>
-            <a href="cerez-politikasi.html">Çerez Politikası</a>
+            <a href="sss.html">Sıkça Sorulan Sorular</a><a href="cerez-politikasi.html">Çerez Politikası</a>
+            
           </section>
 
           <section class="yr-footer-col">
             <h4>Kurumsal</h4>
             <a href="kullanim-kosullari.html">Kullanım Koşulları</a>
-            <a href="kvkk.html">Kişisel Verilerin Korunması</a>
-            <a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+            <a href="kvkk.html">Kişisel Verilerin Korunması</a><a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+            
           </section>
         </div>
         <div class="yr-footer-bottom">
@@ -432,12 +433,13 @@
     <script src="web-runtime.js?v=20260302-01"></script>
     <script src="header-state.js?v=20260302-01"></script>
     <script src="header-i18n.js?v=20260429-i18n-page-keys-01"></script>
-    <script src="header-nav.js?v=20260422-header-fav-desktop-01"></script>
+    <script src="header-nav.js?v=20260505-hash-auth-01"></script>
     <script src="header-shell.js?v=20260302-02"></script>
     <script src="header-search-ui.js?v=20260303-04"></script>
     <script src="header-search-data.js?v=20260420-search-db-06"></script>
     <script src="header-search.js?v=20260422-header-no-topbar-01"></script>
-    <script src="istanbul-kesfet.js?v=20260425-discovery-random-all-01"></script>
+    <script src="istanbul-kesfet.js?v=20260512-distance-fix-01"></script>
+    <script src="business-highlight.js?v=20260510-01"></script>
     <script src="adsense-privacy.js?v=20260429-01"></script>
   </body>
 </html>

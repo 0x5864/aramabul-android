@@ -22,17 +22,19 @@
     <meta name="twitter:title" content="İstanbul Hizmetler | AramaBul" />
     <meta name="twitter:description" content="İstanbul’da kuaför, veteriner ve akaryakıt; ilçe, arama ve konum ile keşfet." />
     <meta name="twitter:image" content="https://aramabul.com/assets/sac.png" />
-    <link rel="icon" type="image/png" href="assets/favicon.png" />
-    <link rel="shortcut icon" type="image/png" href="assets/favicon.png" />
-    <link rel="apple-touch-icon" href="assets/favicon.png" />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260508b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260508b" />
+    <link rel="apple-touch-icon" href="assets/favicon.png?v=20260508b" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260422-header-fav-desktop-01" />
+    <link rel="stylesheet" href="styles.css?v=20260508-footer-fix" />
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3016888060216617" crossorigin="anonymous"></script>
+    <script async src="https://fundingchoicesmessages.google.com/i/pub-3016888060216617?ers=1" nonce=""></script>
+    <script nonce="">(function(){function signalGooglefcPresent(){if(!window.frames["googlefcPresent"]){if(document.body){var a=document.createElement("iframe");a.style="width:0;height:0;border:none;z-index:-1000;left:-1000px;top:-1000px;";a.style.display="none";a.name="googlefcPresent";document.body.appendChild(a)}else{setTimeout(signalGooglefcPresent,0)}}}signalGooglefcPresent()})();</script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NHE1J9FWDG"></script>
     <script>
@@ -53,9 +55,25 @@
     <header class="global-header-band">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
-          <img class="brand-logo" src="assets/logo.png?v=20260504" alt="aramabul logo" />
-          <span class="brand-wordmark">aramabul</span>
+          <img class="brand-logo" src="assets/logo.png?v=20260508b" alt="aramabul logo" />
+          <span class="brand-wordmark"><span class="brand-wordmark-rest">arama</span><span class="brand-wordmark-search">bul</span></span>
         </a>
+        <form
+          id="istanbulMvpSearchForm"
+          class="header-search topbar-search-form"
+          role="search"
+          aria-label="Hizmetler listesinde ara"
+        >
+          <label class="visually-hidden" for="queryInput">Mekan ara</label>
+          <input
+            id="queryInput"
+            class="header-search-input"
+            type="search"
+            placeholder="Mekan adı, ilçe veya mahalle"
+            autocomplete="off"
+          />
+          <button class="header-search-btn" type="submit">Bul</button>
+        </form>
       </nav>
       <div class="global-topline"></div>
     </header>
@@ -64,9 +82,6 @@
       <section class="section-head province-head" aria-label="Keşfet">
         <div>
           <h1 id="resultsTitle" class="istanbul-results-outside-title" data-i18n-key="shared.placesLoading">Mekanlar yükleniyor</h1>
-          <p data-i18n-key="hizmetler.hero.p1" style="margin:12px 0 4px;color:rgba(16,40,61,.82);font-size:1rem;line-height:1.4;">Hizmetler bölümü, kullanıcıların gündelik yaşamında ihtiyaç duyduğu kategorideki işletmelere, "Yakındaki Mekanlar" seçimini yaparak veya istediği ilçe ve mahalle bilgisi seçerek hızlıca ulaşmasını sağlar.</p>
-          <p data-i18n-key="hizmetler.hero.p2" style="margin:0 0 4px;color:rgba(16,40,61,.72);font-size:.95rem;line-height:1.4;">Mekân listeleri karar vermeyi hızlandıracak ihtiyaca göre filtrelenerek, sade ve kullanıcı dostu bir biçimde sunulmuştur.</p>
-          <p data-i18n-key="hizmetler.hero.p3" style="margin:0;color:rgba(16,40,61,.72);font-size:.95rem;line-height:1.4;">Seçtiğiniz mekanın, adres, telefon, varsa web sitesi ve Instagram sayfası bilgileri ile haritadaki yeri gibi ayrıntılı bilgileri gösterir.</p>
         </div>
       </section>
       <section class="istanbul-results-shell istanbul-results-shell--hizmetler" aria-live="polite">
@@ -183,18 +198,12 @@
             </div>
 
             <div class="istanbul-filter-meta-column">
-              <div class="istanbul-filter-combined-search-row">
-                <form id="istanbulMvpSearchForm" class="header-search istanbul-filter-inline-search" role="search">
-                  <label class="visually-hidden" for="queryInput">Mekan adı, ilçe veya mahalle adı ile ara</label>
-                  <input
-                    id="queryInput"
-                    class="header-search-input"
-                    type="search"
-                    placeholder="Mekan adı, ilçe veya mahalle"
-                    autocomplete="off"
-                  />
-                  <button class="header-search-btn" type="submit">Bul</button>
-                </form>
+              <div class="bh-cta-wrap">
+                <button type="button" class="bh-cta-button" id="bhCtaButton" aria-label="İşletme başvuru formunu aç">
+                  <span class="bh-cta-icon" aria-hidden="true">✦</span>
+                  <span class="bh-cta-label">İşletmenizi öne çıkarmak ister misiniz?</span>
+                  <span class="bh-cta-arrow" aria-hidden="true">→</span>
+                </button>
               </div>
 
               <div class="istanbul-filter-nearby-panel istanbul-filter-nearby-panel--hizmetler-below-search" aria-label="Konuma göre listele">
@@ -212,7 +221,7 @@
         </section>
 
         <div class="istanbul-results-head istanbul-results-head--hizmetler">
-          <p id="resultsMeta" class="istanbul-results-meta">Lütfen bekle.</p>
+          <p id="resultsMeta" class="istanbul-results-meta">Lütfen bekleyin.</p>
         </div>
 
         <div id="activeFilterPills" class="istanbul-active-pills" aria-label="Aktif filtreler"></div>
@@ -226,25 +235,25 @@
       </section>
 
       <section class="content-guide" aria-label="İstanbul Günlük Hizmetler Rehberi">
-        <h2>İstanbul'da Günlük Hizmetler Rehberi</h2>
-        <p>İstanbul'da günlük yaşamın vazgeçilmez parçası olan hizmet sektörü, kuaförden tamirciye, terzi'den kuru temizlemeciye kadar geniş bir yelpazede hizmet sunar. Aramabul'un Hizmetler bölümü, bu ihtiyaçlarınıza en yakın ve en kaliteli çözümleri bulmanızı sağlar.</p>
+        <h2 data-i18n-key="hizmetler.guide.title">İstanbul'da Günlük Hizmetler Rehberi</h2>
+        <p data-i18n-key="hizmetler.guide.p1">İstanbul'da günlük yaşamın vazgeçilmez parçası olan hizmet sektörü, kuaförden tamirciye, terzi'den kuru temizlemeciye kadar geniş bir yelpazede hizmet sunar. Aramabul'un Hizmetler bölümü, bu ihtiyaçlarınıza en yakın ve en kaliteli çözümleri bulmanızı sağlar.</p>
 
-        <h3>Sık Aranan Hizmet Kategorileri</h3>
-        <p>İstanbul'da en çok aranan hizmet türleri arasında kuaför ve güzellik salonları, oto yıkama ve tamir servisleri, terzi ve kuru temizleme, veteriner klinikleri, eczaneler ve fotoğrafçılar yer alır. Her mahallede bu hizmetlerin birden fazla alternatifi bulunur; doğru seçimi yapmak için kullanıcı değerlendirmelerine bakmak faydalıdır.</p>
+        <h3 data-i18n-key="hizmetler.guide.h3_1">Sık Aranan Hizmet Kategorileri</h3>
+        <p data-i18n-key="hizmetler.guide.p2">İstanbul'da en çok aranan hizmet türleri arasında kuaför ve güzellik salonları, oto yıkama ve tamir servisleri, terzi ve kuru temizleme, veteriner klinikleri, eczaneler ve fotoğrafçılar yer alır. Her mahallede bu hizmetlerin birden fazla alternatifi bulunur; doğru seçimi yapmak için kullanıcı değerlendirmelerine bakmak faydalıdır.</p>
 
-        <h3>İlçelere Göre Hizmet Yoğunluğu</h3>
-        <p>Kadıköy, Beşiktaş ve Şişli gibi yoğun nüfuslu ilçeler hizmet çeşitliliği açısından zengindir. Bakırköy, Ataşehir ve Ümraniye'de de güçlü bir esnaf altyapısı mevcuttur. Daha sakin semtlerde az sayıda ancak uzmanlaşmış hizmet sağlayıcılar öne çıkar.</p>
+        <h3 data-i18n-key="hizmetler.guide.h3_2">İlçelere Göre Hizmet Yoğunluğu</h3>
+        <p data-i18n-key="hizmetler.guide.p3">Kadıköy, Beşiktaş ve Şişli gibi yoğun nüfuslu ilçeler hizmet çeşitliliği açısından zengindir. Bakırköy, Ataşehir ve Ümraniye'de de güçlü bir esnaf altyapısı mevcuttur. Daha sakin semtlerde az sayıda ancak uzmanlaşmış hizmet sağlayıcılar öne çıkar.</p>
 
-        <h3>Doğru Hizmet Sağlayıcıyı Seçmek</h3>
-        <ul>
+        <h3 data-i18n-key="hizmetler.guide.h3_3">Doğru Hizmet Sağlayıcıyı Seçmek</h3>
+        <ul data-i18n-key="hizmetler.guide.ul1">
           <li><strong>Kullanıcı yorumları:</strong> Gerçek deneyimler, hizmet kalitesi hakkında en güvenilir bilgiyi verir.</li>
           <li><strong>Konum ve mesafe:</strong> Günlük hizmetlerde yakınlık büyük avantajdır; "Yakındaki Mekanlar" özelliğini kullanın.</li>
           <li><strong>İletişim bilgileri:</strong> Telefon ve web sitesi olan işletmeler genellikle daha profesyonel hizmet sunar.</li>
           <li><strong>Çalışma saatleri:</strong> Hizmet sektöründe çalışma saatleri değişkendir; ziyaret öncesi arayarak teyit etmeniz önerilir.</li>
       </ul>
 
-        <h3>Aramabul ile Hizmet Arama</h3>
-        <p>Hizmetler bölümünde İstanbul'un 39 ilçesindeki hizmet sağlayıcıları mahalle bazında filtreleyebilirsiniz. Detay sayfalarında adres, telefon, web sitesi ve harita bilgisi ile birlikte Google kullanıcı puanlarını inceleyebilirsiniz.</p>
+        <h3 data-i18n-key="hizmetler.guide.h3_4">Aramabul ile Hizmet Arama</h3>
+        <p data-i18n-key="hizmetler.guide.p4">Hizmetler bölümünde İstanbul'un 39 ilçesindeki hizmet sağlayıcıları mahalle bazında filtreleyebilirsiniz. Detay sayfalarında adres, telefon, web sitesi ve harita bilgisi ile birlikte Google kullanıcı puanlarını inceleyebilirsiniz.</p>
       </section>
     </main>
 
@@ -358,15 +367,15 @@
 
           <section class="yr-footer-col">
             <h4>Yardım mı lazım?</h4>
-            <a href="sss.html">Sıkça Sorulan Sorular</a>
-            <a href="cerez-politikasi.html">Çerez Politikası</a>
+            <a href="sss.html">Sıkça Sorulan Sorular</a><a href="cerez-politikasi.html">Çerez Politikası</a>
+            
           </section>
 
           <section class="yr-footer-col">
             <h4>Kurumsal</h4>
             <a href="kullanim-kosullari.html">Kullanım Koşulları</a>
-            <a href="kvkk.html">Kişisel Verilerin Korunması</a>
-            <a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+            <a href="kvkk.html">Kişisel Verilerin Korunması</a><a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+            
           </section>
         </div>
         <div class="yr-footer-bottom">
@@ -378,12 +387,13 @@
     <script src="web-runtime.js?v=20260302-01"></script>
     <script src="header-state.js?v=20260302-01"></script>
     <script src="header-i18n.js?v=20260429-i18n-page-keys-01"></script>
-    <script src="header-nav.js?v=20260422-header-fav-desktop-01"></script>
+    <script src="header-nav.js?v=20260505-hash-auth-01"></script>
     <script src="header-shell.js?v=20260302-02"></script>
     <script src="header-search-ui.js?v=20260303-04"></script>
     <script src="header-search-data.js?v=20260420-search-db-06"></script>
     <script src="header-search.js?v=20260422-header-no-topbar-01"></script>
-    <script src="istanbul-kesfet.js?v=20260425-discovery-random-all-01"></script>
+    <script src="istanbul-kesfet.js?v=20260512-distance-fix-01"></script>
+    <script src="business-highlight.js?v=20260510-01"></script>
     <script src="adsense-privacy.js?v=20260429-01"></script>
   </body>
 </html>

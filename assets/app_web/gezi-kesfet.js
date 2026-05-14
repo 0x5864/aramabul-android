@@ -646,9 +646,11 @@
   }
 
   function computeDistanceMeters(userLocation, item) {
-    if (!userLocation || !Number.isFinite(Number(item.latitude)) || !Number.isFinite(Number(item.longitude))) {
-      return null;
-    }
+    if (!userLocation) return null;
+    const lat = Number(item.latitude);
+    const lng = Number(item.longitude);
+    if (!item.latitude || !item.longitude || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+    if (lat < 35 || lat > 43 || lng < 25 || lng > 45) return null;
     const toRad = (value) => (Number(value) * Math.PI) / 180;
     const lat1 = toRad(userLocation.lat);
     const lon1 = toRad(userLocation.lng);
@@ -658,7 +660,8 @@
     const dLon = lon2 - lon1;
     const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return 6371000 * c;
+    const meters = 6371000 * c;
+    return meters > 500000 ? null : meters;
   }
 
   function getCategoryImage(category) {
@@ -1914,100 +1917,83 @@
         }
       }
 
-      if (contactLine) {
-        const contactText = formatVenueContactLine(item);
-        if (contactText) {
-          contactLine.hidden = false;
-          contactLine.textContent = contactText;
-        } else {
-          contactLine.hidden = true;
-          contactLine.textContent = "";
-        }
-      }
-
-      if (summaryLine) {
-        summaryLine.hidden = true;
-        summaryLine.textContent = "";
-      }
-
+      // Eski alanları gizle (kültür/hizmetler tarzı sadeleştirilmiş kart)
+      if (contactLine) { contactLine.hidden = true; contactLine.textContent = ""; }
+      if (summaryLine) { summaryLine.hidden = true; summaryLine.textContent = ""; }
       const venueTypeRow = fragment.querySelector(".istanbul-venue-venue-type-row");
-      const venueTypeChip = fragment.querySelector(".istanbul-venue-venue-type-chip");
-      if (venueTypeRow && venueTypeChip) {
-        const typeLabel = String(item.cuisine || item.category || "").trim();
-        if (typeLabel) {
-          venueTypeRow.hidden = false;
-          venueTypeChip.textContent = formatCategoryChipDisplayName(typeLabel);
-          venueTypeChip.setAttribute("aria-label", `${typeLabel} türündeki mekanları göster`);
-          venueTypeChip.addEventListener("click", (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            applyVenueTypeFilterFromItem(item);
-          });
-        } else {
-          venueTypeRow.hidden = true;
-          venueTypeChip.textContent = "";
-        }
-      }
+      if (venueTypeRow) { venueTypeRow.hidden = true; }
+      if (galleryRow) { galleryRow.hidden = true; galleryRow.innerHTML = ""; }
 
-      if (galleryRow) {
-        galleryRow.innerHTML = "";
-        const extra = Array.isArray(item.galleryPhotoUris) ? item.galleryPhotoUris.slice(1, 4) : [];
-        if (extra.length) {
-          galleryRow.hidden = false;
-          extra.forEach((u) => {
-            const src = String(u || "").trim();
-            if (!src) {
-              return;
-            }
-            const wrap = document.createElement("span");
-            wrap.className = "istanbul-venue-gallery-thumb-wrap";
-            const img = document.createElement("img");
-            img.className = "istanbul-venue-gallery-thumb";
-            img.src = src;
-            img.alt = "";
-            img.loading = "lazy";
-            wrap.appendChild(img);
-            galleryRow.appendChild(wrap);
-          });
-        } else {
-          galleryRow.hidden = true;
-        }
-      }
+      // District/neighborhood is shown in tag chips, not above title.
+      eyebrow.textContent = "";
+      eyebrow.hidden = true;
 
-      eyebrow.textContent = [item.district, item.neighborhood].filter(Boolean).join(" / ");
-
-      const formattedDistance = formatDistance(Number(item.distanceMeters));
+      const rawDistanceMeters = (item.distanceMeters != null && item.distanceMeters !== "") ? Number(item.distanceMeters) : NaN;
+      const computedDistanceMeters = Number.isFinite(rawDistanceMeters)
+        ? rawDistanceMeters
+        : computeDistanceMeters(state.userLocation, item);
+      const formattedDistance = formatDistance(computedDistanceMeters);
       if (formattedDistance) {
         distance.hidden = false;
         distance.textContent = formattedDistance;
+      } else if (state.nearbyMode) {
+        distance.hidden = false;
+        distance.textContent = "Yakın ilçe";
       } else {
         distance.hidden = true;
       }
 
-      if (distance && actions) {
-        if (distance.parentElement !== actions) {
-          actions.insertBefore(distance, actionGroup || actions.firstChild);
-        }
-        actions.classList.add("has-distance-chip");
-      }
-
       titleLink.textContent = item.name || "İsimsiz mekan";
       titleLink.href = buildDetailUrl(item.slug);
-      address.textContent = item.address || "Adres bilgisi bulunmuyor.";
-      rating.textContent = formatVenueRatingText(item.rating, item.userRatingCount);
-      budget.textContent = formatBudgetLabel(item.budget) || "Bütçe yok";
-      updateFavoriteButtonLabel(favoriteButton, item.id);
-      bindCardShare(fragment, item);
 
-      if (Array.isArray(item.tags) && item.tags.length) {
-        item.tags.forEach((tagValue) => {
-          const tagNode = document.createElement("span");
-          tagNode.className = "istanbul-venue-tag";
-          const match = state.filters.tags.find((itemTag) => itemTag.key === tagValue);
-          tagNode.textContent = match ? match.label : tagValue;
-          tags.appendChild(tagNode);
-        });
-      } else {
+      // Sadeleştirilmiş kart: adres, rating, bütçe, favori, paylaş gizleniyor
+      address.hidden = true;
+      rating.hidden = true;
+      budget.hidden = true;
+      const pillRow = fragment.querySelector(".istanbul-venue-pill-row");
+      if (pillRow) pillRow.hidden = true;
+      if (actions) actions.hidden = true;
+
+      // Tag satırına sadece ilçe, altkategori ve mesafe ekleniyor
+      const seenTagKeys = new Set();
+
+      function consumeTagLabel(label) {
+        const trimmed = String(label || "").trim();
+        if (!trimmed) return false;
+        const key = normalizeText(trimmed);
+        if (!key || seenTagKeys.has(key)) return false;
+        seenTagKeys.add(key);
+        return true;
+      }
+
+      const districtLabel = String(item.district || "").trim();
+      if (districtLabel) {
+        const link = document.createElement("a");
+        link.className = "istanbul-venue-tag";
+        link.href = `gezi.html?district=${encodeURIComponent(districtLabel)}`;
+        link.setAttribute("aria-label", `${districtLabel} ilçesindeki mekanları aç`);
+        link.textContent = districtLabel;
+        tags.appendChild(link);
+        consumeTagLabel(districtLabel);
+      }
+
+      const cuisineLabel = String(item.cuisine || item.category || "").trim();
+      if (cuisineLabel && normalizeText(cuisineLabel) !== normalizeText(districtLabel)) {
+        if (consumeTagLabel(cuisineLabel)) {
+          const span = document.createElement("span");
+          span.className = "istanbul-venue-tag";
+          span.textContent = cuisineLabel;
+          tags.appendChild(span);
+        }
+      }
+
+      // Mesafe chip'ini tag satırına ekle
+      if (!distance.hidden) {
+        distance.classList.add("istanbul-venue-tag");
+        tags.appendChild(distance);
+      }
+
+      if (!tags.childElementCount) {
         card.classList.add("is-tagless");
       }
 
@@ -2211,6 +2197,38 @@
     }
   }
 
+  function requestDistanceHints() {
+    if (state.userLocation || !navigator.geolocation) {
+      return;
+    }
+
+    function onSuccess(position) {
+      state.userLocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      };
+      loadVenues();
+    }
+
+    // Try fast network location first
+    navigator.geolocation.getCurrentPosition(
+      onSuccess,
+      () => {
+        // Fallback: try with high accuracy (GPS)
+        navigator.geolocation.getCurrentPosition(onSuccess, () => {}, {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 300000,
+        });
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 300000,
+      },
+    );
+  }
+
   function requestNearbyMode() {
     if (state.nearbyMode) {
       clearNearbyMode();
@@ -2368,6 +2386,43 @@
     try {
       state.selectedVenueSlug = readVenueSlugFromUrl();
       await loadFilters();
+
+      // Anasayfa chip'lerinden gelen subcategoryId parametresini oku
+      const urlParams = new URLSearchParams(window.location.search);
+      const subcatId = urlParams.get("subcategoryId");
+      if (subcatId) {
+        // Önce categoryOptions'tan (numeric id) eşleşme dene
+        const categoryOptions = Array.isArray(state.filters.categoryOptions) ? state.filters.categoryOptions : [];
+        const matchById = categoryOptions.find((c) => String(c.id) === String(subcatId));
+        if (matchById) {
+          state.selectedCategory = String(matchById.id);
+        } else {
+          // categoryOptions boşsa, API'den subcategory adını al ve string kategorilerle eşleştir
+          try {
+            const res = await fetch(
+              "/api/public/content-model/subcategories?mainCategoryKey=gezi",
+              { headers: { Accept: "application/json" } }
+            );
+            if (res.ok) {
+              const data = await res.json();
+              const items = Array.isArray(data.items) ? data.items : [];
+              const found = items.find((s) => String(s.id) === String(subcatId));
+              if (found && found.name) {
+                const cats = Array.isArray(state.filters.categories) ? state.filters.categories : [];
+                const catMatch = cats.find((c) => normalizeText(c) === normalizeText(found.name));
+                if (catMatch) {
+                  state.selectedCategory = catMatch;
+                } else {
+                  state.selectedCategory = found.name;
+                }
+              }
+            }
+          } catch (_e) { /* sustur */ }
+        }
+        syncCategoryChipVisuals();
+        syncKesfetCategoryTrigger();
+      }
+
       const initialQuery = readInitialQueryFromUrl();
       if (initialQuery && queryInput) {
         state.query = initialQuery;
@@ -2377,6 +2432,7 @@
       updateModeHeading();
       syncActiveFilterPills();
       await loadVenues();
+      requestDistanceHints();
     } catch (error) {
       setLoading(false, error instanceof Error ? error.message : "Sayfa başlatılamadı.");
     }
