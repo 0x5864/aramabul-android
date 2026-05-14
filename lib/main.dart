@@ -744,6 +744,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           'body { background: #729875 !important; }' +
           '.global-header-band { display: none !important; height: 0 !important; overflow: hidden !important; font-size: 0 !important; line-height: 0 !important; }' +
           '.global-topline { display: none !important; }' +
+          '.home-hero-search { display: none !important; }' +
           '.texture { font-size: 0 !important; line-height: 0 !important; }' +
           '.hero { padding-top: 0 !important; }' +
           '.hero-content { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }' +
