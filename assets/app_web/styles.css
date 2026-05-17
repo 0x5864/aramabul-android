@@ -46,32 +46,7 @@
   --header-line-start: calc(var(--content-offset) - 0.52rem);
 }
 
-button,
-[class*="btn"],
-[class*="button"],
-.venue-detail-action,
-.venue-detail-action-secondary,
-.istanbul-filter-reset,
-.admin-table-action,
-.admin-logout-button,
-.istanbul-favorite-button,
-.istanbul-tag-button {
-  border-radius: 4px !important;
-}
-
-input,
-select,
-textarea,
-.card,
-[class*="card"],
-[class*="panel"],
-[class*="box"],
-[class*="tile"],
-[class*="thumb"],
-[class*="badge"],
-.home-info-link {
-  border-radius: 4px !important;
-}
+/* Global 4px wildcard rules removed — individual elements have their own border-radius */
 
 [class*="pill"],
 [class*="chip"] {
@@ -193,7 +168,7 @@ main {
   width: min(1220px, calc(100% - 2.4rem));
   margin-inline: auto;
   position: relative;
-  padding-top: calc(74px + 0.38rem + 0.9rem);
+  padding-top: calc(59px + 0.3rem + 2.4rem);
   background: var(--bg);
 }
 
@@ -205,10 +180,10 @@ main {
   transform: none;
   z-index: 1200;
   box-sizing: border-box;
-  min-height: 74px;
+  min-height: 59px;
   padding-inline-start: max(calc((100vw - 1220px) / 2 + var(--header-line-start)), calc(1.2rem + var(--header-line-start)));
   padding-inline-end: max(calc((100vw - 1220px) / 2), 1.2rem);
-  padding-bottom: 0.38rem;
+  padding-bottom: 0.3rem;
   border-bottom: 1px solid #b8c8dc;
   background: #729875;
 }
@@ -409,8 +384,8 @@ main {
 
 .search-page .header-search-btn {
   border: 0;
-  background: #011d36;
-  color: #e1e1e1;
+  background: linear-gradient(145deg, #d4854a 0%, #c37238 100%);
+  color: #fff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -427,8 +402,8 @@ main {
 }
 
 .search-page .header-search-btn:hover {
-  background: #384796;
-  color: #e1e1e1;
+  background: linear-gradient(145deg, #dc9358 0%, #c97e48 100%);
+  color: #fff;
   transform: none;
   box-shadow: none;
   outline: none;
@@ -436,10 +411,10 @@ main {
 
 .search-page .header-search-btn:focus-visible {
   border: 0;
-  background: #022746;
-  color: #e1e1e1;
+  background: linear-gradient(145deg, #dc9358 0%, #c97e48 100%);
+  color: #fff;
   transform: translateY(-1px);
-  box-shadow: 0 0 0 2px var(--hover-blue-soft);
+  box-shadow: 0 0 0 2px rgba(195, 114, 56, 0.4);
   outline: none;
 }
 
@@ -489,7 +464,7 @@ main {
   width: 100%;
   min-height: 38px;
   border: 1px solid rgba(22, 33, 35, 0.2);
-  border-radius: 12px;
+  border-radius: 14px 0 0 14px;
   background: #ffffff;
   color: rgba(22, 33, 35, 0.95);
   padding: 0.42rem 0.86rem;
@@ -509,9 +484,9 @@ main {
 
 .header-search-btn {
   border: 0;
-  border-radius: 4px;
-  background: #011d36;
-  color: #e1e1e1;
+  border-radius: 0 14px 14px 0;
+  background: linear-gradient(145deg, #d4854a 0%, #c37238 100%);
+  color: #fff;
   min-height: 34px;
   min-width: 56px;
   padding: 0 0.72rem;
@@ -530,7 +505,7 @@ main {
 }
 
 .header-search-btn:hover {
-  background: #384796;
+  background: linear-gradient(145deg, #dc9358 0%, #c97e48 100%);
   transform: none;
   box-shadow: none;
   outline: none;
@@ -961,20 +936,21 @@ link[rel="apple-touch-icon"] {
 .auth-submit {
   margin-top: 0.3rem;
   border: 0;
-  border-radius: 12px;
+  border-radius: 4px;
   min-height: 34px;
   min-width: 56px;
   padding: 0 0.72rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #011d36;
-  color: #e1e1e1;
+  background: linear-gradient(145deg, #d4854a 0%, #c37238 100%);
+  color: #fff;
   font: inherit;
   font-size: 0.84rem;
   font-weight: 400;
   line-height: 1;
   cursor: pointer;
+  box-shadow: 0 3px 8px rgba(195, 114, 56, 0.25);
   transition: background-color 0.16s ease, transform 0.12s ease, box-shadow 0.16s ease;
 }
 
@@ -987,18 +963,18 @@ link[rel="apple-touch-icon"] {
 }
 
 .auth-submit:hover {
-  background: #0281c2;
-  transform: none;
-  box-shadow: none;
+  background: linear-gradient(145deg, #dc9358 0%, #c97e48 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(195, 114, 56, 0.35);
   outline: none;
 }
 
 .auth-submit:focus-visible {
   border: 0;
-  background: #0281c2;
-  color: #e1e1e1;
+  background: linear-gradient(145deg, #dc9358 0%, #c97e48 100%);
+  color: #fff;
   transform: none;
-  box-shadow: 0 0 0 2px var(--hover-blue-soft);
+  box-shadow: 0 0 0 2px rgba(195, 114, 56, 0.4);
   outline: none;
 }
 
@@ -1093,7 +1069,7 @@ h1 {
   appearance: none;
   border: 1px solid var(--line);
   background: var(--paper);
-  border-radius: 14px;
+  border-radius: 4px;
   min-height: 50px;
   font: inherit;
   padding: 0.8rem 0.95rem;
@@ -1613,7 +1589,7 @@ a.content-page-card:focus-visible {
 
 .content-page-shell[data-page-key="yer-ekle"] .content-page-form-button {
   min-height: 34px;
-  border-radius: 12px;
+  border-radius: 4px;
   background: #011d36;
   color: #e1e1e1;
   padding: 0 0.72rem;
@@ -1624,7 +1600,7 @@ a.content-page-card:focus-visible {
 
 .content-page-shell[data-page-key="iletisim"] .content-page-form-button {
   min-height: 34px;
-  border-radius: 12px;
+  border-radius: 4px;
   background: #011d36;
   color: #e1e1e1;
   padding: 0 0.72rem;
@@ -1853,7 +1829,7 @@ a.content-page-card:focus-visible {
 
 .category-search-wrap input {
   min-height: 54px;
-  border-radius: 10px;
+  border-radius: 4px;
   border: 1px solid rgba(22, 33, 35, 0.18);
   padding: 0.9rem 1rem;
   font: inherit;
@@ -1872,7 +1848,7 @@ a.content-page-card:focus-visible {
   text-align: left;
   position: relative;
   border: 1px solid var(--box-border);
-  border-radius: 12px;
+  border-radius: 4px;
   min-height: 152px;
   overflow: hidden;
   background-position: center;
@@ -1960,7 +1936,7 @@ a.content-page-card:focus-visible {
 
 .category-empty {
   border: 1px dashed var(--box-border);
-  border-radius: 12px;
+  border-radius: 4px;
   padding: 0.82rem;
   background: #fafafa;
   font-size: 0.9rem;
@@ -2897,7 +2873,7 @@ body.search-choice-open {
   width: min(520px, 100%);
   max-height: min(76vh, 720px);
   border: 1px solid var(--box-border);
-  border-radius: 18px;
+  border-radius: 4px;
   background: #fffdf8;
   box-shadow: 0 24px 70px rgba(10, 18, 26, 0.24);
   padding: 1rem;
@@ -2955,7 +2931,7 @@ body.search-choice-open {
 .search-choice-option {
   width: 100%;
   border: 1px solid var(--box-border);
-  border-radius: 12px;
+  border-radius: 4px;
   background: #ffffff;
   padding: 0.72rem 0.78rem;
   text-align: left;
@@ -3020,7 +2996,7 @@ body.search-choice-open {
   width: min(980px, 100%);
   max-height: min(88vh, 860px);
   border: 1px solid var(--box-border);
-  border-radius: 18px;
+  border-radius: 4px;
   background: #fffdf8;
   box-shadow: 0 24px 70px rgba(10, 18, 26, 0.28);
   overflow: hidden;
@@ -3141,7 +3117,7 @@ body.search-choice-open {
 .map-focus-info-photo {
   display: block;
   width: 100%;
-  border-radius: 10px;
+  border-radius: 4px;
   border: 1px solid rgba(22, 33, 35, 0.12);
   background: #edf1f5;
   aspect-ratio: 16 / 10;
@@ -3178,7 +3154,7 @@ body.search-choice-open {
 
 .map-focus-external {
   border: 0;
-  border-radius: 12px;
+  border-radius: 4px;
   background: #011d36;
   color: #e1e1e1;
   min-height: 34px;
@@ -3232,7 +3208,7 @@ body.nearby-venues-open {
   width: min(780px, 100%);
   max-height: min(86vh, 820px);
   border: 1px solid var(--box-border);
-  border-radius: 18px;
+  border-radius: 4px;
   background: #fffdf8;
   box-shadow: 0 24px 70px rgba(10, 18, 26, 0.28);
   display: grid;
@@ -3334,7 +3310,7 @@ body.nearby-venues-open {
 
 .nearby-venues-preview-btn {
   border: 0;
-  border-radius: 12px;
+  border-radius: 4px;
   background: #011d36;
   color: #e1e1e1;
   min-height: 34px;
@@ -3371,7 +3347,7 @@ body.nearby-venues-open {
 
   .map-focus-panel {
     max-height: calc(100vh - 1.1rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-    border-radius: 14px;
+    border-radius: 4px;
   }
 
   .map-focus-body {
@@ -3407,7 +3383,7 @@ body.nearby-venues-open {
 
   .nearby-venues-panel {
     max-height: calc(100vh - 1.1rem - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-    border-radius: 14px;
+    border-radius: 4px;
   }
 
   .nearby-venues-head {
@@ -3514,7 +3490,7 @@ body.nearby-venues-open {
 .yr-footer-col a.store-badge,
 .yr-footer-col a.store-badge:hover {
   min-width: 180px;
-  border-radius: 12px;
+  border-radius: 4px;
   border: 1px solid #a4b3b5;
   background: #0f2d1f;
   color: #ffffff !important;
@@ -3635,7 +3611,7 @@ body.nearby-venues-open {
   bottom: calc(100% + 0.45rem);
   margin-bottom: 0;
   border: 1px solid var(--mobile-search-border);
-  border-radius: 14px;
+  border-radius: 4px;
   background: var(--mobile-search-bg);
   box-shadow: 0 14px 30px rgba(2, 7, 18, 0.4);
   padding: 0.52rem;
@@ -3650,7 +3626,7 @@ body.nearby-venues-open {
 .mobile-bottom-search-input {
   min-height: 44px;
   border: 1px solid var(--mobile-search-input-border);
-  border-radius: 12px;
+  border-radius: 4px;
   background: var(--mobile-search-input-bg);
   color: var(--mobile-search-input-text);
   font: inherit;
@@ -3667,7 +3643,7 @@ body.nearby-venues-open {
 .mobile-bottom-search-submit {
   min-height: 44px;
   border: 1px solid var(--mobile-search-submit-border);
-  border-radius: 12px;
+  border-radius: 4px;
   background: var(--mobile-search-submit-bg);
   color: var(--mobile-search-submit-text);
   min-width: 72px;
@@ -3684,7 +3660,7 @@ body.nearby-venues-open {
 
 .mobile-bottom-nav-btn {
   border: 0;
-  border-radius: 12px;
+  border-radius: 4px;
   background: transparent;
   min-height: 60px;
   width: auto;
@@ -4047,7 +4023,7 @@ body.nearby-venues-open {
   .search-page .header-search-input,
   .search-page .header-search-btn {
     min-height: 40px;
-    border-radius: 11px;
+    border-radius: 4px;
   }
 
   .search-page .header-search-btn {
@@ -4060,7 +4036,7 @@ body.nearby-venues-open {
   .header-search-input,
   .header-search-btn {
     min-height: 44px;
-    border-radius: 12px;
+    border-radius: 4px;
     font-size: 0.95rem;
   }
 
@@ -4157,7 +4133,7 @@ body.nearby-venues-open {
   .top-city-thumb {
     width: 58px;
     height: 58px;
-    border-radius: 12px;
+    border-radius: 4px;
   }
 
   .top-city-name {
@@ -5687,7 +5663,7 @@ body.mobile-chrome-browser.mobile-force-layout .brand-wordmark {
   display: grid;
   gap: 1rem;
   border: 1px solid rgba(210, 216, 219, 0.7);
-  border-radius: 10px;
+  border-radius: 4px;
   background: #ffffff;
   padding: 1.25rem 1.4rem 1.35rem;
   box-shadow: 0 18px 42px rgba(11, 20, 28, 0.08);
@@ -6000,7 +5976,7 @@ body.mobile-chrome-browser.mobile-force-layout .brand-wordmark {
 .image-resize-card {
   background: #fffdf8;
   border: 1px solid #eee7dd;
-  border-radius: 18px;
+  border-radius: 4px;
   padding: 32px;
   box-shadow: 0 14px 40px rgba(15, 24, 40, 0.08);
 }
@@ -6024,7 +6000,7 @@ body.mobile-chrome-browser.mobile-force-layout .brand-wordmark {
 .image-resize-panel {
   background: #faf7f1;
   border: 1px solid #eee7dd;
-  border-radius: 14px;
+  border-radius: 4px;
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -6062,7 +6038,7 @@ body.mobile-chrome-browser.mobile-force-layout .brand-wordmark {
 .image-resize-preview {
   min-height: 180px;
   border: 1px dashed #d8d4cc;
-  border-radius: 10px;
+  border-radius: 4px;
   background: #fff;
   display: flex;
   align-items: center;
@@ -6164,7 +6140,7 @@ body.mobile-chrome-browser.mobile-force-layout .brand-wordmark {
   width: 100%;
   background: #fff;
   border: 1px solid #e2e2e2;
-  border-radius: 12px;
+  border-radius: 4px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
   padding: 18px 20px 24px;
 }
@@ -6247,7 +6223,7 @@ body.mobile-chrome-browser.mobile-force-layout .brand-wordmark {
 .image-crop-card {
   background: #fffdf8;
   border: 1px solid #eee7dd;
-  border-radius: 18px;
+  border-radius: 4px;
   padding: 32px;
   box-shadow: 0 14px 40px rgba(15, 24, 40, 0.08);
 }
@@ -6271,7 +6247,7 @@ body.mobile-chrome-browser.mobile-force-layout .brand-wordmark {
 .image-crop-panel {
   background: #faf7f1;
   border: 1px solid #eee7dd;
-  border-radius: 14px;
+  border-radius: 4px;
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -6310,7 +6286,7 @@ body.mobile-chrome-browser.mobile-force-layout .brand-wordmark {
   position: relative;
   width: 100%;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 4px;
   border: 1px solid #ddd5ca;
   background: #fff;
 }
@@ -6458,7 +6434,7 @@ body.mobile-chrome-browser.mobile-force-layout .brand-wordmark {
 
 #imageCropResult {
   width: 100%;
-  border-radius: 10px;
+  border-radius: 4px;
   border: 1px solid #ddd5ca;
   background: #fff;
 }
@@ -6792,8 +6768,8 @@ body.sanat-page .istanbul-discovery-shell > .istanbul-breadcrumb {
 .admin-logout-button {
   border: 0;
   border-radius: 4px;
-  background: #011d36;
-  color: #e1e1e1;
+  background: linear-gradient(145deg, #d4854a 0%, #c37238 100%);
+  color: #fff;
   min-height: 34px;
   font: inherit;
   font-size: 0.84rem;
@@ -7056,15 +7032,16 @@ body.yeme-icme-page .istanbul-filter-yeme-icme-budget-nest .kesfet-category-drop
   width: 100%;
   min-height: 2.1rem;
   padding: 0.24rem 0.5rem 0.24rem 0.6rem;
-  border: 1px solid rgba(22, 33, 35, 0.12) !important;
-  border-radius: 8px;
-  background: #ffffff !important;
+  border: 1px solid rgba(22, 93, 91, 0.12) !important;
+  border-radius: 4px;
+  background: #f5f6f7 !important;
   color: #011d36;
   font-size: var(--istanbul-filter-ui-font, 0.84rem);
   font-weight: 400;
   justify-content: space-between;
   gap: 0.4rem;
-  box-shadow: none;
+  box-shadow: 0 2px 6px rgba(9, 56, 38, 0.06);
+  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .istanbul-filter-location-box .kesfet-category-dropdown[data-kesfet-district-switch] .kesfet-category-dropdown-btn:hover,
@@ -7094,15 +7071,16 @@ body.yeme-icme-page .istanbul-filter-yeme-icme-budget-nest .kesfet-category-drop
   width: 100%;
   min-height: 2.1rem;
   padding: 0.24rem 0.5rem 0.24rem 0.6rem;
-  border: 1px solid rgba(22, 33, 35, 0.12) !important;
-  border-radius: 8px;
-  background: #ffffff !important;
+  border: 1px solid rgba(22, 93, 91, 0.12) !important;
+  border-radius: 4px;
+  background: #f5f6f7 !important;
   color: #011d36;
   font-size: var(--istanbul-filter-ui-font, 0.84rem);
   font-weight: 400;
   justify-content: space-between;
   gap: 0.4rem;
-  box-shadow: none;
+  box-shadow: 0 2px 6px rgba(9, 56, 38, 0.06);
+  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .istanbul-filter-location-box .kesfet-category-dropdown[data-kesfet-neighborhood-switch] .kesfet-category-dropdown-btn:disabled,
@@ -7131,10 +7109,11 @@ body.yeme-icme-page .istanbul-filter-yeme-icme-budget-nest .kesfet-category-drop
 
 /* Kategori açılır tetikleyici: .lang-switch-btn:hover çerçeveyi silmesin */
 .kesfet-category-dropdown[data-kesfet-category-switch] .kesfet-category-dropdown-btn {
-  border: 1px solid rgba(22, 33, 35, 0.12) !important;
-  border-radius: 8px;
-  background: #ffffff !important;
-  box-shadow: none;
+  border: 1px solid rgba(22, 93, 91, 0.12) !important;
+  border-radius: 4px;
+  background: #f5f6f7 !important;
+  box-shadow: 0 2px 6px rgba(9, 56, 38, 0.06);
+  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .kesfet-category-dropdown[data-kesfet-category-switch] .kesfet-category-dropdown-btn:hover,
@@ -7287,10 +7266,12 @@ body.saglik-page
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  padding: 1rem 1rem 1.05rem;
-  border: 1px solid rgba(185, 196, 202, 0.95);
-  border-radius: 10px;
-  background: #d5e8d3;
+  padding: 1.1rem 1.1rem 1.15rem;
+  border: none;
+  border-radius: 14px;
+  background: #c8773e;
+  box-shadow: 0 3px 8px rgba(107, 70, 51, 0.25);
+  color: #fff;
 }
 
 .istanbul-filter-location-box-title {
@@ -7306,11 +7287,13 @@ body.saglik-page
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
-  padding: 1rem 1rem 1.05rem;
-  border: 1px solid rgba(185, 196, 202, 0.95);
-  border-radius: 10px;
-  background: #d5e8d3;
+  padding: 1.1rem 1.1rem 1.15rem;
+  border: none;
+  border-radius: 14px;
+  background: #c8773e;
   min-width: 0;
+  box-shadow: 0 3px 8px rgba(107, 70, 51, 0.25);
+  color: #fff;
 }
 
 .istanbul-filter-section-box-title {
@@ -7520,7 +7503,7 @@ body.sanat-page .istanbul-filter-meta-column > .istanbul-filter-combined-search-
   gap: 0.5rem 0.65rem;
   padding: 0.75rem 0.85rem;
   border: 1px solid rgba(185, 196, 202, 0.95);
-  border-radius: 10px;
+  border-radius: 4px;
   background: #fbfcfd;
   min-height: 3.25rem;
 }
@@ -7591,8 +7574,6 @@ body.hizmetler-page .istanbul-filter-card {
   --istanbul-filter-ui-font: 0.84rem;
 }
 
-body.yeme-icme-page .istanbul-filter-card .istanbul-filter-location-box,
-body.yeme-icme-page .istanbul-filter-card .istanbul-filter-section-box,
 body.yeme-icme-page .istanbul-filter-card .istanbul-filter-chip-box,
 body.yeme-icme-page .istanbul-filter-card .istanbul-filter-meta-banner,
 body.yeme-icme-page .istanbul-filter-card .istanbul-filter-chip,
@@ -7600,9 +7581,6 @@ body.yeme-icme-page .istanbul-filter-card .istanbul-filter-field input,
 body.yeme-icme-page .istanbul-filter-card .istanbul-filter-field select,
 body.yeme-icme-page .istanbul-filter-card .header-search-input,
 body.yeme-icme-page .istanbul-filter-card .header-search-btn,
-body.yeme-icme-page .istanbul-filter-card .istanbul-filter-nearby-panel .istanbul-discovery-primary-button,
-body.sanat-page .istanbul-filter-card .istanbul-filter-location-box,
-body.sanat-page .istanbul-filter-card .istanbul-filter-section-box,
 body.sanat-page .istanbul-filter-card .istanbul-filter-chip-box,
 body.sanat-page .istanbul-filter-card .istanbul-filter-meta-banner,
 body.sanat-page .istanbul-filter-card .istanbul-filter-chip,
@@ -7610,9 +7588,6 @@ body.sanat-page .istanbul-filter-card .istanbul-filter-field input,
 body.sanat-page .istanbul-filter-card .istanbul-filter-field select,
 body.sanat-page .istanbul-filter-card .header-search-input,
 body.sanat-page .istanbul-filter-card .header-search-btn,
-body.sanat-page .istanbul-filter-card .istanbul-filter-nearby-panel .istanbul-discovery-primary-button,
-body.kultur-page .istanbul-filter-card .istanbul-filter-location-box,
-body.kultur-page .istanbul-filter-card .istanbul-filter-section-box,
 body.kultur-page .istanbul-filter-card .istanbul-filter-chip-box,
 body.kultur-page .istanbul-filter-card .istanbul-filter-meta-banner,
 body.kultur-page .istanbul-filter-card .istanbul-filter-chip,
@@ -7620,9 +7595,6 @@ body.kultur-page .istanbul-filter-card .istanbul-filter-field input,
 body.kultur-page .istanbul-filter-card .istanbul-filter-field select,
 body.kultur-page .istanbul-filter-card .header-search-input,
 body.kultur-page .istanbul-filter-card .header-search-btn,
-body.kultur-page .istanbul-filter-card .istanbul-filter-nearby-panel .istanbul-discovery-primary-button,
-body.saglik-page .istanbul-filter-card .istanbul-filter-location-box,
-body.saglik-page .istanbul-filter-card .istanbul-filter-section-box,
 body.saglik-page .istanbul-filter-card .istanbul-filter-chip-box,
 body.saglik-page .istanbul-filter-card .istanbul-filter-meta-banner,
 body.saglik-page .istanbul-filter-card .istanbul-filter-chip,
@@ -7630,9 +7602,6 @@ body.saglik-page .istanbul-filter-card .istanbul-filter-field input,
 body.saglik-page .istanbul-filter-card .istanbul-filter-field select,
 body.saglik-page .istanbul-filter-card .header-search-input,
 body.saglik-page .istanbul-filter-card .header-search-btn,
-body.saglik-page .istanbul-filter-card .istanbul-filter-nearby-panel .istanbul-discovery-primary-button,
-body.gezi-page .istanbul-filter-card .istanbul-filter-location-box,
-body.gezi-page .istanbul-filter-card .istanbul-filter-section-box,
 body.gezi-page .istanbul-filter-card .istanbul-filter-chip-box,
 body.gezi-page .istanbul-filter-card .istanbul-filter-meta-banner,
 body.gezi-page .istanbul-filter-card .istanbul-filter-chip,
@@ -7640,17 +7609,13 @@ body.gezi-page .istanbul-filter-card .istanbul-filter-field input,
 body.gezi-page .istanbul-filter-card .istanbul-filter-field select,
 body.gezi-page .istanbul-filter-card .header-search-input,
 body.gezi-page .istanbul-filter-card .header-search-btn,
-body.gezi-page .istanbul-filter-card .istanbul-filter-nearby-panel .istanbul-discovery-primary-button,
-body.hizmetler-page .istanbul-filter-card .istanbul-filter-location-box,
-body.hizmetler-page .istanbul-filter-card .istanbul-filter-section-box,
 body.hizmetler-page .istanbul-filter-card .istanbul-filter-chip-box,
 body.hizmetler-page .istanbul-filter-card .istanbul-filter-meta-banner,
 body.hizmetler-page .istanbul-filter-card .istanbul-filter-chip,
 body.hizmetler-page .istanbul-filter-card .istanbul-filter-field input,
 body.hizmetler-page .istanbul-filter-card .istanbul-filter-field select,
 body.hizmetler-page .istanbul-filter-card .header-search-input,
-body.hizmetler-page .istanbul-filter-card .header-search-btn,
-body.hizmetler-page .istanbul-filter-card .istanbul-filter-nearby-panel .istanbul-discovery-primary-button {
+body.hizmetler-page .istanbul-filter-card .header-search-btn {
   border-radius: 4px !important;
 }
 
@@ -7820,14 +7785,16 @@ body.saglik-page .kesfet-category-dropdown-btn {
   width: 100%;
   min-height: 2.1rem;
   padding: 0.24rem 0.5rem 0.24rem 0.6rem;
-  border: 1px solid rgba(22, 33, 35, 0.12);
-  border-radius: 8px;
-  background: #ffffff;
+  border: 1px solid rgba(22, 93, 91, 0.12);
+  border-radius: 4px;
+  background: #f5f6f7;
   color: #011d36;
   font-size: var(--istanbul-filter-ui-font, 0.84rem);
   font-weight: 400;
   justify-content: space-between;
   gap: 0.4rem;
+  box-shadow: 0 2px 6px rgba(9, 56, 38, 0.06);
+  transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 body.yeme-icme-page .kesfet-category-dropdown-btn:hover,
@@ -7980,7 +7947,11 @@ body.hizmetler-page .kesfet-category-dropdown-options .istanbul-filter-chip.is-a
 body.kultur-page .kesfet-category-dropdown-options .istanbul-filter-chip.is-active,
 body.sanat-page .kesfet-category-dropdown-options .istanbul-filter-chip.is-active,
 body.saglik-page .kesfet-category-dropdown-options .istanbul-filter-chip.is-active {
-  font-weight: 500;
+  font-weight: 600;
+  background: rgba(9, 56, 38, 0.14);
+  color: #093826;
+  border-left: 3px solid #165d5b;
+  padding-left: calc(0.65rem - 3px);
 }
 
 body.yeme-icme-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box,
@@ -8037,9 +8008,11 @@ body.hizmetler-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-
 body.kultur-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active,
 body.sanat-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active,
 body.saglik-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active {
-  font-weight: 500;
-  background: rgba(9, 56, 38, 0.08);
+  font-weight: 600;
+  background: rgba(9, 56, 38, 0.14);
   color: #093826;
+  border-left: 3px solid #165d5b;
+  padding-left: calc(0.75rem - 3px);
 }
 
 /* Hizmetler keşfet: Kategori + 3 tür; en uzun metin kadar geniş, üç kutu eşit, satırı doldurmaz */
@@ -8520,13 +8493,13 @@ body.yeme-icme-page .istanbul-results-grid {
 }
 
 .istanbul-venue-card {
-  border: 1px solid rgba(210, 216, 219, 0.9);
-  border-radius: 4px;
-  background: #d5e8d3;
+  border: 1px solid rgba(22, 93, 91, 0.12);
+  border-radius: 14px;
+  background: linear-gradient(145deg, #e8f0e4 0%, #d5e8d3 40%, #c9dfca 100%);
   padding: 0.7rem;
   display: grid;
   gap: 0.45rem;
-  box-shadow: 0 8px 16px rgba(27, 32, 41, 0.05);
+  box-shadow: 0 4px 14px rgba(9, 56, 38, 0.08), 0 1px 3px rgba(9, 56, 38, 0.06);
   cursor: pointer;
 }
 
@@ -10722,7 +10695,7 @@ button.admin-content-model-geo-neighborhood.is-active {
 
 .home-subcategory-box {
   border: 1px solid rgba(17, 35, 44, 0.12);
-  border-radius: 12px;
+  border-radius: 4px;
   background: #ffffff;
   padding: clamp(0.85rem, 2vw, 1.15rem);
   box-shadow: 0 4px 28px rgba(15, 35, 52, 0.07);
@@ -10779,7 +10752,7 @@ button.admin-content-model-geo-neighborhood.is-active {
   margin: 0 auto;
   padding: clamp(1.25rem, 3vw, 1.85rem) clamp(0.9rem, 2.5vw, 1.35rem);
   border: 1px solid rgba(17, 35, 44, 0.12);
-  border-radius: 12px;
+  border-radius: 4px;
   background: #fff;
   box-shadow: 0 4px 28px rgba(15, 35, 52, 0.07);
   box-sizing: border-box;
@@ -11123,7 +11096,7 @@ button.admin-content-model-geo-neighborhood.is-active {
    Applied from Android app design to web for brand consistency.
    ========================================================================== */
 
-/* --- Global: all boxes 4px corners --- */
+/* --- Global: all boxes 14px rounded corners --- */
 .istanbul-venue-card,
 .istanbul-venue-card-inner,
 .istanbul-filter-card,
@@ -11139,18 +11112,34 @@ button.admin-content-model-geo-neighborhood.is-active {
 .venue-detail-review-form,
 .top-city-card,
 .category-home-card,
+.settings-card,
+.settings-panel-card,
+.settings-sidebar-card,
+.istanbul-map-card,
+.istanbul-map-frame-wrap {
+  border-radius: 14px !important;
+}
+
 .home-subcat-chip,
 .istanbul-venue-tag,
 .istanbul-discovery-hero-label,
 .kesfet-category-dropdown-menu,
 .lang-switch-menu,
 .card-share-menu,
-.istanbul-discovery-primary-button,
-.header-search-input,
-.header-search-btn,
+.istanbul-discovery-primary-button {
+  border-radius: 14px !important;
+}
+
+.header-search-input {
+  border-radius: 14px 0 0 14px !important;
+}
+.header-search-btn {
+  border-radius: 0 14px 14px 0 !important;
+}
+
 .store-badge,
 .brand-logo {
-  border-radius: 4px !important;
+  border-radius: 10px !important;
 }
 
 .desktop-auth-links .lang-switch-option,
@@ -11169,9 +11158,9 @@ button.admin-content-model-geo-neighborhood.is-active {
 /* --- Cards & Panels --- */
 .istanbul-venue-card,
 .istanbul-venue-card-inner {
-  background: #d5e8d3 !important;
-  border: none !important;
-  box-shadow: none !important;
+  background: linear-gradient(145deg, #e8f0e4 0%, #d5e8d3 40%, #c9dfca 100%) !important;
+  border: 1px solid rgba(22, 93, 91, 0.10) !important;
+  box-shadow: 0 4px 14px rgba(9, 56, 38, 0.08), 0 1px 3px rgba(9, 56, 38, 0.05) !important;
 }
 
 .istanbul-discovery-hero-label,
@@ -11184,57 +11173,107 @@ button.admin-content-model-geo-neighborhood.is-active {
 .venue-detail-tag,
 .venue-detail-meta-pill,
 .venue-detail-chip {
-  background: #f4f5f5 !important;
-  border: 1px solid #dcdede !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  border: 1px solid rgba(22, 93, 91, 0.12) !important;
   font-family: var(--ui-font-family) !important;
   font-size: 0.82rem !important;
   font-weight: 400 !important;
   color: #011d36 !important;
-  border-radius: 4px !important;
+  border-radius: 8px !important;
   padding: 0.36rem 0.62rem !important;
+  backdrop-filter: blur(4px);
 }
 
 .top-city-card,
 .category-home-card {
-  background: #d5e8d3 !important;
+  background: #2b4249 !important;
+  border: 1px solid rgba(43, 66, 73, 0.3) !important;
+  box-shadow: 0 4px 14px rgba(9, 56, 38, 0.08), 0 1px 3px rgba(9, 56, 38, 0.05) !important;
+  color: #f5e6d0 !important;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.top-city-card .top-city-name,
+.top-city-card .top-city-meta,
+.top-city-card .top-city-population,
+.category-home-card .top-city-name {
+  color: #f5e6d0 !important;
+}
+
+.top-city-card:hover,
+.category-home-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(43, 66, 73, 0.25), 0 4px 10px rgba(43, 66, 73, 0.12) !important;
+  color: #fff1de !important;
 }
 
 .venue-detail-main-card,
 .venue-detail-side-card {
-  background: #d5e8d3 !important;
-  border: none !important;
-  border-radius: 4px !important;
+  background: linear-gradient(145deg, #e8f0e4 0%, #d5e8d3 40%, #c9dfca 100%) !important;
+  border: 1px solid rgba(22, 93, 91, 0.10) !important;
+  box-shadow: 0 4px 14px rgba(9, 56, 38, 0.08), 0 1px 3px rgba(9, 56, 38, 0.05) !important;
 }
 
 .venue-detail-media,
 .venue-detail-info,
 .venue-detail-reviews,
 .venue-detail-review-form {
-  background: #d5e8d3 !important;
-  border: none !important;
+  background: linear-gradient(145deg, #e8f0e4 0%, #d5e8d3 40%, #c9dfca 100%) !important;
+  border: 1px solid rgba(22, 93, 91, 0.10) !important;
+  box-shadow: 0 3px 10px rgba(9, 56, 38, 0.06) !important;
 }
 
 .settings-card,
 .settings-panel-card,
 .settings-sidebar-card {
-  background: #d5e8d3 !important;
-  border-color: #c2d8c0 !important;
-  border-radius: 4px !important;
+  background: linear-gradient(145deg, #e8f0e4 0%, #d5e8d3 40%, #c9dfca 100%) !important;
+  border: 1px solid rgba(22, 93, 91, 0.10) !important;
+  box-shadow: 0 4px 14px rgba(9, 56, 38, 0.08), 0 1px 3px rgba(9, 56, 38, 0.05) !important;
 }
 
 .istanbul-filter-location-box,
 .istanbul-filter-section-box {
-  background: #d5e8d3 !important;
-  border: 1px solid #c2d8c0 !important;
-  border-radius: 4px !important;
-  padding: 12px !important;
+  background: #c8773e !important;
+  border: none !important;
+  border-radius: 14px !important;
+  padding: 1.1rem !important;
   margin-bottom: 8px !important;
+  box-shadow: 0 3px 8px rgba(107, 70, 51, 0.25) !important;
+  color: #fff !important;
+}
+
+.istanbul-filter-location-box-title,
+.istanbul-filter-section-box-title,
+.istanbul-filter-field > span:first-child,
+.istanbul-filter-yeme-icme-budget-nest-label {
+  color: #fff !important;
+}
+
+/* --- Dropdown hover & active: #c8773e uyumlu --- */
+.kesfet-category-dropdown-btn:hover,
+.kesfet-category-dropdown.is-open .kesfet-category-dropdown-btn {
+  background: rgba(200, 119, 62, 0.10) !important;
+  border-color: rgba(200, 119, 62, 0.25) !important;
+  box-shadow: 0 3px 10px rgba(200, 119, 62, 0.12) !important;
+}
+
+.kesfet-category-dropdown-options .istanbul-filter-chip:hover:not(.is-active),
+.kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:hover:not(.is-active) {
+  background: rgba(200, 119, 62, 0.12) !important;
+}
+
+.kesfet-category-dropdown-options .istanbul-filter-chip.is-active,
+.kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active {
+  background: rgba(200, 119, 62, 0.18) !important;
+  color: #7a4420 !important;
+  border-left: 3px solid #c8773e !important;
+  font-weight: 600 !important;
 }
 
 .content-guide {
-  background: #d5e8d3 !important;
-  border: none !important;
-  border-radius: 4px !important;
+  background: linear-gradient(145deg, #e8f0e4 0%, #d5e8d3 40%, #c9dfca 100%) !important;
+  border: 1px solid rgba(22, 93, 91, 0.10) !important;
+  box-shadow: 0 3px 10px rgba(9, 56, 38, 0.06) !important;
 }
 
 .content-guide h2,
@@ -11376,13 +11415,25 @@ button.admin-content-model-geo-neighborhood.is-active {
 
 /* --- CTA Buttons --- */
 .header-search-btn,
-.istanbul-discovery-primary-button,
-.istanbul-filter-nearby-panel-button,
 .settings-feedback-submit,
-.settings-signout {
-  background: #425921 !important;
-  border-color: #425921 !important;
+.settings-signout,
+.settings-signup-submit {
+  background: #144940 !important;
+  border-color: #0f3a33 !important;
   color: #fff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 3px 8px rgba(20, 73, 64, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.istanbul-discovery-primary-button,
+.istanbul-filter-nearby-panel-button {
+  background: #144940 !important;
+  border-color: #0f3a33 !important;
+  color: #fff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 3px 8px rgba(20, 73, 64, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .store-badge {
@@ -11392,30 +11443,48 @@ button.admin-content-model-geo-neighborhood.is-active {
 }
 
 .istanbul-favorite-button {
-  background: #f4f5f5 !important;
-  border: 1px solid #dcdede !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  border: 1px solid rgba(22, 93, 91, 0.12) !important;
   color: #011d36 !important;
   font-family: var(--ui-font-family) !important;
   font-size: 0.82rem !important;
   font-weight: 400 !important;
-  border-radius: 4px !important;
+  border-radius: 10px !important;
   padding: 0.36rem 0.62rem !important;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s ease, transform 0.15s ease;
 }
 
-.header-search-btn:hover,
+.header-search-btn:hover {
+  background: #1a5c51 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(20, 73, 64, 0.35) !important;
+}
+
 .istanbul-discovery-primary-button:hover,
 .istanbul-filter-nearby-panel-button:hover {
-  background: #354a1a !important;
+  background: #1a5c51 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(20, 73, 64, 0.35) !important;
 }
 
 .istanbul-favorite-button:hover {
-  background: #e8e9e9 !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  transform: scale(1.05);
 }
 
 .istanbul-pagination-button {
-  background: #425921 !important;
-  border-color: #425921 !important;
+  background: linear-gradient(145deg, #d4854a 0%, #c37238 100%) !important;
+  border-color: #b0652f !important;
   color: #fff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 3px 8px rgba(195, 114, 56, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.istanbul-pagination-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(195, 114, 56, 0.35) !important;
 }
 
 .istanbul-pagination-current {
@@ -11611,11 +11680,11 @@ button.admin-content-model-geo-neighborhood.is-active {
 }
 
 .topbar-search-form .header-search-input {
-  border-radius: 8px 0 0 8px;
+  border-radius: 14px 0 0 14px;
 }
 
 .topbar-search-form .header-search-btn {
-  border-radius: 0 8px 8px 0;
+  border-radius: 0 14px 14px 0;
 }
 
 /* ================================================================== */
@@ -11634,33 +11703,34 @@ button.admin-content-model-geo-neighborhood.is-active {
   width: 100%;
   padding: 0.7rem 1rem;
   border: none;
-  border-radius: 10px;
-  background: #093826;
-  color: #9dc79c;
+  border-radius: 14px !important;
+  background: #c8773e;
+  color: #fff;
   font-family: inherit;
   font-size: 0.84rem;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
-  transition: all 0.22s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   text-align: left;
   line-height: 1.35;
+  box-shadow: 0 3px 8px rgba(107, 70, 51, 0.25);
 }
 
 .bh-cta-button:hover {
-  background: #0b4a33;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(9, 56, 38, 0.25);
+  background: #d4854a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(107, 70, 51, 0.35);
 }
 
 .bh-cta-button:active {
   transform: translateY(0);
-  box-shadow: none;
+  box-shadow: 0 2px 6px rgba(195, 114, 56, 0.2);
 }
 
 .bh-cta-icon {
   font-size: 1.1rem;
   flex-shrink: 0;
-  color: #9dc79c;
+  color: #fff;
 }
 
 .bh-cta-label {
@@ -11670,7 +11740,7 @@ button.admin-content-model-geo-neighborhood.is-active {
 .bh-cta-arrow {
   flex-shrink: 0;
   font-size: 1rem;
-  opacity: 0.6;
+  opacity: 0.7;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
@@ -11826,7 +11896,7 @@ button.admin-content-model-geo-neighborhood.is-active {
   width: 100%;
   padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 10px;
+  border-radius: 4px;
   background: #093826;
   color: #fff;
   font-family: inherit;
@@ -11890,7 +11960,7 @@ button.admin-content-model-geo-neighborhood.is-active {
 @media (max-width: 480px) {
   .bh-modal {
     max-width: 100%;
-    border-radius: 14px;
+    border-radius: 4px;
   }
 
   .bh-modal-header {
@@ -11901,6 +11971,42 @@ button.admin-content-model-geo-neighborhood.is-active {
     padding: 1rem 1.15rem 1.25rem;
   }
 }
+
+/* ================================================================== */
+/* Homepage Category Cards — Per-Category Color Themes                 */
+/* ================================================================== */
+
+/* Yeme-İçme: sıcak turuncu/terracotta */
+/* Per-category colors removed — unified #2b4249 */
+
+
+/* ================================================================== */
+/* Homepage Subcategory Chips — Premium Unified Style                  */
+/* ================================================================== */
+
+.home-subcat-chip {
+  background: linear-gradient(145deg, #f4f4f4 0%, #eeeeee 45%, #e6e6e6 100%) !important;
+  border: 1px solid rgba(120, 120, 120, 0.15) !important;
+  border-radius: 12px !important;
+  color: #333333 !important;
+  font-weight: 500 !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease !important;
+  backdrop-filter: blur(4px);
+}
+
+.home-subcat-chip:hover {
+  background: linear-gradient(145deg, #ececec 0%, #e4e4e4 45%, #dcdcdc 100%) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10), 0 3px 8px rgba(0, 0, 0, 0.06) !important;
+  color: #1a1a1a !important;
+}
+
+.home-subcat-chip:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+}
+
 
 /* ================================================================== */
 /* Homepage Topbar Search                                              */
@@ -11917,7 +12023,7 @@ button.admin-content-model-geo-neighborhood.is-active {
   flex: 1;
   min-height: 38px;
   font-size: 0.88rem;
-  border-radius: 8px 0 0 8px;
+  border-radius: 14px 0 0 14px;
   border: 1px solid rgba(255,255,255,0.3);
   border-right: none;
   padding: 0.4rem 0.85rem;
@@ -11932,10 +12038,10 @@ button.admin-content-model-geo-neighborhood.is-active {
 
 .topbar-search-form .header-search-btn {
   min-height: 38px;
-  border-radius: 0 8px 8px 0;
+  border-radius: 0 14px 14px 0;
   padding: 0.4rem 1.1rem;
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 400;
   background: #093827;
   color: #fff;
   border: 1px solid #093827;
@@ -11962,3 +12068,198 @@ button.admin-content-model-geo-neighborhood.is-active {
     font-size: 0.8rem;
   }
 }
+
+/* ================================================================== */
+/* Premium Card Design — Category-Based Color Themes                   */
+/* ================================================================== */
+
+/* --- Base: all category page cards --- */
+.istanbul-venue-card,
+.istanbul-venue-card-inner {
+  border-radius: 14px !important;
+  border: 1px solid rgba(22, 93, 91, 0.12) !important;
+  box-shadow: 0 4px 14px rgba(9, 56, 38, 0.08), 0 1px 3px rgba(9, 56, 38, 0.06) !important;
+  transition: transform 0.22s ease, box-shadow 0.22s ease !important;
+  overflow: hidden;
+}
+
+.istanbul-venue-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(9, 56, 38, 0.14), 0 4px 10px rgba(9, 56, 38, 0.08) !important;
+}
+
+.istanbul-venue-media {
+  border-radius: 10px !important;
+  border: none !important;
+  overflow: hidden;
+}
+
+.istanbul-venue-image {
+  border-radius: 4px;
+  height: 160px;
+  transition: transform 0.3s ease;
+}
+
+.istanbul-venue-card:hover .istanbul-venue-image {
+  transform: scale(1.04);
+}
+
+.istanbul-venue-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #1a4a2e;
+  opacity: 0.7;
+}
+
+.istanbul-venue-title-link {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #093826;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.istanbul-venue-card-head {
+  gap: 0.5rem;
+}
+
+.istanbul-venue-distance {
+  background: rgba(9, 56, 38, 0.09);
+  color: #093826;
+  border-radius: 8px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.istanbul-venue-tag {
+  background: rgba(255, 255, 255, 0.65) !important;
+  border: 1px solid rgba(22, 93, 91, 0.15) !important;
+  border-radius: 8px !important;
+  font-size: 0.76rem !important;
+  padding: 0.25rem 0.55rem !important;
+  color: #1a4a2e !important;
+  backdrop-filter: blur(4px);
+}
+
+.istanbul-venue-card.is-selected {
+  border-color: #165d5b !important;
+  box-shadow: 0 14px 32px rgba(22, 93, 91, 0.18), 0 0 0 2px rgba(22, 93, 91, 0.25) !important;
+}
+
+/* --- Category Color Themes via data-card-category --- */
+
+/* Sanat: Tiyatrolar, Opera, Galeriler — mor/leylak */
+.istanbul-venue-card[data-card-category*="tiyatro"],
+.istanbul-venue-card[data-card-category*="opera"],
+.istanbul-venue-card[data-card-category*="bale"] {
+  background: linear-gradient(145deg, #ece4f0 0%, #ddd3e8 40%, #d0c5dc 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="galeri"] {
+  background: linear-gradient(145deg, #f0e8ec 0%, #e8d8e0 40%, #dcc8d4 100%) !important;
+}
+
+/* Kültür: Müzeler, Camiler, Mağaralar — mavi/çelik */
+.istanbul-venue-card[data-card-category*="müze"],
+.istanbul-venue-card[data-card-category*="ören"] {
+  background: linear-gradient(145deg, #e4eaef 0%, #d3dee8 40%, #c7d3df 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="cami"],
+.istanbul-venue-card[data-card-category*="şelale"],
+.istanbul-venue-card[data-card-category*="mağara"] {
+  background: linear-gradient(145deg, #e2ecef 0%, #d0e0e6 40%, #c2d5dc 100%) !important;
+}
+
+/* Sağlık: Hastane, Eczane, ASM — turkuaz */
+.istanbul-venue-card[data-card-category*="hastane"],
+.istanbul-venue-card[data-card-category*="aile"] {
+  background: linear-gradient(145deg, #e4f0ee 0%, #d3e8e5 40%, #c5deda 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="eczane"],
+.istanbul-venue-card[data-card-category*="nöbetçi"] {
+  background: linear-gradient(145deg, #e8f2ec 0%, #d8ebe1 40%, #cce3d8 100%) !important;
+}
+
+/* Gezi: Oteller — sıcak krem/bej */
+.istanbul-venue-card[data-card-category*="otel"],
+.istanbul-venue-card[data-card-category*="pansiyon"],
+.istanbul-venue-card[data-card-category*="hostel"],
+.istanbul-venue-card[data-card-category*="motel"] {
+  background: linear-gradient(145deg, #f0ece4 0%, #e6dfd3 40%, #ddd5c7 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="camping"],
+.istanbul-venue-card[data-card-category*="kamp"] {
+  background: linear-gradient(145deg, #e6efe4 0%, #d5e4cf 40%, #c8dac0 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="günübirlik"],
+.istanbul-venue-card[data-card-category*="mesire"] {
+  background: linear-gradient(145deg, #eaf0e4 0%, #dce8d3 40%, #cfdfc7 100%) !important;
+}
+
+/* Yeme-İçme: sıcak turuncu/terracotta tonları */
+.istanbul-venue-card[data-card-category*="restoran"],
+.istanbul-venue-card[data-card-category*="lokanta"],
+.istanbul-venue-card[data-card-category*="esnaf"] {
+  background: linear-gradient(145deg, #f0e8e2 0%, #e8dbd0 40%, #dfd0c2 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="kafe"],
+.istanbul-venue-card[data-card-category*="kahvaltı"] {
+  background: linear-gradient(145deg, #f0ede4 0%, #e8e2d3 40%, #dfd8c7 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="balık"],
+.istanbul-venue-card[data-card-category*="deniz"] {
+  background: linear-gradient(145deg, #e4ecf0 0%, #d3e1e8 40%, #c5d7df 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="bar"],
+.istanbul-venue-card[data-card-category*="meyhane"] {
+  background: linear-gradient(145deg, #efe4e8 0%, #e3d3da 40%, #d9c5cf 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="kebap"],
+.istanbul-venue-card[data-card-category*="döner"],
+.istanbul-venue-card[data-card-category*="köfte"],
+.istanbul-venue-card[data-card-category*="et-&-mangal"] {
+  background: linear-gradient(145deg, #efe8e4 0%, #e3d8d0 40%, #d9cec5 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="pizza"],
+.istanbul-venue-card[data-card-category*="burger"],
+.istanbul-venue-card[data-card-category*="sushi"],
+.istanbul-venue-card[data-card-category*="asya"] {
+  background: linear-gradient(145deg, #f0eae4 0%, #e8ded3 40%, #dfd4c7 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="tatlı"],
+.istanbul-venue-card[data-card-category*="börek"],
+.istanbul-venue-card[data-card-category*="fırın"],
+.istanbul-venue-card[data-card-category*="pide"],
+.istanbul-venue-card[data-card-category*="lahmacun"] {
+  background: linear-gradient(145deg, #f2efe6 0%, #eae5d8 40%, #e2dbcd 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="tavuk"],
+.istanbul-venue-card[data-card-category*="tantuni"],
+.istanbul-venue-card[data-card-category*="çiğ"],
+.istanbul-venue-card[data-card-category*="kokoreç"],
+.istanbul-venue-card[data-card-category*="çorba"],
+.istanbul-venue-card[data-card-category*="mantı"],
+.istanbul-venue-card[data-card-category*="vegan"] {
+  background: linear-gradient(145deg, #eef0e4 0%, #e2e8d3 40%, #d8dfc7 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="michelin"] {
+  background: linear-gradient(145deg, #ece4e6 0%, #e0d3d7 40%, #d6c5cb 100%) !important;
+}
+
+/* Hizmetler: Kuaför, Berber, Veteriner — toprak/doğal */
+.istanbul-venue-card[data-card-category*="kuaför"],
+.istanbul-venue-card[data-card-category*="berber"] {
+  background: linear-gradient(145deg, #f0ece6 0%, #e6dfda 40%, #ddd4cd 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="veteriner"] {
+  background: linear-gradient(145deg, #e6f0ea 0%, #d5e8de 40%, #c9dfd3 100%) !important;
+}
+.istanbul-venue-card[data-card-category*="akaryakıt"] {
+  background: linear-gradient(145deg, #eceef0 0%, #dfe2e8 40%, #d3d7df 100%) !important;
+}
+
+/* ================================================================== */
+/* Anasayfa Kategori Kartları — unified #2b4249 (per-category overrides removed) */
