@@ -753,12 +753,13 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-results-shell { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 8px !important; }' +
           '.istanbul-filter-card { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; overflow: visible !important; }' +
           '.istanbul-filter-body, .istanbul-filter-yeme-icme-sidebar, .istanbul-filter-yeme-icme-sidebar--gezi-two-up { overflow: visible !important; }' +
-          '.istanbul-filter-location-box, .istanbul-filter-section-box { background: #d5e8d3 !important; border: 1px solid #c2d8c0 !important; border-radius: 4px !important; padding: 12px !important; margin-bottom: 8px !important; overflow: visible !important; position: relative !important; }' +
+          '.istanbul-filter-location-box, .istanbul-filter-section-box { background: #e8c37b !important; border: none !important; border-radius: 14px !important; padding: 12px !important; margin-bottom: 8px !important; overflow: visible !important; position: relative !important; }' +
+          '.istanbul-filter-location-box-title, .istanbul-filter-section-box-title, .istanbul-filter-gezi-category-box .istanbul-filter-section-box-title { color: #000000 !important; }' +
           '.istanbul-filter-location-box { z-index: 200 !important; }' +
           '.istanbul-filter-section-box { z-index: 100 !important; }' +
           '.kesfet-category-dropdown-btn, .lang-switch-btn { display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; background: #ffffff !important; color: #011d36 !important; border: 1px solid rgba(164,179,181,0.82) !important; border-radius: 6px !important; padding: 0.5rem 0.65rem !important; font-size: 0.84rem !important; cursor: pointer !important; box-sizing: border-box !important; }' +
           '.istanbul-filter-field { display: block !important; margin-bottom: 6px !important; }' +
-          '.istanbul-filter-field > span { display: block !important; margin-bottom: 4px !important; font-size: 0.82rem !important; color: #011d36 !important; }' +
+          '.istanbul-filter-field > span { display: block !important; margin-bottom: 4px !important; font-size: 0.82rem !important; color: #000000 !important; }' +
           '.istanbul-filter-location-box .kesfet-category-dropdown, .istanbul-filter-section-box .kesfet-category-dropdown { position: relative !important; z-index: 1200 !important; }' +
           '.kesfet-category-dropdown-menu { position: absolute !important; left: 0 !important; top: calc(100% + 4px) !important; width: max-content !important; min-width: 100% !important; max-width: calc(100vw - 24px) !important; background: #ffffff !important; border: 1px solid #c2d8c0 !important; border-radius: 6px !important; box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important; z-index: 1200 !important; overflow-y: auto !important; max-height: 50vh !important; display: flex !important; flex-direction: column !important; padding: 0 !important; }' +
           '.kesfet-category-dropdown-menu[hidden] { display: none !important; }' +
@@ -768,7 +769,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.featured-venues-section { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding-left: 0 !important; padding-right: 0 !important; padding-bottom: 0 !important; }' +
           '.featured-venues-panel { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; }' +
           '.featured-venues-grid { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; }' +
-          '.content-guide { background: #d5e8d3 !important; border: none !important; box-shadow: none !important; border-radius: 4px !important; padding: 16px !important; margin-top: 12px !important; }' +
+          '.content-guide { background: #d7d7d7 !important; border: none !important; box-shadow: none !important; border-radius: 14px !important; padding: 16px !important; margin-top: 12px !important; }' +
+          '.content-guide.home-ustalara-saygi { background: #e8c37b !important; border-radius: 14px !important; }' +
           '.home-empty-box { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }' +
           '.home-subcategory-list { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0.5rem !important; }' +
           '.home-subcat-chip { border-radius: 8px !important; padding: 0.5rem 0.25rem !important; font-size: 0.8rem !important; }' +
@@ -776,15 +778,15 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.home-top-category-row { background: transparent !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0.5rem !important; }' +
           '.istanbul-venue-card { background: #d5e8d3 !important; border-color: #d5e8d3 !important; }' +
           '.istanbul-results-grid { padding: 0 !important; }' +
-          '.home-subcat-chip { background: #d5e8d3 !important; border-color: #c2d8c0 !important; }' +
+          '.home-subcat-chip { background: #fdf8f0 !important; border: none !important; border-radius: 8px !important; padding: 0.5rem 0.25rem !important; font-size: 0.76rem !important; font-weight: 600 !important; color: #093826 !important; }' +
           '.category-home-card .top-city-thumb { display: none !important; }' +
           '.top-city-card, .category-home-card { background: #2b4249 !important; border-radius: 8px !important; padding: 0.5rem 0.25rem !important; min-height: auto !important; aspect-ratio: auto !important; color: #f5e6d0 !important; }' +
           '.category-home-card .top-city-content { position: static !important; padding: 0 !important; text-align: center !important; }' +
           '.top-city-name { font-size: 0.8rem !important; font-weight: 400 !important; color: #f5e6d0 !important; }' +
-          '.istanbul-discovery-hero-label { background: #d5e8d3 !important; }' +
-          '.istanbul-venue-tag { background: #d5e8d3 !important; border-color: #c2d8c0 !important; }' +
-          '.istanbul-filter-nearby-panel-button, .istanbul-discovery-primary-button { background: #425921 !important; border-color: #425921 !important; color: #fff !important; }' +
-          '.venue-detail-main-card, .venue-detail-side-card { background: #d5e8d3 !important; border-color: #c2d8c0 !important; border-radius: 4px !important; }' +
+          '.istanbul-discovery-hero-label { background: #fdf8f0 !important; border: none !important; border-radius: 8px !important; color: #093826 !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; }' +
+          '.istanbul-venue-tag, .istanbul-venue-distance, .istanbul-venue-budget { background: #fdf8f0 !important; border: none !important; border-radius: 8px !important; color: #093826 !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; white-space: nowrap !important; }' +
+          '.istanbul-filter-nearby-panel-button, .istanbul-discovery-primary-button { background: #2b4249 !important; border-color: #2b4249 !important; color: #fff !important; }' +
+          '.venue-detail-main-card, .venue-detail-side-card { background: #ede4d5 !important; border: none !important; border-radius: 14px !important; }' +
           '.venue-detail-media, .venue-detail-info, .venue-detail-reviews, .venue-detail-review-form { background: #d5e8d3 !important; border-color: #d5e8d3 !important; }' +
           '.section-head h1, .section-head h2, .section-head h3, .province-head h1, .province-head h2, .province-head h3, .istanbul-discovery-copy h1, .istanbul-discovery-copy h2 { color: #093826 !important; font-weight: 700 !important; margin-bottom: 0.75rem !important; }' +
           '.istanbul-discovery-kicker, .istanbul-breadcrumb, .istanbul-breadcrumb a, .istanbul-breadcrumb a:visited, .istanbul-breadcrumb span, .istanbul-discovery-subline, .istanbul-discovery-location-note { color: #ffffff !important; }' +
@@ -804,15 +806,15 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.search-page-shell { background: transparent !important; border: none !important; box-shadow: none !important; }' +
           '.search-page-note { display: none !important; }' +
           '.search-page .hero { padding-top: 3rem !important; }' +
-          '.header-search-btn, .istanbul-discovery-primary-button, .istanbul-filter-nearby-panel-button, .settings-feedback-submit, .settings-signout { background: #425921 !important; border-color: #425921 !important; color: #fff !important; }' +
+          '.header-search-btn, .settings-feedback-submit, .settings-signout { background: #2b4249 !important; border-color: #2b4249 !important; color: #fff !important; }' +
           '.store-badge { background: #0f2d1f !important; border-color: #0f2d1f !important; color: #fff !important; }' +
           '.header-search-btn:hover, .istanbul-discovery-primary-button:hover { background: #354a1a !important; }' +
           '.istanbul-pagination-button { background: #425921 !important; border-color: #425921 !important; color: #fff !important; }' +
           '.istanbul-pagination-current { background: #729875 !important; border-color: #729875 !important; color: #fff !important; }' +
           '.istanbul-results-mode { display: none !important; }' +
-          '.istanbul-venue-distance { background: transparent !important; }' +
-          '.istanbul-venue-distance::before { background-color: transparent !important; }' +
-          '.istanbul-favorite-button { background: #f4f5f5 !important; border: 1px solid #dcdede !important; color: #011d36 !important; border-radius: 4px !important; }' +
+          '.istanbul-favorite-button, .card-share-trigger { background: #fdf8f0 !important; border: none !important; color: #093826 !important; border-radius: 8px !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; }' +
+          '.venue-detail-action, .venue-detail-action-secondary, .venue-detail-action-inline { background: #fdf8f0 !important; border: none !important; color: #093826 !important; border-radius: 8px !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; }' +
+          '.venue-detail-chip { background: #fdf8f0 !important; border: none !important; border-radius: 8px !important; color: #093826 !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; }' +
           '#favoritesTitle { color: #093826 !important; }' +
           '.istanbul-results-head h2 { color: #093826 !important; }' +
           '.kesfet-category-dropdown-options { gap: 0 !important; padding: 0 !important; margin: 0 !important; }' +
@@ -935,8 +937,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         favObs.observe(favTitle, { childList: true, characterData: true, subtree: true });
       }
 
-      // Hide header language switch and apply selected language
-      var langSwitch = document.querySelector('.lang-switch');
+      // Hide header language switch (not the filter dropdowns which also use lang-switch class)
+      var langSwitch = document.querySelector('.global-topbar .lang-switch, .desktop-auth-links .lang-switch, [data-lang-switch]');
       if (langSwitch) { langSwitch.style.display = 'none'; }
 
       // Apply app language to website
