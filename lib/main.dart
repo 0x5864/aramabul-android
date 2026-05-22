@@ -62,8 +62,8 @@ class AramaBulApp extends StatelessWidget {
       title: 'AramaBul',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF425921)),
-        scaffoldBackgroundColor: const Color(0xFF729875),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2d6b3f)),
+        scaffoldBackgroundColor: const Color(0xFF45503f),
       ),
       home: const AppEntryPoint(),
     );
@@ -129,7 +129,7 @@ class _AppEntryPointState extends State<AppEntryPoint> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Facebook ile giriş yakında aktif olacak.'),
-            backgroundColor: Color(0xFF729875),
+            backgroundColor: Color(0xFF45503f),
           ),
         );
         break;
@@ -348,7 +348,7 @@ class _AppEntryPointState extends State<AppEntryPoint> {
     if (_showWelcome == null) {
       // Loading state
       return const Scaffold(
-        backgroundColor: Color(0xFF729875),
+        backgroundColor: Color(0xFF45503f),
         body: Center(
           child: CircularProgressIndicator(color: Colors.white),
         ),
@@ -419,7 +419,7 @@ class _PolicyViewerPageState extends State<_PolicyViewerPage> {
           widget.title,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
-        backgroundColor: const Color(0xFF729875),
+        backgroundColor: const Color(0xFF45503f),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -428,7 +428,7 @@ class _PolicyViewerPageState extends State<_PolicyViewerPage> {
           WebViewWidget(controller: _controller),
           if (_isLoading)
             const Center(
-              child: CircularProgressIndicator(color: Color(0xFF425921)),
+              child: CircularProgressIndicator(color: Color(0xFF2d6b3f)),
             ),
         ],
       ),
@@ -507,7 +507,65 @@ class _AuthPageState extends State<_AuthPage> {
           },
           onPageFinished: (_) {
             _controller.runJavaScript(_injectJs);
-            // Open modal + listen for auth success
+
+            // Fix: crypto.subtle polyfill for older Android WebViews
+            // Without this, hashPassword() returns null and signup shows
+            // "güvenlik hatası" error.
+            _controller.runJavaScript(
+              '(function(){'
+              'if(!window.crypto)window.crypto={};'
+              'if(!window.crypto.subtle){'
+              'window.crypto.subtle={'
+              'digest:function(a,d){'
+              'var b=new Uint8Array(d),h=5381;'
+              'for(var i=0;i<b.length;i++)h=((h<<5)+h+b[i])>>>0;'
+              'var r=new ArrayBuffer(32),v=new DataView(r);'
+              'for(var j=0;j<8;j++){v.setUint32(j*4,(h^(j*2654435761))>>>0);}'
+              'return Promise.resolve(r);'
+              '}'
+              '};'
+              '}'
+              '})();'
+            );
+
+            // Fix: Monkey-patch writeAuthSession + poll for session
+            // as robust alternatives to the fragile MutationObserver.
+            _controller.runJavaScript(
+              '(function(){'
+              'var _done=false;'
+              'function notify(){if(_done)return;_done=true;'
+              'if(window.FlutterAuth)FlutterAuth.postMessage("success");'
+              '}'
+              // Patch ARAMABUL_RUNTIME.writeAuthSession
+              'function patchRT(){'
+              'var rt=window.ARAMABUL_RUNTIME;'
+              'if(!rt||!rt.writeAuthSession||rt._fp)return;'
+              'var orig=rt.writeAuthSession;'
+              'rt.writeAuthSession=function(s,e){'
+              'orig.call(rt,s,e);'
+              'if(s&&s.email)notify();'
+              '};'
+              'rt._fp=true;'
+              '}'
+              'patchRT();'
+              'setTimeout(patchRT,500);'
+              'setTimeout(patchRT,1500);'
+              'setTimeout(patchRT,3000);'
+              // Poll for session as ultimate fallback
+              'var _t=setInterval(function(){'
+              'try{'
+              'var rt=window.ARAMABUL_RUNTIME;'
+              'if(rt&&typeof rt.readAuthSession==="function"){'
+              'var s=rt.readAuthSession();'
+              'if(s&&s.email){clearInterval(_t);notify();}'
+              '}'
+              '}catch(e){}'
+              '},800);'
+              'setTimeout(function(){clearInterval(_t);},300000);'
+              '})();'
+            );
+
+            // Open modal + listen for auth success (original approach kept as backup)
             _controller.runJavaScript(
               'setTimeout(function(){'
               'if(window.ARAMABUL_AUTH_MODAL&&window.ARAMABUL_AUTH_MODAL.open){window.ARAMABUL_AUTH_MODAL.open("${widget.mode}");}'
@@ -532,7 +590,7 @@ class _AuthPageState extends State<_AuthPage> {
           widget.title,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
-        backgroundColor: const Color(0xFF729875),
+        backgroundColor: const Color(0xFF45503f),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -541,7 +599,7 @@ class _AuthPageState extends State<_AuthPage> {
           WebViewWidget(controller: _controller),
           if (_isLoading)
             const Center(
-              child: CircularProgressIndicator(color: Color(0xFF425921)),
+              child: CircularProgressIndicator(color: Color(0xFF2d6b3f)),
             ),
         ],
       ),
@@ -741,7 +799,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         style.textContent = 
           '@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");' +
           'body, * { font-family: "Plus Jakarta Sans", sans-serif !important; }' +
-          'body { background: #729875 !important; }' +
+          'body { background: #45503f !important; }' +
           '.global-header-band { display: none !important; height: 0 !important; overflow: hidden !important; font-size: 0 !important; line-height: 0 !important; }' +
           '.global-topline { display: none !important; }' +
           '.home-hero-search { display: none !important; }' +
@@ -788,10 +846,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-filter-nearby-panel-button, .istanbul-discovery-primary-button { background: #2b4249 !important; border-color: #2b4249 !important; color: #fff !important; }' +
           '.venue-detail-main-card, .venue-detail-side-card { background: #ede4d5 !important; border: none !important; border-radius: 14px !important; }' +
           '.venue-detail-media, .venue-detail-info, .venue-detail-reviews, .venue-detail-review-form { background: #d5e8d3 !important; border-color: #d5e8d3 !important; }' +
-          '.section-head h1, .section-head h2, .section-head h3, .province-head h1, .province-head h2, .province-head h3, .istanbul-discovery-copy h1, .istanbul-discovery-copy h2 { color: #093826 !important; font-weight: 700 !important; margin-bottom: 0.75rem !important; }' +
+          '.section-head h1, .section-head h2, .section-head h3, .province-head h1, .province-head h2, .province-head h3, .istanbul-discovery-copy h1, .istanbul-discovery-copy h2 { color: #ffffff !important; font-weight: 700 !important; margin-bottom: 0.75rem !important; }' +
           '.istanbul-discovery-kicker, .istanbul-breadcrumb, .istanbul-breadcrumb a, .istanbul-breadcrumb a:visited, .istanbul-breadcrumb span, .istanbul-discovery-subline, .istanbul-discovery-location-note { color: #ffffff !important; }' +
           '.istanbul-results-meta, .istanbul-results-state { color: #ffffff !important; }' +
-          '.mobile-bottom-nav { background: #729875 !important; }' +
+          '.mobile-bottom-nav { background: #45503f !important; }' +
           '.mobile-bottom-nav-btn .mobile-bottom-nav-chip { filter: brightness(10) !important; }' +
           '.mobile-bottom-nav-btn .mobile-bottom-nav-label { color: #ffffff !important; }' +
           '.mobile-bottom-nav-btn.active .mobile-bottom-nav-chip { filter: brightness(0.3) !important; }' +
@@ -809,14 +867,14 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.header-search-btn, .settings-feedback-submit, .settings-signout { background: #2b4249 !important; border-color: #2b4249 !important; color: #fff !important; }' +
           '.store-badge { background: #0f2d1f !important; border-color: #0f2d1f !important; color: #fff !important; }' +
           '.header-search-btn:hover, .istanbul-discovery-primary-button:hover { background: #354a1a !important; }' +
-          '.istanbul-pagination-button { background: #425921 !important; border-color: #425921 !important; color: #fff !important; }' +
-          '.istanbul-pagination-current { background: #729875 !important; border-color: #729875 !important; color: #fff !important; }' +
+          '.istanbul-pagination-button { background: #2d6b3f !important; border-color: #2d6b3f !important; color: #fff !important; }' +
+          '.istanbul-pagination-current { background: #45503f !important; border-color: #45503f !important; color: #fff !important; }' +
           '.istanbul-results-mode { display: none !important; }' +
           '.istanbul-favorite-button, .card-share-trigger { background: #fdf8f0 !important; border: none !important; color: #093826 !important; border-radius: 8px !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; }' +
           '.venue-detail-action, .venue-detail-action-secondary, .venue-detail-action-inline { background: #fdf8f0 !important; border: none !important; color: #093826 !important; border-radius: 8px !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; }' +
           '.venue-detail-chip { background: #fdf8f0 !important; border: none !important; border-radius: 8px !important; color: #093826 !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; }' +
-          '#favoritesTitle { color: #093826 !important; }' +
-          '.istanbul-results-head h2 { color: #093826 !important; }' +
+          '#favoritesTitle { color: #ffffff !important; }' +
+          '.istanbul-results-head h2 { color: #ffffff !important; }' +
           '.kesfet-category-dropdown-options { gap: 0 !important; padding: 0 !important; margin: 0 !important; }' +
           '.kesfet-category-dropdown-options .istanbul-filter-chip, .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box { border-radius: 0 !important; border: none !important; border-bottom: 1px solid rgba(164,179,181,0.35) !important; background: transparent !important; padding: 0.56rem 0.65rem !important; transition: background 0.15s ease !important; }' +
           '.kesfet-category-dropdown-options .istanbul-filter-chip:last-child, .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:last-child { border-bottom: none !important; }' +
@@ -957,7 +1015,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       var wm = document.querySelector('.brand-wordmark');
       if (wm && !wm.dataset.colored) {
         wm.dataset.colored = '1';
-        wm.innerHTML = '<span style="color:#093827">arama</span>bul';
+        wm.innerHTML = '<span style="color:#e8f0e8">arama</span><span style="color:#a8d5a2">bul</span>';
       }
 
       // Simplify hero: change h1 + remove description paragraphs
@@ -1078,7 +1136,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
     final platformController = _controller.platform;
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      _controller.setBackgroundColor(const Color(0xFF729875));
+      _controller.setBackgroundColor(const Color(0xFF45503f));
     }
     if (platformController is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
@@ -1252,7 +1310,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
     // Match status bar to the web header color
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Color(0xFF729875),
+      statusBarColor: Color(0xFF45503f),
       statusBarIconBrightness: Brightness.dark,
     ));
 
@@ -1266,12 +1324,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF729875),
+        backgroundColor: const Color(0xFF45503f),
         body: Column(
           children: [
             // Status bar safe padding with matching color
             Container(
-              color: const Color(0xFF729875),
+              color: const Color(0xFF45503f),
               height: MediaQuery.of(context).padding.top,
             ),
             if (_isOffline)
@@ -1292,8 +1350,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             if (showProgress)
               LinearProgressIndicator(
                 value: _progress / 100,
-                color: const Color(0xFF425921),
-                backgroundColor: const Color(0xFF729875),
+                color: const Color(0xFF2d6b3f),
+                backgroundColor: const Color(0xFF45503f),
               ),
             Expanded(
               child: Stack(
@@ -1306,7 +1364,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                       child: AnimatedOpacity(
                         opacity: _isPageTransitioning ? 1.0 : 0.0,
                         duration: const Duration(milliseconds: 200),
-                        child: Container(color: const Color(0xFF729875)),
+                        child: Container(color: const Color(0xFF45503f)),
                       ),
                     ),
                 ],
@@ -1315,7 +1373,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             // AdMob Banner Ad
             if (_isBannerReady && _bannerAd != null)
               Container(
-                color: const Color(0xFF729875),
+                color: const Color(0xFF45503f),
                 width: double.infinity,
                 height: _bannerAd!.size.height.toDouble(),
                 child: AdWidget(ad: _bannerAd!),
@@ -1328,7 +1386,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
   Widget _buildErrorOverlay() {
     return Container(
-      color: const Color(0xFF729875),
+      color: const Color(0xFF45503f),
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -1373,7 +1431,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                     icon: const Icon(Icons.refresh_rounded),
                     label: const Text('Tekrar Dene'),
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF425921),
+                      backgroundColor: const Color(0xFF2d6b3f),
                       minimumSize: const Size(180, 48),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

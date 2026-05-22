@@ -2,26 +2,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --bg: #729875;
+  --bg: #45503f;
   --paper: #d5e8d3;
   --ink: #162123;
-  --accent: #9dc79c;
-  --accent-strong: #7db37c;
-  --hover-blue: #9dc79c;
-  --hover-blue-soft: rgba(222, 171, 109, 0.14);
-  --olive: #3f5b3d;
+  --accent: #3a7d44;
+  --accent-strong: #2d6b3f;
+  --hover-blue: #3a7d44;
+  --hover-blue-soft: rgba(58, 125, 68, 0.14);
+  --olive: #1a3d22;
   --line: rgba(22, 33, 35, 0.14);
   --shadow: 0 20px 60px rgba(22, 33, 35, 0.12);
   --radius: 4px;
   --ui-font-family: "Plus Jakarta Sans", "Raleway", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --ui-font-size: 14px;
   --link-base: #011d36;
-  --link-hover: #176f13;
-  --mobile-nav-bg: #729875;
+  --link-hover: #2d6b3f;
+  --mobile-nav-bg: #45503f;
   --mobile-nav-border: transparent;
-  --mobile-nav-shadow: 0 -10px 24px rgba(10, 18, 28, 0.28);
+  --mobile-nav-shadow: 0 -10px 24px rgba(10, 18, 28, 0.32);
   --mobile-nav-icon: #ffffff;
-  --mobile-nav-icon-active: #d5e8d3;
+  --mobile-nav-icon-active: #a8d5a2;
   --mobile-nav-icon-size: 26.4px;
   --mobile-nav-chip-size: 40px;
   --mobile-nav-chip-bg: transparent;
@@ -29,19 +29,19 @@
   --mobile-nav-chip-active-bg: transparent;
   --mobile-nav-chip-active-border: transparent;
   --mobile-nav-icon-filter: brightness(0) invert(1);
-  --mobile-nav-icon-active-filter: brightness(0) saturate(100%) invert(85%) sepia(20%) saturate(500%) hue-rotate(340deg) brightness(105%);
-  --mobile-search-bg: rgba(40, 80, 80, 0.96);
-  --mobile-search-border: rgba(244, 223, 200, 0.32);
-  --mobile-search-input-bg: rgba(30, 60, 60, 0.95);
-  --mobile-search-input-border: rgba(244, 223, 200, 0.3);
+  --mobile-nav-icon-active-filter: brightness(0) saturate(100%) invert(85%) sepia(20%) saturate(500%) hue-rotate(90deg) brightness(105%);
+  --mobile-search-bg: rgba(20, 50, 30, 0.96);
+  --mobile-search-border: rgba(168, 213, 162, 0.32);
+  --mobile-search-input-bg: rgba(15, 40, 25, 0.95);
+  --mobile-search-input-border: rgba(168, 213, 162, 0.3);
   --mobile-search-input-text: #ecf4ff;
-  --mobile-search-submit-bg: linear-gradient(160deg, #9dc79c, #7db37c);
-  --mobile-search-submit-border: rgba(222, 171, 109, 0.5);
-  --mobile-search-submit-text: #000000;
-  --box-border: #a4b3b5;
+  --mobile-search-submit-bg: linear-gradient(160deg, #3a7d44, #2d6b3f);
+  --mobile-search-submit-border: rgba(58, 125, 68, 0.5);
+  --mobile-search-submit-text: #ffffff;
+  --box-border: #baae89;
   --box-text: #011d36;
-  --box-hover-text: #9dc79c;
-  --box-hover-soft: rgba(222, 171, 109, 0.16);
+  --box-hover-text: #2d6b3f;
+  --box-hover-soft: rgba(58, 125, 68, 0.16);
   --content-offset: clamp(2.2rem, 4vw, 3rem);
   --header-line-start: calc(var(--content-offset) - 0.52rem);
 }
@@ -184,8 +184,8 @@ main {
   padding-inline-start: max(calc((100vw - 1220px) / 2 + var(--header-line-start)), calc(1.2rem + var(--header-line-start)));
   padding-inline-end: max(calc((100vw - 1220px) / 2), 1.2rem);
   padding-bottom: 0.3rem;
-  border-bottom: 1px solid #b8c8dc;
-  background: #729875;
+  border-bottom: 1px solid rgba(168, 213, 162, 0.2);
+  background: #45503f;
 }
 
 .global-topbar::after {
@@ -463,8 +463,8 @@ main {
 .header-search-input {
   width: 100%;
   min-height: 38px;
-  border: 1px solid rgba(22, 33, 35, 0.2);
-  border-radius: 14px 0 0 14px;
+  border: 1px solid #baae89;
+  border-radius: 14px;
   background: #ffffff;
   color: rgba(22, 33, 35, 0.95);
   padding: 0.42rem 0.86rem;
@@ -483,8 +483,8 @@ main {
 }
 
 .header-search-btn {
-  border: 0;
-  border-radius: 0 14px 14px 0;
+  border: 1px solid #baae89;
+  border-radius: 14px;
   background: linear-gradient(145deg, #d4854a 0%, #c37238 100%);
   color: #fff;
   min-height: 34px;
@@ -527,7 +527,7 @@ main {
   font-size: clamp(2.05rem, 3.45vw, 3.05rem);
   line-height: 0.9;
   letter-spacing: -0.045em;
-  color: #797152;
+  color: #e8f0e8;
   text-transform: none;
   transform: none;
   display: inline-flex;
@@ -536,11 +536,11 @@ main {
 }
 
 .brand-wordmark-search {
-  color: #093827;
+  color: #a8d5a2;
 }
 
 .brand-wordmark-rest {
-  color: #093826 !important;
+  color: #e8f0e8 !important;
 }
 
 .brand-logo {
@@ -1031,11 +1031,40 @@ link[rel="apple-touch-icon"] {
 }
 
 h1,
+h2,
 h3,
 h4 {
   font-family: inherit;
   font-weight: 400;
   margin: 0;
+}
+
+/* Koyu arka planlı sayfalar: beyaz başlık */
+.home-page h1,
+.home-page h2,
+.home-page h3,
+body.yeme-icme-page h1,
+body.gezi-page h1,
+body.hizmetler-page h1,
+body.kultur-page h1,
+body.sanat-page h1,
+body.saglik-page h1,
+body.yeme-icme-page h2,
+body.gezi-page h2,
+body.hizmetler-page h2,
+body.kultur-page h2,
+body.sanat-page h2,
+body.saglik-page h2,
+body.search-page h1,
+body.search-page h2,
+body.favorites-page h1 {
+  color: #ffffff !important;
+}
+
+/* Detay sayfaları: açık zemin, koyu başlık */
+body.venue-detail-page h3,
+body.venue-detail-page h4 {
+  color: #093826 !important;
 }
 
 h1 {
@@ -2455,7 +2484,7 @@ a.content-page-card:focus-visible {
   appearance: none;
   border: 1px solid var(--box-border);
   border-radius: 4px;
-  background: #ffffff;
+  background: #a8d5a2;
   color: var(--box-text);
   text-align: left;
   min-height: 78px;
@@ -3459,10 +3488,7 @@ body.nearby-venues-open {
 }
 
 .yr-footer-grid > .yr-footer-col:first-child {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
+  grid-column-start: 2;
 }
 
 .yr-footer-col a,
@@ -6530,6 +6556,7 @@ body.mobile-chrome-browser.mobile-force-layout .brand-wordmark {
   border: 1px solid rgba(220, 226, 229, 0.92);
   border-radius: 4px;
   background: #ffffff;
+  aspect-ratio: 4 / 3;
 }
 
 .venue-detail-media-placeholder {
@@ -6569,7 +6596,7 @@ body.mobile-chrome-browser.mobile-force-layout .brand-wordmark {
 .venue-detail-image {
   display: block;
   width: 100%;
-  max-height: 360px;
+  height: 100%;
   object-fit: cover;
 }
 
@@ -6655,14 +6682,20 @@ body.mobile-chrome-browser.mobile-force-layout .brand-wordmark {
 .venue-detail-eyebrow,
 .istanbul-results-mode {
   margin: 0;
-  color: rgba(1, 29, 54, 0.62);
+  color: rgba(255, 255, 255, 0.72);
   font-size: 0.76rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
-.istanbul-discovery-copy h1,
+.istanbul-discovery-copy h1 {
+  margin: 0.4rem 0 0;
+  color: #ffffff;
+  font-size: clamp(1.5rem, 2vw, 2.2rem);
+  line-height: 1.05;
+}
+
 .venue-detail-title {
   margin: 0.4rem 0 0;
   color: #011d36;
@@ -6734,7 +6767,7 @@ body.sanat-page .istanbul-discovery-shell > .istanbul-breadcrumb {
   padding: 0.52rem 0.8rem;
   border-radius: 999px;
   border: 1px solid rgba(210, 216, 219, 0.95);
-  background: rgba(1, 29, 54, 0.04);
+  background: #ffffff;
   color: #011d36;
   font-size: 0.9rem;
   font-weight: 600;
@@ -6767,7 +6800,7 @@ body.sanat-page .istanbul-discovery-shell > .istanbul-breadcrumb {
 .admin-table-action,
 .admin-logout-button {
   border: 0;
-  border-radius: 4px;
+  border-radius: 14px;
   background: linear-gradient(145deg, #d4854a 0%, #c37238 100%);
   color: #fff;
   min-height: 34px;
@@ -6801,7 +6834,7 @@ body.sanat-page .istanbul-discovery-shell > .istanbul-breadcrumb {
 .istanbul-filter-reset,
 .venue-detail-action-secondary {
   border: 1px solid rgba(1, 29, 54, 0.18);
-  border-radius: 4px;
+  border-radius: 14px;
   background: #ffffff;
   color: #011d36;
   min-height: 34px;
@@ -7034,7 +7067,7 @@ body.yeme-icme-page .istanbul-filter-yeme-icme-budget-nest .kesfet-category-drop
   padding: 0.24rem 0.5rem 0.24rem 0.6rem;
   border: 1px solid rgba(22, 93, 91, 0.12) !important;
   border-radius: 4px;
-  background: #f5f6f7 !important;
+  background: #e9eef1 !important;
   color: #011d36;
   font-size: var(--istanbul-filter-ui-font, 0.84rem);
   font-weight: 400;
@@ -7073,7 +7106,7 @@ body.yeme-icme-page .istanbul-filter-yeme-icme-budget-nest .kesfet-category-drop
   padding: 0.24rem 0.5rem 0.24rem 0.6rem;
   border: 1px solid rgba(22, 93, 91, 0.12) !important;
   border-radius: 4px;
-  background: #f5f6f7 !important;
+  background: #e9eef1 !important;
   color: #011d36;
   font-size: var(--istanbul-filter-ui-font, 0.84rem);
   font-weight: 400;
@@ -7107,11 +7140,19 @@ body.yeme-icme-page .istanbul-filter-yeme-icme-budget-nest .kesfet-category-drop
   outline-offset: 2px;
 }
 
-/* Kategori açılır tetikleyici: .lang-switch-btn:hover çerçeveyi silmesin */
+/* Kategori açılır tetikleyici: konum ile aynı stil */
 .kesfet-category-dropdown[data-kesfet-category-switch] .kesfet-category-dropdown-btn {
+  width: 100%;
+  min-height: 2.1rem;
+  padding: 0.24rem 0.5rem 0.24rem 0.6rem;
   border: 1px solid rgba(22, 93, 91, 0.12) !important;
   border-radius: 4px;
-  background: #f5f6f7 !important;
+  background: #e9eef1 !important;
+  color: #011d36;
+  font-size: var(--istanbul-filter-ui-font, 0.84rem);
+  font-weight: 400;
+  justify-content: space-between;
+  gap: 0.4rem;
   box-shadow: 0 2px 6px rgba(9, 56, 38, 0.06);
   transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
@@ -8400,7 +8441,7 @@ body.kultur-page .section-head.province-head .istanbul-results-outside-title,
 body.sanat-page .section-head.province-head .istanbul-results-outside-title,
 body.saglik-page .section-head.province-head .istanbul-results-outside-title {
   margin: 0.35rem 0 0.42rem;
-  color: #011d36;
+  color: #ffffff !important;
   font-size: clamp(1.35rem, 2.8vw, 2rem);
   font-weight: 400;
   line-height: 1.2;
@@ -11016,6 +11057,135 @@ button.admin-content-model-geo-neighborhood.is-active {
   }
 }
 
+/* ── Home Lezzet Durakları Banner ── */
+.home-lezzet-banner {
+  max-width: 1200px;
+  margin: 0.75rem auto 0;
+  padding: 0 clamp(0.9rem, 2.5vw, 1.35rem);
+  box-sizing: border-box;
+}
+
+.home-lezzet-banner-inner {
+  display: flex;
+  width: 100%;
+  min-height: 280px;
+  border: 1px solid rgba(17, 35, 44, 0.12);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 28px rgba(15, 35, 52, 0.07);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.22s ease, transform 0.22s ease;
+}
+
+.home-lezzet-banner-inner:hover {
+  box-shadow: 0 8px 36px rgba(15, 35, 52, 0.13);
+  transform: translateY(-2px);
+}
+
+.home-lezzet-banner-content {
+  flex: 2;
+  min-height: 100%;
+}
+
+.home-lezzet-banner-image {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.home-lezzet-banner-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+@media (max-width: 768px) {
+  .home-lezzet-banner-inner {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .home-lezzet-banner-content {
+    min-height: 120px;
+  }
+
+  .home-lezzet-banner-image {
+    height: 200px;
+  }
+}
+
+/* ── Ustalara Saygı Kutusu ── */
+.home-ustalara-saygi {
+  overflow: hidden;
+  background: #e0d9cb !important;
+}
+
+a.ustalara-saygi-inner,
+.ustalara-saygi-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.ustalara-saygi-content {
+  flex: 1;
+}
+
+.ustalara-saygi-content h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  color: #0d2032;
+}
+
+.ustalara-saygi-content h2 {
+  margin: 0;
+}
+
+.ustalara-saygi-image {
+  flex: 0 0 auto;
+  max-width: 340px;
+}
+
+.ustalara-saygi-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+@media (max-width: 600px) {
+  .ustalara-saygi-inner {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .ustalara-saygi-image {
+    max-width: 100%;
+  }
+}
+
+/* ── Lezzet Durakları Mekan Linkleri ── */
+.lezzet-venue-link {
+  color: #1a6b4a;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.18s ease;
+}
+
+.lezzet-venue-link:hover,
+.lezzet-venue-link:focus-visible {
+  color: #0d4a30;
+}
+
 /* ── Content Guide (SEO / AdSense editoryal blok) ── */
 .content-guide {
   margin-top: 0.5rem;
@@ -11131,10 +11301,10 @@ button.admin-content-model-geo-neighborhood.is-active {
 }
 
 .header-search-input {
-  border-radius: 14px 0 0 14px !important;
+  border-radius: 14px !important;
 }
 .header-search-btn {
-  border-radius: 0 14px 14px 0 !important;
+  border-radius: 14px !important;
 }
 
 .store-badge,
@@ -11163,6 +11333,11 @@ button.admin-content-model-geo-neighborhood.is-active {
   box-shadow: 0 4px 14px rgba(9, 56, 38, 0.08), 0 1px 3px rgba(9, 56, 38, 0.05) !important;
 }
 
+.featured-venues-section .istanbul-venue-card,
+.featured-venues-section .istanbul-venue-card-inner {
+  background: #ede5d5 !important;
+}
+
 .istanbul-discovery-hero-label,
 .home-subcat-chip {
   background: #d5e8d3 !important;
@@ -11186,10 +11361,10 @@ button.admin-content-model-geo-neighborhood.is-active {
 
 .top-city-card,
 .category-home-card {
-  background: #2b4249 !important;
-  border: 1px solid rgba(43, 66, 73, 0.3) !important;
+  background: #71935d !important;
+  border: none !important;
   box-shadow: 0 4px 14px rgba(9, 56, 38, 0.08), 0 1px 3px rgba(9, 56, 38, 0.05) !important;
-  color: #f5e6d0 !important;
+  color: #ffffff !important;
   transition: transform 0.22s ease, box-shadow 0.22s ease;
 }
 
@@ -11197,14 +11372,14 @@ button.admin-content-model-geo-neighborhood.is-active {
 .top-city-card .top-city-meta,
 .top-city-card .top-city-population,
 .category-home-card .top-city-name {
-  color: #f5e6d0 !important;
+  color: #ffffff !important;
 }
 
 .top-city-card:hover,
 .category-home-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 28px rgba(43, 66, 73, 0.25), 0 4px 10px rgba(43, 66, 73, 0.12) !important;
-  color: #fff1de !important;
+  color: #ffffff !important;
 }
 
 .venue-detail-main-card,
@@ -11233,20 +11408,20 @@ button.admin-content-model-geo-neighborhood.is-active {
 
 .istanbul-filter-location-box,
 .istanbul-filter-section-box {
-  background: #c8773e !important;
+  background: #e8c37b !important;
   border: none !important;
   border-radius: 14px !important;
   padding: 1.1rem !important;
   margin-bottom: 8px !important;
   box-shadow: 0 3px 8px rgba(107, 70, 51, 0.25) !important;
-  color: #fff !important;
+  color: #000 !important;
 }
 
 .istanbul-filter-location-box-title,
 .istanbul-filter-section-box-title,
 .istanbul-filter-field > span:first-child,
 .istanbul-filter-yeme-icme-budget-nest-label {
-  color: #fff !important;
+  color: #000 !important;
 }
 
 /* --- Dropdown hover & active: #c8773e uyumlu --- */
@@ -11271,9 +11446,15 @@ button.admin-content-model-geo-neighborhood.is-active {
 }
 
 .content-guide {
-  background: linear-gradient(145deg, #e8f0e4 0%, #d5e8d3 40%, #c9dfca 100%) !important;
+  background: #d7d7d7 !important;
   border: 1px solid rgba(22, 93, 91, 0.10) !important;
   box-shadow: 0 3px 10px rgba(9, 56, 38, 0.06) !important;
+  border-radius: 14px !important;
+}
+
+.content-guide.home-ustalara-saygi {
+  background: #e8c37b !important;
+  border-radius: 14px !important;
 }
 
 .content-guide h2,
@@ -11377,7 +11558,7 @@ button.admin-content-model-geo-neighborhood.is-active {
   box-shadow: none !important;
 }
 
-/* --- White headings on teal --- */
+/* --- White headings on dark bg --- */
 .section-head h1,
 .section-head h2,
 .section-head h3,
@@ -11386,7 +11567,7 @@ button.admin-content-model-geo-neighborhood.is-active {
 .province-head h3,
 .istanbul-discovery-copy h1,
 .istanbul-discovery-copy h2 {
-  color: #093826 !important;
+  color: #ffffff !important;
   font-weight: 700 !important;
 }
 
@@ -11414,7 +11595,6 @@ button.admin-content-model-geo-neighborhood.is-active {
 }
 
 /* --- CTA Buttons --- */
-.header-search-btn,
 .settings-feedback-submit,
 .settings-signout,
 .settings-signup-submit {
@@ -11426,13 +11606,22 @@ button.admin-content-model-geo-neighborhood.is-active {
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
+.header-search-btn {
+  background: #71935d !important;
+  border-color: #71935d !important;
+  color: #fff !important;
+  border-radius: 14px !important;
+  box-shadow: 0 3px 8px rgba(43, 66, 73, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
 .istanbul-discovery-primary-button,
 .istanbul-filter-nearby-panel-button {
-  background: #144940 !important;
-  border-color: #0f3a33 !important;
+  background: #71935d !important;
+  border-color: #71935d !important;
   color: #fff !important;
   border-radius: 12px !important;
-  box-shadow: 0 3px 8px rgba(20, 73, 64, 0.25);
+  box-shadow: 0 3px 8px rgba(43, 66, 73, 0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
@@ -11456,14 +11645,14 @@ button.admin-content-model-geo-neighborhood.is-active {
 }
 
 .header-search-btn:hover {
-  background: #1a5c51 !important;
+  background: #5a7a4a !important;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(20, 73, 64, 0.35) !important;
 }
 
 .istanbul-discovery-primary-button:hover,
 .istanbul-filter-nearby-panel-button:hover {
-  background: #1a5c51 !important;
+  background: #5a7a4a !important;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(20, 73, 64, 0.35) !important;
 }
@@ -11522,28 +11711,30 @@ button.admin-content-model-geo-neighborhood.is-active {
   color: #000 !important;
 }
 
-/* --- Header band & topbar: match logo (#729875) --- */
+/* --- Header band & topbar: match logo (#45503f) --- */
 .global-header-band {
-  background: #729875 !important;
+  background: #45503f !important;
   border-bottom-color: rgba(255,255,255,0.1) !important;
 }
 
 .global-topbar {
-  background: #729875 !important;
+  background: #45503f !important;
   border-bottom: none !important;
 }
 
 .global-topbar .brand-wordmark,
 .global-header-band .header-logo-text {
-  color: #ffffff !important;
+  color: #e8f0e8 !important;
 }
 
 .global-topbar .brand-wordmark-rest {
-  color: #093826 !important;
+  color: #e8f0e8 !important;
+  font-weight: 500 !important;
 }
 
 .global-topbar .brand-wordmark-search {
-  color: #d5e8d3 !important;
+  color: #a8d5a2 !important;
+  font-weight: 500 !important;
 }
 
 .brand-logo {
@@ -11571,7 +11762,7 @@ button.admin-content-model-geo-neighborhood.is-active {
 }
 
 .global-topline {
-  background: #729875 !important;
+  background: #45503f !important;
   border: none !important;
 }
 
@@ -11583,12 +11774,12 @@ button.admin-content-model-geo-neighborhood.is-active {
 }
 
 .global-topline-inner a:hover {
-  color: #9dc79c !important;
+  color: #a8d5a2 !important;
 }
 
 /* --- Mobile bottom nav: teal --- */
 .mobile-bottom-nav {
-  background: #729875 !important;
+  background: #45503f !important;
 }
 
 .mobile-bottom-nav-btn .mobile-bottom-nav-label {
@@ -11642,13 +11833,15 @@ button.admin-content-model-geo-neighborhood.is-active {
 .favorites-grid .istanbul-venue-card {
   background: #d5e8d3 !important;
   border: none !important;
-  border-radius: 4px !important;
+  border-radius: 14px !important;
   padding: 1rem !important;
 }
 
 .favorites-grid .istanbul-venue-eyebrow {
   color: #555 !important;
   font-size: 0.85rem !important;
+  text-transform: none !important;
+  font-weight: 400 !important;
 }
 
 .favorites-grid .istanbul-venue-title-link {
@@ -11680,11 +11873,11 @@ button.admin-content-model-geo-neighborhood.is-active {
 }
 
 .topbar-search-form .header-search-input {
-  border-radius: 14px 0 0 14px;
+  border-radius: 14px;
 }
 
 .topbar-search-form .header-search-btn {
-  border-radius: 0 14px 14px 0;
+  border-radius: 14px;
 }
 
 /* ================================================================== */
@@ -11704,7 +11897,7 @@ button.admin-content-model-geo-neighborhood.is-active {
   padding: 0.7rem 1rem;
   border: none;
   border-radius: 14px !important;
-  background: #c8773e;
+  background: #71935d;
   color: #fff;
   font-family: inherit;
   font-size: 0.84rem;
@@ -11717,7 +11910,7 @@ button.admin-content-model-geo-neighborhood.is-active {
 }
 
 .bh-cta-button:hover {
-  background: #d4854a;
+  background: #5a7a4a;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(107, 70, 51, 0.35);
 }
@@ -12023,8 +12216,8 @@ button.admin-content-model-geo-neighborhood.is-active {
   flex: 1;
   min-height: 38px;
   font-size: 0.88rem;
-  border-radius: 14px 0 0 14px;
-  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 14px;
+  border: 1px solid #baae89;
   border-right: none;
   padding: 0.4rem 0.85rem;
   background: rgba(255,255,255,0.95);
@@ -12038,18 +12231,18 @@ button.admin-content-model-geo-neighborhood.is-active {
 
 .topbar-search-form .header-search-btn {
   min-height: 38px;
-  border-radius: 0 14px 14px 0;
+  border-radius: 14px;
   padding: 0.4rem 1.1rem;
   font-size: 0.85rem;
   font-weight: 400;
-  background: #093827;
+  background: #71935d;
   color: #fff;
-  border: 1px solid #093827;
+  border: 1px solid #baae89;
   cursor: pointer;
 }
 
 .topbar-search-form .header-search-btn:hover {
-  background: #0b4d35;
+  background: #5a7a4a;
 }
 
 @media (max-width: 600px) {
@@ -12077,7 +12270,7 @@ button.admin-content-model-geo-neighborhood.is-active {
 .istanbul-venue-card,
 .istanbul-venue-card-inner {
   border-radius: 14px !important;
-  border: 1px solid rgba(22, 93, 91, 0.12) !important;
+  border: 1px solid #baae89 !important;
   box-shadow: 0 4px 14px rgba(9, 56, 38, 0.08), 0 1px 3px rgba(9, 56, 38, 0.06) !important;
   transition: transform 0.22s ease, box-shadow 0.22s ease !important;
   overflow: hidden;
@@ -12136,8 +12329,8 @@ button.admin-content-model-geo-neighborhood.is-active {
 }
 
 .istanbul-venue-tag {
-  background: rgba(255, 255, 255, 0.65) !important;
-  border: 1px solid rgba(22, 93, 91, 0.15) !important;
+  background: #ffffff !important;
+  border: 1px solid #baae89 !important;
   border-radius: 8px !important;
   font-size: 0.76rem !important;
   padding: 0.25rem 0.55rem !important;
@@ -12263,3 +12456,111 @@ button.admin-content-model-geo-neighborhood.is-active {
 
 /* ================================================================== */
 /* Anasayfa Kategori Kartları — unified #2b4249 (per-category overrides removed) */
+
+/* ── Admin Sayfaları: Beyaz zemin, siyah başlık ── */
+body.admin-venue-editor-page .admin-venues-list-card,
+body.admin-venue-editor-page .admin-venue-form-card,
+body.admin-venue-editor-page .admin-review-moderation-card,
+body.admin-content-model-page .admin-venues-list-card,
+body.admin-content-model-page .admin-venue-form-card {
+  background: #ffffff !important;
+  border-radius: 14px !important;
+}
+
+body.admin-venue-editor-page .admin-venues-title,
+body.admin-content-model-page .admin-venues-title {
+  color: #000000 !important;
+}
+
+body.admin-venue-editor-page .istanbul-venue-card,
+body.admin-venue-editor-page .istanbul-venue-card-inner {
+  background: #ffffff !important;
+}
+
+/* Admin: label, kicker, filter-field metin renkleri — beyaz zemin üzerinde okunabilir */
+body.admin-venue-editor-page .istanbul-filter-field,
+body.admin-venue-editor-page .istanbul-filter-field span,
+body.admin-venue-editor-page .istanbul-discovery-kicker,
+body.admin-venue-editor-page .admin-venues-scope-note,
+body.admin-venue-editor-page .istanbul-results-state,
+body.admin-venue-editor-page label,
+body.admin-content-model-page .istanbul-filter-field,
+body.admin-content-model-page .istanbul-filter-field span,
+body.admin-content-model-page .istanbul-discovery-kicker,
+body.admin-content-model-page label {
+  color: #111111 !important;
+}
+
+/* Admin login sayfası */
+body.venue-detail-page .admin-login-card .istanbul-discovery-kicker,
+body.venue-detail-page .admin-login-card .istanbul-filter-field,
+body.venue-detail-page .admin-login-card .istanbul-filter-field span,
+body.venue-detail-page .admin-login-card label,
+body.venue-detail-page .admin-login-card .admin-venues-title,
+body.venue-detail-page .admin-login-card .admin-login-copy {
+  color: #111111 !important;
+}
+
+.admin-panel-nav-card {
+  border-radius: 14px !important;
+}
+
+.admin-login-card {
+  border-radius: 14px !important;
+}
+
+/* ── Tüm Minik Kutular: Birleşik Stil (distance gibi, krem zemin) ── */
+.istanbul-venue-tag,
+.istanbul-venue-distance,
+.istanbul-venue-budget,
+.venue-detail-chip,
+.venue-detail-tag,
+.venue-detail-meta-pill,
+.home-subcat-chip,
+.istanbul-discovery-hero-label,
+.card-share-trigger,
+.istanbul-favorite-button,
+.venue-detail-action,
+.venue-detail-action:link,
+.venue-detail-action:visited,
+.venue-detail-action-secondary,
+.venue-detail-action-secondary:link,
+.venue-detail-action-secondary:visited,
+.venue-detail-action-inline,
+.venue-detail-action-inline:link,
+.venue-detail-action-inline:visited {
+  background: #fdf8f0 !important;
+  color: #093826 !important;
+  border: 1px solid #baae89 !important;
+  border-radius: 8px !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  padding: 0.25rem 0.55rem !important;
+  white-space: nowrap !important;
+}
+
+/* ── Detay Sayfası Kart Zemin ── */
+.venue-detail-main-card,
+.venue-detail-side-card {
+  background: #ede4d5 !important;
+  border-radius: 14px !important;
+}
+
+/* ── Venue Card Info Boxes ── */
+.venue-card-info-boxes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-top: 0.15rem;
+}
+
+.venue-card-info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.32rem;
+  align-items: center;
+}
+
+
+
+
