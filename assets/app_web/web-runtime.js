@@ -1,4 +1,8 @@
 (() => {
+  // Hard refresh → her zaman sayfa başına dön
+  if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+  window.scrollTo(0, 0);
+
   const storageKeys = Object.freeze({
     language: "aramabul.selectedLanguage.v1",
     theme: "aramabul.theme.v1",
@@ -45,6 +49,7 @@
     tt: ["tt", "tesis", "facilityType"],
     il: ["il"],
     kategori: ["kategori"],
+    slug: ["slug"],
   });
 
   function normalizePathname(pathname) {
@@ -70,6 +75,9 @@
     }
     if (fileName === "city.html") {
       return ["il", "ilce", "kategori"];
+    }
+    if (fileName === "venue-detail.html") {
+      return ["slug"];
     }
     if (fileName.endsWith("-city.html")) {
       return ["tur", "sehir"];

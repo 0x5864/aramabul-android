@@ -295,11 +295,11 @@
   };
 
   const SEARCH_NOT_FOUND_COPY = {
-    TR: "Kayıt bulunamamıştır.",
-    EN: "No records found.",
-    RU: "Запись не найдена.",
-    DE: "Kein Eintrag gefunden.",
-    ZH: "未找到记录。",
+    TR: "Üzgünüz, aradığınız yer veri tabanımızda bulunamamıştır.",
+    EN: "Sorry, the place you are looking for was not found in our database.",
+    RU: "К сожалению, искомое место не найдено в нашей базе данных.",
+    DE: "Leider wurde der gesuchte Ort nicht in unserer Datenbank gefunden.",
+    ZH: "很抱歉，在我们的数据库中未找到您要寻找的地点。",
   };
 
   let searchChoiceModalApi = null;
@@ -336,7 +336,7 @@
 
     const toast = document.createElement("div");
     toast.className = "yr-search-not-found-toast";
-    toast.textContent = "Aradığınız kayda ulaşılamamıştır.";
+    toast.textContent = searchNotFoundMessage();
     toast.setAttribute("role", "status");
     toast.setAttribute("aria-live", "polite");
     toast.style.position = "fixed";
@@ -347,17 +347,20 @@
     toast.style.opacity = "0";
     toast.style.pointerEvents = "none";
     toast.style.zIndex = "10000";
-    toast.style.padding = "10px 14px";
-    toast.style.borderRadius = "10px";
-    toast.style.background = "#ffffff";
-    toast.style.color = "#3f3f3f";
-    toast.style.fontSize = "12px";
+    toast.style.padding = "12px 18px";
+    toast.style.borderRadius = "14px";
+    toast.style.background = "#fdf8f0";
+    toast.style.color = "#093826";
+    toast.style.border = "1px solid #baae89";
+    toast.style.fontFamily = '"Plus Jakarta Sans", sans-serif';
+    toast.style.fontSize = "13px";
     toast.style.fontWeight = "600";
-    toast.style.boxShadow = "0 10px 24px rgba(0, 0, 0, 0.22)";
+    toast.style.boxShadow = "0 10px 24px rgba(9, 56, 38, 0.12)";
     toast.style.transition = "opacity 180ms ease, transform 180ms ease";
     document.body.append(toast);
 
     const show = () => {
+      toast.textContent = searchNotFoundMessage();
       const rect = form.getBoundingClientRect();
       toast.style.left = `${Math.round(rect.left + (rect.width / 2))}px`;
       toast.style.top = `${Math.round(rect.bottom + 10)}px`;
@@ -571,14 +574,11 @@
       return;
     }
 
-    if (currentPageName() !== "search.html") {
-      navigateToSearchPage(query);
-      return;
+    if (currentPageName() === "search.html") {
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set("mekan", query);
+      window.history.replaceState({}, "", `${currentUrl.pathname}${currentUrl.search}`);
     }
-
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set("mekan", query);
-    window.history.replaceState({}, "", `${currentUrl.pathname}${currentUrl.search}`);
     await runSearchQuery(query);
   });
 

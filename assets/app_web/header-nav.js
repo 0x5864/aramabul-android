@@ -1244,7 +1244,7 @@
       <nav class="mobile-bottom-nav-actions" aria-label="${labels.nav}">
         <button class="mobile-bottom-nav-btn" data-mobile-nav="home" type="button" aria-label="${labels.home}" title="${labels.home}">
           <span class="mobile-bottom-nav-chip" aria-hidden="true">
-            <img class="mobile-bottom-nav-icon-img" src="assets/ev.png" alt="" />
+            <img class="mobile-bottom-nav-icon-img" src="assets/ev.svg" alt="" />
             <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
               <path d="m3 11 9-7 9 7"></path>
               <path d="M7 10v9h10v-9"></path>
@@ -1253,7 +1253,7 @@
         </button>
         <button class="mobile-bottom-nav-btn" data-mobile-nav="favorites" type="button" aria-label="${labels.favorites}" title="${labels.favorites}">
           <span class="mobile-bottom-nav-chip" aria-hidden="true">
-            <img class="mobile-bottom-nav-icon-img" src="assets/fav-footer.png" alt="" />
+            <img class="mobile-bottom-nav-icon-img" src="assets/fav.svg" alt="" />
             <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
               <path d="m12 20.2-6.3-3.3 1.2-7L12 4.8l5.1 5.1 1.2 7z"></path>
             </svg>
@@ -1280,7 +1280,7 @@
         </button>
         <button class="mobile-bottom-nav-btn" data-mobile-nav="profile" type="button" aria-label="${labels.profile}" title="${labels.profile}">
           <span class="mobile-bottom-nav-chip" aria-hidden="true">
-            <img class="mobile-bottom-nav-icon-img" src="assets/ayar.png" alt="" />
+            <img class="mobile-bottom-nav-icon-img" src="assets/ayar.svg" alt="" />
             <svg class="mobile-bottom-nav-icon-svg mobile-bottom-nav-icon-svg-fallback" viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="12" cy="12" r="3"></circle>
               <path d="M12 3.8v2.2"></path>

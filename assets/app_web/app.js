@@ -1325,6 +1325,7 @@ function normalizeVenueRecord(record) {
     cuisine,
     rating: sanitizeRating(record.rating),
     budget: sanitizeBudget(record.budget),
+    photoUri: record.photoUri || record.photoUrl || record.imageUrl || record.image || record.coverImageUrl || "",
     sourcePlaceId: sanitizeText(record.sourcePlaceId, ""),
     cuisineIndex: normalizeForSearch(cuisine),
     searchIndex: normalizeForSearch(`${name} ${cuisine} ${city} ${district}`),
@@ -2603,9 +2604,27 @@ function renderEmptyState() {
 }
 
 function topRatedVenues(venuesToRank) {
+  const hasValidPhoto = (photo) => {
+    if (typeof photo !== "string") return false;
+    const val = photo.trim();
+    if (!val) return false;
+    if (val.includes("AL8-SNH-")) return false;
+    if (val.includes("AL8-SNHyLSmXv7Pa75n")) return false;
+    if (val.includes("staticmap")) return false;
+    if (val.includes("maps.google")) return false;
+    if (val.includes("assets/")) return false;
+    return true;
+  };
+
   return venuesToRank
     .slice()
     .sort((left, right) => {
+      const leftHasPhoto = hasValidPhoto(left.photoUri);
+      const rightHasPhoto = hasValidPhoto(right.photoUri);
+      if (leftHasPhoto !== rightHasPhoto) {
+        return leftHasPhoto ? -1 : 1;
+      }
+
       if (right.rating !== left.rating) {
         return right.rating - left.rating;
       }

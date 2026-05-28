@@ -74,8 +74,6 @@
   const GEZI_CATEGORY_OPTIONS = [
     "Kamp Alanları",
     "Gezi Tesis Tipleri",
-    "Apart Otel",
-    "Butik Otel",
     "Camping",
     "Gastronomi Tesisi",
     "Günübirlik Tesis",
@@ -97,7 +95,7 @@
 
   const LOCAL_DATA_SOURCES = [
     { label: "Kamp Alanları", file: "data/gezi-kamp-alanlari.json", category: "Kamp Alanları" },
-    { label: "Butik Oteller", file: "data/gezi-butik-oteller.json", category: "Butik Otel" },
+    { label: "Butik Oteller", file: "data/gezi-butik-oteller.json", category: "Otel" },
     { label: "5 Yıldızlı Oteller", file: "data/gezi-oteller-5-yildiz.json", category: "Otel" },
     { label: "4 Yıldızlı Oteller", file: "data/gezi-oteller-4-yildiz.json", category: "Otel" },
     { label: "3 Yıldızlı Oteller", file: "data/gezi-oteller-3-yildiz.json", category: "Otel" },
@@ -669,7 +667,7 @@
     if (normalized.includes("otel")) {
       return "assets/otel.png";
     }
-    return "assets/gezi.png";
+    return "assets/no-image-icon.png";
   }
 
   function readVenueSlugFromUrl() {
@@ -1734,6 +1732,20 @@
     });
   }
 
+  async function fetchContentModelCategories(mainCategoryKey) {
+    try {
+      const response = await fetch(
+        `/api/public/content-model/subcategories?mainCategoryKey=${encodeURIComponent(mainCategoryKey)}`,
+        { headers: { Accept: "application/json" } }
+      );
+      if (!response.ok) return [];
+      const payload = await response.json();
+      return Array.isArray(payload.items) ? payload.items : [];
+    } catch (_error) {
+      return [];
+    }
+  }
+
   async function loadFilters() {
     if (state.dataMode === "local") {
       const items = await loadLocalData();
@@ -1755,10 +1767,15 @@
     }
 
     const payload = await response.json();
+
+    // İçerik mimarisinden alt kategorileri çek
+    const contentModelCategories = await fetchContentModelCategories("gezi");
+    const hasDynamicCategories = contentModelCategories.length > 0;
+
     state.filters = {
       districts: Array.isArray(payload.districts) ? payload.districts : [],
-      categoryOptions: [],
-      categories: GEZI_CATEGORY_OPTIONS.slice(),
+      categoryOptions: hasDynamicCategories ? contentModelCategories : [],
+      categories: hasDynamicCategories ? [] : GEZI_CATEGORY_OPTIONS.slice(),
       tags: Array.isArray(payload.tags) ? payload.tags : [],
     };
 
@@ -1778,7 +1795,7 @@
       if (normalizeText(cat) === normalizeText(GEZI_TESIS_TIPLERI_LABEL)) {
         params.set("source", "ktb");
       } else if (Array.isArray(state.filters.categoryOptions) && state.filters.categoryOptions.length) {
-        params.set("categoryId", state.selectedCategory);
+        params.set("subcategoryId", state.selectedCategory);
       } else {
         params.set("category", state.selectedCategory);
       }
@@ -1894,6 +1911,7 @@
       const actionGroup = fragment.querySelector(".istanbul-venue-action-group");
 
       card.tabIndex = 0;
+      card.dataset.cardCategory = (item.category || item.cuisine || "").toLowerCase().replace(/\s+/g, "-");
       if (item.slug === state.selectedVenueSlug) {
         card.classList.add("is-selected");
       }
@@ -1901,7 +1919,6 @@
       if (image && media) {
         const photoUri = resolveCardPhotoUri(item);
         if (photoUri) {
-          image.src = photoUri;
           image.alt = `${item.name || "Mekan"} fotoğrafı`;
           image.addEventListener(
             "error",
@@ -1911,6 +1928,7 @@
             },
             { once: true },
           );
+          image.src = photoUri;
         } else {
           image.src = getCategoryImage(item.category || item.cuisine || "");
           image.alt = item.name || "Mekan";
@@ -1928,20 +1946,8 @@
       eyebrow.textContent = "";
       eyebrow.hidden = true;
 
-      const rawDistanceMeters = (item.distanceMeters != null && item.distanceMeters !== "") ? Number(item.distanceMeters) : NaN;
-      const computedDistanceMeters = Number.isFinite(rawDistanceMeters)
-        ? rawDistanceMeters
-        : computeDistanceMeters(state.userLocation, item);
-      const formattedDistance = formatDistance(computedDistanceMeters);
-      if (formattedDistance) {
-        distance.hidden = false;
-        distance.textContent = formattedDistance;
-      } else if (state.nearbyMode) {
-        distance.hidden = false;
-        distance.textContent = "Yakın ilçe";
-      } else {
-        distance.hidden = true;
-      }
+      // Mesafe bilgisi artık info kutucuklarında hesaplanıyor
+      distance.hidden = true;
 
       titleLink.textContent = item.name || "İsimsiz mekan";
       titleLink.href = buildDetailUrl(item.slug);
@@ -1954,46 +1960,90 @@
       if (pillRow) pillRow.hidden = true;
       if (actions) actions.hidden = true;
 
-      // Tag satırına sadece ilçe, altkategori ve mesafe ekleniyor
-      const seenTagKeys = new Set();
+      // ── Bilgi kutucukları: 2 satır ──
+      tags.innerHTML = "";
+      const infoBoxes = document.createElement("div");
+      infoBoxes.className = "venue-card-info-boxes";
 
-      function consumeTagLabel(label) {
-        const trimmed = String(label || "").trim();
-        if (!trimmed) return false;
-        const key = normalizeText(trimmed);
-        if (!key || seenTagKeys.has(key)) return false;
-        seenTagKeys.add(key);
-        return true;
-      }
+      // Satır 1: İlçe, Mahalle, Alt Kategori
+      const row1 = document.createElement("div");
+      row1.className = "venue-card-info-row";
 
       const districtLabel = String(item.district || "").trim();
       if (districtLabel) {
-        const link = document.createElement("a");
-        link.className = "istanbul-venue-tag";
-        link.href = `gezi.html?district=${encodeURIComponent(districtLabel)}`;
-        link.setAttribute("aria-label", `${districtLabel} ilçesindeki mekanları aç`);
-        link.textContent = districtLabel;
-        tags.appendChild(link);
-        consumeTagLabel(districtLabel);
+        const el = document.createElement("a");
+        el.className = "istanbul-venue-tag";
+        el.href = `gezi.html?district=${encodeURIComponent(districtLabel)}`;
+        el.setAttribute("aria-label", `${districtLabel} ilçesindeki mekanları aç`);
+        el.textContent = districtLabel;
+        row1.appendChild(el);
+      }
+
+      const neighborhoodLabel = String(item.neighborhood || item.mahalle || "").trim();
+      if (neighborhoodLabel) {
+        const el = document.createElement("span");
+        el.className = "istanbul-venue-tag";
+        el.textContent = neighborhoodLabel;
+        row1.appendChild(el);
       }
 
       const cuisineLabel = String(item.cuisine || item.category || "").trim();
       if (cuisineLabel && normalizeText(cuisineLabel) !== normalizeText(districtLabel)) {
-        if (consumeTagLabel(cuisineLabel)) {
-          const span = document.createElement("span");
-          span.className = "istanbul-venue-tag";
-          span.textContent = cuisineLabel;
-          tags.appendChild(span);
-        }
+        const el = document.createElement("span");
+        el.className = "istanbul-venue-tag";
+        el.textContent = cuisineLabel;
+        row1.appendChild(el);
       }
 
-      // Mesafe chip'ini tag satırına ekle
-      if (!distance.hidden) {
-        distance.classList.add("istanbul-venue-tag");
-        tags.appendChild(distance);
+      if (row1.childElementCount) {
+        infoBoxes.appendChild(row1);
       }
 
-      if (!tags.childElementCount) {
+      // Satır 2: Bütçe, Mesafe, Değerlendirme
+      const row2 = document.createElement("div");
+      row2.className = "venue-card-info-row";
+
+      const budgetValue = String(item.budget || "").trim();
+      const budgetLabelText = formatBudgetLabel(budgetValue);
+      if (budgetLabelText && normalizeText(budgetLabelText) !== normalizeText("bilinmiyor")) {
+        const el = document.createElement("span");
+        el.className = "istanbul-venue-budget";
+        el.textContent = budgetLabelText;
+        row2.appendChild(el);
+      }
+
+      const rawDistanceMeters2 = (item.distanceMeters != null && item.distanceMeters !== "") ? Number(item.distanceMeters) : NaN;
+      const computedDistanceMeters2 = Number.isFinite(rawDistanceMeters2)
+        ? rawDistanceMeters2
+        : computeDistanceMeters(state.userLocation, item);
+      const formattedDistance2 = formatDistance(computedDistanceMeters2);
+      if (formattedDistance2) {
+        const el = document.createElement("span");
+        el.className = "istanbul-venue-distance";
+        el.textContent = formattedDistance2;
+        row2.appendChild(el);
+      }
+
+      const ratingNum = Number(item.rating);
+      if (Number.isFinite(ratingNum) && ratingNum > 0) {
+        const ratingFormatted = ratingNum.toFixed(1).replace(".", ",");
+        const ratingCount = Number(item.userRatingCount ?? item.user_rating_count ?? 0);
+        const countText = ratingCount > 0 ? ` (${new Intl.NumberFormat("tr-TR").format(ratingCount)})` : "";
+        const el = document.createElement("span");
+        el.className = "istanbul-venue-tag";
+        el.textContent = `★ ${ratingFormatted}${countText}`;
+        row2.appendChild(el);
+      }
+
+      if (row2.childElementCount) {
+        infoBoxes.appendChild(row2);
+      }
+
+      tags.appendChild(infoBoxes);
+      // Mesafe distance elemanını gizle (artık info kutucuklarında)
+      distance.hidden = true;
+
+      if (!infoBoxes.childElementCount) {
         card.classList.add("is-tagless");
       }
 
@@ -2102,8 +2152,28 @@
           ? withDistance.filter((item) => Number.isFinite(item.distanceMeters) && item.distanceMeters <= 8000)
           : withDistance;
 
+        const hasValidPhoto = (item) => {
+          if (!item) return false;
+          const photo = item.photoUri || item.photoUrl || item.imageUrl || item.image || item.coverImageUrl;
+          if (typeof photo !== "string") return false;
+          const val = photo.trim();
+          if (!val) return false;
+          if (val.includes("AL8-SNH-")) return false;
+          if (val.includes("AL8-SNHyLSmXv7Pa75n")) return false;
+          if (val.includes("staticmap")) return false;
+          if (val.includes("maps.google")) return false;
+          if (val.includes("assets/")) return false;
+          return true;
+        };
+
         if (state.nearbyMode && state.userLocation) {
           finalItems.sort((a, b) => {
+            const aHasPhoto = hasValidPhoto(a);
+            const bHasPhoto = hasValidPhoto(b);
+            if (aHasPhoto !== bHasPhoto) {
+              return aHasPhoto ? -1 : 1;
+            }
+
             const aIsOsm = a.source === "openstreetmap";
             const bIsOsm = b.source === "openstreetmap";
             if (aIsOsm !== bIsOsm) {
@@ -2120,10 +2190,25 @@
         } else if (shouldHighRatedRandomDiscoveryLocal()) {
           const pool = finalItems.slice();
           shuffleDiscoveryVenuesInPlace(pool);
+          pool.sort((a, b) => {
+            const aHasPhoto = hasValidPhoto(a);
+            const bHasPhoto = hasValidPhoto(b);
+            if (aHasPhoto !== bHasPhoto) {
+              return aHasPhoto ? -1 : 1;
+            }
+            return 0;
+          });
           finalItems.length = 0;
           finalItems.push(...pool);
         } else {
-          finalItems.sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "tr-TR"));
+          finalItems.sort((a, b) => {
+            const aHasPhoto = hasValidPhoto(a);
+            const bHasPhoto = hasValidPhoto(b);
+            if (aHasPhoto !== bHasPhoto) {
+              return aHasPhoto ? -1 : 1;
+            }
+            return String(a.name || "").localeCompare(String(b.name || ""), "tr-TR");
+          });
         }
 
         const total = finalItems.length;

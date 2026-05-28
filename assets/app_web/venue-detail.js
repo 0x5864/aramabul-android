@@ -775,17 +775,28 @@
     if (cat.includes("veteriner")) return "assets/veteriner.png";
     if (cat.includes("akaryak")) return "assets/pompa.png";
     if (cat.includes("eczane")) return "assets/eczane.png";
-    return "assets/yemek.png";
+    return "assets/no-image-icon.png";
   }
 
   function setImageSource(imageEl, src, alt, fallback) {
-    imageEl.src = src;
+    const cleanFallback = fallback && fallback !== "assets/yemek.png" ? fallback : "assets/no-image-icon.png";
     imageEl.alt = alt;
     imageEl.onerror = () => {
       imageEl.onerror = null;
-      imageEl.src = fallback || "assets/yemek.png";
-      imageEl.alt = alt;
+      imageEl.src = cleanFallback;
+      imageEl.classList.add("is-placeholder");
     };
+    if (src === cleanFallback || !src || src === "assets/yemek.png") {
+      imageEl.classList.add("is-placeholder");
+      imageEl.src = cleanFallback;
+    } else {
+      if (src.startsWith("data:image/svg+xml") || src.includes("no-image-icon.png") || src.includes("assets/eczane.png") || src.includes("assets/pompa.png") || src.includes("assets/veteriner.png") || src.includes("assets/sac.png") || src.includes("assets/berber.jpeg")) {
+        imageEl.classList.add("is-placeholder");
+      } else {
+        imageEl.classList.remove("is-placeholder");
+      }
+      imageEl.src = src;
+    }
   }
 
   function setTextValue(node, value) {
@@ -1510,6 +1521,7 @@
       setupShare(venue);
       applyFavoriteButtons();
       showVenueDistance(venue);
+      tryShowAdminEditLink(venue);
 
       setState("", true, false);
       return;
@@ -1520,6 +1532,49 @@
       document.title = "Hata | AramaBul";
       setState(error instanceof Error ? error.message : "Mekan bilgisi yüklenemedi.", false, true);
     }
+  }
+
+  function tryShowAdminEditLink(venue) {
+    if (!venue || !venue.id || !titleNode) return;
+    fetch("/api/admin/auth/session", {
+      credentials: "include",
+      headers: { Accept: "application/json" },
+    })
+      .then(function (res) {
+        return res.ok ? res.json() : null;
+      })
+      .then(function (data) {
+        if (!data || !data.session) return;
+        var existing = document.getElementById("venueDetailAdminEditLink");
+        if (existing) existing.remove();
+        var link = document.createElement("a");
+        link.id = "venueDetailAdminEditLink";
+        link.href = "admin-venues.html?venueId=" + encodeURIComponent(venue.id);
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.title = "Admin'de düzenle";
+        link.setAttribute("aria-label", "Admin'de düzenle");
+        link.style.cssText =
+          "display:inline-flex;align-items:center;justify-content:center;" +
+          "width:32px;height:32px;border-radius:8px;background:transparent;" +
+          "margin-left:8px;vertical-align:middle;text-decoration:none;" +
+          "flex-shrink:0;transition:opacity 0.15s ease;opacity:0.85;";
+        var img = document.createElement("img");
+        img.src = "/assets/edit.png";
+        img.alt = "Düzenle";
+        img.style.cssText = "width:28px;height:28px;display:block;pointer-events:none;";
+        link.appendChild(img);
+        link.addEventListener("mouseenter", function () {
+          link.style.opacity = "1";
+        });
+        link.addEventListener("mouseleave", function () {
+          link.style.opacity = "0.85";
+        });
+        titleNode.parentNode.insertBefore(link, titleNode.nextSibling);
+      })
+      .catch(function () {
+        // Not an admin or network error — silently ignore.
+      });
   }
 
   bindShareMenu();

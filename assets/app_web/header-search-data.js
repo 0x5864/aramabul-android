@@ -558,6 +558,16 @@
 
       const queryTokens = canonicalQuery.split(" ").filter((token) => token.length >= 2);
       if (queryTokens.length >= 2) {
+        const nameTokenMatches = records.filter((record) =>
+          queryTokens.every((token) => record.canonicalName.includes(token)),
+        );
+        if (nameTokenMatches.length === 1) {
+          return dedupeMatchRecords(nameTokenMatches);
+        }
+        if (nameTokenMatches.length > 1 && allowAmbiguousSet(nameTokenMatches)) {
+          return dedupeMatchRecords(nameTokenMatches);
+        }
+
         const tokenMatches = records.filter((record) =>
           queryTokens.every((token) => record.canonicalSearchBlob.includes(token)),
         );
@@ -691,7 +701,7 @@
       return cityUrlFor(record.city || record.name || "");
     }
 
-    if (record.openAsRestaurant) {
+    {
       const targetUrl = new URL("venue-detail.html", window.location.href);
       const slugValue = sanitizeText(record.slug) || buildDerivedVenueSlug(record);
       if (slugValue) {

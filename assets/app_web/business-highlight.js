@@ -81,6 +81,18 @@
   /* Aç / kapat                                                         */
   /* ------------------------------------------------------------------ */
   function openModal() {
+    // Sadece giriş yapmış kullanıcılar form açabilsin. Aksi takdirde uyarı çıksın.
+    const appRuntime = window.ARAMABUL_RUNTIME;
+    const hasSession = appRuntime && typeof appRuntime.readAuthSession === "function" && Boolean(appRuntime.readAuthSession());
+
+    if (!hasSession) {
+      alert("Bu özelliği kullanabilmek için lütfen önce giriş yapınız.");
+      if (window.ARAMABUL_AUTH_MODAL && typeof window.ARAMABUL_AUTH_MODAL.open === "function") {
+        window.ARAMABUL_AUTH_MODAL.open("login");
+      }
+      return;
+    }
+
     overlay.hidden = false;
     requestAnimationFrame(() => overlay.classList.add("is-visible"));
     document.body.style.overflow = "hidden";

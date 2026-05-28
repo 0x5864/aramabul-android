@@ -598,7 +598,27 @@ function rankNearbyVenues(venues, cityName, districtName, neighborhoodName) {
   const normalizedDistrict = normalizeName(districtName);
   const normalizedNeighborhood = normalizeSearchText(neighborhoodName);
 
+  const hasValidPhoto = (item) => {
+    if (!item) return false;
+    const photo = item.photoUrl || item.photoUri || item.imageUrl || item.image || item.coverImageUrl;
+    if (typeof photo !== "string") return false;
+    const val = photo.trim();
+    if (!val) return false;
+    if (val.includes("AL8-SNH-")) return false;
+    if (val.includes("AL8-SNHyLSmXv7Pa75n")) return false;
+    if (val.includes("staticmap")) return false;
+    if (val.includes("maps.google")) return false;
+    if (val.includes("assets/")) return false;
+    return true;
+  };
+
   return [...venues].sort((left, right) => {
+    const leftHasPhoto = hasValidPhoto(left);
+    const rightHasPhoto = hasValidPhoto(right);
+    if (leftHasPhoto !== rightHasPhoto) {
+      return leftHasPhoto ? -1 : 1;
+    }
+
     const scoreVenue = (venue) => {
       let score = 5;
       const venueCity = normalizeName(venue?.city);
@@ -2953,7 +2973,27 @@ function readNumericVenueReviewCount(venue) {
 }
 
 function sortVenuesByGoogleRating(venues) {
+  const hasValidPhoto = (item) => {
+    if (!item) return false;
+    const photo = item.photoUrl || item.photoUri || item.imageUrl || item.image || item.coverImageUrl;
+    if (typeof photo !== "string") return false;
+    const val = photo.trim();
+    if (!val) return false;
+    if (val.includes("AL8-SNH-")) return false;
+    if (val.includes("AL8-SNHyLSmXv7Pa75n")) return false;
+    if (val.includes("staticmap")) return false;
+    if (val.includes("maps.google")) return false;
+    if (val.includes("assets/")) return false;
+    return true;
+  };
+
   return [...venues].sort((left, right) => {
+    const leftHasPhoto = hasValidPhoto(left);
+    const rightHasPhoto = hasValidPhoto(right);
+    if (leftHasPhoto !== rightHasPhoto) {
+      return leftHasPhoto ? -1 : 1;
+    }
+
     const ratingDiff = readNumericVenueRating(right) - readNumericVenueRating(left);
     if (ratingDiff !== 0) {
       return ratingDiff;

@@ -1139,11 +1139,11 @@
   function syncCuisineFromCategory() {
     const selectedId = fields.categoryId.value;
     if (!selectedId) {
-      fields.cuisine.value = "";
+      if (fields.cuisine) fields.cuisine.value = "";
       return;
     }
     const cat = state.categories.find((c) => String(c.id) === selectedId);
-    fields.cuisine.value = cat ? (cat.name || "") : "";
+    if (fields.cuisine) fields.cuisine.value = cat ? (cat.name || "") : "";
   }
 
   function fillForm(item) {
@@ -1451,7 +1451,7 @@
       district: fields.district.value.trim(),
       neighborhood: fields.neighborhood.value.trim() || null,
       categoryId: normalizeNumber(fields.categoryId.value),
-      cuisine: fields.cuisine.value.trim() || null,
+      cuisine: fields.cuisine ? fields.cuisine.value.trim() || null : null,
       budget: fields.budget.value || null,
       rating: normalizeNumber(fields.rating.value),
       userRatingCount: normalizeNumber(fields.userRatingCount.value),
@@ -1893,6 +1893,7 @@
     });
 
     Object.values(fields).forEach((inputNode) => {
+      if (!inputNode) return;
       inputNode.addEventListener("input", () => {
         inputNode.classList.remove("is-invalid");
         inputNode.removeAttribute("aria-invalid");
@@ -2045,6 +2046,19 @@
     bindEvents();
     await loadReviewModerationList();
     await loadVenueList();
+
+    // URL'den ?venueId=123 parametresi varsa mekanı otomatik aç
+    try {
+      var urlVenueId = new URLSearchParams(window.location.search).get("venueId");
+      if (urlVenueId) {
+        var parsedVenueId = Number(urlVenueId);
+        if (Number.isFinite(parsedVenueId) && parsedVenueId > 0) {
+          await loadVenueDetail(parsedVenueId);
+        }
+      }
+    } catch (_urlError) {
+      // Ignore URL param errors.
+    }
   }
 
   main().catch((error) => {

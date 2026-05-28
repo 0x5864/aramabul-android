@@ -1035,7 +1035,7 @@
     fields.neighborhood.value = item.neighborhood || "";
     syncNeighborhoodDatalist(fields.district, formNeighborhoodDatalist);
     fields.categoryId.value = item.category?.id ? String(item.category.id) : "";
-    fields.cuisine.value = item.cuisine || "";
+    if (fields.cuisine) fields.cuisine.value = item.cuisine || "";
     fields.budget.value = item.budget || "";
     fields.rating.value = item.rating ?? "";
     fields.userRatingCount.value = item.userRatingCount ?? "";
@@ -1323,7 +1323,7 @@
       district: fields.district.value.trim(),
       neighborhood: fields.neighborhood.value.trim() || null,
       categoryId: normalizeNumber(fields.categoryId.value),
-      cuisine: fields.cuisine.value.trim() || null,
+      cuisine: fields.cuisine ? fields.cuisine.value.trim() || null : null,
       budget: fields.budget.value || null,
       rating: normalizeNumber(fields.rating.value),
       userRatingCount: normalizeNumber(fields.userRatingCount.value),
@@ -1770,6 +1770,7 @@
     });
 
     Object.values(fields).forEach((inputNode) => {
+      if (!inputNode) return;
       inputNode.addEventListener("input", () => {
         inputNode.classList.remove("is-invalid");
         inputNode.removeAttribute("aria-invalid");

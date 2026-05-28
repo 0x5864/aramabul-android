@@ -8,20 +8,19 @@
     ZH: { discover: "探索", help: "帮助", partners: "企业" },
   };
   const FOOTER_PAGE_GROUPS = [
-    ["footer-page.html?sayfa=app-store", "footer-page.html?sayfa=google-play"],
     [
       "footer-page.html?sayfa=hakkimizda",
       "footer-page.html?sayfa=yer-ekle",
       "footer-page.html?sayfa=iletisim",
     ],
     [
+      "footer-page.html?sayfa=sss",
+      "footer-page.html?sayfa=cerez",
+    ],
+    [
       "footer-page.html?sayfa=kosullar",
       "footer-page.html?sayfa=kvkk",
       "footer-page.html?sayfa=gizlilik",
-    ],
-    [
-      "footer-page.html?sayfa=sss",
-      "footer-page.html?sayfa=cerez",
     ],
   ];
   const FOOTER_SOCIAL_PAGES = [

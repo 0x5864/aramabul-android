@@ -5,7 +5,6 @@
   const layoutNode = document.getElementById("adminContentModelLayout");
   const mainCategoryListNode = document.getElementById("adminContentMainCategoryList");
   const subcategoryListNode = document.getElementById("adminContentSubcategoryList");
-  const jumpToSubcategoriesButton = document.getElementById("adminContentJumpToSubcategoriesButton");
   const openCategoryAdminLink = document.getElementById("adminContentOpenCategoryAdminLink");
   const openRootPageLink = document.getElementById("adminContentOpenRootPageLink");
   const subcategoriesSection = document.getElementById("adminContentSubcategoriesSection");
@@ -28,7 +27,6 @@
     || !layoutNode
     || !mainCategoryListNode
     || !subcategoryListNode
-    || !jumpToSubcategoriesButton
     || !openCategoryAdminLink
     || !openRootPageLink
     || !subcategoriesSection
@@ -524,19 +522,26 @@
     }
   }
 
+  const categoryAdminPages = {
+    "yeme-icme": "admin-venues.html",
+    "gezi": "admin-gezi.html",
+    "hizmetler": "admin-hizmetler.html",
+    "saglik": "admin-saglik.html",
+    "kultur": "admin-kultur.html",
+    "sanat": "admin-sanat.html",
+  };
+
   function updateSelectedCategoryActions() {
     const selectedMainCategory = getSelectedMainCategory();
 
-    jumpToSubcategoriesButton.disabled = !selectedMainCategory;
-
-    if (selectedMainCategory && selectedMainCategory.key === "yeme-icme") {
+    if (selectedMainCategory && categoryAdminPages[selectedMainCategory.key]) {
       openCategoryAdminLink.hidden = false;
-      openCategoryAdminLink.href = "admin-venues.html";
-      openCategoryAdminLink.textContent = "Yeme-İçme adminine git";
+      openCategoryAdminLink.href = categoryAdminPages[selectedMainCategory.key];
+      openCategoryAdminLink.textContent = (selectedMainCategory.name || "Kategori") + " adminine git";
     } else {
       openCategoryAdminLink.hidden = true;
       openCategoryAdminLink.removeAttribute("href");
-      openCategoryAdminLink.textContent = "Kategori adminine git";
+      openCategoryAdminLink.textContent = "Admin sayfasına git";
     }
 
     openRootPageLink.hidden = true;
@@ -628,8 +633,8 @@
     state.subcategories = Array.isArray(payload.subcategories) ? payload.subcategories : [];
 
     if (!state.mainCategories.some((item) => Number(item.id) === Number(state.selectedMainCategoryId))) {
-      const geziCategory = state.mainCategories.find((item) => item.key === "gezi");
-      state.selectedMainCategoryId = geziCategory ? Number(geziCategory.id) : Number(state.mainCategories[0]?.id || 0);
+      const defaultCategory = state.mainCategories.find((item) => item.key === "yeme-icme");
+      state.selectedMainCategoryId = defaultCategory ? Number(defaultCategory.id) : Number(state.mainCategories[0]?.id || 0);
     }
 
     if (!state.subcategories.some((item) => Number(item.id) === Number(state.selectedSubcategoryId))) {
@@ -785,9 +790,6 @@
       resetSubcategoryForm();
     });
 
-    jumpToSubcategoriesButton.addEventListener("click", () => {
-      subcategoriesSection.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
 
     mainCategoryForm.addEventListener("submit", (event) => {
       void saveMainCategory(event).catch((error) => {

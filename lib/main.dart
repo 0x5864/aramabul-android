@@ -62,8 +62,8 @@ class AramaBulApp extends StatelessWidget {
       title: 'AramaBul',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2d6b3f)),
-        scaffoldBackgroundColor: const Color(0xFF45503f),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF094174)),
+        scaffoldBackgroundColor: const Color(0xFF094174),
       ),
       home: const AppEntryPoint(),
     );
@@ -129,7 +129,7 @@ class _AppEntryPointState extends State<AppEntryPoint> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Facebook ile giriş yakında aktif olacak.'),
-            backgroundColor: Color(0xFF45503f),
+            backgroundColor: Color(0xFF094174),
           ),
         );
         break;
@@ -348,7 +348,7 @@ class _AppEntryPointState extends State<AppEntryPoint> {
     if (_showWelcome == null) {
       // Loading state
       return const Scaffold(
-        backgroundColor: Color(0xFF45503f),
+        backgroundColor: Color(0xFF094174),
         body: Center(
           child: CircularProgressIndicator(color: Colors.white),
         ),
@@ -419,7 +419,7 @@ class _PolicyViewerPageState extends State<_PolicyViewerPage> {
           widget.title,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
-        backgroundColor: const Color(0xFF45503f),
+        backgroundColor: const Color(0xFF094174),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -428,7 +428,7 @@ class _PolicyViewerPageState extends State<_PolicyViewerPage> {
           WebViewWidget(controller: _controller),
           if (_isLoading)
             const Center(
-              child: CircularProgressIndicator(color: Color(0xFF2d6b3f)),
+              child: CircularProgressIndicator(color: Color(0xFF094174)),
             ),
         ],
       ),
@@ -590,7 +590,7 @@ class _AuthPageState extends State<_AuthPage> {
           widget.title,
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
-        backgroundColor: const Color(0xFF45503f),
+        backgroundColor: const Color(0xFF094174),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -599,7 +599,7 @@ class _AuthPageState extends State<_AuthPage> {
           WebViewWidget(controller: _controller),
           if (_isLoading)
             const Center(
-              child: CircularProgressIndicator(color: Color(0xFF2d6b3f)),
+              child: CircularProgressIndicator(color: Color(0xFF094174)),
             ),
         ],
       ),
@@ -799,7 +799,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         style.textContent = 
           '@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");' +
           'body, * { font-family: "Plus Jakarta Sans", sans-serif !important; }' +
-          'body { background: #45503f !important; }' +
+          'body { background: #094174 !important; }' +
           '.global-header-band { display: none !important; height: 0 !important; overflow: hidden !important; font-size: 0 !important; line-height: 0 !important; }' +
           '.global-topline { display: none !important; }' +
           '.home-hero-search { display: none !important; }' +
@@ -811,7 +811,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-results-shell { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 8px !important; }' +
           '.istanbul-filter-card { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; overflow: visible !important; }' +
           '.istanbul-filter-body, .istanbul-filter-yeme-icme-sidebar, .istanbul-filter-yeme-icme-sidebar--gezi-two-up { overflow: visible !important; }' +
-          '.istanbul-filter-location-box, .istanbul-filter-section-box { background: #e8c37b !important; border: none !important; border-radius: 14px !important; padding: 12px !important; margin-bottom: 8px !important; overflow: visible !important; position: relative !important; }' +
+          '.istanbul-filter-location-box, .istanbul-filter-section-box { background: #48769f !important; border: none !important; border-radius: 14px !important; padding: 12px !important; margin-bottom: 8px !important; overflow: visible !important; position: relative !important; }' +
           '.istanbul-filter-location-box-title, .istanbul-filter-section-box-title, .istanbul-filter-gezi-category-box .istanbul-filter-section-box-title { color: #000000 !important; }' +
           '.istanbul-filter-location-box { z-index: 200 !important; }' +
           '.istanbul-filter-section-box { z-index: 100 !important; }' +
@@ -819,56 +819,61 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-filter-field { display: block !important; margin-bottom: 6px !important; }' +
           '.istanbul-filter-field > span { display: block !important; margin-bottom: 4px !important; font-size: 0.82rem !important; color: #000000 !important; }' +
           '.istanbul-filter-location-box .kesfet-category-dropdown, .istanbul-filter-section-box .kesfet-category-dropdown { position: relative !important; z-index: 1200 !important; }' +
-          '.kesfet-category-dropdown-menu { position: absolute !important; left: 0 !important; top: calc(100% + 4px) !important; width: max-content !important; min-width: 100% !important; max-width: calc(100vw - 24px) !important; background: #ffffff !important; border: 1px solid #c2d8c0 !important; border-radius: 6px !important; box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important; z-index: 1200 !important; overflow-y: auto !important; max-height: 50vh !important; display: flex !important; flex-direction: column !important; padding: 0 !important; }' +
+          '.kesfet-category-dropdown-menu { position: absolute !important; left: 0 !important; top: calc(100% + 4px) !important; width: max-content !important; min-width: 100% !important; max-width: calc(100vw - 24px) !important; background: #ffffff !important; border: 1px solid #7bbce8 !important; border-radius: 6px !important; box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important; z-index: 1200 !important; overflow-y: auto !important; max-height: 50vh !important; display: flex !important; flex-direction: column !important; padding: 0 !important; }' +
           '.kesfet-category-dropdown-menu[hidden] { display: none !important; }' +
           '.kesfet-category-dropdown.is-open .kesfet-category-dropdown-menu { display: flex !important; }' +
-          '.lang-switch-menu { position: absolute !important; background: #ffffff !important; border: 1px solid #c2d8c0 !important; border-radius: 6px !important; box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important; z-index: 1200 !important; overflow-y: auto !important; max-height: 50vh !important; }' +
+          '.lang-switch-menu { position: absolute !important; background: #ffffff !important; border: 1px solid #7bbce8 !important; border-radius: 6px !important; box-shadow: 0 4px 16px rgba(0,0,0,0.12) !important; z-index: 1200 !important; overflow-y: auto !important; max-height: 50vh !important; }' +
           '.lang-switch-menu[hidden] { display: none !important; }' +
           '.featured-venues-section { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding-left: 0 !important; padding-right: 0 !important; padding-bottom: 0 !important; }' +
           '.featured-venues-panel { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; }' +
           '.featured-venues-grid { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; margin: 0 !important; }' +
           '.content-guide { background: #d7d7d7 !important; border: none !important; box-shadow: none !important; border-radius: 14px !important; padding: 16px !important; margin-top: 12px !important; }' +
-          '.content-guide.home-ustalara-saygi { background: #e8c37b !important; border-radius: 14px !important; }' +
+          '.content-guide.home-ustalara-saygi { background: #7bbce8 !important; border-radius: 14px !important; }' +
           '.home-empty-box { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; }' +
           '.home-subcategory-list { background: transparent !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0.5rem !important; }' +
           '.home-subcat-chip { border-radius: 8px !important; padding: 0.5rem 0.25rem !important; font-size: 0.8rem !important; }' +
           '.content-guide h2, .content-guide h3, .content-guide p, .content-guide li, .content-guide strong { color: #000 !important; }' +
           '.home-top-category-row { background: transparent !important; display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 0.5rem !important; }' +
-          '.istanbul-venue-card { background: #d5e8d3 !important; border-color: #d5e8d3 !important; }' +
+          '.istanbul-venue-card { background: #bdd8e9 !important; border-color: #bdd8e9 !important; }' +
           '.istanbul-results-grid { padding: 0 !important; }' +
           '.home-subcat-chip { background: #fdf8f0 !important; border: none !important; border-radius: 8px !important; padding: 0.5rem 0.25rem !important; font-size: 0.76rem !important; font-weight: 600 !important; color: #093826 !important; }' +
           '.category-home-card .top-city-thumb { display: none !important; }' +
-          '.top-city-card, .category-home-card { background: #2b4249 !important; border-radius: 8px !important; padding: 0.5rem 0.25rem !important; min-height: auto !important; aspect-ratio: auto !important; color: #f5e6d0 !important; }' +
+          '.top-city-card, .category-home-card { background: #48769f !important; border: none !important; border-radius: 8px !important; padding: 0.5rem 0.25rem !important; min-height: auto !important; aspect-ratio: auto !important; color: #fff !important; }' +
           '.category-home-card .top-city-content { position: static !important; padding: 0 !important; text-align: center !important; }' +
-          '.top-city-name { font-size: 0.8rem !important; font-weight: 400 !important; color: #f5e6d0 !important; }' +
+          '.top-city-name { font-size: 0.8rem !important; font-weight: 400 !important; color: #fff !important; }' +
           '.istanbul-discovery-hero-label { background: #fdf8f0 !important; border: none !important; border-radius: 8px !important; color: #093826 !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; }' +
-          '.istanbul-venue-tag, .istanbul-venue-distance, .istanbul-venue-budget { background: #fdf8f0 !important; border: none !important; border-radius: 8px !important; color: #093826 !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; white-space: nowrap !important; }' +
-          '.istanbul-filter-nearby-panel-button, .istanbul-discovery-primary-button { background: #2b4249 !important; border-color: #2b4249 !important; color: #fff !important; }' +
-          '.venue-detail-main-card, .venue-detail-side-card { background: #ede4d5 !important; border: none !important; border-radius: 14px !important; }' +
-          '.venue-detail-media, .venue-detail-info, .venue-detail-reviews, .venue-detail-review-form { background: #d5e8d3 !important; border-color: #d5e8d3 !important; }' +
+          '.istanbul-venue-tag, .istanbul-venue-distance, .istanbul-venue-budget { background: #fdf8f0 !important; border: 1px solid #7bbce8 !important; border-radius: 8px !important; color: #093826 !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; white-space: nowrap !important; }' +
+          '.istanbul-filter-nearby-panel-button, .istanbul-discovery-primary-button { background: #011e3a !important; border: none !important; border-radius: 14px !important; color: #fff !important; }' +
+          '.venue-detail-main-card, .venue-detail-side-card { background: #bdd8e9 !important; border: none !important; border-radius: 14px !important; }' +
+          '.venue-detail-media, .venue-detail-info, .venue-detail-reviews, .venue-detail-review-form { background: #bdd8e9 !important; border-color: #bdd8e9 !important; }' +
           '.section-head h1, .section-head h2, .section-head h3, .province-head h1, .province-head h2, .province-head h3, .istanbul-discovery-copy h1, .istanbul-discovery-copy h2 { color: #ffffff !important; font-weight: 700 !important; margin-bottom: 0.75rem !important; }' +
           '.istanbul-discovery-kicker, .istanbul-breadcrumb, .istanbul-breadcrumb a, .istanbul-breadcrumb a:visited, .istanbul-breadcrumb span, .istanbul-discovery-subline, .istanbul-discovery-location-note { color: #ffffff !important; }' +
-          '.istanbul-results-meta, .istanbul-results-state { color: #ffffff !important; }' +
-          '.mobile-bottom-nav { background: #45503f !important; }' +
+          '.istanbul-results-meta, .istanbul-results-state { color: #ffffff !important; text-align: left !important; }' +
+          '.istanbul-results-head { text-align: left !important; }' +
+          '.mobile-bottom-nav { background: #094174 !important; }' +
           '.mobile-bottom-nav-btn .mobile-bottom-nav-chip { filter: brightness(10) !important; }' +
           '.mobile-bottom-nav-btn .mobile-bottom-nav-label { color: #ffffff !important; }' +
-          '.mobile-bottom-nav-btn.active .mobile-bottom-nav-chip { filter: brightness(0.3) !important; }' +
-          '.mobile-bottom-nav-btn.active .mobile-bottom-nav-label { color: #3c4b49 !important; }' +
+          '.mobile-bottom-nav-btn.active .mobile-bottom-nav-chip { filter: none !important; }' +
+          '.mobile-bottom-nav-btn.active .mobile-bottom-nav-icon-img { display: block !important; filter: brightness(0) saturate(100%) invert(73%) sepia(30%) saturate(600%) hue-rotate(170deg) brightness(95%) contrast(90%) !important; }' +
+          '.mobile-bottom-nav-btn.active:not([data-mobile-nav=\"search\"]) .mobile-bottom-nav-icon-svg { display: none !important; }' +
+          '.mobile-bottom-nav-btn.active[data-mobile-nav=\"search\"] .mobile-bottom-nav-icon-svg { color: #7bbce8 !important; }' +
+          '.mobile-bottom-nav-btn.active .mobile-bottom-nav-label { color: #7bbce8 !important; }' +
           '.global-footer, .global-footer-band, .footer-band, .yr-footer { background: transparent !important; border: none !important; color: #ffffff !important; }' +
           '.global-footer a, .global-footer-band a, .footer-band a, .yr-footer a { color: #ffffff !important; }' +
           '.yr-footer h4 { color: #ffffff !important; }' +
           '.settings-shell, .settings-layout { background: transparent !important; border: none !important; box-shadow: none !important; }' +
           '.settings-page .hero, .settings-page .settings-shell { padding-top: 2rem !important; }' +
-          '.settings-card, .settings-panel-card, .settings-sidebar-card { background: #d5e8d3 !important; border-color: #c2d8c0 !important; border-radius: 4px !important; }' +
+          '.settings-card, .settings-panel-card, .settings-sidebar-card { background: #bdd8e9 !important; border-color: #7bbce8 !important; border-radius: 4px !important; }' +
           '.settings-feedback-field input, .settings-feedback-field textarea, .settings-feedback-field select, .settings-signup-field input, .settings-feedback-phone-group input { background: #fff !important; color: #000 !important; }' +
+          '.settings-feedback-phone-group, .settings-feedback-field:has(.settings-feedback-phone-group) { display: none !important; }' +
           '.search-page-shell { background: transparent !important; border: none !important; box-shadow: none !important; }' +
           '.search-page-note { display: none !important; }' +
           '.search-page .hero { padding-top: 3rem !important; }' +
-          '.header-search-btn, .settings-feedback-submit, .settings-signout { background: #2b4249 !important; border-color: #2b4249 !important; color: #fff !important; }' +
-          '.store-badge { background: #0f2d1f !important; border-color: #0f2d1f !important; color: #fff !important; }' +
-          '.header-search-btn:hover, .istanbul-discovery-primary-button:hover { background: #354a1a !important; }' +
-          '.istanbul-pagination-button { background: #2d6b3f !important; border-color: #2d6b3f !important; color: #fff !important; }' +
-          '.istanbul-pagination-current { background: #45503f !important; border-color: #45503f !important; color: #fff !important; }' +
+          '.header-search-btn, .settings-feedback-submit, .settings-signout { background: #011e3a !important; border: none !important; border-radius: 14px !important; color: #fff !important; }' +
+          '.store-badge { background: #011e3a !important; border-color: #011e3a !important; color: #fff !important; }' +
+          '.header-search-btn:hover, .istanbul-discovery-primary-button:hover { background: #0a2e52 !important; }' +
+          '.istanbul-pagination-button { background: #011e3a !important; border: none !important; border-radius: 14px !important; color: #fff !important; }' +
+          '.istanbul-pagination-current { background: #094174 !important; border-color: #094174 !important; color: #fff !important; }' +
           '.istanbul-results-mode { display: none !important; }' +
           '.istanbul-favorite-button, .card-share-trigger { background: #fdf8f0 !important; border: none !important; color: #093826 !important; border-radius: 8px !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; }' +
           '.venue-detail-action, .venue-detail-action-secondary, .venue-detail-action-inline { background: #fdf8f0 !important; border: none !important; color: #093826 !important; border-radius: 8px !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; }' +
@@ -878,7 +883,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.kesfet-category-dropdown-options { gap: 0 !important; padding: 0 !important; margin: 0 !important; }' +
           '.kesfet-category-dropdown-options .istanbul-filter-chip, .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box { border-radius: 0 !important; border: none !important; border-bottom: 1px solid rgba(164,179,181,0.35) !important; background: transparent !important; padding: 0.56rem 0.65rem !important; transition: background 0.15s ease !important; }' +
           '.kesfet-category-dropdown-options .istanbul-filter-chip:last-child, .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:last-child { border-bottom: none !important; }' +
-          '.kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active { background: rgba(9,56,38,0.08) !important; color: #093826 !important; font-weight: 500 !important; }';
+          '.kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active { background: rgba(9,56,38,0.08) !important; color: #093826 !important; font-weight: 500 !important; }' +
+          '.istanbul-filter-location-box, .istanbul-filter-section-box { background: #48769f !important; box-shadow: 0 3px 8px rgba(72,118,159,0.3) !important; color: #fff !important; }' +
+          '.istanbul-filter-location-box-title, .istanbul-filter-section-box-title, .istanbul-filter-field > span:first-child, .istanbul-filter-yeme-icme-budget-nest-label { color: #fff !important; }' +
+          '.istanbul-venue-card, .istanbul-venue-card-inner, .istanbul-filter-card, .istanbul-filter-section-box, .istanbul-filter-location-box, .content-guide, .venue-detail-main-card, .venue-detail-side-card, .venue-detail-media, .venue-detail-info, .venue-detail-reviews, .venue-detail-review-form, .top-city-card, .category-home-card, .settings-card, .settings-panel-card, .settings-sidebar-card, .istanbul-map-card, .istanbul-map-frame-wrap, .featured-venues-section, .featured-venues-panel, .featured-venues-grid, .home-lezzet-banner-inner { border: none !important; }';
         document.head.appendChild(style);
       }
 
@@ -955,29 +963,30 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         if (searchBtn && favoritesBtn && (searchBtn.compareDocumentPosition(favoritesBtn) & Node.DOCUMENT_POSITION_PRECEDING)) {
           mobileNav.insertBefore(searchBtn, favoritesBtn);
         }
-        // Replace favorites star icon with fav.png heart
-        if (favoritesBtn && !favoritesBtn.dataset.iconSwapped) {
-          favoritesBtn.dataset.iconSwapped = '1';
-          var chip = favoritesBtn.querySelector('.mobile-bottom-nav-chip');
-          if (chip) { chip.classList.remove('icon-load-failed'); }
-          var iconImg = favoritesBtn.querySelector('.mobile-bottom-nav-icon-img');
-          if (iconImg) {
-            iconImg.src = 'https://aramabul.com/assets/fav.png';
-            iconImg.style.display = 'block';
-            iconImg.style.width = '22px';
-            iconImg.style.height = '22px';
-          }
-          var iconSvg = favoritesBtn.querySelector('.mobile-bottom-nav-icon-svg');
-          if (iconSvg) { iconSvg.style.display = 'none'; }
-        }
-
-        // Force active nav icon color to #3c4b49, non-active white
+        // Replace footer nav PNG icons with custom SVGs
         mobileNav.querySelectorAll('.mobile-bottom-nav-btn').forEach(function(btn) {
-          var isActive = btn.classList.contains('active');
-          if (isActive) {
-            btn.style.filter = 'brightness(0.25)';
+          var type = btn.getAttribute('data-mobile-nav') || btn.dataset.mobileNav;
+          var img = btn.querySelector('.mobile-bottom-nav-icon-img');
+          var chip = btn.querySelector('.mobile-bottom-nav-chip');
+          if (img) {
+            if (type === 'home') { img.src = 'assets/ev.svg'; }
+            else if (type === 'favorites') { img.src = 'assets/fav.svg'; }
+            else if (type === 'profile') { img.src = 'assets/ayar.svg'; }
+            img.style.display = 'block';
+            img.style.width = '22px';
+            img.style.height = '22px';
+          }
+          if (type === 'home' || type === 'favorites' || type === 'profile') {
+            if (chip) { chip.classList.remove('icon-load-failed'); }
+            var svg = btn.querySelector('.mobile-bottom-nav-icon-svg');
+            if (svg) { svg.style.display = 'none'; }
+          }
+          // Active icon styling
+          if (btn.classList.contains('active')) {
+            if (chip) { chip.style.filter = 'none'; }
+            if (img) { img.style.filter = 'brightness(0) saturate(100%) invert(73%) sepia(30%) saturate(600%) hue-rotate(170deg) brightness(95%) contrast(90%)'; }
             var label = btn.querySelector('.mobile-bottom-nav-label');
-            if (label) { label.style.color = '#3c4b49'; }
+            if (label) { label.style.color = '#7bbce8'; }
           }
         });
       }
@@ -1015,7 +1024,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       var wm = document.querySelector('.brand-wordmark');
       if (wm && !wm.dataset.colored) {
         wm.dataset.colored = '1';
-        wm.innerHTML = '<span style="color:#e8f0e8">arama</span><span style="color:#a8d5a2">bul</span>';
+        wm.innerHTML = '<span style="color:#e8f0e8">arama</span><span style="color:#7bbce8">bul</span>';
       }
 
       // Simplify hero: change h1 + remove description paragraphs
@@ -1028,6 +1037,27 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         if (container) {
           container.querySelectorAll('p').forEach(function(p) { p.style.display = 'none'; });
         }
+      }
+      // Settings: fix mobile panel visibility for sub-panels (password, feedback, etc.)
+      var params = new URLSearchParams(window.location.search);
+      var action = (params.get('action') || '').trim().toLowerCase();
+      if (action === 'password' || action === 'feedback' || action === 'help' || action === 'about') {
+        var panelStack = document.querySelector('.settings-panel-stack');
+        var sidebar = document.querySelector('.settings-sidebar-card');
+        if (panelStack) { panelStack.style.display = 'block'; }
+        if (sidebar) { sidebar.style.display = 'none'; }
+        // Ensure bottom nav buttons work on settings sub-pages
+        setTimeout(function() {
+          document.querySelectorAll('.mobile-bottom-nav-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+              var type = btn.getAttribute('data-mobile-nav') || btn.dataset.mobileNav;
+              if (type === 'home') { window.location.href = 'index.html'; }
+              else if (type === 'search') { window.location.href = 'search.html'; }
+              else if (type === 'favorites') { window.location.href = 'favorites.html'; }
+              else if (type === 'profile') { window.location.href = 'profile.html?action=profile'; }
+            });
+          });
+        }, 500);
       }
     ''');
   }
@@ -1136,7 +1166,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
     final platformController = _controller.platform;
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-      _controller.setBackgroundColor(const Color(0xFF45503f));
+      _controller.setBackgroundColor(const Color(0xFF094174));
     }
     if (platformController is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
@@ -1310,7 +1340,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
     // Match status bar to the web header color
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Color(0xFF45503f),
+      statusBarColor: Color(0xFF094174),
       statusBarIconBrightness: Brightness.dark,
     ));
 
@@ -1324,12 +1354,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF45503f),
+        backgroundColor: const Color(0xFF094174),
         body: Column(
           children: [
             // Status bar safe padding with matching color
             Container(
-              color: const Color(0xFF45503f),
+              color: const Color(0xFF094174),
               height: MediaQuery.of(context).padding.top,
             ),
             if (_isOffline)
@@ -1350,21 +1380,77 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             if (showProgress)
               LinearProgressIndicator(
                 value: _progress / 100,
-                color: const Color(0xFF2d6b3f),
-                backgroundColor: const Color(0xFF45503f),
+                color: const Color(0xFF094174),
+                backgroundColor: const Color(0xFF094174),
               ),
             Expanded(
               child: Stack(
                 children: [
-                  WebViewWidget(controller: _controller),
+                  Opacity(
+                    opacity: _hasLoadedAtLeastOnce ? 1.0 : 0.0,
+                    child: WebViewWidget(controller: _controller),
+                  ),
                   if (_lastError != null) _buildErrorOverlay(),
                   // Theme overlay to prevent flash of unstyled content
-                  if (_isPageTransitioning && _hasLoadedAtLeastOnce)
+                  if (_isPageTransitioning || !_hasLoadedAtLeastOnce)
                     Positioned.fill(
                       child: AnimatedOpacity(
-                        opacity: _isPageTransitioning ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 200),
-                        child: Container(color: const Color(0xFF45503f)),
+                        opacity: (_isPageTransitioning || !_hasLoadedAtLeastOnce) ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 250),
+                        child: Container(
+                          color: const Color(0xFF094174),
+                          child: !_hasLoadedAtLeastOnce
+                            ? Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Image.asset(
+                                      'assets/logoNew.png',
+                                      width: 80,
+                                      height: 80,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    const SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.5,
+                                        color: Color(0xFF7bbce8),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : null,
+                        ),
+                      ),
+                    ),
+                  // Floating Refresh Icon
+                  if (_hasLoadedAtLeastOnce && !_isPageTransitioning && _lastError == null)
+                    Positioned(
+                      top: 16,
+                      right: 16,
+                      child: GestureDetector(
+                        onTap: _reload,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF094174).withValues(alpha: 0.9),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.25),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Image.asset(
+                            'assets/welcome/refresh.png',
+                            width: 22,
+                            height: 22,
+                          ),
+                        ),
                       ),
                     ),
                 ],
@@ -1373,7 +1459,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             // AdMob Banner Ad
             if (_isBannerReady && _bannerAd != null)
               Container(
-                color: const Color(0xFF45503f),
+                color: const Color(0xFF094174),
                 width: double.infinity,
                 height: _bannerAd!.size.height.toDouble(),
                 child: AdWidget(ad: _bannerAd!),
@@ -1386,7 +1472,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
   Widget _buildErrorOverlay() {
     return Container(
-      color: const Color(0xFF45503f),
+      color: const Color(0xFF094174),
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -1431,7 +1517,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                     icon: const Icon(Icons.refresh_rounded),
                     label: const Text('Tekrar Dene'),
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF2d6b3f),
+                      backgroundColor: const Color(0xFF094174),
                       minimumSize: const Size(180, 48),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

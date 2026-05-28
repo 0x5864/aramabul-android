@@ -84,6 +84,7 @@
   const kesfetBudgetCurrent = document.querySelector("[data-kesfet-budget-current]");
 
   const KESFET_CATEGORY_MENU_HOVER_DELAY_MS = 180;
+  const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0 || window.matchMedia("(pointer: coarse)").matches;
   const kesfetCategoryHoverCloseTimers = new WeakMap();
   const kesfetDistrictHoverCloseTimers = new WeakMap();
   const kesfetBudgetHoverCloseTimers = new WeakMap();
@@ -347,14 +348,16 @@
       closeKesfetCategoryMenuIstanbul();
     });
 
-    kesfetCategorySwitch.addEventListener("mouseenter", () => {
-      clearKesfetCategoryHoverTimerIstanbul(kesfetCategorySwitch);
-      openKesfetCategoryMenuIstanbul();
-    });
+    if (!isTouchDevice) {
+      kesfetCategorySwitch.addEventListener("mouseenter", () => {
+        clearKesfetCategoryHoverTimerIstanbul(kesfetCategorySwitch);
+        openKesfetCategoryMenuIstanbul();
+      });
 
-    kesfetCategorySwitch.addEventListener("mouseleave", () => {
-      scheduleKesfetCategoryMenuCloseIstanbul();
-    });
+      kesfetCategorySwitch.addEventListener("mouseleave", () => {
+        scheduleKesfetCategoryMenuCloseIstanbul();
+      });
+    }
 
     kesfetCategoryMenu.addEventListener("mouseenter", () => {
       clearKesfetCategoryHoverTimerIstanbul(kesfetCategorySwitch);
@@ -394,14 +397,16 @@
       closeKesfetBudgetMenuIstanbul();
     });
 
-    kesfetBudgetSwitch.addEventListener("mouseenter", () => {
-      clearKesfetBudgetHoverTimerIstanbul(kesfetBudgetSwitch);
-      openKesfetBudgetMenuIstanbul();
-    });
+    if (!isTouchDevice) {
+      kesfetBudgetSwitch.addEventListener("mouseenter", () => {
+        clearKesfetBudgetHoverTimerIstanbul(kesfetBudgetSwitch);
+        openKesfetBudgetMenuIstanbul();
+      });
 
-    kesfetBudgetSwitch.addEventListener("mouseleave", () => {
-      scheduleKesfetBudgetMenuCloseIstanbul();
-    });
+      kesfetBudgetSwitch.addEventListener("mouseleave", () => {
+        scheduleKesfetBudgetMenuCloseIstanbul();
+      });
+    }
 
     kesfetBudgetMenu.addEventListener("mouseenter", () => {
       clearKesfetBudgetHoverTimerIstanbul(kesfetBudgetSwitch);
@@ -457,17 +462,19 @@
       closeKesfetNeighborhoodMenuIstanbul();
     });
 
-    kesfetNeighborhoodSwitch.addEventListener("mouseenter", () => {
-      if (kesfetNeighborhoodTrigger.disabled) {
-        return;
-      }
-      clearKesfetNeighborhoodHoverTimerIstanbul(kesfetNeighborhoodSwitch);
-      openKesfetNeighborhoodMenuIstanbul();
-    });
+    if (!isTouchDevice) {
+      kesfetNeighborhoodSwitch.addEventListener("mouseenter", () => {
+        if (kesfetNeighborhoodTrigger.disabled) {
+          return;
+        }
+        clearKesfetNeighborhoodHoverTimerIstanbul(kesfetNeighborhoodSwitch);
+        openKesfetNeighborhoodMenuIstanbul();
+      });
 
-    kesfetNeighborhoodSwitch.addEventListener("mouseleave", () => {
-      scheduleKesfetNeighborhoodMenuCloseIstanbul();
-    });
+      kesfetNeighborhoodSwitch.addEventListener("mouseleave", () => {
+        scheduleKesfetNeighborhoodMenuCloseIstanbul();
+      });
+    }
 
     kesfetNeighborhoodMenu.addEventListener("mouseenter", () => {
       clearKesfetNeighborhoodHoverTimerIstanbul(kesfetNeighborhoodSwitch);
@@ -577,18 +584,20 @@
       closeKesfetDistrictMenuIstanbul();
     });
 
-    kesfetDistrictSwitch.addEventListener("mouseenter", () => {
-      clearKesfetDistrictHoverTimerIstanbul(kesfetDistrictSwitch);
-      openKesfetDistrictMenuIstanbul();
-    });
+    if (!isTouchDevice) {
+      kesfetDistrictSwitch.addEventListener("mouseenter", () => {
+        clearKesfetDistrictHoverTimerIstanbul(kesfetDistrictSwitch);
+        openKesfetDistrictMenuIstanbul();
+      });
 
-    kesfetDistrictSwitch.addEventListener("mouseleave", () => {
-      scheduleKesfetDistrictMenuCloseIstanbul();
-    });
+      kesfetDistrictSwitch.addEventListener("mouseleave", () => {
+        scheduleKesfetDistrictMenuCloseIstanbul();
+      });
 
-    kesfetDistrictMenu.addEventListener("mouseenter", () => {
-      clearKesfetDistrictHoverTimerIstanbul(kesfetDistrictSwitch);
-    });
+      kesfetDistrictMenu.addEventListener("mouseenter", () => {
+        clearKesfetDistrictHoverTimerIstanbul(kesfetDistrictSwitch);
+      });
+    }
 
     kesfetDistrictTrigger.addEventListener("focus", () => {
       openKesfetDistrictMenuIstanbul();
@@ -1516,6 +1525,8 @@
     return meters;
   }
 
+  const SLEEK_SVG_FALLBACK = "assets/no-image-icon.png";
+
   function getCategoryImage(category, name) {
     const normalized = normalizeText(category) + " " + normalizeText(name || "");
     if (normalized.includes("akaryakıt") || normalized.includes("akaryakit") || normalized.includes("benzin") || normalized.includes("petrol ofisi") || normalized.includes("opet") || normalized.includes("shell") || normalized.includes("bp ") || normalized.includes("total") || normalized.includes("lukoil")) {
@@ -1542,11 +1553,12 @@
     if (normalized.includes("kultur") || normalized.includes("kültür") || normalized.includes("muze") || normalized.includes("müze") || normalized.includes("cami") || normalized.includes("kilise") || normalized.includes("sinagog") || mvpMainCategoryKey === "kultur") {
       return "assets/kultur.png";
     }
-    return "assets/yemek.png";
+    return SLEEK_SVG_FALLBACK;
   }
 
   function isPlaceholderImage(src) {
-    return src.includes("assets/eczane.png") || src.includes("assets/hasta.png") || src.includes("assets/kafe.png") || src.includes("assets/yemek.png") || src.includes("assets/pompa.png") || src.includes("assets/veteriner.png") || src.includes("assets/sac.png") || src.includes("assets/kultur.png") || src.includes("assets/berber.jpeg");
+    if (!src) return false;
+    return src.startsWith("data:image/svg+xml") || src.includes("no-image-icon.png") || src.includes("assets/eczane.png") || src.includes("assets/hasta.png") || src.includes("assets/kafe.png") || src.includes("assets/yemek.png") || src.includes("assets/pompa.png") || src.includes("assets/veteriner.png") || src.includes("assets/sac.png") || src.includes("assets/kultur.png") || src.includes("assets/berber.jpeg");
   }
 
   function readVenueSlugFromUrl() {
@@ -3125,6 +3137,7 @@
 
       card.tabIndex = 0;
       card.venue = item;
+      card.dataset.cardCategory = (item.category || item.cuisine || "").toLowerCase().replace(/\s+/g, "-");
       if (item.slug === state.selectedVenueSlug) {
         card.classList.add("is-selected");
       }
@@ -3132,7 +3145,6 @@
       if (image && media) {
         const photoUri = typeof item.photoUri === "string" ? item.photoUri.trim() : "";
         if (photoUri) {
-          image.src = photoUri;
           image.alt = `${item.name || "Mekan"} fotoğrafı`;
           image.addEventListener(
             "error",
@@ -3146,6 +3158,7 @@
             },
             { once: true },
           );
+          image.src = photoUri;
         } else {
           const fallback = getCategoryImage(item.category || item.cuisine || "", item.name);
           image.src = fallback;
@@ -3160,27 +3173,8 @@
       eyebrow.textContent = "";
       eyebrow.hidden = true;
 
-      const rawDistanceMeters = (item.distanceMeters != null && item.distanceMeters !== "") ? Number(item.distanceMeters) : NaN;
-      const computedDistanceMeters = Number.isFinite(rawDistanceMeters)
-        ? rawDistanceMeters
-        : computeDistanceMeters(state.userLocation, item);
-      const formattedDistance = formatDistance(computedDistanceMeters);
-      if (formattedDistance) {
-        distance.hidden = false;
-        distance.textContent = formattedDistance;
-      } else if (state.nearbyMode) {
-        distance.hidden = false;
-        distance.textContent = "Yakın ilçe";
-      } else {
-        distance.hidden = true;
-      }
-
-      if (distance && actions) {
-        if (distance.parentElement !== actions) {
-          actions.insertBefore(distance, actionGroup || actions.firstChild);
-        }
-        actions.classList.add("has-distance-chip");
-      }
+      // Mesafe bilgisi artık info kutucuklarında hesaplanıyor
+      distance.hidden = true;
 
       titleLink.textContent = item.name || "İsimsiz mekan";
       titleLink.href = buildDetailUrl(item);
@@ -3193,56 +3187,100 @@
       if (pillRow) pillRow.hidden = true;
       if (actions) actions.hidden = true;
 
-      // Tag satırına sadece ilçe, altkategori ve mesafe ekleniyor
-      const seenTagKeys = new Set();
+      // ── Bilgi kutucukları: 2 satır ──
+      tags.innerHTML = "";
+      const infoBoxes = document.createElement("div");
+      infoBoxes.className = "venue-card-info-boxes";
 
-      function consumeTagLabel(label) {
-        const trimmed = String(label || "").trim();
-        if (!trimmed) return false;
-        const key = normalizeText(trimmed);
-        if (!key || seenTagKeys.has(key)) return false;
-        seenTagKeys.add(key);
-        return true;
-      }
+      // Satır 1: İlçe, Mahalle, Alt Kategori
+      const row1 = document.createElement("div");
+      row1.className = "venue-card-info-row";
 
       const districtLabel = String(item.district || "").trim();
       if (districtLabel) {
-        const link = document.createElement("a");
-        link.className = "istanbul-venue-tag";
-        link.href = buildYemeIcmeDistrictFilterUrl(districtLabel);
-        link.setAttribute("aria-label", `${districtLabel} ilçesindeki mekanları aç`);
-        link.textContent = districtLabel;
-        tags.appendChild(link);
-        consumeTagLabel(districtLabel);
+        const el = document.createElement("a");
+        el.className = "istanbul-venue-tag";
+        el.href = buildYemeIcmeDistrictFilterUrl(districtLabel);
+        el.setAttribute("aria-label", `${districtLabel} ilçesindeki mekanları aç`);
+        el.textContent = districtLabel;
+        row1.appendChild(el);
+      }
+
+      const neighborhoodLabel = String(item.neighborhood || item.mahalle || "").trim();
+      if (neighborhoodLabel) {
+        const el = document.createElement("span");
+        el.className = "istanbul-venue-tag";
+        el.textContent = neighborhoodLabel;
+        row1.appendChild(el);
       }
 
       const cuisineLabel = String(item.cuisine || item.category || "").trim();
       if (cuisineLabel && normalizeText(cuisineLabel) !== normalizeText(districtLabel)) {
-        if (consumeTagLabel(cuisineLabel)) {
-          const href = buildYemeIcmeCategoryFilterUrl(item);
-          if (href) {
-            const link = document.createElement("a");
-            link.className = "istanbul-venue-tag";
-            link.href = href;
-            link.setAttribute("aria-label", `${cuisineLabel} türündeki mekanları filtrele`);
-            link.textContent = cuisineLabel;
-            tags.appendChild(link);
-          } else {
-            const span = document.createElement("span");
-            span.className = "istanbul-venue-tag";
-            span.textContent = cuisineLabel;
-            tags.appendChild(span);
-          }
+        const href = buildYemeIcmeCategoryFilterUrl(item);
+        if (href) {
+          const el = document.createElement("a");
+          el.className = "istanbul-venue-tag";
+          el.href = href;
+          el.setAttribute("aria-label", `${cuisineLabel} türündeki mekanları filtrele`);
+          el.textContent = cuisineLabel;
+          row1.appendChild(el);
+        } else {
+          const el = document.createElement("span");
+          el.className = "istanbul-venue-tag";
+          el.textContent = cuisineLabel;
+          row1.appendChild(el);
         }
       }
 
-      // Mesafe chip'ini tag satırına ekle
-      if (!distance.hidden) {
-        distance.classList.add("istanbul-venue-tag");
-        tags.appendChild(distance);
+      if (row1.childElementCount) {
+        infoBoxes.appendChild(row1);
       }
 
-      if (!tags.childElementCount) {
+      // Satır 2: Bütçe, Mesafe, Değerlendirme
+      const row2 = document.createElement("div");
+      row2.className = "venue-card-info-row";
+
+      const budgetValue = String(item.budget || "").trim();
+      const budgetLabel = formatBudgetLabel(budgetValue);
+      if (budgetLabel && normalizeText(budgetLabel) !== normalizeText("bilinmiyor")) {
+        const el = document.createElement("span");
+        el.className = "istanbul-venue-budget";
+        el.textContent = budgetLabel;
+        row2.appendChild(el);
+      }
+
+      const rawDistanceMeters = (item.distanceMeters != null && item.distanceMeters !== "") ? Number(item.distanceMeters) : NaN;
+      const computedDistanceMeters = Number.isFinite(rawDistanceMeters)
+        ? rawDistanceMeters
+        : computeDistanceMeters(state.userLocation, item);
+      const formattedDistance = formatDistance(computedDistanceMeters);
+      if (formattedDistance) {
+        const el = document.createElement("span");
+        el.className = "istanbul-venue-distance";
+        el.textContent = formattedDistance;
+        row2.appendChild(el);
+      }
+
+      const ratingNum = Number(item.rating);
+      if (Number.isFinite(ratingNum) && ratingNum > 0) {
+        const ratingFormatted = ratingNum.toFixed(1).replace(".", ",");
+        const ratingCount = Number(item.userRatingCount ?? item.user_rating_count ?? 0);
+        const countText = ratingCount > 0 ? ` (${new Intl.NumberFormat("tr-TR").format(ratingCount)})` : "";
+        const el = document.createElement("span");
+        el.className = "istanbul-venue-tag";
+        el.textContent = `★ ${ratingFormatted}${countText}`;
+        row2.appendChild(el);
+      }
+
+      if (row2.childElementCount) {
+        infoBoxes.appendChild(row2);
+      }
+
+      tags.appendChild(infoBoxes);
+      // Mesafe distance elemanını gizle (artık info kutucuklarında)
+      distance.hidden = true;
+
+      if (!infoBoxes.childElementCount) {
         card.classList.add("is-tagless");
       }
 
@@ -3393,8 +3431,28 @@
           ? withDistance.filter((item) => Number.isFinite(item.distanceMeters) && item.distanceMeters <= 8000)
           : withDistance;
 
+        const hasValidPhoto = (item) => {
+          if (!item) return false;
+          const photo = item.photoUri || item.photoUrl || item.imageUrl || item.image || item.coverImageUrl;
+          if (typeof photo !== "string") return false;
+          const val = photo.trim();
+          if (!val) return false;
+          if (val.includes("AL8-SNH-")) return false;
+          if (val.includes("AL8-SNHyLSmXv7Pa75n")) return false;
+          if (val.includes("staticmap")) return false;
+          if (val.includes("maps.google")) return false;
+          if (val.includes("assets/")) return false;
+          return true;
+        };
+
         if (state.nearbyMode && state.userLocation) {
           finalItems.sort((a, b) => {
+            const aHasPhoto = hasValidPhoto(a);
+            const bHasPhoto = hasValidPhoto(b);
+            if (aHasPhoto !== bHasPhoto) {
+              return aHasPhoto ? -1 : 1;
+            }
+
             const aIsOsm = a.source === "openstreetmap";
             const bIsOsm = b.source === "openstreetmap";
             if (aIsOsm !== bIsOsm) {
@@ -3411,6 +3469,14 @@
         } else if (shouldHighRatedRandomDiscoveryLocal()) {
           const pool = finalItems.slice();
           shuffleDiscoveryVenuesInPlace(pool);
+          pool.sort((a, b) => {
+            const aHasPhoto = hasValidPhoto(a);
+            const bHasPhoto = hasValidPhoto(b);
+            if (aHasPhoto !== bHasPhoto) {
+              return aHasPhoto ? -1 : 1;
+            }
+            return 0;
+          });
           finalItems.length = 0;
           finalItems.push(...pool);
         } else if (mvpMainCategoryKey === "yeme-icme") {
@@ -3420,6 +3486,12 @@
             return Number.isFinite(r) ? r : 0;
           };
           finalItems.sort((a, b) => {
+            const aHasPhoto = hasValidPhoto(a);
+            const bHasPhoto = hasValidPhoto(b);
+            if (aHasPhoto !== bHasPhoto) {
+              return aHasPhoto ? -1 : 1;
+            }
+
             const dc = reviewCount(b) - reviewCount(a);
             if (dc !== 0) {
               return dc;
@@ -3431,7 +3503,14 @@
             return String(a.name || "").localeCompare(String(b.name || ""), "tr-TR");
           });
         } else {
-          finalItems.sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "tr-TR"));
+          finalItems.sort((a, b) => {
+            const aHasPhoto = hasValidPhoto(a);
+            const bHasPhoto = hasValidPhoto(b);
+            if (aHasPhoto !== bHasPhoto) {
+              return aHasPhoto ? -1 : 1;
+            }
+            return String(a.name || "").localeCompare(String(b.name || ""), "tr-TR");
+          });
         }
 
         const total = finalItems.length;

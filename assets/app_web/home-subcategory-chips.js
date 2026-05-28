@@ -77,6 +77,9 @@
       link.className = "home-subcat-chip";
       link.href = entry.href;
       link.textContent = translateName(entry.name);
+      if (entry.category) {
+        link.dataset.category = entry.category;
+      }
       fragment.appendChild(link);
     });
 
@@ -111,6 +114,7 @@
         allChips.push({
           name: item.name || "",
           href: buildChipHref(mainCat, item),
+          category: mainCat.key,
         });
       });
     }

@@ -168,7 +168,7 @@ main {
   width: min(1220px, calc(100% - 2.4rem));
   margin-inline: auto;
   position: relative;
-  padding-top: calc(72px + 0.3rem + 2.4rem);
+  padding-top: calc(59px + 0.3rem + 2.4rem);
   background: var(--bg);
 }
 
@@ -180,7 +180,7 @@ main {
   transform: none;
   z-index: 1200;
   box-sizing: border-box;
-  min-height: 72px;
+  min-height: 59px;
   padding-inline-start: max(calc((100vw - 1220px) / 2 + var(--header-line-start)), calc(1.2rem + var(--header-line-start)));
   padding-inline-end: max(calc((100vw - 1220px) / 2), 1.2rem);
   padding-bottom: 0.3rem;
@@ -544,8 +544,8 @@ main {
 }
 
 .brand-logo {
-  width: 4rem;
-  height: 4rem;
+  width: 7.1rem;
+  height: 7.1rem;
   object-fit: contain;
   flex-shrink: 0;
 }
@@ -6550,7 +6550,7 @@ body.mobile-chrome-browser.mobile-force-layout .brand-wordmark {
   max-width: 100%;
   margin-bottom: 0;
   border: 1px solid rgba(220, 226, 229, 0.92);
-  border-radius: 4px;
+  border-radius: 10px;
   background: #ffffff;
   aspect-ratio: 4 / 3;
 }
@@ -9335,14 +9335,161 @@ body.yeme-icme-page .istanbul-results-grid {
   display: block;
 }
 
+/* Right column: photo + map + button stacked */
+.venue-detail-right-col {
+  grid-column: 2;
+  grid-row: 1 / -1;
+  align-self: start;
+}
+
+/* Inline map below photo — same size as photo */
+.venue-detail-map-inline {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid rgba(220, 226, 229, 0.92);
+  margin-top: 0.5rem;
+}
+
+.venue-detail-map-actions-inline {
+  margin-top: 0.4rem;
+}
+
+.venue-detail-map-inline-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+
+
+
+.venue-detail-directions-btn,
+.venue-detail-directions-btn:link,
+.venue-detail-directions-btn:visited,
+.venue-detail-directions-btn:hover,
+.venue-detail-directions-btn:active {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  padding: 0.45rem 0.9rem !important;
+  background: #1a73e8 !important;
+  color: #fff !important;
+  border-radius: 6px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  border: none !important;
+}
+
+.venue-detail-directions-btn svg {
+  flex-shrink: 0;
+}
+
+.venue-detail-maps-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid rgba(210, 216, 219, 0.9);
+  color: #1a73e8;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.venue-detail-maps-link:hover {
+  background: rgba(26, 115, 232, 0.06);
+  border-color: #1a73e8;
+}
+
+/* Similar venues */
+.venue-detail-similar {
+  margin-top: 0.75rem;
+}
+
+.venue-detail-similar-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1b2029;
+  margin: 0 0 0.5rem;
+}
+
+.venue-detail-similar-list {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+.venue-detail-similar-list::-webkit-scrollbar {
+  height: 4px;
+}
+
+.venue-detail-similar-list::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.15);
+  border-radius: 2px;
+}
+
+.venue-detail-similar-card {
+  flex: 0 0 130px;
+  scroll-snap-align: start;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(210, 216, 219, 0.9);
+  background: #fff;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.2s ease;
+}
+
+.venue-detail-similar-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.venue-detail-similar-card-img {
+  width: 100%;
+  height: 85px;
+  object-fit: cover;
+  display: block;
+  background: #eef1f3;
+}
+
+.venue-detail-similar-card-body {
+  padding: 0.35rem 0.45rem;
+}
+
+.venue-detail-similar-card-name {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #1b2029;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.venue-detail-similar-card-meta {
+  font-size: 0.65rem;
+  color: rgba(27, 32, 41, 0.6);
+  margin: 2px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .venue-detail-review-form {
   display: grid;
   gap: 0.78rem;
-  border: 1px solid rgba(210, 216, 219, 0.92);
+  border: 1px solid rgba(210, 216, 219, 0.92) !important;
   border-radius: 8px;
-  background: #ffffff;
+  background: #ffffff !important;
   padding: 1rem;
-  box-shadow: 0 12px 24px rgba(27, 32, 41, 0.05);
+  box-shadow: 0 12px 24px rgba(27, 32, 41, 0.05) !important;
 }
 
 .venue-detail-review-field {
@@ -9479,10 +9626,9 @@ body.yeme-icme-page .istanbul-results-grid {
 }
 
 .admin-panel-nav-card.is-active {
-  border-color: #0a1f3d !important;
-  background: #0a1f3d !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(10, 31, 61, 0.35) !important;
+  border-color: #094174;
+  background: #094174;
+  color: #ffffff;
 }
 
 .admin-panel-nav-title {
@@ -9493,7 +9639,7 @@ body.yeme-icme-page .istanbul-results-grid {
 }
 
 .admin-panel-nav-card.is-active .admin-panel-nav-title {
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
 .admin-venues-list-card,
@@ -11404,8 +11550,7 @@ a.ustalara-saygi-inner,
 
 .venue-detail-media,
 .venue-detail-info,
-.venue-detail-reviews,
-.venue-detail-review-form {
+.venue-detail-reviews {
   background: #bdd8e9 !important;
   border: 1px solid rgba(22, 93, 91, 0.10) !important;
   box-shadow: 0 3px 10px rgba(9, 56, 38, 0.06) !important;
@@ -11759,6 +11904,8 @@ body.saglik-page .content-guide h2,
 }
 
 .brand-logo {
+  width: 100px;
+  height: 100px;
   border-radius: 8px;
 }
 
@@ -11987,9 +12134,9 @@ body.saglik-page .content-guide h2,
 
 /* Modal box */
 .bh-modal {
-  background: #e8f5e9;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f0fa 100%);
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(9, 56, 38, 0.08);
+  box-shadow: 0 20px 60px rgba(13, 32, 50, 0.25), 0 0 0 1px rgba(13, 32, 50, 0.08);
   width: 100%;
   max-width: 480px;
   max-height: 90vh;
@@ -12010,13 +12157,13 @@ body.saglik-page .content-guide h2,
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 1.5rem 0.75rem;
-  border-bottom: 1px solid rgba(9, 56, 38, 0.08);
+  border-bottom: 1px solid rgba(13, 32, 50, 0.08);
 }
 
 .bh-modal-title {
   font-size: 1.15rem;
   font-weight: 700;
-  color: #093826;
+  color: #0a2540;
   margin: 0;
 }
 
@@ -12027,9 +12174,9 @@ body.saglik-page .content-guide h2,
   align-items: center;
   justify-content: center;
   border: none;
-  background: rgba(9, 56, 38, 0.06);
+  background: rgba(13, 32, 50, 0.06);
   border-radius: 8px;
-  color: #093826;
+  color: #0a2540;
   font-size: 1rem;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -12037,7 +12184,7 @@ body.saglik-page .content-guide h2,
 }
 
 .bh-modal-close:hover {
-  background: rgba(9, 56, 38, 0.14);
+  background: rgba(13, 32, 50, 0.14);
 }
 
 /* Form */
@@ -12047,7 +12194,7 @@ body.saglik-page .content-guide h2,
 
 .bh-form-intro {
   font-size: 0.82rem;
-  color: #4a5c57;
+  color: #405973;
   line-height: 1.5;
   margin: 0 0 1.25rem;
 }
@@ -12061,7 +12208,7 @@ body.saglik-page .content-guide h2,
   display: block;
   font-size: 0.82rem;
   font-weight: 600;
-  color: #093826;
+  color: #0a2540;
   margin-bottom: 0.35rem;
 }
 
@@ -12073,7 +12220,7 @@ body.saglik-page .content-guide h2,
 
 .bh-field-optional {
   font-weight: 400;
-  color: #7a8c87;
+  color: #607993;
   font-size: 0.78rem;
 }
 
@@ -12081,7 +12228,7 @@ body.saglik-page .content-guide h2,
   display: block;
   width: 100%;
   padding: 0.6rem 0.75rem;
-  border: 1.5px solid rgba(9, 56, 38, 0.18);
+  border: 1.5px solid rgba(13, 32, 50, 0.15);
   border-radius: 8px;
   background: #fff;
   color: #011d36;
@@ -12092,13 +12239,13 @@ body.saglik-page .content-guide h2,
 }
 
 .bh-input::placeholder {
-  color: #a0b0ab;
+  color: #90a5bc;
 }
 
 .bh-input:focus {
   outline: none;
-  border-color: #093826;
-  box-shadow: 0 0 0 3px rgba(9, 56, 38, 0.1);
+  border-color: #0d2032;
+  box-shadow: 0 0 0 3px rgba(13, 32, 50, 0.1);
 }
 
 /* Actions */
@@ -12125,7 +12272,7 @@ body.saglik-page .content-guide h2,
 }
 
 .bh-submit-btn:hover:not(:disabled) {
-  background: #0b4a33;
+  background: #0f3154;
   transform: translateY(-1px);
 }
 
@@ -12423,21 +12570,6 @@ body.venue-detail-page .admin-login-card .admin-login-copy {
 
 .admin-panel-nav-card {
   border-radius: 14px !important;
-}
-
-.admin-panel-nav-card.is-active,
-body.venue-detail-page .admin-panel-nav-card.is-active,
-body.admin-venue-editor-page .admin-panel-nav-card.is-active {
-  background: #0a1f3d !important;
-  border-color: #0a1f3d !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(10, 31, 61, 0.35) !important;
-}
-
-.admin-panel-nav-card.is-active .admin-panel-nav-title,
-body.venue-detail-page .admin-panel-nav-card.is-active .admin-panel-nav-title,
-body.admin-venue-editor-page .admin-panel-nav-card.is-active .admin-panel-nav-title {
-  color: #ffffff !important;
 }
 
 .admin-login-card {
