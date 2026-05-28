@@ -844,12 +844,14 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-discovery-hero-label { background: #fdf8f0 !important; border: none !important; border-radius: 8px !important; color: #093826 !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; }' +
           '.istanbul-venue-tag, .istanbul-venue-distance, .istanbul-venue-budget { background: #fdf8f0 !important; border: 1px solid #7bbce8 !important; border-radius: 8px !important; color: #093826 !important; font-size: 0.76rem !important; font-weight: 600 !important; padding: 0.25rem 0.55rem !important; white-space: nowrap !important; }' +
           '.istanbul-filter-nearby-panel-button, .istanbul-discovery-primary-button { background: #011e3a !important; border: none !important; border-radius: 14px !important; color: #fff !important; }' +
-          '.venue-detail-main-card, .venue-detail-side-card { background: #bdd8e9 !important; border: none !important; border-radius: 14px !important; }' +
+          '.venue-detail-main-card { background: #bdd8e9 !important; border: none !important; border-radius: 14px !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; padding: 0.75rem !important; overflow: hidden !important; }' +
+          '.venue-detail-side-card { background: #bdd8e9 !important; border: none !important; border-radius: 14px !important; }' +
           '.venue-detail-media, .venue-detail-info, .venue-detail-reviews, .venue-detail-review-form { background: #bdd8e9 !important; border-color: #bdd8e9 !important; }' +
-          '.venue-detail-top-grid { display: flex !important; flex-direction: column !important; gap: 1rem !important; }' +
-          '.venue-detail-side-info, .venue-detail-right-col { width: 100% !important; max-width: 100% !important; display: block !important; }' +
+          '.venue-detail-top-grid { display: flex !important; flex-direction: column !important; gap: 0.75rem !important; width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; }' +
+          '.venue-detail-side-info, .venue-detail-right-col { width: 100% !important; max-width: 100% !important; display: block !important; box-sizing: border-box !important; }' +
           '.venue-detail-right-col { display: flex !important; flex-direction: column !important; gap: 0.75rem !important; }' +
-          '.venue-detail-media, .venue-detail-media-placeholder, .venue-detail-map-inline { width: 100% !important; max-width: 100% !important; aspect-ratio: 4 / 3 !important; }' +
+          '.venue-detail-media, .venue-detail-media-placeholder, .venue-detail-map-inline { width: 100% !important; max-width: 100% !important; box-sizing: border-box !important; aspect-ratio: 4 / 3 !important; overflow: hidden !important; border-radius: 10px !important; }' +
+          '.venue-detail-image, .venue-detail-map-inline-frame { width: 100% !important; height: 100% !important; max-width: 100% !important; box-sizing: border-box !important; object-fit: cover !important; }' +
           '.section-head h1, .section-head h2, .section-head h3, .province-head h1, .province-head h2, .province-head h3, .istanbul-discovery-copy h1, .istanbul-discovery-copy h2 { color: #ffffff !important; font-weight: 700 !important; margin-bottom: 0.75rem !important; }' +
           '.istanbul-discovery-kicker, .istanbul-breadcrumb, .istanbul-breadcrumb a, .istanbul-breadcrumb a:visited, .istanbul-breadcrumb span, .istanbul-discovery-subline, .istanbul-discovery-location-note { color: #ffffff !important; }' +
           '.istanbul-results-meta, .istanbul-results-state { color: #ffffff !important; text-align: left !important; }' +
