@@ -2,18 +2,18 @@ const ASSET_VERSION = "20260305-03";
 const CATEGORY_VENUES_JSON_PATH = "data/venues.json";
 const DISTRICTS_JSON_PATH = "data/districts.json";
 const ROOT_MARQUEE_IMAGES = Object.freeze([
-  { src: "assets/yemek.png", alt: "Yeme-İçme görseli" },
-  { src: "assets/gezi.png", alt: "Gezi görseli" },
-  { src: "assets/sac.png", alt: "Hizmetler görseli" },
+  { src: "assets/yemek.webp", alt: "Yeme-İçme görseli" },
+  { src: "assets/gezi.webp", alt: "Gezi görseli" },
+  { src: "assets/sac.webp", alt: "Hizmetler görseli" },
   { src: "assets/saglik.png", alt: "Sağlık görseli" },
-  { src: "assets/kultur.png", alt: "Kültür görseli" },
+  { src: "assets/kultur.webp", alt: "Kültür görseli" },
   { src: "assets/sanat.png", alt: "Sanat görseli" },
-  { src: "assets/eczane.png", alt: "Eczane görseli" },
+  { src: "assets/eczane.webp", alt: "Eczane görseli" },
   { src: "assets/kafe.png", alt: "Kafe görseli" },
-  { src: "assets/yemek.png", alt: "Yeme-İçme görseli" },
+  { src: "assets/yemek.webp", alt: "Yeme-İçme görseli" },
   { src: "assets/otel.png", alt: "Otel görseli" },
-  { src: "assets/pompa.png", alt: "Akaryakıt görseli" },
-  { src: "assets/veteriner.png", alt: "Veteriner görseli" },
+  { src: "assets/pompa.webp", alt: "Akaryakıt görseli" },
+  { src: "assets/veteriner.webp", alt: "Veteriner görseli" },
 ]);
 const DISTRICT_INLINE_AD_INSERT_AFTER = 6;
 const DISTRICT_INLINE_AD_SCRIPT_SRC = "";
@@ -602,13 +602,14 @@ function rankNearbyVenues(venues, cityName, districtName, neighborhoodName) {
     if (!item) return false;
     const photo = item.photoUrl || item.photoUri || item.imageUrl || item.image || item.coverImageUrl;
     if (typeof photo !== "string") return false;
-    const val = photo.trim();
+    const val = photo.trim().toLowerCase();
     if (!val) return false;
-    if (val.includes("AL8-SNH-")) return false;
-    if (val.includes("AL8-SNHyLSmXv7Pa75n")) return false;
-    if (val.includes("staticmap")) return false;
-    if (val.includes("maps.google")) return false;
-    if (val.includes("assets/")) return false;
+    if (val.includes("al8-snh-") || val.includes("al8-snhylsmxv7pa75n") || val.includes("staticmap") || val.includes("maps.google") || val.includes("assets/") || val.includes("static-maps.yandex") || val.includes("s100x100")) return false;
+    if (val === "null" || val === "undefined" || val === "none" || val === "placeholder" || val === "empty" || val === "false") return false;
+    if (val.includes("no-image") || val.includes("noimage") || val.includes("no_image") || val.includes("no-photo") || val.includes("nophoto")) return false;
+    if (val.includes("placeholder") || val.includes("upload-img") || val.includes("upload_img") || val.includes("<img")) return false;
+    if (val.includes("default-") || val.includes("default_") || val.includes("/default.") || val.includes("/defaultog") || val.includes("og-image") || val.includes("social-image") || val.includes("stock/")) return false;
+    if (!val.startsWith("http://") && !val.startsWith("https://") && !val.startsWith("/")) return false;
     return true;
   };
 
@@ -1965,6 +1966,14 @@ function buildMapsSearchUrl(venue) {
 }
 
 function buildMapsEmbedUrl(venue) {
+  const lat = Number(venue.latitude || venue.lat);
+  const lng = Number(venue.longitude || venue.lng);
+  const name = venue.name || "Mekan";
+
+  if (Number.isFinite(lat) && Number.isFinite(lng)) {
+    return `https://maps.google.com/maps?hl=tr&q=loc:${lat},${lng}(${encodeURIComponent(name)})&z=15&output=embed`;
+  }
+
   const mapsUrl = new URL("https://www.google.com/maps");
   mapsUrl.searchParams.set("q", buildVenueQueryText(venue));
   mapsUrl.searchParams.set("output", "embed");
@@ -1972,8 +1981,11 @@ function buildMapsEmbedUrl(venue) {
 }
 
 function buildVenueUrl(venue) {
-  // Generate venue detail URL with parameters
-  return `venue-detail.html?venue=${encodeURIComponent(venue.name)}&district=${encodeURIComponent(venue.district || '')}`;
+  const slug = String(venue.slug || "").trim();
+  if (slug) {
+    return `venue-detail.html?slug=${encodeURIComponent(slug)}`;
+  }
+  return `venue-detail.html?slug=${encodeURIComponent(venue.name || '')}`;
 }
 
 function sanitizeUrl(rawUrl) {
@@ -1991,6 +2003,30 @@ function sanitizeUrl(rawUrl) {
   }
 
   return "";
+}
+
+function buildDirectionsUrl(venue) {
+  const mapsUrl = new URL("https://www.google.com/maps/search/");
+  mapsUrl.searchParams.set("api", "1");
+  mapsUrl.searchParams.set("query", buildVenueQueryText(venue));
+
+  const placeId = String(venue.sourcePlaceId || venue.placeId || "").trim();
+  if (placeId) {
+    mapsUrl.searchParams.set("query_place_id", placeId);
+  }
+
+  return mapsUrl.toString();
+}
+
+function buildGoogleDirectionsUrl(venue) {
+  const lat = Number(venue.latitude || venue.lat);
+  const lng = Number(venue.longitude || venue.lng);
+  const name = venue.name || "Mekan";
+  if (Number.isFinite(lat) && Number.isFinite(lng)) {
+    return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+  }
+  const queryText = [name, venue.address, venue.district, "İstanbul"].filter(Boolean).join(" ");
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(queryText)}`;
 }
 
 function mapsPlaceUrl(venue) {
@@ -2077,12 +2113,16 @@ function ensureMapFocusModal() {
           ></iframe>
         </div>
       </div>
+      <footer class="map-focus-foot">
+        <a class="map-focus-external" href="#" target="_blank" rel="noopener noreferrer">Google Maps'te aç</a>
+      </footer>
     </article>
   `;
 
   const titleNode = modal.querySelector(".map-focus-title");
   const subtitleNode = modal.querySelector(".map-focus-subtitle");
   const iframeNode = modal.querySelector(".map-focus-frame");
+  const externalNode = modal.querySelector(".map-focus-external");
   const closeNode = modal.querySelector(".map-focus-close");
   const backdropNode = modal.querySelector(".map-focus-backdrop");
   const infoPhonePrimaryNode = modal.querySelector('[data-info-field="phone-primary"]');
@@ -2124,6 +2164,16 @@ function ensureMapFocusModal() {
       subtitleNode.hidden = !subtitle;
     }
 
+    if (externalNode instanceof HTMLAnchorElement) {
+      if (externalUrl) {
+        externalNode.href = externalUrl;
+        externalNode.hidden = false;
+      } else {
+        externalNode.removeAttribute("href");
+        externalNode.hidden = true;
+      }
+    }
+
     const info = payload?.info && typeof payload.info === "object" ? payload.info : {};
     const infoLocation = String(info.location || subtitle || "").trim();
     const infoAddress = String(info.address || "").trim();
@@ -2146,9 +2196,11 @@ function ensureMapFocusModal() {
       if (infoWebsite) {
         infoWebsiteNode.href = infoWebsite;
         infoWebsiteNode.textContent = infoWebsite;
+        infoWebsiteNode.hidden = false;
       } else {
         infoWebsiteNode.removeAttribute("href");
         infoWebsiteNode.textContent = "";
+        infoWebsiteNode.hidden = true;
       }
     }
     if (infoPhotoNode instanceof HTMLImageElement) {
@@ -2171,7 +2223,7 @@ function ensureMapFocusModal() {
       infoAddressRow.hidden = !infoAddress;
     }
     if (infoWebsiteRow instanceof HTMLElement) {
-      infoWebsiteRow.hidden = false;
+      infoWebsiteRow.hidden = !infoWebsite;
     }
 
     iframeNode.src = embedUrl;
@@ -2977,13 +3029,14 @@ function sortVenuesByGoogleRating(venues) {
     if (!item) return false;
     const photo = item.photoUrl || item.photoUri || item.imageUrl || item.image || item.coverImageUrl;
     if (typeof photo !== "string") return false;
-    const val = photo.trim();
+    const val = photo.trim().toLowerCase();
     if (!val) return false;
-    if (val.includes("AL8-SNH-")) return false;
-    if (val.includes("AL8-SNHyLSmXv7Pa75n")) return false;
-    if (val.includes("staticmap")) return false;
-    if (val.includes("maps.google")) return false;
-    if (val.includes("assets/")) return false;
+    if (val.includes("al8-snh-") || val.includes("al8-snhylsmxv7pa75n") || val.includes("staticmap") || val.includes("maps.google") || val.includes("assets/") || val.includes("static-maps.yandex") || val.includes("s100x100")) return false;
+    if (val === "null" || val === "undefined" || val === "none" || val === "placeholder" || val === "empty" || val === "false") return false;
+    if (val.includes("no-image") || val.includes("noimage") || val.includes("no_image") || val.includes("no-photo") || val.includes("nophoto")) return false;
+    if (val.includes("placeholder") || val.includes("upload-img") || val.includes("upload_img") || val.includes("<img")) return false;
+    if (val.includes("default-") || val.includes("default_") || val.includes("/default.") || val.includes("/defaultog") || val.includes("og-image") || val.includes("social-image") || val.includes("stock/")) return false;
+    if (!val.startsWith("http://") && !val.startsWith("https://") && !val.startsWith("/")) return false;
     return true;
   };
 
@@ -3113,6 +3166,12 @@ function filterDistrictVenueSlice(definition, venues, city, district) {
 }
 
 function renderVenueRow(title, venues, subtitle = "", options = {}) {
+  const shuffledVenues = [...(venues || [])];
+  for (let i = shuffledVenues.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledVenues[i], shuffledVenues[j]] = [shuffledVenues[j], shuffledVenues[i]];
+  }
+
   const adContext = options && typeof options === "object" ? options.adContext : null;
   const adConfig = options && typeof options === "object" ? options.adConfig : null;
   const row = document.createElement("article");
@@ -3135,7 +3194,7 @@ function renderVenueRow(title, venues, subtitle = "", options = {}) {
   const chips = document.createElement("div");
   chips.className = "province-cities";
 
-  venues.forEach((venue, index) => {
+  shuffledVenues.forEach((venue, index) => {
     const chip = document.createElement("button");
     chip.className = "province-pill yemek-pill yemek-pill-link";
     chip.type = "button";
@@ -3150,6 +3209,20 @@ function renderVenueRow(title, venues, subtitle = "", options = {}) {
     const venueCard = document.createElement("article");
     venueCard.className = "istanbul-venue-card";
     venueCard.setAttribute('data-venue', JSON.stringify(venue));
+    
+    const tagsHtml = `
+      <button class="venue-popup-info-chip-btn istanbul-detail-trigger-btn" type="button"><img src="assets/detail.png" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi</button>
+    `;
+
+    const phoneHtml = String(venue.phone || "").trim()
+      ? `<p class="istanbul-venue-phone">Tel: <a href="tel:${venue.phone}">${venue.phone}</a></p>`
+      : '';
+
+    const categoryKey = String(document.body.dataset.categoryKey || "").trim();
+    // Ratings are completely removed
+    const showRating = false;
+    const ratingHtml = '';
+
     venueCard.innerHTML = `
       <div class="istanbul-venue-card-head">
         <p class="istanbul-venue-eyebrow">${venue.district || ''}</p>
@@ -3158,25 +3231,44 @@ function renderVenueRow(title, venues, subtitle = "", options = {}) {
         <a class="istanbul-venue-title-link" href="${buildVenueUrl(venue)}">${venue.name}</a>
       </h3>
       <p class="istanbul-venue-address">${venue.address || 'Adres bilgisi bulunmuyor.'}</p>
+      ${phoneHtml}
       <div class="istanbul-venue-meta">
-        <span class="istanbul-venue-rating">${venue.rating ? formatVenueRatingText(venue.rating, venue.userRatingCount) : ''}</span>
+        <span class="istanbul-venue-rating">${ratingHtml}</span>
       </div>
       <div class="istanbul-venue-pill-row">
-        <span class="istanbul-venue-budget">${venue.budget ? formatBudgetLabel(venue.budget) : ''}</span>
         <button class="istanbul-favorite-button" type="button">Kaydet</button>
       </div>
-      <div class="istanbul-venue-tags"></div>
+      <div class="istanbul-venue-tags">${tagsHtml}</div>
       <footer class="istanbul-venue-actions">
         <div class="istanbul-venue-action-group"></div>
       </footer>
     `;
+    venueCard.addEventListener("click", (event) => {
+      if (event.target instanceof HTMLElement && event.target.closest("a, button")) {
+        if (event.target.closest(".istanbul-detail-trigger-btn")) {
+          event.preventDefault();
+          event.stopPropagation();
+          const mapsUrl = venue.mapsUrl || venue.maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((venue.name || "") + " " + (venue.district || "") + " İstanbul")}`;
+          window.open(mapsUrl, "_blank", "noopener,noreferrer");
+        } else if (event.target.closest(".istanbul-venue-title-link")) {
+          event.preventDefault();
+          if (typeof window.openVenuePopup === "function") {
+            window.openVenuePopup(venue);
+          }
+        }
+        return;
+      }
+      if (typeof window.openVenuePopup === "function") {
+        window.openVenuePopup(venue);
+      }
+    });
     chips.append(venueCard);
 
     const shouldInsertAd = Boolean(
       adContext
       && adConfig
       && adContext.inserted !== true
-      && venues.length > adConfig.insertAfter
+      && shuffledVenues.length > adConfig.insertAfter
       && index + 1 === adConfig.insertAfter,
     );
     if (shouldInsertAd) {
@@ -3291,6 +3383,10 @@ async function loadAllVenues() {
           editorialSummary: String(item.editorialSummary || "").trim(),
           instagram: String(item.instagram || "").trim(),
           sourcePlaceId: typeof item.sourcePlaceId === "string" ? item.sourcePlaceId.trim() : "",
+          latitude: item.latitude != null ? item.latitude : item.lat,
+          longitude: item.longitude != null ? item.longitude : item.lng,
+          lat: item.latitude != null ? item.latitude : item.lat,
+          lng: item.longitude != null ? item.longitude : item.lng,
         }));
       })
       .catch((error) => {
@@ -3334,6 +3430,10 @@ async function loadCategoryDataFile(dataFilePath) {
         googleRating: String(item.googleRating || item.rating || item.score || item.stars || "").trim(),
         googleReviewCount: String(item.googleReviewCount || item.reviewCount || item.reviews || "").trim(),
         sourcePlaceId: String(item.sourcePlaceId || item.placeId || "").trim(),
+        latitude: item.latitude != null ? item.latitude : item.lat,
+        longitude: item.longitude != null ? item.longitude : item.lng,
+        lat: item.latitude != null ? item.latitude : item.lat,
+        lng: item.longitude != null ? item.longitude : item.lng,
       }));
 
       if (!cacheKey.includes("akaryakit")) {

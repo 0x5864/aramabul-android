@@ -107,7 +107,8 @@
       titleLink.textContent = item.name || "İsimsiz mekan";
       titleLink.href = buildDetailUrl(item.slug);
       address.textContent = item.address || "Adres bilgisi bulunmuyor.";
-      rating.textContent = formatVenueRatingText(item.rating, item.userRatingCount);
+      rating.textContent = "";
+      rating.hidden = true;
       budget.textContent = formatBudgetLabel(item.budget) || "Bütçe yok";
 
       if (item.mapsUrl) {

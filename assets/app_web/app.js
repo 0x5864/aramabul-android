@@ -1015,7 +1015,7 @@ const topCityFallbackImages = {
   İzmir: "assets/izmir.webp",
   Bursa: "assets/bursa.webp",
   Antalya: "assets/antalya.webp",
-  Konya: "assets/konya.jpg",
+  Konya: "assets/konya.webp",
   Adana: "https://picsum.photos/seed/adana-city/220/140",
 };
 
@@ -2606,13 +2606,14 @@ function renderEmptyState() {
 function topRatedVenues(venuesToRank) {
   const hasValidPhoto = (photo) => {
     if (typeof photo !== "string") return false;
-    const val = photo.trim();
+    const val = photo.trim().toLowerCase();
     if (!val) return false;
-    if (val.includes("AL8-SNH-")) return false;
-    if (val.includes("AL8-SNHyLSmXv7Pa75n")) return false;
-    if (val.includes("staticmap")) return false;
-    if (val.includes("maps.google")) return false;
-    if (val.includes("assets/")) return false;
+    if (val.includes("al8-snh-") || val.includes("al8-snhylsmxv7pa75n") || val.includes("staticmap") || val.includes("maps.google") || val.includes("assets/") || val.includes("static-maps.yandex") || val.includes("s100x100")) return false;
+    if (val === "null" || val === "undefined" || val === "none" || val === "placeholder" || val === "empty" || val === "false") return false;
+    if (val.includes("no-image") || val.includes("noimage") || val.includes("no_image") || val.includes("no-photo") || val.includes("nophoto")) return false;
+    if (val.includes("placeholder") || val.includes("upload-img") || val.includes("upload_img") || val.includes("<img")) return false;
+    if (val.includes("default-") || val.includes("default_") || val.includes("/default.") || val.includes("/defaultog") || val.includes("og-image") || val.includes("social-image") || val.includes("stock/")) return false;
+    if (!val.startsWith("http://") && !val.startsWith("https://") && !val.startsWith("/")) return false;
     return true;
   };
 

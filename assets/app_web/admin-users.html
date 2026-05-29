@@ -3,20 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0d2032" />
+    <meta name="theme-color" content="#45503f" />
     <title>Admin Kullanıcılar | AramaBul</title>
     <meta name="description" content="Kayıtlı kullanıcıları yönet." />
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260508b" />
-    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260508b" />
-    <link rel="apple-touch-icon" href="assets/favicon.png?v=20260508b" />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260522d" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260527-header-fix" />
+    <link rel="stylesheet" href="styles.css?v=20260529h" />
     <style>
       .admin-users-card {
         background: var(--paper);
@@ -140,6 +140,68 @@
       .admin-pv-top-row:last-child { border-bottom: 0; }
       .admin-pv-top-path { color: #093827; font-weight: 600; }
       .admin-pv-top-count { color: #5a6b7a; font-weight: 700; }
+      .admin-pv-chart-wrap {
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(185, 196, 202, 0.5);
+      }
+      .admin-pv-chart-title {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: #093827;
+        margin: 0 0 0.75rem;
+      }
+      .admin-pv-chart {
+        display: flex;
+        align-items: flex-end;
+        gap: 1px;
+        height: 140px;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding-bottom: 22px;
+        position: relative;
+      }
+      .admin-pv-bar {
+        flex: 1 1 0;
+        min-width: 4px;
+        max-width: 18px;
+        background: linear-gradient(180deg, #1a6b4a 0%, #2e9d6a 100%);
+        border-radius: 2px 2px 0 0;
+        position: relative;
+        cursor: pointer;
+        transition: opacity 0.12s ease;
+      }
+      .admin-pv-bar:hover {
+        opacity: 0.8;
+      }
+      .admin-pv-bar-tip {
+        display: none;
+        position: absolute;
+        bottom: calc(100% + 6px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: #0d2032;
+        color: #fff;
+        font-size: 0.68rem;
+        font-weight: 600;
+        padding: 3px 7px;
+        border-radius: 4px;
+        white-space: nowrap;
+        z-index: 10;
+        pointer-events: none;
+      }
+      .admin-pv-bar:hover .admin-pv-bar-tip {
+        display: block;
+      }
+      .admin-pv-chart-axis {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.65rem;
+        color: #8a9baa;
+        margin-top: 4px;
+        font-weight: 600;
+      }
     </style>
   </head>
   <body class="venue-detail-page admin-venue-editor-page">
@@ -148,7 +210,7 @@
     <header class="global-header-band">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
-          <img class="brand-logo" src="assets/logo.png?v=20260508b" alt="aramabul logo" />
+          <img class="brand-logo" src="assets/logo.png?v=20260525a" alt="aramabul logo" />
           <span class="brand-wordmark"><span class="brand-wordmark-search">arama</span><span class="brand-wordmark-rest">bul</span></span>
         </a>
         <div class="istanbul-topbar-actions">
@@ -193,6 +255,7 @@
         <div id="adminPvStats" class="admin-pv-stats">
           <div class="admin-pv-stat"><span class="admin-pv-stat-value">-</span><span class="admin-pv-stat-label">Yükleniyor...</span></div>
         </div>
+        <div id="adminPvChart" class="admin-pv-chart-wrap" hidden></div>
         <div id="adminPvTop" class="admin-pv-top"></div>
       </section>
 
@@ -257,12 +320,32 @@
             <div class="admin-pv-stat"><span class="admin-pv-stat-value">${s.total.toLocaleString("tr-TR")}</span><span class="admin-pv-stat-label">Toplam</span></div>
           `;
 
+          // Günlük bar grafik
+          if (data.dailyChart && data.dailyChart.length) {
+            var chartEl = document.getElementById("adminPvChart");
+            var maxViews = Math.max.apply(null, data.dailyChart.map(function(d) { return d.views; }));
+            if (maxViews < 1) maxViews = 1;
+            var bars = data.dailyChart.map(function(d) {
+              var pct = Math.max(2, (d.views / maxViews) * 100);
+              var dayStr = new Date(d.day).toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit" });
+              return '<div class="admin-pv-bar" style="height:' + pct + '%" title="' + dayStr + ': ' + d.views + '">' +
+                '<span class="admin-pv-bar-tip">' + dayStr + ' — ' + d.views.toLocaleString("tr-TR") + '</span></div>';
+            }).join("");
+            var firstDay = new Date(data.dailyChart[0].day).toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
+            var lastDay = new Date(data.dailyChart[data.dailyChart.length - 1].day).toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
+            chartEl.innerHTML =
+              '<p class="admin-pv-chart-title">Günlük Sayfa Görüntülenme</p>' +
+              '<div class="admin-pv-chart">' + bars + '</div>' +
+              '<div class="admin-pv-chart-axis"><span>' + firstDay + '</span><span>' + lastDay + '</span></div>';
+            chartEl.hidden = false;
+          }
+
           if (data.topPages && data.topPages.length) {
             document.getElementById("adminPvTop").innerHTML =
-              `<p style="font-weight:700;font-size:0.85rem;color:#093827;margin:0.5rem 0">En Çok Ziyaret Edilen (30 gün)</p>` +
-              data.topPages.map(p =>
-                `<div class="admin-pv-top-row"><span class="admin-pv-top-path">${p.path}</span><span class="admin-pv-top-count">${p.views.toLocaleString("tr-TR")}</span></div>`
-              ).join("");
+              '<p style="font-weight:700;font-size:0.85rem;color:#093827;margin:0.5rem 0">En Çok Ziyaret Edilen Sayfalar</p>' +
+              data.topPages.map(function(p) {
+                return '<div class="admin-pv-top-row"><span class="admin-pv-top-path">' + p.path + '</span><span class="admin-pv-top-count">' + p.views.toLocaleString("tr-TR") + '</span></div>';
+              }).join("");
           }
         } catch (err) {
           console.error("Page stats error:", err);

@@ -44,6 +44,47 @@
     return ["gezi", state.selectedDistrict, String(state.selectedCategory || ""), state.query.trim()].join("\u0001");
   }
 
+  function buildDirectionsUrl(item) {
+    const mapsUrl = new URL("https://www.google.com/maps/search/");
+    mapsUrl.searchParams.set("api", "1");
+    
+    const name = String(item.name || "").trim();
+    const address = String(item.address || "").trim();
+    const district = String(item.district || "").trim();
+    const city = String(item.city || "İstanbul").trim();
+    
+    const queryParts = [name, address, district, city].filter(Boolean);
+    const seen = new Set();
+    const uniqueParts = [];
+    queryParts.forEach((part) => {
+      const normalized = part.toLowerCase().replace(/\s+/g, "");
+      if (!seen.has(normalized)) {
+        seen.add(normalized);
+        uniqueParts.push(part);
+      }
+    });
+    
+    mapsUrl.searchParams.set("query", uniqueParts.join(" "));
+
+    const placeId = String(item.sourcePlaceId || item.placeId || "").trim();
+    if (placeId) {
+      mapsUrl.searchParams.set("query_place_id", placeId);
+    }
+
+    return mapsUrl.toString();
+  }
+
+  function buildGoogleDirectionsUrl(item) {
+    const lat = Number(item.latitude || item.lat);
+    const lng = Number(item.longitude || item.lng);
+    const name = item.name || "Mekan";
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    }
+    const queryText = [name, item.address, item.district, "İstanbul"].filter(Boolean).join(" ");
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(queryText)}`;
+  }
+
   function discoveryFiltersAllowHighRatedShuffle() {
     if (state.nearbyMode) {
       return false;
@@ -667,7 +708,7 @@
     if (normalized.includes("otel")) {
       return "assets/otel.png";
     }
-    return "assets/no-image-icon.png";
+    return "assets/no-image-icon.webp";
   }
 
   function readVenueSlugFromUrl() {
@@ -1810,7 +1851,7 @@
       params.set("radius", "8000");
     }
 
-    if (state.dataMode === "api" && discoveryFiltersAllowHighRatedShuffle()) {
+    if (state.dataMode === "api") {
       params.set("sort", "random");
       if (!state.discoveryRandomSeed) {
         state.discoveryRandomSeed = String(Math.floor(Math.random() * 1_000_000_000));
@@ -1883,6 +1924,37 @@
       return;
     }
 
+    // Shuffle state.items in-place for random order
+    for (let i = state.items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [state.items[i], state.items[j]] = [state.items[j], state.items[i]];
+    }
+
+    const hasValidPhotoLocal = (item) => {
+      if (!item) return false;
+      const photo = item.photoUri || item.photoUrl || item.imageUrl || item.image || item.coverImageUrl;
+      if (typeof photo !== "string") return false;
+      const val = photo.trim().toLowerCase();
+      if (!val) return false;
+      if (val.includes("al8-snh-") || val.includes("al8-snhylsmxv7pa75n") || val.includes("staticmap") || val.includes("maps.google") || val.includes("assets/") || val.includes("static-maps.yandex") || val.includes("s100x100")) return false;
+      if (val === "null" || val === "undefined" || val === "none" || val === "placeholder" || val === "empty" || val === "false") return false;
+      if (val.includes("no-image") || val.includes("noimage") || val.includes("no_image") || val.includes("no-photo") || val.includes("nophoto")) return false;
+      if (val.includes("placeholder") || val.includes("upload-img") || val.includes("upload_img") || val.includes("<img")) return false;
+      if (val.includes("default-") || val.includes("default_") || val.includes("/default.") || val.includes("/defaultog") || val.includes("og-image") || val.includes("social-image") || val.includes("stock/")) return false;
+      if (!val.startsWith("http://") && !val.startsWith("https://") && !val.startsWith("/")) return false;
+      return true;
+    };
+
+    // Sort to place venues with valid photos first
+    state.items.sort((a, b) => {
+      const aHasPhoto = hasValidPhotoLocal(a);
+      const bHasPhoto = hasValidPhotoLocal(b);
+      if (aHasPhoto !== bHasPhoto) {
+        return aHasPhoto ? -1 : 1;
+      }
+      return 0;
+    });
+
     if (hasMapPanel) {
       syncSelectedVenue();
     } else {
@@ -1950,10 +2022,26 @@
       distance.hidden = true;
 
       titleLink.textContent = item.name || "İsimsiz mekan";
-      titleLink.href = buildDetailUrl(item.slug);
+      titleLink.href = "#";
+      titleLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.openVenuePopup(item);
+      });
 
-      // Sadeleştirilmiş kart: adres, rating, bütçe, favori, paylaş gizleniyor
-      address.hidden = true;
+      // Sadeleştirilmiş kart: rating, bütçe, favori, paylaş gizleniyor (adres ve telefon açık)
+      address.textContent = item.address || "Adres bilgisi bulunmuyor.";
+      address.hidden = false;
+
+      const existingPhone = card.querySelector(".istanbul-venue-phone");
+      if (existingPhone) existingPhone.remove();
+
+      if (String(item.phone || "").trim()) {
+        const phonePara = document.createElement("p");
+        phonePara.className = "istanbul-venue-phone";
+        phonePara.innerHTML = `Tel: <a href="tel:${item.phone}">${item.phone}</a>`;
+        address.parentNode.insertBefore(phonePara, address.nextSibling);
+      }
+
       rating.hidden = true;
       budget.hidden = true;
       const pillRow = fragment.querySelector(".istanbul-venue-pill-row");
@@ -1973,7 +2061,7 @@
       if (districtLabel) {
         const el = document.createElement("a");
         el.className = "istanbul-venue-tag";
-        el.href = `gezi.html?district=${encodeURIComponent(districtLabel)}`;
+        el.href = `gezi.html#district=${encodeURIComponent(districtLabel)}`;
         el.setAttribute("aria-label", `${districtLabel} ilçesindeki mekanları aç`);
         el.textContent = districtLabel;
         row1.appendChild(el);
@@ -2003,15 +2091,6 @@
       const row2 = document.createElement("div");
       row2.className = "venue-card-info-row";
 
-      const budgetValue = String(item.budget || "").trim();
-      const budgetLabelText = formatBudgetLabel(budgetValue);
-      if (budgetLabelText && normalizeText(budgetLabelText) !== normalizeText("bilinmiyor")) {
-        const el = document.createElement("span");
-        el.className = "istanbul-venue-budget";
-        el.textContent = budgetLabelText;
-        row2.appendChild(el);
-      }
-
       const rawDistanceMeters2 = (item.distanceMeters != null && item.distanceMeters !== "") ? Number(item.distanceMeters) : NaN;
       const computedDistanceMeters2 = Number.isFinite(rawDistanceMeters2)
         ? rawDistanceMeters2
@@ -2019,21 +2098,23 @@
       const formattedDistance2 = formatDistance(computedDistanceMeters2);
       if (formattedDistance2) {
         const el = document.createElement("span");
-        el.className = "istanbul-venue-distance";
-        el.textContent = formattedDistance2;
+        el.className = "venue-popup-distance-chip";
+        el.innerHTML = `<img src="assets/uzak.png" class="venue-popup-chip-icon" alt="" />${formattedDistance2}`;
         row2.appendChild(el);
       }
 
-      const ratingNum = Number(item.rating);
-      if (Number.isFinite(ratingNum) && ratingNum > 0) {
-        const ratingFormatted = ratingNum.toFixed(1).replace(".", ",");
-        const ratingCount = Number(item.userRatingCount ?? item.user_rating_count ?? 0);
-        const countText = ratingCount > 0 ? ` (${new Intl.NumberFormat("tr-TR").format(ratingCount)})` : "";
-        const el = document.createElement("span");
-        el.className = "istanbul-venue-tag";
-        el.textContent = `★ ${ratingFormatted}${countText}`;
-        row2.appendChild(el);
-      }
+
+
+      const detailLink = document.createElement("button");
+      detailLink.type = "button";
+      detailLink.className = "venue-popup-info-chip-btn";
+      detailLink.innerHTML = `<img src="assets/detail.png" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi`;
+      detailLink.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const mapsUrl = item.mapsUrl || item.maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((item.name || "") + " " + (item.district || "") + " İstanbul")}`;
+        window.open(mapsUrl, "_blank", "noopener,noreferrer");
+      });
+      row2.appendChild(detailLink);
 
       if (row2.childElementCount) {
         infoBoxes.appendChild(row2);
@@ -2052,7 +2133,7 @@
           return;
         }
         if (opensVenueDetailFromCard) {
-          window.location.href = buildDetailUrl(item.slug);
+          window.openVenuePopup(item);
           return;
         }
         selectVenue(item.slug);
@@ -2061,7 +2142,7 @@
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           if (opensVenueDetailFromCard) {
-            window.location.href = buildDetailUrl(item.slug);
+            window.openVenuePopup(item);
             return;
           }
           selectVenue(item.slug);
@@ -2156,13 +2237,14 @@
           if (!item) return false;
           const photo = item.photoUri || item.photoUrl || item.imageUrl || item.image || item.coverImageUrl;
           if (typeof photo !== "string") return false;
-          const val = photo.trim();
+          const val = photo.trim().toLowerCase();
           if (!val) return false;
-          if (val.includes("AL8-SNH-")) return false;
-          if (val.includes("AL8-SNHyLSmXv7Pa75n")) return false;
-          if (val.includes("staticmap")) return false;
-          if (val.includes("maps.google")) return false;
-          if (val.includes("assets/")) return false;
+          if (val.includes("al8-snh-") || val.includes("al8-snhylsmxv7pa75n") || val.includes("staticmap") || val.includes("maps.google") || val.includes("assets/") || val.includes("static-maps.yandex") || val.includes("s100x100")) return false;
+          if (val === "null" || val === "undefined" || val === "none" || val === "placeholder" || val === "empty" || val === "false") return false;
+          if (val.includes("no-image") || val.includes("noimage") || val.includes("no_image") || val.includes("no-photo") || val.includes("nophoto")) return false;
+          if (val.includes("placeholder") || val.includes("upload-img") || val.includes("upload_img") || val.includes("<img")) return false;
+          if (val.includes("default-") || val.includes("default_") || val.includes("/default.") || val.includes("/defaultog") || val.includes("og-image") || val.includes("social-image") || val.includes("stock/")) return false;
+          if (!val.startsWith("http://") && !val.startsWith("https://") && !val.startsWith("/")) return false;
           return true;
         };
 
@@ -2187,7 +2269,7 @@
             }
             return a.distanceMeters - b.distanceMeters;
           });
-        } else if (shouldHighRatedRandomDiscoveryLocal()) {
+        } else {
           const pool = finalItems.slice();
           shuffleDiscoveryVenuesInPlace(pool);
           pool.sort((a, b) => {
@@ -2200,15 +2282,6 @@
           });
           finalItems.length = 0;
           finalItems.push(...pool);
-        } else {
-          finalItems.sort((a, b) => {
-            const aHasPhoto = hasValidPhoto(a);
-            const bHasPhoto = hasValidPhoto(b);
-            if (aHasPhoto !== bHasPhoto) {
-              return aHasPhoto ? -1 : 1;
-            }
-            return String(a.name || "").localeCompare(String(b.name || ""), "tr-TR");
-          });
         }
 
         const total = finalItems.length;
@@ -2237,7 +2310,7 @@
         return;
       }
 
-      if (shouldHighRatedRandomDiscoveryApi()) {
+      if (state.dataMode === "api") {
         const filterKey = highRatedDiscoveryShuffleKey();
         if (state.discoveryShuffleFilterKey !== filterKey) {
           state.discoveryShuffleFilterKey = filterKey;

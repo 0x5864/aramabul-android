@@ -3,36 +3,61 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0d2032" />
+    <meta name="theme-color" content="#45503f" />
     <title>Mekan Detayı | AramaBul</title>
     <meta name="description" content="İstanbul mekan detay sayfası." />
-    <meta name="robots" content="index,follow" />
-    <!-- canonical tag set dynamically by venue-detail.js -->
+    <meta name="robots" content="noindex,nofollow" />
+    <!-- canonical is set by HTTP Link header (server) and venue-detail.js (client) -->
     <meta property="og:locale" content="tr_TR" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content="Mekan Detayı | AramaBul" />
     <meta property="og:description" content="İstanbul mekan detay sayfası." />
     <meta property="og:url" content="https://aramabul.com/venue-detail.html" />
     <meta property="og:site_name" content="AramaBul" />
-    <meta property="og:image" content="https://aramabul.com/assets/yemek.png" />
+    <meta property="og:image" content="https://aramabul.com/assets/yemek.webp" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Mekan Detayı | AramaBul" />
     <meta name="twitter:description" content="İstanbul mekan detay sayfası." />
-    <meta name="twitter:image" content="https://aramabul.com/assets/yemek.png" />
-    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260508b" />
-    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260508b" />
-    <link rel="apple-touch-icon" href="assets/favicon.png?v=20260508b" />
+    <meta name="twitter:image" content="https://aramabul.com/assets/yemek.webp" />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260522d" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260527-header-fix" />
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3016888060216617" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styles.css?v=20260529h" />
+    
     <script async src="https://fundingchoicesmessages.google.com/i/pub-3016888060216617?ers=1" nonce=""></script>
     <script nonce="">(function(){function signalGooglefcPresent(){if(!window.frames["googlefcPresent"]){if(document.body){var a=document.createElement("iframe");a.style="width:0;height:0;border:none;z-index:-1000;left:-1000px;top:-1000px;";a.style.display="none";a.name="googlefcPresent";document.body.appendChild(a)}else{setTimeout(signalGooglefcPresent,0)}}}signalGooglefcPresent()})();</script>
     <!-- Google tag (gtag.js) -->
+        <!-- Google Consent Mode v2 -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      (function() {
+        var consent = null;
+        try { consent = localStorage.getItem("aramabul_cookie_consent"); } catch (e) {}
+        var defaults = {
+          'ad_storage': 'denied',
+          'ad_user_data': 'denied',
+          'ad_personalization': 'denied',
+          'analytics_storage': 'denied',
+          'wait_for_update': 500
+        };
+        if (consent === 'all') {
+          defaults = {
+            'ad_storage': 'granted',
+            'ad_user_data': 'granted',
+            'ad_personalization': 'granted',
+            'analytics_storage': 'granted'
+          };
+        }
+        gtag('consent', 'default', defaults);
+      })();
+    </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NHE1J9FWDG"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -47,7 +72,7 @@
     <header class="global-header-band">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
-          <img class="brand-logo" src="assets/logo.png?v=20260508b" alt="aramabul logo" />
+          <img class="brand-logo" src="assets/logo.png?v=20260525a" alt="aramabul logo" />
           <span class="brand-wordmark"><span class="brand-wordmark-rest">arama</span><span class="brand-wordmark-search">bul</span></span>
         </a>
         <div class="istanbul-topbar-actions">
@@ -159,7 +184,7 @@
                         aria-label="Facebook"
                         title="Facebook"
                       >
-                        <img class="card-share-item-icon" src="assets/face.png" alt="" aria-hidden="true" />
+                        <img class="card-share-item-icon" src="assets/face.webp" alt="" aria-hidden="true" />
                         <span class="card-share-visually-hidden">Facebook</span>
                       </a>
                       <a
@@ -203,60 +228,81 @@
                   <span id="venueDetailStatus" class="venue-detail-meta-pill" hidden></span>
                 </div>
               </div>
+
+              <section id="venueDetailServicesSection" class="venue-detail-section" hidden>
+                <h2 class="venue-detail-section-title">Servis</h2>
+                <div id="venueDetailServicesList" class="venue-detail-chip-list"></div>
+              </section>
+
+              <section id="venueDetailMenuSection" class="venue-detail-section" hidden>
+                <h2 class="venue-detail-section-title" data-i18n-key="venue.menu">Menü</h2>
+                <a
+                  id="venueDetailMenuLink"
+                  class="venue-detail-action venue-detail-action-inline"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  hidden
+                >
+                  Menüyü aç
+                </a>
+                <div id="venueDetailMenuList" class="venue-detail-chip-list"></div>
+              </section>
+
+              <section id="venueDetailAtmosphereSection" class="venue-detail-section" hidden>
+                <h2 class="venue-detail-section-title" data-i18n-key="venue.atmosphere">Ortam</h2>
+                <div id="venueDetailAtmosphereList" class="venue-detail-chip-list"></div>
+              </section>
+
+              <div class="venue-detail-map-actions-inline">
+                <a id="venueDetailDirectionsLink" class="venue-detail-directions-btn" href="#" target="_blank" rel="noopener noreferrer">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+                  Yol tarifi
+                </a>
+              </div>
             </div>
 
-            <div id="venueDetailMedia" class="venue-detail-media" hidden>
-              <img id="venueDetailImage" class="venue-detail-image" src="" alt="" loading="lazy" />
-            </div>
-            <div id="venueDetailMediaPlaceholder" class="venue-detail-media-placeholder" hidden>
-              <p class="venue-detail-media-placeholder-kicker">Fotoğraf</p>
-              <p class="venue-detail-media-placeholder-text">Bu mekan için henüz fotoğraf yok.</p>
+            <div class="venue-detail-right-col">
+              <div id="venueDetailMedia" class="venue-detail-media" hidden>
+                <img id="venueDetailImage" class="venue-detail-image" src="" alt="" loading="lazy" />
+              </div>
+              <div id="venueDetailMediaPlaceholder" class="venue-detail-media-placeholder" hidden>
+                <p class="venue-detail-media-placeholder-kicker">Fotoğraf</p>
+                <p class="venue-detail-media-placeholder-text">Bu mekan için henüz fotoğraf yok.</p>
+              </div>
+              <div id="venueDetailMapWrap" class="venue-detail-map-inline" hidden>
+                <iframe
+                  id="venueDetailMapFrame"
+                  class="venue-detail-map-inline-frame"
+                  src=""
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  allowfullscreen
+                  title="Mekan haritası"
+                ></iframe>
+              </div>
+
+              <div id="venueDetailSimilarSection" class="venue-detail-similar" hidden>
+                <h3 class="venue-detail-similar-title">Benzer mekanlar</h3>
+                <div id="venueDetailSimilarList" class="venue-detail-similar-list"></div>
+              </div>
             </div>
           </div>
           <p id="venueDetailSummary" class="venue-detail-summary" hidden></p>
 
-          <section id="venueDetailServicesSection" class="venue-detail-section" hidden>
-            <h2 class="venue-detail-section-title">Servis</h2>
-            <div id="venueDetailServicesList" class="venue-detail-chip-list"></div>
-          </section>
 
-          <section id="venueDetailMenuSection" class="venue-detail-section" hidden>
-            <h2 class="venue-detail-section-title" data-i18n-key="venue.menu">Menü</h2>
-            <a
-              id="venueDetailMenuLink"
-              class="venue-detail-action venue-detail-action-inline"
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              hidden
-            >
-              Menüyü aç
-            </a>
-            <div id="venueDetailMenuList" class="venue-detail-chip-list"></div>
-          </section>
-
-          <section id="venueDetailAtmosphereSection" class="venue-detail-section" hidden>
-            <h2 class="venue-detail-section-title" data-i18n-key="venue.atmosphere">Ortam</h2>
-            <div id="venueDetailAtmosphereList" class="venue-detail-chip-list"></div>
-          </section>
-
-          <section class="venue-detail-section venue-detail-map-section" aria-label="Harita ve bağlantılar">
-            <h2 class="venue-detail-section-title" data-i18n-key="venue.map">Harita ve bağlantılar</h2>
-            <div id="venueDetailMapWrap" class="venue-detail-map-wrap">
-              <iframe
-                id="venueDetailMapFrame"
-                class="venue-detail-map-frame"
-                src=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                allowfullscreen
-                title="Mekan haritası"
-              ></iframe>
-            </div>
-            <div class="venue-detail-link-grid">
-              <a id="venueDetailInstagramLink" class="venue-detail-action" href="#" target="_blank" rel="noopener noreferrer" hidden>
-                Instagram
-              </a>
+          <!-- Reklam Birimi -->
+          <section class="venue-detail-section adsense-section" style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(0, 0, 0, 0.08);">
+            <div class="adsense-ad-wrapper" style="text-align: center; overflow: hidden;">
+              <ins class="adsbygoogle"
+                   style="display:block"
+                   data-ad-client="ca-pub-3016888060216617"
+                   data-ad-slot="auto"
+                   data-ad-format="auto"
+                   data-full-width-responsive="true"></ins>
+              <script>
+                   (adsbygoogle = window.adsbygoogle || []).push({});
+              </script>
             </div>
           </section>
 
@@ -286,15 +332,15 @@
       </section>
     </main>
 
-    <script src="web-runtime.js?v=20260302-01"></script>
+    <script src="web-runtime.js?v=20260529d"></script>
     <script src="header-state.js?v=20260302-01"></script>
     <script src="header-i18n.js?v=20260429-i18n-page-keys-01"></script>
     <script src="header-nav.js?v=20260505-hash-auth-01"></script>
     <script src="header-shell.js?v=20260302-02"></script>
     <script src="header-search-ui.js?v=20260303-04"></script>
-    <script src="header-search-data.js?v=20260420-search-db-06"></script>
+    <script src="header-search-data.js?v=20260523-search-fix-02"></script>
     <script src="header-search.js?v=20260422-header-no-topbar-01"></script>
-    <script src="venue-detail.js?v=20260512-distance-fix-01"></script>
-    <script src="adsense-privacy.js?v=20260429-01"></script>
+    <script src="venue-detail.js?v=20260528-maps-fix-03"></script>
+    <script src="adsense-privacy.js?v=20260523-adsense-consent-02"></script>
   </body>
 </html>

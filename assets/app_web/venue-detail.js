@@ -27,6 +27,8 @@
   const instagramNode = document.getElementById("venueDetailInstagram");
   const mapFrame = document.getElementById("venueDetailMapFrame");
   const mapWrapNode = document.getElementById("venueDetailMapWrap");
+  const directionsLink = document.getElementById("venueDetailDirectionsLink");
+  const mapsLink = document.getElementById("venueDetailMapsLink");
   const tagsNode = document.getElementById("venueDetailTags");
   const statusNode = document.getElementById("venueDetailStatus");
   const menuSectionNode = document.getElementById("venueDetailMenuSection");
@@ -713,9 +715,27 @@
   }
 
   function buildMapEmbedUrl(venue) {
-    const mapsUrl = String(venue.mapsUrl || "").trim();
-    if (!mapsUrl) {
-      return "";
+    var mapsUrl = String(venue.mapsUrl || "").trim();
+    var sourcePlaceId = String(venue.sourcePlaceId || "").trim();
+    var vName = String(venue.name || "").trim();
+    var vDistrict = String(venue.district || "").trim();
+
+    // Check if mapsUrl is empty OR coordinates-only
+    var isCoordsOnly = mapsUrl.includes("query=") && !/[a-zA-Z]/.test(decodeURIComponent(mapsUrl.split("query=")[1] || ""));
+
+    var venueLat = venue.lat || venue.latitude;
+    var venueLng = venue.lng || venue.longitude;
+
+    if (sourcePlaceId) {
+      return "https://maps.google.com/maps?hl=tr&q=" + encodeURIComponent(vName + " " + vDistrict + " İstanbul") + "&z=15&output=embed";
+    }
+
+    if (!mapsUrl || isCoordsOnly) {
+      if (venueLat && venueLng && vName) {
+        return "https://maps.google.com/maps?hl=tr&q=loc:" + venueLat + "," + venueLng + "(" + encodeURIComponent(vName) + ")&z=15&output=embed";
+      } else if (vName && vDistrict) {
+        return "https://maps.google.com/maps?hl=tr&q=" + encodeURIComponent(vName + " " + vDistrict + " İstanbul") + "&z=15&output=embed";
+      }
     }
 
     try {
@@ -770,27 +790,27 @@
 
   function getCategoryFallbackImage(venue) {
     const cat = String((venue && (venue.cuisine || venue.categoryName)) || "").toLocaleLowerCase("tr");
-    if (cat.includes("berber") || cat.includes("barber")) return "assets/berber.jpeg";
-    if (cat.includes("kuaför") || cat.includes("kuafor")) return "assets/sac.png";
-    if (cat.includes("veteriner")) return "assets/veteriner.png";
-    if (cat.includes("akaryak")) return "assets/pompa.png";
-    if (cat.includes("eczane")) return "assets/eczane.png";
-    return "assets/no-image-icon.png";
+    if (cat.includes("berber") || cat.includes("barber")) return "assets/berber.webp";
+    if (cat.includes("kuaför") || cat.includes("kuafor")) return "assets/sac.webp";
+    if (cat.includes("veteriner")) return "assets/veteriner.webp";
+    if (cat.includes("akaryak")) return "assets/pompa.webp";
+    if (cat.includes("eczane")) return "assets/eczane.webp";
+    return "assets/no-image-icon.webp";
   }
 
   function setImageSource(imageEl, src, alt, fallback) {
-    const cleanFallback = fallback && fallback !== "assets/yemek.png" ? fallback : "assets/no-image-icon.png";
+    const cleanFallback = fallback && fallback !== "assets/yemek.webp" ? fallback : "assets/no-image-icon.webp";
     imageEl.alt = alt;
     imageEl.onerror = () => {
       imageEl.onerror = null;
       imageEl.src = cleanFallback;
       imageEl.classList.add("is-placeholder");
     };
-    if (src === cleanFallback || !src || src === "assets/yemek.png") {
+    if (src === cleanFallback || !src || src === "assets/yemek.webp") {
       imageEl.classList.add("is-placeholder");
       imageEl.src = cleanFallback;
     } else {
-      if (src.startsWith("data:image/svg+xml") || src.includes("no-image-icon.png") || src.includes("assets/eczane.png") || src.includes("assets/pompa.png") || src.includes("assets/veteriner.png") || src.includes("assets/sac.png") || src.includes("assets/berber.jpeg")) {
+      if (src.startsWith("data:image/svg+xml") || src.includes("no-image-icon.webp") || src.includes("assets/eczane.webp") || src.includes("assets/pompa.webp") || src.includes("assets/veteriner.webp") || src.includes("assets/sac.webp") || src.includes("assets/berber.webp")) {
         imageEl.classList.add("is-placeholder");
       } else {
         imageEl.classList.remove("is-placeholder");
@@ -894,8 +914,8 @@
       ? `https://aramabul.com/venue-detail.html?slug=${encodeURIComponent(slug)}`
       : window.location.href;
     const imageUrl =
-      String(resolveVenueHeroPhotoUrl(venue) || "https://aramabul.com/assets/yemek.png").trim() ||
-      "https://aramabul.com/assets/yemek.png";
+      String(resolveVenueHeroPhotoUrl(venue) || "https://aramabul.com/assets/yemek.webp").trim() ||
+      "https://aramabul.com/assets/yemek.webp";
 
     document.title = title;
     upsertCanonicalLink(canonicalUrl);
@@ -1094,7 +1114,7 @@
         return new URL(`venue-detail.html?slug=${encodeURIComponent(venue.slug)}`, window.location.href).href;
       }
       return new URL(
-        `venue-detail.html?venue=${encodeURIComponent(venue.name || "")}&district=${encodeURIComponent(venue.district || "")}`,
+        `venue-detail.html?slug=${encodeURIComponent(venue.name || "")}`,
         window.location.href
       ).href;
     })();
@@ -1494,6 +1514,59 @@
         }
       }
 
+      /* Directions & Maps links */
+      var rawMapsUrl = String(venue.mapsUrl || "").trim();
+      var venueLat = venue.lat || venue.latitude;
+      var venueLng = venue.lng || venue.longitude;
+      var sourcePlaceId = String(venue.sourcePlaceId || "").trim();
+      var vName = String(venue.name || "").trim();
+      var vDistrict = String(venue.district || "").trim();
+
+      // Check if rawMapsUrl is empty OR is a coordinates-only query (e.g., query=41.0761,28.9256 or encoded query=41.0761%2C28.9256)
+      var queryPart = rawMapsUrl.split("query=")[1] || rawMapsUrl.split("destination=")[1] || "";
+      var decodedQuery = "";
+      try {
+        decodedQuery = decodeURIComponent(queryPart);
+      } catch (e) {
+        decodedQuery = queryPart;
+      }
+      var isCoordsOnly = rawMapsUrl.includes("query=") && !/[a-zA-Z]/.test(decodedQuery);
+
+      if (!rawMapsUrl || isCoordsOnly) {
+        if (sourcePlaceId) {
+          rawMapsUrl = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(vName + " " + vDistrict + " İstanbul") + "&query_place_id=" + sourcePlaceId;
+        } else if (venueLat && venueLng && vName) {
+          rawMapsUrl = "https://maps.google.com/maps?q=loc:" + venueLat + "," + venueLng + "(" + encodeURIComponent(vName) + ")&hl=tr";
+        } else if (vName && vDistrict) {
+          rawMapsUrl = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(vName + " " + vDistrict + " İstanbul");
+        }
+      }
+
+      if (directionsLink) {
+        if (sourcePlaceId) {
+          directionsLink.href = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(vName + " " + vDistrict + " İstanbul") + "&destination_place_id=" + sourcePlaceId;
+        } else if (venueLat && venueLng && vName) {
+          directionsLink.href = "https://maps.google.com/maps?q=loc:" + venueLat + "," + venueLng + "(" + encodeURIComponent(vName) + ")&hl=tr";
+        } else if (vName && vDistrict) {
+          directionsLink.href = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(vName + " " + vDistrict + " İstanbul");
+        } else if (venueLat && venueLng) {
+          directionsLink.href = "https://www.google.com/maps/dir/?api=1&destination=" + venueLat + "," + venueLng;
+        } else if (rawMapsUrl) {
+          directionsLink.href = rawMapsUrl;
+        } else {
+          directionsLink.hidden = true;
+        }
+      }
+      if (mapsLink) {
+        if (rawMapsUrl) {
+          mapsLink.href = rawMapsUrl;
+        } else if (venueLat && venueLng) {
+          mapsLink.href = "https://www.google.com/maps/search/?api=1&query=" + venueLat + "," + venueLng;
+        } else {
+          mapsLink.hidden = true;
+        }
+      }
+
       const menuCapabilities = cleanList(venue.menuCapabilities);
       const serviceCapabilities = cleanList(venue.serviceCapabilities);
       const atmosphereCapabilities = cleanList(venue.atmosphereCapabilities);
@@ -1522,6 +1595,7 @@
       applyFavoriteButtons();
       showVenueDistance(venue);
       tryShowAdminEditLink(venue);
+      loadSimilarVenues(venue);
 
       setState("", true, false);
       return;
@@ -1575,6 +1649,62 @@
       .catch(function () {
         // Not an admin or network error — silently ignore.
       });
+  }
+
+  function loadSimilarVenues(venue) {
+    var similarSection = document.getElementById("venueDetailSimilarSection");
+    var similarList = document.getElementById("venueDetailSimilarList");
+    if (!similarSection || !similarList) return;
+
+    var district = (venue.district || "").trim();
+    var cuisine = (venue.cuisine || venue.categoryName || "").trim();
+    if (!district && !cuisine) return;
+
+    var params = new URLSearchParams();
+    if (district) params.set("district", district);
+    if (cuisine) params.set("category", cuisine);
+    params.set("limit", "8");
+    params.set("sort", "rating");
+
+    fetch("/api/mvp/istanbul/venues?" + params.toString())
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        var items = (data.items || []).filter(function (v) {
+          return v.id !== venue.id && v.slug !== venue.slug;
+        });
+        if (!items.length) return;
+
+        similarList.innerHTML = "";
+        items.slice(0, 6).forEach(function (v) {
+          var card = document.createElement("a");
+          card.className = "venue-detail-similar-card";
+          card.href = "venue-detail.html?slug=" + encodeURIComponent(v.slug);
+
+          var imgSrc = v.photoUri || "";
+          var imgHtml = imgSrc
+            ? '<img class="venue-detail-similar-card-img" src="' + imgSrc + '" alt="' + (v.name || "") + '" loading="lazy" />'
+            : '<div class="venue-detail-similar-card-img"></div>';
+
+          var ratingText = "";
+          if (v.rating) {
+            ratingText = v.rating.toFixed(1).replace(".", ",");
+            if (v.userRatingCount) ratingText += " ★ (" + Number(v.userRatingCount).toLocaleString("tr-TR") + ")";
+          }
+          var metaText = [v.district, v.neighborhood].filter(Boolean).join(" · ");
+
+          card.innerHTML = imgHtml +
+            '<div class="venue-detail-similar-card-body">' +
+              '<p class="venue-detail-similar-card-name">' + (v.name || "") + '</p>' +
+              (ratingText ? '<p class="venue-detail-similar-card-meta">' + ratingText + '</p>' : '') +
+              (metaText ? '<p class="venue-detail-similar-card-meta">' + metaText + '</p>' : '') +
+            '</div>';
+
+          similarList.appendChild(card);
+        });
+
+        similarSection.hidden = false;
+      })
+      .catch(function () { /* ignore */ });
   }
 
   bindShareMenu();

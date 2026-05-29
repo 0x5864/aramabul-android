@@ -626,7 +626,8 @@
       mvpMainCategoryKey === "hizmetler" ||
       mvpMainCategoryKey === "saglik" ||
       mvpMainCategoryKey === "kultur" ||
-      mvpMainCategoryKey === "sanat"
+      mvpMainCategoryKey === "sanat" ||
+      mvpMainCategoryKey === "gezi"
     );
   }
 
@@ -1525,40 +1526,40 @@
     return meters;
   }
 
-  const SLEEK_SVG_FALLBACK = "assets/no-image-icon.png";
+  const SLEEK_SVG_FALLBACK = "assets/no-image-icon.webp";
 
   function getCategoryImage(category, name) {
     const normalized = normalizeText(category) + " " + normalizeText(name || "");
     if (normalized.includes("akaryakıt") || normalized.includes("akaryakit") || normalized.includes("benzin") || normalized.includes("petrol ofisi") || normalized.includes("opet") || normalized.includes("shell") || normalized.includes("bp ") || normalized.includes("total") || normalized.includes("lukoil")) {
-      return "assets/pompa.png";
+      return "assets/pompa.webp";
     }
     if (normalized.includes("veteriner") || normalized.includes("vet mua")) {
-      return "assets/veteriner.png";
+      return "assets/veteriner.webp";
     }
     if (normalized.includes("berber") || normalized.includes("barber")) {
-      return "assets/berber.jpeg";
+      return "assets/berber.webp";
     }
     if (normalized.includes("kuafor") || normalized.includes("kuaför") || normalized.includes("güzellik") || normalized.includes("guzellik") || normalized.includes("saç") || normalized.includes("sac")) {
-      return "assets/sac.png";
+      return "assets/sac.webp";
     }
     if (normalized.includes("eczane")) {
-      return "assets/eczane.png";
+      return "assets/eczane.webp";
     }
     if (normalized.includes("hastane") || normalized.includes("asm") || normalized.includes("toplum saglıgı") || normalized.includes("saglık merkezi") || normalized.includes("aile saglıgı")) {
-      return "assets/hasta.png";
+      return "assets/hasta.webp";
     }
     if (normalized.includes("kafe") || normalized.includes("cafe")) {
       return "assets/kafe.png";
     }
     if (normalized.includes("kultur") || normalized.includes("kültür") || normalized.includes("muze") || normalized.includes("müze") || normalized.includes("cami") || normalized.includes("kilise") || normalized.includes("sinagog") || mvpMainCategoryKey === "kultur") {
-      return "assets/kultur.png";
+      return "assets/kultur.webp";
     }
     return SLEEK_SVG_FALLBACK;
   }
 
   function isPlaceholderImage(src) {
     if (!src) return false;
-    return src.startsWith("data:image/svg+xml") || src.includes("no-image-icon.png") || src.includes("assets/eczane.png") || src.includes("assets/hasta.png") || src.includes("assets/kafe.png") || src.includes("assets/yemek.png") || src.includes("assets/pompa.png") || src.includes("assets/veteriner.png") || src.includes("assets/sac.png") || src.includes("assets/kultur.png") || src.includes("assets/berber.jpeg");
+    return src.startsWith("data:image/svg+xml") || src.includes("no-image-icon.webp") || src.includes("assets/eczane.webp") || src.includes("assets/hasta.webp") || src.includes("assets/kafe.png") || src.includes("assets/yemek.webp") || src.includes("assets/pompa.webp") || src.includes("assets/veteriner.webp") || src.includes("assets/sac.webp") || src.includes("assets/kultur.webp") || src.includes("assets/berber.webp");
   }
 
   function readVenueSlugFromUrl() {
@@ -1568,12 +1569,18 @@
 
   function readInitialDistrictFromUrl() {
     const params = new URLSearchParams(window.location.search);
-    return (params.get("district") || params.get("ilce") || "").trim();
+    const fromSearch = (params.get("district") || params.get("ilce") || "").trim();
+    if (fromSearch) return fromSearch;
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    return (hashParams.get("district") || hashParams.get("ilce") || "").trim();
   }
 
   function readInitialNeighborhoodFromUrl() {
     const params = new URLSearchParams(window.location.search);
-    return (params.get("neighborhood") || params.get("mahalle") || "").trim();
+    const fromSearch = (params.get("neighborhood") || params.get("mahalle") || "").trim();
+    if (fromSearch) return fromSearch;
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    return (hashParams.get("neighborhood") || hashParams.get("mahalle") || "").trim();
   }
 
   function readInitialSubcategoryIdFromUrl() {
@@ -1993,19 +2000,16 @@
     if (slug) {
       return `venue-detail.html?slug=${encodeURIComponent(slug)}`;
     }
-    return `venue-detail.html?venue=${encodeURIComponent(item.name)}&district=${encodeURIComponent(item.district || "")}`;
+    return `venue-detail.html?slug=${encodeURIComponent(item.name || "")}`;
   }
 
   /** Same filter URLs as homepage featured cards (featured-venues.js). */
   function buildYemeIcmeDistrictFilterUrl(district) {
-    return `${mvpPageFile}?district=${encodeURIComponent(String(district || "").trim())}`;
+    return `${mvpPageFile}#district=${encodeURIComponent(String(district || "").trim())}`;
   }
 
   function buildYemeIcmeNeighborhoodFilterUrl(district, neighborhood) {
-    const params = new URLSearchParams();
-    params.set("district", String(district || "").trim());
-    params.set("neighborhood", String(neighborhood || "").trim());
-    return `${mvpPageFile}?${params.toString()}`;
+    return `${mvpPageFile}#district=${encodeURIComponent(String(district || "").trim())}&neighborhood=${encodeURIComponent(String(neighborhood || "").trim())}`;
   }
 
   function resolveCategoryOptionForVenue(item) {
@@ -2064,6 +2068,264 @@
       telegramUrl: `https://t.me/share/url?url=${encodeURIComponent(detailUrl)}&text=${encodeURIComponent(shareTitle)}`,
       xUrl: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${shareTitle} ${detailUrl}`)}`,
     };
+  }
+
+  function buildDirectionsUrl(item) {
+    const mapsUrl = new URL("https://www.google.com/maps/search/");
+    mapsUrl.searchParams.set("api", "1");
+    
+    const name = String(item.name || "").trim();
+    const address = String(item.address || "").trim();
+    const district = String(item.district || "").trim();
+    const city = String(item.city || "İstanbul").trim();
+    
+    const queryParts = [name, address, district, city].filter(Boolean);
+    const seen = new Set();
+    const uniqueParts = [];
+    queryParts.forEach((part) => {
+      const normalized = part.toLowerCase().replace(/\s+/g, "");
+      if (!seen.has(normalized)) {
+        seen.add(normalized);
+        uniqueParts.push(part);
+      }
+    });
+    
+    mapsUrl.searchParams.set("query", uniqueParts.join(" "));
+
+    const placeId = String(item.sourcePlaceId || item.placeId || "").trim();
+    if (placeId) {
+      mapsUrl.searchParams.set("query_place_id", placeId);
+    }
+
+    return mapsUrl.toString();
+  }
+
+  function buildGoogleDirectionsUrl(item) {
+    const lat = Number(item.latitude || item.lat);
+    const lng = Number(item.longitude || item.lng);
+    const name = item.name || "Mekan";
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+    }
+    const queryText = [name, item.address, item.district, "İstanbul"].filter(Boolean).join(" ");
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(queryText)}`;
+  }
+
+  let mapFocusModalApi = null;
+
+  function ensureMapFocusModal() {
+    if (mapFocusModalApi) {
+      return mapFocusModalApi;
+    }
+
+    if (!document.body) {
+      return null;
+    }
+
+    const modal = document.createElement("section");
+    modal.className = "map-focus-modal";
+    modal.hidden = true;
+    modal.innerHTML = `
+      <button class="map-focus-backdrop" type="button" aria-label="Harita penceresini kapat"></button>
+      <article class="map-focus-panel" role="dialog" aria-modal="true" aria-labelledby="mapFocusTitle">
+        <header class="map-focus-head">
+          <div class="map-focus-head-text">
+            <p class="map-focus-eyebrow">Harita Odağı</p>
+            <h3 id="mapFocusTitle" class="map-focus-title">Mekan</h3>
+            <p class="map-focus-subtitle"></p>
+          </div>
+          <div class="map-focus-head-actions">
+            <button class="map-focus-close" type="button" aria-label="Kapat">Kapat</button>
+          </div>
+        </header>
+        <div class="map-focus-body">
+          <aside class="map-focus-info-card" aria-label="Mekan bilgileri">
+            <h4 class="map-focus-info-title">Mekan Bilgisi</h4>
+            <dl class="map-focus-info-list">
+              <div class="map-focus-info-row" data-info-row="phone-primary">
+                <dt>Telefon No</dt>
+                <dd data-info-field="phone-primary">-</dd>
+              </div>
+              <div class="map-focus-info-row" data-info-row="location">
+                <dt>Konum</dt>
+                <dd data-info-field="location">-</dd>
+              </div>
+              <div class="map-focus-info-row" data-info-row="address">
+                <dt>Adres</dt>
+                <dd data-info-field="address">-</dd>
+              </div>
+              <div class="map-focus-info-row" data-info-row="website">
+                <dt>Website</dt>
+                <dd>
+                  <img class="map-focus-info-photo" data-info-field="photo" alt="Mekan görseli" loading="lazy" hidden />
+                  <a data-info-field="website" href="#" target="_blank" rel="noopener noreferrer">Siteye git</a>
+                </dd>
+              </div>
+            </dl>
+          </aside>
+          <div class="map-focus-frame-wrap">
+            <iframe
+              class="map-focus-frame"
+              title="Google Maps mekan görünümü"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen
+            ></iframe>
+          </div>
+        </div>
+        <footer class="map-focus-foot">
+          <a class="map-focus-external" href="#" target="_blank" rel="noopener noreferrer">Google Maps'te aç</a>
+        </footer>
+      </article>
+    `;
+
+    const titleNode = modal.querySelector(".map-focus-title");
+    const subtitleNode = modal.querySelector(".map-focus-subtitle");
+    const iframeNode = modal.querySelector(".map-focus-frame");
+    const externalNode = modal.querySelector(".map-focus-external");
+    const closeNode = modal.querySelector(".map-focus-close");
+    const backdropNode = modal.querySelector(".map-focus-backdrop");
+    const infoPhonePrimaryNode = modal.querySelector('[data-info-field="phone-primary"]');
+    const infoLocationNode = modal.querySelector('[data-info-field="location"]');
+    const infoAddressNode = modal.querySelector('[data-info-field="address"]');
+    const infoWebsiteNode = modal.querySelector('[data-info-field="website"]');
+    const infoPhotoNode = modal.querySelector('[data-info-field="photo"]');
+    const infoPhonePrimaryRow = modal.querySelector('[data-info-row="phone-primary"]');
+    const infoLocationRow = modal.querySelector('[data-info-row="location"]');
+    const infoAddressRow = modal.querySelector('[data-info-row="address"]');
+    const infoWebsiteRow = modal.querySelector('[data-info-row="website"]');
+
+    const close = () => {
+      modal.hidden = true;
+      document.body.classList.remove("map-focus-open");
+      if (iframeNode instanceof HTMLIFrameElement) {
+        iframeNode.src = "about:blank";
+      }
+    };
+
+    const open = (payload) => {
+      const _t = window.ARAMABUL_HEADER_I18N?.getStaticUiTranslation || ((t) => t);
+      const title = String(payload?.title || "").trim() || _t("Mekan");
+      const subtitle = String(payload?.subtitle || "").trim();
+      const embedUrl = String(payload?.embedUrl || "").trim();
+      const externalUrl = String(payload?.externalUrl || "").trim() || embedUrl;
+
+      if (!embedUrl || !(iframeNode instanceof HTMLIFrameElement)) {
+        if (externalUrl) {
+          window.open(externalUrl, "_blank", "noopener");
+        }
+        return;
+      }
+
+      if (titleNode) {
+        titleNode.textContent = title;
+      }
+      if (subtitleNode) {
+        subtitleNode.textContent = subtitle;
+        subtitleNode.hidden = !subtitle;
+      }
+
+      if (externalNode instanceof HTMLAnchorElement) {
+        if (externalUrl) {
+          externalNode.href = externalUrl;
+          externalNode.hidden = false;
+        } else {
+          externalNode.removeAttribute("href");
+          externalNode.hidden = true;
+        }
+      }
+
+      const info = payload?.info && typeof payload.info === "object" ? payload.info : {};
+      const infoLocation = String(info.location || subtitle || "").trim();
+      const infoAddress = String(info.address || "").trim();
+      const infoPhone = String(info.phone || "").trim();
+      const infoWebsite = info.website ? buildAbsoluteUrl(info.website) : "";
+
+      const rawPhoto = String(info.photoUrl || info.photoUri || info.imageUrl || info.image || info.coverImageUrl || "").trim();
+      const hasPhoto = rawPhoto && rawPhoto !== "null" && rawPhoto !== "undefined" && rawPhoto !== "none";
+      const infoPhoto = hasPhoto ? buildAbsoluteUrl(rawPhoto) : "";
+
+      if (infoPhonePrimaryNode) {
+        infoPhonePrimaryNode.textContent = infoPhone || "Bilgi yok";
+      }
+      if (infoLocationNode) {
+        infoLocationNode.textContent = infoLocation || "-";
+      }
+      if (infoAddressNode) {
+        infoAddressNode.textContent = infoAddress || "-";
+      }
+      if (infoWebsiteNode instanceof HTMLAnchorElement) {
+        if (infoWebsite) {
+          infoWebsiteNode.href = infoWebsite;
+          infoWebsiteNode.textContent = info.website;
+          infoWebsiteNode.hidden = false;
+        } else {
+          infoWebsiteNode.removeAttribute("href");
+          infoWebsiteNode.textContent = "";
+          infoWebsiteNode.hidden = true;
+        }
+      }
+      if (infoPhotoNode instanceof HTMLImageElement) {
+        if (infoPhoto) {
+          infoPhotoNode.src = infoPhoto;
+          infoPhotoNode.hidden = false;
+        } else {
+          infoPhotoNode.removeAttribute("src");
+          infoPhotoNode.hidden = true;
+        }
+      }
+
+      if (infoPhonePrimaryRow instanceof HTMLElement) {
+        infoPhonePrimaryRow.hidden = false;
+      }
+      if (infoLocationRow instanceof HTMLElement) {
+        infoLocationRow.hidden = !infoLocation;
+      }
+      if (infoAddressRow instanceof HTMLElement) {
+        infoAddressRow.hidden = !infoAddress;
+      }
+      if (infoWebsiteRow instanceof HTMLElement) {
+        infoWebsiteRow.hidden = !infoWebsite;
+      }
+
+      iframeNode.src = embedUrl;
+      modal.hidden = false;
+      document.body.classList.add("map-focus-open");
+    };
+
+    closeNode.addEventListener("click", close);
+    backdropNode.addEventListener("click", close);
+    document.body.appendChild(modal);
+
+    mapFocusModalApi = { open, close };
+    return mapFocusModalApi;
+  }
+
+  function openVenueMapFocus(venue) {
+    const api = ensureMapFocusModal();
+    const externalUrl = buildDirectionsUrl(venue);
+    const embedUrl = buildMapEmbedUrl(venue);
+    const subtitle = [venue.district, venue.city].map((value) => String(value || "").trim()).filter(Boolean).join(" / ");
+
+    if (!api) {
+      window.open(externalUrl, "_blank", "noopener");
+      return;
+    }
+
+    const _t = window.ARAMABUL_HEADER_I18N?.getStaticUiTranslation || ((t) => t);
+    api.open({
+      title: String(venue.name || "").trim() || _t("Mekan"),
+      subtitle,
+      embedUrl,
+      externalUrl,
+      info: {
+        location: subtitle,
+        address: String(venue.address || "").trim(),
+        phone: String(venue.phone || "").trim(),
+        website: String(venue.website || "").trim(),
+        photoUrl: String(venue.photoUrl || venue.photoUri || "").trim(),
+      },
+    });
   }
 
   function closeCardShareMenus() {
@@ -2221,7 +2483,8 @@
     if (Number.isFinite(Number(item.latitude)) && Number.isFinite(Number(item.longitude))) {
       const latitude = Number(item.latitude);
       const longitude = Number(item.longitude);
-      return `https://maps.google.com/maps?hl=tr&q=${encodeURIComponent(`${latitude},${longitude}`)}&z=15&output=embed`;
+      const name = item.name || "Mekan";
+      return `https://maps.google.com/maps?hl=tr&q=loc:${latitude},${longitude}(${encodeURIComponent(name)})&z=15&output=embed`;
     }
 
     const fallbackQuery = item.address || item.name || "İstanbul";
@@ -2453,7 +2716,9 @@
             ? { nearby: _t("Konumuna göre sıralanan kültür noktaları"), list: _t("İstanbul'da keşfedebileceğin kültür noktaları") }
             : mvpMainCategoryKey === "sanat"
               ? { nearby: _t("Konumuna göre sıralanan sanat noktaları"), list: _t("İstanbul'da keşfedebileceğin sanat noktaları") }
-              : null;
+              : mvpMainCategoryKey === "gezi"
+                ? { nearby: _t("Konumuna göre sıralanan gezi noktaları"), list: _t("İstanbul'da keşfedebileceğin gezi yerleri") }
+                : null;
     if (state.nearbyMode && state.userLocation) {
       resultsTitle.textContent = hizmetlerTitles
         ? hizmetlerTitles.nearby
@@ -3035,10 +3300,12 @@
     }
 
     if (mvpMainCategoryKey === "yeme-icme") {
-      params.set("sort", "popular");
-    }
-
-    if (state.dataMode === "api" && discoveryFiltersAllowHighRatedShuffle()) {
+      params.set("sort", "random");
+      if (!state.discoveryRandomSeed) {
+        state.discoveryRandomSeed = String(Math.floor(Math.random() * 1_000_000_000));
+      }
+      params.set("randomSeed", state.discoveryRandomSeed);
+    } else if (state.dataMode === "api" && discoveryFiltersAllowHighRatedShuffle()) {
       params.set("sort", "random");
       if (!state.discoveryRandomSeed) {
         state.discoveryRandomSeed = String(Math.floor(Math.random() * 1_000_000_000));
@@ -3111,6 +3378,37 @@
       return;
     }
 
+    // Shuffle state.items in-place for random order
+    for (let i = state.items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [state.items[i], state.items[j]] = [state.items[j], state.items[i]];
+    }
+
+    const hasValidPhotoLocal = (item) => {
+      if (!item) return false;
+      const photo = item.photoUri || item.photoUrl || item.imageUrl || item.image || item.coverImageUrl;
+      if (typeof photo !== "string") return false;
+      const val = photo.trim().toLowerCase();
+      if (!val) return false;
+      if (val.includes("al8-snh-") || val.includes("al8-snhylsmxv7pa75n") || val.includes("staticmap") || val.includes("maps.google") || val.includes("assets/") || val.includes("static-maps.yandex") || val.includes("s100x100")) return false;
+      if (val === "null" || val === "undefined" || val === "none" || val === "placeholder" || val === "empty" || val === "false") return false;
+      if (val.includes("no-image") || val.includes("noimage") || val.includes("no_image") || val.includes("no-photo") || val.includes("nophoto")) return false;
+      if (val.includes("placeholder") || val.includes("upload-img") || val.includes("upload_img") || val.includes("<img")) return false;
+      if (val.includes("default-") || val.includes("default_") || val.includes("/default.") || val.includes("/defaultog") || val.includes("og-image") || val.includes("social-image") || val.includes("stock/")) return false;
+      if (!val.startsWith("http://") && !val.startsWith("https://") && !val.startsWith("/")) return false;
+      return true;
+    };
+
+    // Sort to place venues with valid photos first
+    state.items.sort((a, b) => {
+      const aHasPhoto = hasValidPhotoLocal(a);
+      const bHasPhoto = hasValidPhotoLocal(b);
+      if (aHasPhoto !== bHasPhoto) {
+        return aHasPhoto ? -1 : 1;
+      }
+      return 0;
+    });
+
     if (hasMapPanel) {
       syncSelectedVenue();
     } else {
@@ -3143,28 +3441,32 @@
       }
 
       if (image && media) {
-        const photoUri = typeof item.photoUri === "string" ? item.photoUri.trim() : "";
-        if (photoUri) {
-          image.alt = `${item.name || "Mekan"} fotoğrafı`;
-          image.addEventListener(
-            "error",
-            () => {
-              const fallback = getCategoryImage(item.category || item.cuisine || "", item.name);
-              image.src = fallback;
-              image.alt = item.name || "Mekan";
-              if (isPlaceholderImage(fallback)) {
-                image.classList.add("is-placeholder");
-              }
-            },
-            { once: true },
-          );
-          image.src = photoUri;
+        if (["saglik", "hizmetler", "kultur", "sanat"].includes(mvpMainCategoryKey)) {
+          media.remove();
         } else {
-          const fallback = getCategoryImage(item.category || item.cuisine || "", item.name);
-          image.src = fallback;
-          image.alt = item.name || "Mekan";
-          if (isPlaceholderImage(fallback)) {
-            image.classList.add("is-placeholder");
+          const photoUri = typeof item.photoUri === "string" ? item.photoUri.trim() : "";
+          if (photoUri) {
+            image.alt = `${item.name || "Mekan"} fotoğrafı`;
+            image.addEventListener(
+              "error",
+              () => {
+                const fallback = getCategoryImage(item.category || item.cuisine || "", item.name);
+                image.src = fallback;
+                image.alt = item.name || "Mekan";
+                if (isPlaceholderImage(fallback)) {
+                  image.classList.add("is-placeholder");
+                }
+              },
+              { once: true },
+            );
+            image.src = photoUri;
+          } else {
+            const fallback = getCategoryImage(item.category || item.cuisine || "", item.name);
+            image.src = fallback;
+            image.alt = item.name || "Mekan";
+            if (isPlaceholderImage(fallback)) {
+              image.classList.add("is-placeholder");
+            }
           }
         }
       }
@@ -3177,14 +3479,31 @@
       distance.hidden = true;
 
       titleLink.textContent = item.name || "İsimsiz mekan";
-      titleLink.href = buildDetailUrl(item);
+      titleLink.href = "#";
+      titleLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.openVenuePopup(item);
+      });
 
-      // Sadeleştirilmiş kart: adres, rating, bütçe, favori, paylaş gizleniyor
-      address.hidden = true;
+      // Sadeleştirilmiş kart: rating, bütçe, favori, paylaş gizleniyor (adres ve telefon açık)
+      address.textContent = item.address || "Adres bilgisi bulunmuyor.";
+      address.hidden = false;
+
+      const existingPhone = card.querySelector(".istanbul-venue-phone");
+      if (existingPhone) existingPhone.remove();
+
+      if (String(item.phone || "").trim()) {
+        const phonePara = document.createElement("p");
+        phonePara.className = "istanbul-venue-phone";
+        phonePara.innerHTML = `Tel: <a href="tel:${item.phone}">${item.phone}</a>`;
+        address.parentNode.insertBefore(phonePara, address.nextSibling);
+      }
+
       rating.hidden = true;
       budget.hidden = true;
       const pillRow = fragment.querySelector(".istanbul-venue-pill-row");
       if (pillRow) pillRow.hidden = true;
+      
       if (actions) actions.hidden = true;
 
       // ── Bilgi kutucukları: 2 satır ──
@@ -3240,15 +3559,6 @@
       const row2 = document.createElement("div");
       row2.className = "venue-card-info-row";
 
-      const budgetValue = String(item.budget || "").trim();
-      const budgetLabel = formatBudgetLabel(budgetValue);
-      if (budgetLabel && normalizeText(budgetLabel) !== normalizeText("bilinmiyor")) {
-        const el = document.createElement("span");
-        el.className = "istanbul-venue-budget";
-        el.textContent = budgetLabel;
-        row2.appendChild(el);
-      }
-
       const rawDistanceMeters = (item.distanceMeters != null && item.distanceMeters !== "") ? Number(item.distanceMeters) : NaN;
       const computedDistanceMeters = Number.isFinite(rawDistanceMeters)
         ? rawDistanceMeters
@@ -3256,21 +3566,23 @@
       const formattedDistance = formatDistance(computedDistanceMeters);
       if (formattedDistance) {
         const el = document.createElement("span");
-        el.className = "istanbul-venue-distance";
-        el.textContent = formattedDistance;
+        el.className = "venue-popup-distance-chip";
+        el.innerHTML = `<img src="assets/uzak.png" class="venue-popup-chip-icon" alt="" />${formattedDistance}`;
         row2.appendChild(el);
       }
 
-      const ratingNum = Number(item.rating);
-      if (Number.isFinite(ratingNum) && ratingNum > 0) {
-        const ratingFormatted = ratingNum.toFixed(1).replace(".", ",");
-        const ratingCount = Number(item.userRatingCount ?? item.user_rating_count ?? 0);
-        const countText = ratingCount > 0 ? ` (${new Intl.NumberFormat("tr-TR").format(ratingCount)})` : "";
-        const el = document.createElement("span");
-        el.className = "istanbul-venue-tag";
-        el.textContent = `★ ${ratingFormatted}${countText}`;
-        row2.appendChild(el);
-      }
+
+
+      const detailLink = document.createElement("button");
+      detailLink.type = "button";
+      detailLink.className = "venue-popup-info-chip-btn";
+      detailLink.innerHTML = `<img src="assets/detail.png" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi`;
+      detailLink.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const mapsUrl = item.mapsUrl || item.maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((item.name || "") + " " + (item.district || "") + " İstanbul")}`;
+        window.open(mapsUrl, "_blank", "noopener,noreferrer");
+      });
+      row2.appendChild(detailLink);
 
       if (row2.childElementCount) {
         infoBoxes.appendChild(row2);
@@ -3289,7 +3601,7 @@
           return;
         }
         if (opensVenueDetailFromCard) {
-          window.location.href = buildDetailUrl(item);
+          window.openVenuePopup(item);
           return;
         }
         selectVenue(item.slug);
@@ -3298,7 +3610,7 @@
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           if (opensVenueDetailFromCard) {
-            window.location.href = buildDetailUrl(item);
+            window.openVenuePopup(item);
             return;
           }
           selectVenue(item.slug);
@@ -3435,13 +3747,14 @@
           if (!item) return false;
           const photo = item.photoUri || item.photoUrl || item.imageUrl || item.image || item.coverImageUrl;
           if (typeof photo !== "string") return false;
-          const val = photo.trim();
+          const val = photo.trim().toLowerCase();
           if (!val) return false;
-          if (val.includes("AL8-SNH-")) return false;
-          if (val.includes("AL8-SNHyLSmXv7Pa75n")) return false;
-          if (val.includes("staticmap")) return false;
-          if (val.includes("maps.google")) return false;
-          if (val.includes("assets/")) return false;
+          if (val.includes("al8-snh-") || val.includes("al8-snhylsmxv7pa75n") || val.includes("staticmap") || val.includes("maps.google") || val.includes("assets/") || val.includes("static-maps.yandex") || val.includes("s100x100")) return false;
+          if (val === "null" || val === "undefined" || val === "none" || val === "placeholder" || val === "empty" || val === "false") return false;
+          if (val.includes("no-image") || val.includes("noimage") || val.includes("no_image") || val.includes("no-photo") || val.includes("nophoto")) return false;
+          if (val.includes("placeholder") || val.includes("upload-img") || val.includes("upload_img") || val.includes("<img")) return false;
+          if (val.includes("default-") || val.includes("default_") || val.includes("/default.") || val.includes("/defaultog") || val.includes("og-image") || val.includes("social-image") || val.includes("stock/")) return false;
+          if (!val.startsWith("http://") && !val.startsWith("https://") && !val.startsWith("/")) return false;
           return true;
         };
 
@@ -3480,28 +3793,18 @@
           finalItems.length = 0;
           finalItems.push(...pool);
         } else if (mvpMainCategoryKey === "yeme-icme") {
-          const reviewCount = (v) => Number(v.userRatingCount ?? v.user_rating_count ?? v.reviewCount ?? 0) || 0;
-          const ratingVal = (v) => {
-            const r = Number(v.rating ?? v.googleRating);
-            return Number.isFinite(r) ? r : 0;
-          };
-          finalItems.sort((a, b) => {
+          const pool = finalItems.slice();
+          shuffleDiscoveryVenuesInPlace(pool);
+          pool.sort((a, b) => {
             const aHasPhoto = hasValidPhoto(a);
             const bHasPhoto = hasValidPhoto(b);
             if (aHasPhoto !== bHasPhoto) {
               return aHasPhoto ? -1 : 1;
             }
-
-            const dc = reviewCount(b) - reviewCount(a);
-            if (dc !== 0) {
-              return dc;
-            }
-            const dr = ratingVal(b) - ratingVal(a);
-            if (dr !== 0) {
-              return dr;
-            }
-            return String(a.name || "").localeCompare(String(b.name || ""), "tr-TR");
+            return 0;
           });
+          finalItems.length = 0;
+          finalItems.push(...pool);
         } else {
           finalItems.sort((a, b) => {
             const aHasPhoto = hasValidPhoto(a);
@@ -3539,8 +3842,8 @@
         return;
       }
 
-      if (shouldHighRatedRandomDiscoveryApi()) {
-        const filterKey = highRatedDiscoveryShuffleKey();
+      if (mvpMainCategoryKey === "yeme-icme" || shouldHighRatedRandomDiscoveryApi()) {
+        const filterKey = mvpMainCategoryKey === "yeme-icme" ? "yeme-icme" : highRatedDiscoveryShuffleKey();
         if (state.discoveryShuffleFilterKey !== filterKey) {
           state.discoveryShuffleFilterKey = filterKey;
           state.discoveryRandomSeed = String(Math.floor(Math.random() * 1_000_000_000));

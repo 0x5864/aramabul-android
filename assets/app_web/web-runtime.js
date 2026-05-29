@@ -353,5 +353,386 @@
     applySeoDefaults,
   };
 
+  window.openVenuePopup = function (venue) {
+    if (!venue || typeof venue !== "object") return;
+
+    // Create modal element
+    const modal = document.createElement("div");
+    modal.className = "venue-popup-modal";
+
+    modal.innerHTML = `
+      <div class="venue-popup-overlay"></div>
+      <div class="venue-popup-content">
+        <button class="venue-popup-close-btn" aria-label="Kapat">&times;</button>
+        <div class="venue-popup-header">
+          <h2 class="venue-popup-title">${venue.name || "Mekan"}</h2>
+        </div>
+        
+        <div class="venue-popup-body">
+          <!-- Similar Venues Section -->
+          <section class="venue-popup-similar-section">
+            <div class="venue-popup-section-header">
+              <h3 class="venue-popup-section-title">İlçedeki Benzer Mekanlar</h3>
+              <div class="venue-popup-admin-container"></div>
+            </div>
+            <div class="venue-popup-similar-list">
+              <p class="venue-popup-loading">Benzer mekanlar yükleniyor...</p>
+            </div>
+          </section>
+          
+          <!-- Review Form Section -->
+          <section class="venue-popup-review-section">
+            <h3 class="venue-popup-section-title">Yorum Yaz</h3>
+            <form class="venue-popup-review-form">
+              <div class="venue-popup-form-row">
+                <input type="text" class="venue-popup-input-name" placeholder="Adınız" maxlength="80" />
+              </div>
+              <div class="venue-popup-form-row">
+                <textarea class="venue-popup-textarea-text" placeholder="Yorumunuz" rows="3" maxlength="800" required></textarea>
+              </div>
+              <div class="venue-popup-form-actions">
+                <button type="submit" class="venue-popup-submit-btn">Yorumu Gönder</button>
+                <span class="venue-popup-form-status"></span>
+              </div>
+            </form>
+          </section>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Prevent body scroll when popup is open
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    // Close function
+    const closePopup = () => {
+      modal.remove();
+      document.body.style.overflow = originalOverflow;
+    };
+
+    modal.querySelector(".venue-popup-close-btn").onclick = closePopup;
+    modal.querySelector(".venue-popup-overlay").onclick = closePopup;
+
+    // Fetch and render similar venues
+    const similarList = modal.querySelector(".venue-popup-similar-list");
+    const district = (venue.district || "").trim();
+    const cuisine = (venue.cuisine || venue.categoryName || "").trim();
+
+    // Helper to get Turkish locative suffix for Istanbul districts
+    function getDistrictLocativeSuffix(dist) {
+      if (!dist) return "";
+      const d = dist.trim().toLowerCase();
+      const suffixes = {
+        'adalar': "Adalar'daki",
+        'arnavutköy': "Arnavutköy'deki",
+        'ataşehir': "Ataşehir'deki",
+        'avcılar': "Avcılar'daki",
+        'bağcılar': "Bağcılar'daki",
+        'bahçelievler': "Bahçelievler'deki",
+        'bakırköy': "Bakırköy'deki",
+        'başakşehir': "Başakşehir'deki",
+        'bayrampaşa': "Bayrampaşa'daki",
+        'beşiktaş': "Beşiktaş'taki",
+        'beykoz': "Beykoz'daki",
+        'beylikdüzü': "Beylikdüzü'ndeki",
+        'beyoğlu': "Beyoğlu'ndaki",
+        'büyükçekmece': "Büyükçekmece'deki",
+        'çatalca': "Çatalca'daki",
+        'çekmeköy': "Çekmeköy'deki",
+        'esenler': "Esenler'deki",
+        'esenyurt': "Esenyurt'taki",
+        'eyüpsultan': "Eyüpsultan'daki",
+        'fatih': "Fatih'teki",
+        'gaziosmanpaşa': "Gaziosmanpaşa'daki",
+        'güngören': "Güngören'deki",
+        'kadıköy': "Kadıköy'deki",
+        'kağıthane': "Kağıthane'deki",
+        'kartal': "Kartal'daki",
+        'küçükçekmece': "Küçükçekmece'deki",
+        'maltepe': "Maltepe'deki",
+        'pendik': "Pendik'teki",
+        'sancaktepe': "Sancaktepe'deki",
+        'sarıyer': "Sarıyer'deki",
+        'silivri': "Silivri'deki",
+        'sultanbeyli': "Sultanbeyli'deki",
+        'sultangazi': "Sultangazi'deki",
+        'şile': "Şile'deki",
+        'şişli': "Şişli'deki",
+        'tuzla': "Tuzla'daki",
+        'ümraniye': "Ümraniye'deki",
+        'üsküdar': "Üsküdar'daki",
+        'zeytinburnu': "Zeytinburnu'ndaki"
+      };
+      const normalized = d.replace(/i̇/g, "i");
+      if (suffixes[normalized]) return suffixes[normalized];
+      if (d.endsWith("oğlu") || d.endsWith("burnu")) return dist + "'ndaki";
+      const vowels = dist.match(/[aıoueiöüAEIOUEIÖÜ]/g) || [];
+      const lastVowel = vowels.length ? vowels[vowels.length - 1].toLowerCase() : 'e';
+      const isBack = ['a', 'ı', 'o', 'u'].includes(lastVowel);
+      const lastChar = d.charAt(d.length - 1);
+      const isUnvoiced = ['f', 's', 't', 'k', 'ç', 'ş', 'h', 'p'].includes(lastChar);
+      return dist + (isUnvoiced ? (isBack ? "'taki" : "'teki") : (isBack ? "'daki" : "'deki"));
+    }
+
+    // Helper to get Turkish plural form for category/cuisine
+    function getTurkishPlural(word) {
+      if (!word) return "Benzer Mekanlar";
+      const w = word.trim();
+      const lower = w.toLowerCase();
+      if (lower === "akaryakıt" || lower === "akaryakit" || lower.includes("akaryakıt") || lower.includes("istasyon")) return "Akaryakıt İstasyonları";
+      if (lower === "gezi" || lower.includes("gezi")) return "Gezi Noktaları";
+      if (lower === "hizmet" || lower.includes("hizmet")) return "Hizmet Noktaları";
+      if (lower === "sağlık" || lower === "saglik" || lower.includes("sağlık")) return "Sağlık Noktaları";
+      if (lower === "kültür" || lower === "kultur" || lower.includes("kültür")) return "Kültür Noktaları";
+      if (lower === "sanat" || lower.includes("sanat")) return "Sanat Noktaları";
+      if (lower === "berber") return "Berberler";
+      if (lower === "kuaför" || lower === "kuafor") return "Kuaförler";
+      if (lower === "veteriner") return "Veterinerler";
+      if (lower === "kafe" || lower === "cafe") return "Kafeler";
+      if (lower === "restoran" || lower === "restaurant") return "Restoranlar";
+      if (lower === "meyhane") return "Meyhaneler";
+      if (lower === "doner" || lower === "döner") return "Dönerciler";
+      if (lower === "kebap") return "Kebapçılar";
+      if (lower === "çiğköfte" || lower === "cigkofte") return "Çiğköfteciler";
+      if (lower === "pide") return "Pideciler";
+      if (lower === "kahvaltı" || lower === "kahvalti") return "Kahvaltı Mekanları";
+      const vowels = w.match(/[aıoueiöüAEIOUEIÖÜ]/g) || [];
+      const lastVowel = vowels.length ? vowels[vowels.length - 1].toLowerCase() : 'e';
+      const isBack = ['a', 'ı', 'o', 'u'].includes(lastVowel);
+      return w.charAt(0).toUpperCase() + w.slice(1) + (isBack ? "lar" : "ler");
+    }
+
+    // Set dynamic section title
+    const sectionTitle = modal.querySelector(".venue-popup-similar-section .venue-popup-section-title");
+    if (sectionTitle && district) {
+      const locativeDistrict = getDistrictLocativeSuffix(district);
+      const pluralCategory = getTurkishPlural(cuisine || venue.category || "Mekan");
+      sectionTitle.textContent = `${locativeDistrict} ${pluralCategory}`;
+    }
+
+    // Helper to get coordinates
+    const getCoordinates = (callback) => {
+      try {
+        const stored = sessionStorage.getItem("aramabul:userLocation");
+        if (stored) {
+          const loc = JSON.parse(stored);
+          if (loc && loc.lat && loc.lng) {
+            callback(loc);
+            return;
+          }
+        }
+      } catch (e) {}
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+            try {
+              sessionStorage.setItem("aramabul:userLocation", JSON.stringify(loc));
+            } catch (e) {}
+            callback(loc);
+          },
+          () => {
+            callback(null);
+          },
+          { timeout: 2000, maximumAge: 60000 }
+        );
+      } else {
+        callback(null);
+      }
+    };
+
+    if (district || cuisine) {
+      getCoordinates((loc) => {
+        const params = new URLSearchParams();
+        if (district) params.set("district", district);
+        if (cuisine) params.set("category", cuisine);
+        params.set("limit", "8");
+        params.set("sort", "rating");
+        if (loc && loc.lat && loc.lng) {
+          params.set("lat", String(loc.lat));
+          params.set("lng", String(loc.lng));
+        }
+
+        fetch("/api/mvp/istanbul/venues?" + params.toString())
+          .then((r) => r.json())
+          .then((data) => {
+            const items = (data.items || []).filter((v) => v.id !== venue.id && v.slug !== venue.slug);
+            similarList.innerHTML = "";
+            
+            if (!items.length) {
+              similarList.innerHTML = '<p class="venue-popup-loading">Benzer mekan bulunamadı.</p>';
+              return;
+            }
+
+            // Helper to calculate distance in meters using Haversine formula
+            function computeDistanceMeters(loc1, loc2) {
+              if (!loc1 || !loc2 || !loc2.latitude || !loc2.longitude) return null;
+              const toRad = (x) => (x * Math.PI) / 180;
+              const R = 6371000; // Earth radius in meters
+              const lat1 = toRad(loc1.lat);
+              const lon1 = toRad(loc1.lng);
+              const lat2 = toRad(loc2.latitude);
+              const lon2 = toRad(loc2.longitude);
+              const dLat = lat2 - lat1;
+              const dLon = lon2 - lon1;
+              const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+              const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+              return Math.round(R * c);
+            }
+
+            items.slice(0, 6).forEach((v) => {
+              let rawMapsUrl = (v.mapsUrl || v.mapUrl || "").trim();
+              let queryPart = rawMapsUrl.split("query=")[1] || rawMapsUrl.split("destination=")[1] || "";
+              let decodedQuery = "";
+              try {
+                decodedQuery = decodeURIComponent(queryPart);
+              } catch (e) {
+                decodedQuery = queryPart;
+              }
+              let isCoordsOnly = rawMapsUrl.includes("query=") && !/[a-zA-Z]/.test(decodedQuery);
+
+              let mapsUrl = "";
+              if (rawMapsUrl && !isCoordsOnly) {
+                mapsUrl = rawMapsUrl;
+              } else if (v.sourcePlaceId || v.placeId) {
+                mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((v.name || "") + " " + (v.district || "") + " İstanbul")}&query_place_id=${v.sourcePlaceId || v.placeId}`;
+              } else if (v.name && v.district) {
+                mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((v.name || "") + " " + (v.district || "") + " İstanbul")}`;
+              } else if (v.latitude && v.longitude) {
+                mapsUrl = `https://maps.google.com/maps?q=loc:${v.latitude},${v.longitude}(${encodeURIComponent(v.name || "Mekan")})&hl=tr`;
+              } else {
+                const urlObj = new URL("https://www.google.com/maps/search/");
+                urlObj.searchParams.set("api", "1");
+                const query = [v.name, v.address, v.district, "İstanbul"].filter(Boolean).join(" ");
+                urlObj.searchParams.set("query", query);
+                mapsUrl = urlObj.toString();
+              }
+
+              const card = document.createElement("div");
+              card.className = "venue-popup-similar-card";
+
+              const metaText = [v.district, v.neighborhood].filter(Boolean).join(" - ");
+              
+              let distanceText = "";
+              if (v.distanceMeters !== undefined && v.distanceMeters !== null) {
+                const meters = Number(v.distanceMeters);
+                if (meters < 1000) {
+                  distanceText = `${meters} m`;
+                } else {
+                  distanceText = `${Number(meters / 1000).toFixed(1).replace(".", ",")} km`;
+                }
+              } else if (v.latitude && v.longitude && loc) {
+                const dist = computeDistanceMeters(loc, v);
+                if (dist !== null) {
+                  if (dist < 1000) {
+                    distanceText = `${dist} m`;
+                  } else {
+                    distanceText = `${Number(dist / 1000).toFixed(1).replace(".", ",")} km`;
+                  }
+                }
+              }
+
+              card.innerHTML = `
+                <p class="venue-popup-similar-card-name">${v.name || ""}</p>
+                ${metaText ? `<p class="venue-popup-similar-card-meta">${metaText}</p>` : ""}
+                ${distanceText ? `<div class="venue-popup-distance-chip"><img src="assets/uzak.png" class="venue-popup-chip-icon" alt="" />${distanceText}</div>` : ""}
+                <button class="venue-popup-info-chip-btn" type="button"><img src="assets/detail.png" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi</button>
+              `;
+
+              const infoBtn = card.querySelector(".venue-popup-info-chip-btn");
+              if (infoBtn) {
+                infoBtn.onclick = (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const finalMapsUrl = mapsUrl || v.mapsUrl || v.maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((v.name || "") + " " + (v.district || "") + " İstanbul")}`;
+                  window.open(finalMapsUrl, "_blank", "noopener,noreferrer");
+                };
+              }
+
+              similarList.appendChild(card);
+            });
+          })
+          .catch(() => {
+            similarList.innerHTML = '<p class="venue-popup-loading">Benzer mekanlar yüklenirken bir hata oluştu.</p>';
+          });
+      });
+    } else {
+      similarList.innerHTML = '<p class="venue-popup-loading">Benzer mekan bulunamadı.</p>';
+    }
+
+    // Load admin edit icon if user is admin
+    const adminContainer = modal.querySelector(".venue-popup-admin-container");
+    fetch("/api/admin/auth/session", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && data.session) {
+          adminContainer.innerHTML = `
+            <a href="admin-venues.html?venueId=${encodeURIComponent(venue.id)}" target="_blank" rel="noopener" class="venue-popup-admin-link" title="Admin'de düzenle">
+              <img src="/assets/edit.png" alt="Düzenle" class="venue-popup-admin-icon" />
+            </a>
+          `;
+        }
+      })
+      .catch(() => {});
+
+    // Review form submission
+    const form = modal.querySelector(".venue-popup-review-form");
+    const nameInput = modal.querySelector(".venue-popup-input-name");
+    const textTextarea = modal.querySelector(".venue-popup-textarea-text");
+    const statusNode = modal.querySelector(".venue-popup-form-status");
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const text = String(textTextarea.value || "").trim();
+      const author = String(nameInput.value || "").trim();
+
+      if (text.length < 3) {
+        statusNode.textContent = "Lütfen kısa da olsa bir yorum yaz.";
+        statusNode.className = "venue-popup-form-status is-error";
+        textTextarea.focus();
+        return;
+      }
+
+      statusNode.textContent = "Gönderiliyor...";
+      statusNode.className = "venue-popup-form-status";
+
+      try {
+        const slug = String(venue.slug || "").trim();
+        const fallback = [venue.name, venue.district].filter(Boolean).join("|");
+        const venueKey = slug || fallback.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
+        const response = await fetch("/api/venue-reviews", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            venueKey,
+            venueName: venue.name || "",
+            district: venue.district || "",
+            author: author,
+            text: text,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error();
+        }
+
+        textTextarea.value = "";
+        statusNode.textContent = "Yorumunuz onaya gönderildi.";
+        statusNode.className = "venue-popup-form-status";
+      } catch (err) {
+        statusNode.textContent = "Yorum gönderilemedi.";
+        statusNode.className = "venue-popup-form-status is-error";
+      }
+    };
+  };
+
   applySeoDefaults();
 })();

@@ -31,7 +31,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260524b" />
+    <link rel="stylesheet" href="styles.css?v=20260529h" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -118,6 +118,56 @@
     </header>
 
     <main class="hero istanbul-discovery-shell">
+      <!-- Category Row Navigation -->
+      <section class="home-top-category-row" aria-label="Arama kategorileri" style="margin-top: 1.2rem; margin-bottom: 0.8rem;">
+        <a
+          class="top-city-card category-home-card"
+          href="yeme-icme.html"
+          data-category="yeme-icme"
+          aria-label="Yeme-İçme kategorisinden İstanbul'da kafe ve restoran keşfet"
+        >
+          <span class="top-city-thumb" style="background-image: url('assets/yemek.webp')" aria-hidden="true"></span>
+          <span class="top-city-content">
+            <span class="top-city-name">Yeme-İçme</span>
+          </span>
+        </a>
+
+        <a class="top-city-card category-home-card" href="gezi.html" data-category="gezi" aria-label="Gezi kategorisinde ara">
+          <span class="top-city-thumb" style="background-image: url('assets/gezi.webp')" aria-hidden="true"></span>
+          <span class="top-city-content">
+            <span class="top-city-name">Gezi</span>
+          </span>
+        </a>
+
+        <a class="top-city-card category-home-card active" href="hizmetler.html" data-category="hizmetler" aria-label="Hizmetler kategorisinde ara">
+          <span class="top-city-thumb" style="background-image: url('assets/sac.webp')" aria-hidden="true"></span>
+          <span class="top-city-content">
+            <span class="top-city-name">Hizmetler</span>
+          </span>
+        </a>
+
+        <a class="top-city-card category-home-card" href="saglik.html" data-category="saglik" aria-label="Sağlık kategorisinde ara">
+          <span class="top-city-thumb" style="background-image: url('assets/saglik.png')" aria-hidden="true"></span>
+          <span class="top-city-content">
+            <span class="top-city-name">Sağlık</span>
+          </span>
+        </a>
+
+        <a class="top-city-card category-home-card" href="kultur.html" data-category="kultur" aria-label="Kültür kategorisinde ara">
+          <span class="top-city-thumb" style="background-image: url('assets/kultur.webp')" aria-hidden="true"></span>
+          <span class="top-city-content">
+            <span class="top-city-name">Kültür</span>
+          </span>
+        </a>
+
+        <a class="top-city-card category-home-card" href="sanat.html" data-category="sanat" aria-label="Sanat kategorisinde ara">
+          <span class="top-city-thumb" style="background-image: url('assets/sanat.png')" aria-hidden="true"></span>
+          <span class="top-city-content">
+            <span class="top-city-name">Sanat</span>
+          </span>
+        </a>
+      </section>
+
       <section class="section-head province-head" aria-label="Keşfet">
         <div>
           <h1 id="resultsTitle" class="istanbul-results-outside-title" data-i18n-key="shared.placesLoading">Mekanlar yükleniyor</h1>
@@ -135,7 +185,6 @@
             >
               <div class="istanbul-filter-location-box" aria-label="Konum ve mahalle">
                 <label class="istanbul-filter-field">
-                  <span>Konum</span>
                   <div class="kesfet-category-dropdown lang-switch" data-kesfet-district-switch>
                     <button
                       type="button"
@@ -168,7 +217,6 @@
                 </label>
 
                 <label class="istanbul-filter-field">
-                  <span>Mahalle</span>
                   <div class="kesfet-category-dropdown lang-switch" data-kesfet-neighborhood-switch>
                     <button
                       type="button"
@@ -200,46 +248,45 @@
                     </div>
                   </div>
                 </label>
-              </div>
 
-              <div class="istanbul-filter-section-box istanbul-filter-gezi-category-box" aria-label="Kategori">
-                <p class="istanbul-filter-section-box-title" id="kesfetCategoryBannerLabel">Kategori</p>
-                <div class="kesfet-category-dropdown lang-switch" data-kesfet-category-switch>
-                  <button
-                    type="button"
-                    class="lang-switch-btn kesfet-category-dropdown-btn"
-                    data-kesfet-category-trigger
-                    id="kesfetCategoryTrigger"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                    aria-controls="kesfetCategoryMenu"
-                  >
-                    <span class="lang-switch-code kesfet-category-dropdown-label" data-kesfet-category-current>Tüm kategoriler</span>
-                    <span class="kesfet-category-dropdown-chevron" aria-hidden="true">▾</span>
-                  </button>
-                  <div
-                    class="lang-switch-menu kesfet-category-dropdown-menu"
-                    id="kesfetCategoryMenu"
-                    data-kesfet-category-menu
-                    role="group"
-                    hidden
-                    aria-label="Kategori seçenekleri"
-                  >
+                <label class="istanbul-filter-field">
+                  <div class="kesfet-category-dropdown lang-switch" data-kesfet-category-switch>
+                    <button
+                      type="button"
+                      class="lang-switch-btn kesfet-category-dropdown-btn"
+                      data-kesfet-category-trigger
+                      id="kesfetCategoryTrigger"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                      aria-controls="kesfetCategoryMenu"
+                    >
+                      <span class="lang-switch-code kesfet-category-dropdown-label" data-kesfet-category-current>Tüm kategoriler</span>
+                      <span class="kesfet-category-dropdown-chevron" aria-hidden="true">▾</span>
+                    </button>
                     <div
-                      id="mvpSubcategoryGrid"
-                      class="kesfet-category-dropdown-options"
-                      role="radiogroup"
-                      aria-label="Kategori seç"
-                    ></div>
+                      class="lang-switch-menu kesfet-category-dropdown-menu"
+                      id="kesfetCategoryMenu"
+                      data-kesfet-category-menu
+                      role="group"
+                      hidden
+                      aria-label="Kategori seçenekleri"
+                    >
+                      <div
+                        id="mvpSubcategoryGrid"
+                        class="kesfet-category-dropdown-options"
+                        role="radiogroup"
+                        aria-label="Kategori seç"
+                      ></div>
+                    </div>
                   </div>
-                </div>
+                </label>
               </div>
             </div>
 
             <div class="istanbul-filter-meta-column">
               <div class="bh-cta-wrap">
                 <button type="button" class="bh-cta-button" id="bhCtaButton" aria-label="İşletme başvuru formunu aç">
-                  <span class="bh-cta-label">İşletmenizi öne çıkarmak ister misiniz?</span>
+                  <span class="bh-cta-label">İşletmenizi öne çıkarın</span>
                 </button>
               </div>
 
@@ -408,7 +455,7 @@
       </div>
     </footer>
 
-    <script src="web-runtime.js?v=20260302-01"></script>
+    <script src="web-runtime.js?v=20260529d"></script>
     <script src="header-state.js?v=20260302-01"></script>
     <script src="header-i18n.js?v=20260429-i18n-page-keys-01"></script>
     <script src="header-nav.js?v=20260505-hash-auth-01"></script>
@@ -416,7 +463,7 @@
     <script src="header-search-ui.js?v=20260303-04"></script>
     <script src="header-search-data.js?v=20260523-search-fix-02"></script>
     <script src="header-search.js?v=20260422-header-no-topbar-01"></script>
-    <script src="istanbul-kesfet.js?v=20260515-touch-fix-01"></script>
+    <script src="istanbul-kesfet.js?v=20260529-photo-fix-05"></script>
     <script src="business-highlight.js?v=20260510-01"></script>
     <script src="adsense-privacy.js?v=20260523-adsense-consent-02"></script>
   </body>

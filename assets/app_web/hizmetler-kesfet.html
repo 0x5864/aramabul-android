@@ -5,8 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Yönlendiriliyor… | AramaBul</title>
     <meta http-equiv="refresh" content="0;url=hizmetler.html" />
-    <link rel="canonical" href="hizmetler.html" />
+    <link rel="canonical" href="https://aramabul.com/hizmetler.html" />
     <!-- Google tag (gtag.js) -->
+        <!-- Google Consent Mode v2 -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      (function() {
+        var consent = null;
+        try { consent = localStorage.getItem("aramabul_cookie_consent"); } catch (e) {}
+        var defaults = {
+          'ad_storage': 'denied',
+          'ad_user_data': 'denied',
+          'ad_personalization': 'denied',
+          'analytics_storage': 'denied',
+          'wait_for_update': 500
+        };
+        if (consent === 'all') {
+          defaults = {
+            'ad_storage': 'granted',
+            'ad_user_data': 'granted',
+            'ad_personalization': 'granted',
+            'analytics_storage': 'granted'
+          };
+        }
+        gtag('consent', 'default', defaults);
+      })();
+    </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NHE1J9FWDG"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -17,5 +42,6 @@
   </head>
   <body>
     <p>Bu sayfa taşındı. <a href="hizmetler.html">İstanbul hizmet keşfet</a> sayfasına geçin.</p>
+      <script src="adsense-privacy.js?v=20260523-adsense-consent-02"></script>
   </body>
 </html>

@@ -3,23 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#1f6f54" />
-    <title>AramaBul</title>
-    <meta
-      name="description"
-      content="Kredi tutarı, faiz ve vade bilgileriyle aylık taksit ve toplam geri ödemeyi hesapla."
-    />
-    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260508b" />
-    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260508b" />
-    <link rel="apple-touch-icon" href="assets/favicon.png?v=20260508b" />
+    <meta name="theme-color" content="#45503f" />
+    <title>Kredi Hesaplama Aracı | AramaBul</title>
+    <meta name="description" content="Kredi faiz ve taksit hesaplama aracı. İhtiyaç, konut ve taşıt kredisi karşılaştırma." />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260522d" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260527-header-fix" />
+    <link rel="stylesheet" href="styles.css?v=20260529h" />
     <!-- Google tag (gtag.js) -->
+        <!-- Google Consent Mode v2 -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      (function() {
+        var consent = null;
+        try { consent = localStorage.getItem("aramabul_cookie_consent"); } catch (e) {}
+        var defaults = {
+          'ad_storage': 'denied',
+          'ad_user_data': 'denied',
+          'ad_personalization': 'denied',
+          'analytics_storage': 'denied',
+          'wait_for_update': 500
+        };
+        if (consent === 'all') {
+          defaults = {
+            'ad_storage': 'granted',
+            'ad_user_data': 'granted',
+            'ad_personalization': 'granted',
+            'analytics_storage': 'granted'
+          };
+        }
+        gtag('consent', 'default', defaults);
+      })();
+    </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NHE1J9FWDG"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -27,6 +49,7 @@
       gtag("js", new Date());
       gtag("config", "G-NHE1J9FWDG");
     </script>
+      <link rel="canonical" href="https://aramabul.com/kredi.html" />
   </head>
   <body class="credit-page finance-tool-page">
     <div class="texture"></div>
@@ -34,7 +57,7 @@
     <header class="global-header-band">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
-          <img class="brand-logo" src="assets/logo.png?v=20260508b" alt="aramabul logo" />
+          <img class="brand-logo" src="assets/logo.png?v=20260525a" alt="aramabul logo" />
           <span class="brand-wordmark"><span class="brand-wordmark-rest">arama</span><span class="brand-wordmark-search">bul</span></span>
         </a>
       </nav>

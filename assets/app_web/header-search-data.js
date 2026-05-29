@@ -226,6 +226,7 @@
     const district = sanitizeText(record.district);
     const neighborhood = sanitizeText(record.neighborhood || record.mahalle);
     const slug = sanitizeText(record.slug);
+    const id = record.id === null || record.id === undefined ? "" : sanitizeText(String(record.id));
     const postalCode = sanitizeText(record.postalCode || record.postcode);
     const address = sanitizeText(record.address);
     const sourcePlaceId = sanitizeText(record.sourcePlaceId || record.placeId);
@@ -239,6 +240,7 @@
     }
 
     return {
+      id,
       name,
       city,
       district,
@@ -249,6 +251,7 @@
       sourcePlaceId,
       dynamicType,
       pageBase,
+      sourceMode: sanitizeText(options.sourceMode || ""),
       openAsRestaurant: Boolean(options.openAsRestaurant),
       canonicalName: canonicalize(name),
       canonicalSearchBlob: canonicalize(
@@ -288,7 +291,10 @@
       }
 
       const pageBase = sanitizeText(venue.pageBase);
-      const locationKey = `${pageBase}|${canonicalize(venue.city)}|${canonicalize(venue.district)}|${venue.canonicalName}`;
+      const idKey = sanitizeText(venue.id);
+      const slugKey = sanitizeText(venue.slug);
+      const stableKey = idKey ? `id:${idKey}` : slugKey ? `slug:${slugKey}` : "";
+      const locationKey = stableKey || `${pageBase}|${canonicalize(venue.city)}|${canonicalize(venue.district)}|${venue.canonicalName}`;
       const bucket = buckets.get(locationKey) || [];
       bucket.push(venue);
       buckets.set(locationKey, bucket);
@@ -374,6 +380,24 @@
       return await response.json();
     } catch (_error) {
       return null;
+    }
+  }
+
+  async function fetchVenuePayloadResult(path) {
+    try {
+      const response = await fetch(path, {
+        method: "GET",
+        headers: { Accept: "application/json" },
+        credentials: "omit",
+      });
+
+      if (!response.ok) {
+        return { ok: false, payload: null };
+      }
+
+      return { ok: true, payload: await response.json() };
+    } catch (_error) {
+      return { ok: false, payload: null };
     }
   }
 
@@ -771,12 +795,13 @@
   async function fetchVenuesByApiTextSearch(rawQuery) {
     const query = String(rawQuery || "").trim();
     if (query.length < 2 || !API_BASE_URL) {
-      return [];
+      return { records: [], apiAvailable: false };
     }
 
     const normalizeOpts = {
       pageBase: "yeme-icme",
       openAsRestaurant: true,
+      sourceMode: "api",
     };
 
     const mvpParams = new URLSearchParams();
@@ -784,22 +809,37 @@
     mvpParams.set("limit", "50");
     const mvpUrl = `${API_BASE_URL}/api/mvp/istanbul/venues?${mvpParams.toString()}`;
 
+    const searchParams = new URLSearchParams();
+    searchParams.set("q", query);
+    searchParams.set("limit", "50");
+    const searchUrl = `${API_BASE_URL}/api/venues/search?${searchParams.toString()}`;
+
     const legacyParams = new URLSearchParams();
     legacyParams.set("city", DEFAULT_VENUES_CITY);
     legacyParams.set("limit", "50");
     legacyParams.set("q", query);
-    const legacyUrl = `${API_BASE_URL}/api/venues?${legacyParams.toString()}`;
+    const legacyListUrl = `${API_BASE_URL}/api/venues?${legacyParams.toString()}`;
 
-    const [mvpPayload, legacyPayload] = await Promise.all([
-      fetchVenuePayload(mvpUrl),
-      fetchVenuePayload(legacyUrl),
-    ]);
+    const apiResults = [
+      await fetchVenuePayloadResult(mvpUrl),
+      await fetchVenuePayloadResult(searchUrl),
+    ];
+
+    if (!apiResults.some((result) => result.ok)) {
+      apiResults.push(await fetchVenuePayloadResult(legacyListUrl));
+    }
+
+    const apiAvailable = apiResults.some((result) => result.ok);
 
     const merged = [
-      ...normalizeVenueCollection(mvpPayload, normalizeOpts),
-      ...normalizeVenueCollection(legacyPayload, normalizeOpts),
+      ...normalizeVenueCollection(apiResults[0]?.payload, normalizeOpts),
+      ...normalizeVenueCollection(apiResults[1]?.payload, normalizeOpts),
+      ...normalizeVenueCollection(apiResults[2]?.payload, normalizeOpts),
     ];
-    return dedupeVenueRecords(merged);
+    return {
+      records: dedupeVenueRecords(merged),
+      apiAvailable,
+    };
   }
 
   async function resolveQuery(rawQuery) {
@@ -818,10 +858,34 @@
       return routeResult(cityUrlFor(exactCity));
     }
 
-    const [records, apiTextMatches] = await Promise.all([
-      loadSearchRecords(),
-      fetchVenuesByApiTextSearch(query),
-    ]);
+    const apiTextSearch = await fetchVenuesByApiTextSearch(query);
+    const apiTextMatches = apiTextSearch.records;
+
+    if (apiTextMatches.length > 1) {
+      return choiceResult(apiTextMatches);
+    }
+    if (apiTextMatches.length === 1) {
+      return routeResult(categoryUrlFor(apiTextMatches[0]));
+    }
+
+    if (apiTextSearch.apiAvailable) {
+      const queryTokenCount = canonicalize(query).split(" ").filter(Boolean).length;
+      const matchedCategoryPage = queryTokenCount === 1
+        ? findMatchingCategoryPage(query)
+        : null;
+      if (matchedCategoryPage) {
+        return routeResult(matchedCategoryPage);
+      }
+
+      const matchedCity = await findMatchingCityName(query);
+      if (matchedCity) {
+        return routeResult(cityUrlFor(matchedCity));
+      }
+
+      return notFoundResult();
+    }
+
+    const records = await loadSearchRecords();
 
     const exactRecords = findExactMatchingRecords(records, query);
     if (exactRecords.length > 1) {
@@ -838,13 +902,6 @@
     }
     if (venueMatches.length === 1) {
       return routeResult(categoryUrlFor(venueMatches[0]));
-    }
-
-    if (venueMatches.length === 0 && apiTextMatches.length > 1) {
-      return choiceResult(apiTextMatches);
-    }
-    if (venueMatches.length === 0 && apiTextMatches.length === 1) {
-      return routeResult(categoryUrlFor(apiTextMatches[0]));
     }
 
     const queryTokenCount = canonicalize(query).split(" ").filter(Boolean).length;

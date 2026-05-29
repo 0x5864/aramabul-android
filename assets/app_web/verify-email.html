@@ -5,12 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex,nofollow" />
     <title>AramaBul</title>
-    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260508b" />
-    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260508b" />
-    <link rel="apple-touch-icon" href="assets/favicon.png?v=20260508b" />
-    <link rel="stylesheet" href="styles.css?v=20260527-header-fix" />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260522d" />
+    <link rel="stylesheet" href="styles.css?v=20260529h" />
     <link rel="stylesheet" href="profile.css?v=20260309-01" />
     <!-- Google tag (gtag.js) -->
+        <!-- Google Consent Mode v2 -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      (function() {
+        var consent = null;
+        try { consent = localStorage.getItem("aramabul_cookie_consent"); } catch (e) {}
+        var defaults = {
+          'ad_storage': 'denied',
+          'ad_user_data': 'denied',
+          'ad_personalization': 'denied',
+          'analytics_storage': 'denied',
+          'wait_for_update': 500
+        };
+        if (consent === 'all') {
+          defaults = {
+            'ad_storage': 'granted',
+            'ad_user_data': 'granted',
+            'ad_personalization': 'granted',
+            'analytics_storage': 'granted'
+          };
+        }
+        gtag('consent', 'default', defaults);
+      })();
+    </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NHE1J9FWDG"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -33,7 +58,7 @@
       </section>
     </main>
 
-    <script src="web-runtime.js?v=20260302-01"></script>
+    <script src="web-runtime.js?v=20260529d"></script>
     <script src="verify-email.js?v=20260309-01"></script>
   </body>
 </html>

@@ -3,20 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0d2032" />
+    <meta name="theme-color" content="#45503f" />
     <title>Admin Sanat | AramaBul</title>
     <meta name="description" content="İstanbul Sanat dikeyi mekan kayıtlarını yönet." />
     <meta name="robots" content="noindex,nofollow" />
-    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260508b" />
-    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260508b" />
-    <link rel="apple-touch-icon" href="assets/favicon.png?v=20260508b" />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260522d" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260527-header-fix" />
+    <link rel="stylesheet" href="styles.css?v=20260529h" />
   </head>
   <body class="venue-detail-page admin-venue-editor-page">
     <div class="texture"></div>
@@ -24,7 +24,7 @@
     <header class="global-header-band">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
-          <img class="brand-logo" src="assets/logo.png?v=20260508b" alt="aramabul logo" />
+          <img class="brand-logo" src="assets/logo.png?v=20260525a" alt="aramabul logo" />
           <span class="brand-wordmark"><span class="brand-wordmark-search">arama</span><span class="brand-wordmark-rest">bul</span></span>
         </a>
         <div class="istanbul-topbar-actions">
@@ -100,7 +100,7 @@
               <span>Durum</span>
               <select id="adminSanatActiveFilter">
                 <option value="">Aktif + pasif</option>
-                <option value="true">Sadece aktif</option>
+                <option value="true" selected>Sadece aktif</option>
                 <option value="false">Sadece pasif</option>
               </select>
             </label>
@@ -226,10 +226,6 @@
                 <input id="adminSanatNeighborhood" name="neighborhood" type="text" list="adminSanatNeighborhoodList" />
               </label>
 
-              <label class="istanbul-filter-field">
-                <span>Sanat türü / tip</span>
-                <input id="adminSanatCuisine" name="cuisine" type="text" />
-              </label>
 
               <label class="istanbul-filter-field">
                 <span>Bütçe</span>
@@ -441,6 +437,6 @@
     </template>
 
     <script src="admin-auth.js?v=20260410-admin-auth-02"></script>
-    <script src="admin-sanat.js?v=20260422-admin-sanat-01"></script>
+    <script src="admin-sanat.js?v=20260514-no-cuisine-02"></script>
   </body>
 </html>
