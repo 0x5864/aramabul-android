@@ -163,15 +163,40 @@ class FeaturedVenues {
     }
   }
 
+  hasValidPhoto(item) {
+    if (!item) return false;
+    const photo = item.photoUri || item.photoUrl || item.imageUrl || item.image || item.coverImageUrl;
+    if (typeof photo !== "string") return false;
+    const val = photo.trim().toLowerCase();
+    if (!val) return false;
+    if (val.includes("al8-snh-") || val.includes("al8-snhylsmxv7pa75n") || val.includes("staticmap") || val.includes("maps.google") || val.includes("assets/") || val.includes("static-maps.yandex") || val.includes("s100x100")) return false;
+    if (val === "null" || val === "undefined" || val === "none" || val === "placeholder" || val === "empty" || val === "false") return false;
+    if (val.includes("no-image") || val.includes("noimage") || val.includes("no_image") || val.includes("no-photo") || val.includes("nophoto")) return false;
+    if (val.includes("placeholder") || val.includes("upload-img") || val.includes("upload_img") || val.includes("<img")) return false;
+    if (val.includes("default-") || val.includes("default_") || val.includes("/default.") || val.includes("/defaultog") || val.includes("og-image") || val.includes("social-image") || val.includes("stock/")) return false;
+    if (!val.startsWith("http://") && !val.startsWith("https://") && !val.startsWith("/")) return false;
+    return true;
+  }
+
   pickRandomUnique(venues, count) {
     const list = (Array.isArray(venues) ? venues : []).filter(Boolean);
-    for (let i = list.length - 1; i > 0; i -= 1) {
+    const withPhotos = list.filter((v) => this.hasValidPhoto(v));
+    const withoutPhotos = list.filter((v) => !this.hasValidPhoto(v));
+
+    // Shuffle both separately
+    for (let i = withPhotos.length - 1; i > 0; i -= 1) {
       const j = Math.floor(Math.random() * (i + 1));
-      [list[i], list[j]] = [list[j], list[i]];
+      [withPhotos[i], withPhotos[j]] = [withPhotos[j], withPhotos[i]];
     }
+    for (let i = withoutPhotos.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [withoutPhotos[i], withoutPhotos[j]] = [withoutPhotos[j], withoutPhotos[i]];
+    }
+
+    const combined = [...withPhotos, ...withoutPhotos];
     const out = [];
     const seen = new Set();
-    for (const v of list) {
+    for (const v of combined) {
       const k = this.getVenueKey(v);
       if (!k || seen.has(k)) {
         continue;
@@ -186,8 +211,20 @@ class FeaturedVenues {
   }
 
   async loadRandomFeaturedCards() {
+    const grid = document.querySelector(".featured-venues-grid");
+    if (!grid) return;
+    
+    // Clear the grid first to remove placeholders/static nodes
+    grid.innerHTML = "";
+    
+    const template = document.getElementById("istanbulVenueCardTemplate");
+    if (!template) {
+      console.warn("Template istanbulVenueCardTemplate bulunamadı.");
+      return;
+    }
+
     const seed = Math.floor(Math.random() * 2000000000);
-    const items = await this.fetchMvpVenues("random", 50, { photoState: "has_photo", randomSeed: seed });
+    const items = await this.fetchMvpVenues("random", 50, { randomSeed: seed });
     const picks = this.pickRandomUnique(items, 3);
     const cardIds = ["featured-most-comments", "featured-highest-rated", "featured-nearest-highest"];
     const keys = ["mostCommented", "highestRated", "nearestHighest"];
@@ -197,6 +234,15 @@ class FeaturedVenues {
     for (let i = 0; i < 3; i += 1) {
       const venue = picks[i] || null;
       this.featuredVenues[keys[i]] = venue;
+
+      // Clone the template
+      const fragment = template.content.cloneNode(true);
+      const card = fragment.querySelector(".istanbul-venue-card");
+      if (card) {
+        card.id = cardIds[i]; // Assign the ID matching existing methods
+      }
+      grid.appendChild(fragment);
+
       if (venue) {
         this.updateVenueCard(cardIds[i], venue, { showDistance: true });
       } else {
@@ -366,11 +412,17 @@ class FeaturedVenues {
       this.applyVenueImage(imageEl, venue, options.placeholder);
     }
 
-    // Eyebrow gizle (kültür/hizmetler tarzı)
+    // Eyebrow: Kategori & İlçe (Gizliyoruz - iç kartlarda tags içinde gösterilecek)
     const eyebrowEl = card.querySelector(".istanbul-venue-eyebrow");
     if (eyebrowEl) {
       eyebrowEl.textContent = "";
       eyebrowEl.hidden = true;
+    }
+
+    // Mesafe bilgisi header (Gizliyoruz)
+    const headerDistanceEl = card.querySelector(".istanbul-venue-distance");
+    if (headerDistanceEl) {
+      headerDistanceEl.hidden = true;
     }
 
     const titleLinkEl = card.querySelector(".istanbul-venue-title-link");
@@ -379,10 +431,34 @@ class FeaturedVenues {
       titleLinkEl.href = options.placeholder ? "yeme-icme.html" : venueUrl;
     }
 
-    // Sadeleştirilmiş kart: adres, rating, bütçe, pill-row, actions gizleniyor
+    // Adres
     const addressEl = card.querySelector(".istanbul-venue-address");
-    if (addressEl) addressEl.hidden = true;
+    if (addressEl) {
+      if (options.placeholder) {
+        addressEl.textContent = "";
+        addressEl.hidden = true;
+      } else {
+        addressEl.textContent = venue.address || this.t("Adres bilgisi bulunmuyor.");
+        addressEl.hidden = false;
+      }
+    }
 
+    // Telefon
+    const existingPhone = card.querySelector(".istanbul-venue-phone");
+    if (existingPhone) {
+      existingPhone.remove();
+    }
+    const phone = String(venue.phone || "").trim();
+    if (!options.placeholder && phone) {
+      const phonePara = document.createElement("p");
+      phonePara.className = "istanbul-venue-phone";
+      phonePara.innerHTML = `Tel: <a href="tel:${phone}">${phone}</a>`;
+      if (addressEl) {
+        addressEl.parentNode.insertBefore(phonePara, addressEl.nextSibling);
+      }
+    }
+
+    // Değerlendirme, Bütçe, Favori, Paylaş (Gizliyoruz - iç kartlarla aynı görsel dil)
     const ratingEl = card.querySelector(".istanbul-venue-rating");
     if (ratingEl) ratingEl.hidden = true;
 
@@ -395,11 +471,74 @@ class FeaturedVenues {
     const actionsEl = card.querySelector(".istanbul-venue-actions");
     if (actionsEl) actionsEl.hidden = true;
 
-    // Tag satırına ilçe, alt kategori ve mesafe ekleniyor
-    this.updateTags(card, venue, Boolean(options.placeholder));
+    // Tags & Bilgi Kutucukları (2 satır)
+    const tagsEl = card.querySelector(".istanbul-venue-tags");
+    if (tagsEl) {
+      tagsEl.innerHTML = "";
+      if (!options.placeholder) {
+        const infoBoxes = document.createElement("div");
+        infoBoxes.className = "venue-card-info-boxes";
 
-    // Mesafe'yi tag satırına ekle
-    this.updateDistanceAsTag(card, venue, Boolean(options.showDistance) && !options.placeholder);
+        // Satır 1: İlçe, Mahalle, Alt Kategori
+        const row1 = document.createElement("div");
+        row1.className = "venue-card-info-row";
+
+        const districtLabel = String(venue.district || "").trim();
+        if (districtLabel) {
+          const el = document.createElement("a");
+          el.className = "istanbul-venue-tag";
+          el.href = this.generateDistrictUrl(districtLabel);
+          el.setAttribute("aria-label", `${districtLabel} ilçesindeki mekanları aç`);
+          el.textContent = districtLabel;
+          row1.appendChild(el);
+        }
+
+        const neighborhoodLabel = String(venue.neighborhood || venue.mahalle || "").trim();
+        if (neighborhoodLabel) {
+          const el = document.createElement("span");
+          el.className = "istanbul-venue-tag";
+          el.textContent = neighborhoodLabel;
+          row1.appendChild(el);
+        }
+
+        const cuisineLabel = String(venue.cuisine || venue.category || "").trim();
+        if (cuisineLabel && this.normalizeLookup(cuisineLabel) !== this.normalizeLookup(districtLabel)) {
+          const el = document.createElement("span");
+          el.className = "istanbul-venue-tag";
+          el.textContent = cuisineLabel;
+          row1.appendChild(el);
+        }
+
+        if (row1.childElementCount) {
+          infoBoxes.appendChild(row1);
+        }
+
+        // Satır 2: Bütçe, Mesafe, Ayrıntılı Bilgi Butonu
+        const row2 = document.createElement("div");
+        row2.className = "venue-card-info-row";
+
+        // Ayrıntılı Bilgi Button
+        const detailLink = document.createElement("button");
+        detailLink.type = "button";
+        detailLink.className = "venue-popup-info-chip-btn";
+        detailLink.innerHTML = `<img src="assets/detail.png" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi`;
+        detailLink.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const mapsUrl = venue.mapsUrl || venue.maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((venue.name || "") + " " + (venue.district || "") + " İstanbul")}`;
+          window.open(mapsUrl, "_blank", "noopener,noreferrer");
+        });
+        row2.appendChild(detailLink);
+
+        if (row2.childElementCount) {
+          infoBoxes.appendChild(row2);
+        }
+
+        tagsEl.appendChild(infoBoxes);
+      }
+    }
+
+    // Mesafeyi güncelle
+    this.updateDistance(cardId, venue, Boolean(options.showDistance) && !options.placeholder);
 
     this.updateShareLinks(card, venue, venueUrl, Boolean(options.placeholder));
 
@@ -414,14 +553,21 @@ class FeaturedVenues {
   }
 
   updateDistanceAsTag(card, venue, shouldShow) {
-    const distanceEl = card ? card.querySelector(".istanbul-venue-distance") : null;
-    const tagsEl = card ? card.querySelector(".istanbul-venue-tags") : null;
-    if (!distanceEl) return;
+    // Deprecated
+  }
 
-    if (!shouldShow) {
+  updateDistance(cardId, venue, shouldShow) {
+    const card = document.getElementById(cardId);
+    if (!card) return;
+
+    // Header distance hidden
+    const distanceEl = card.querySelector(".istanbul-venue-distance");
+    if (distanceEl) {
       distanceEl.hidden = true;
-      return;
     }
+
+    const tagsEl = card.querySelector(".istanbul-venue-tags");
+    if (!tagsEl || !venue) return;
 
     let computedMeters = null;
     if (this.userLocation) {
@@ -434,48 +580,36 @@ class FeaturedVenues {
       }
     }
     const text = this.formatDistance(computedMeters);
-    if (!text || !Number.isFinite(computedMeters) || computedMeters <= 0) {
-      distanceEl.hidden = true;
-      return;
-    }
 
-    // Mesafe bilgisini info kutucuğu olarak row2'ye ekle
-    distanceEl.hidden = true; // Eski distance elemanını gizle
-    if (tagsEl) {
-      const infoBoxes = tagsEl.querySelector(".venue-card-info-boxes");
-      if (infoBoxes) {
-        let row2 = infoBoxes.querySelectorAll(".venue-card-info-row")[1];
-        if (!row2) {
-          row2 = document.createElement("div");
-          row2.className = "venue-card-info-row";
-          infoBoxes.appendChild(row2);
+    let distanceChip = tagsEl.querySelector(".venue-popup-distance-chip");
+    if (shouldShow && text && computedMeters > 0) {
+      if (!distanceChip) {
+        const rows = tagsEl.querySelectorAll(".venue-card-info-row");
+        const row2 = rows[1] || rows[0];
+        if (row2) {
+          distanceChip = document.createElement("span");
+          distanceChip.className = "venue-popup-distance-chip";
+          const detailBtn = row2.querySelector(".venue-popup-info-chip-btn");
+          if (detailBtn) {
+            row2.insertBefore(distanceChip, detailBtn);
+          } else {
+            row2.appendChild(distanceChip);
+          }
         }
-        // Varsa eski mesafe chip'ini kaldır
-        const existingDistance = row2.querySelector(".istanbul-venue-distance");
-        if (existingDistance) existingDistance.remove();
-
-        const el = document.createElement("span");
-        el.className = "istanbul-venue-distance";
-        el.textContent = text;
-        // Bütçe'den sonra, rating'den önce ekle
-        const ratingChip = row2.querySelector("[data-info='rating']");
-        if (ratingChip) {
-          row2.insertBefore(el, ratingChip);
-        } else {
-          row2.appendChild(el);
-        }
+      }
+      if (distanceChip) {
+        distanceChip.innerHTML = `<img src="assets/uzak.png" class="venue-popup-chip-icon" alt="" />${text}`;
+        distanceChip.hidden = false;
+      }
+    } else {
+      if (distanceChip) {
+        distanceChip.remove();
       }
     }
   }
 
-  updateDistance(cardId, venue, shouldShow) {
-    const card = document.getElementById(cardId);
-    if (!card) return;
-    this.updateDistanceAsTag(card, venue, shouldShow);
-  }
-
   applyVenueImage(imageEl, venue, isPlaceholder) {
-    const fallback = "assets/no-image-icon.png";
+    const fallback = "assets/no-image-icon.webp";
     imageEl.onerror = () => {
       imageEl.onerror = null;
       imageEl.src = fallback;
@@ -546,17 +680,7 @@ class FeaturedVenues {
 
     // Mesafe bilgisi updateDistanceAsTag tarafından eklenecek
 
-    const ratingNum = Number(venue.rating);
-    if (Number.isFinite(ratingNum) && ratingNum > 0) {
-      const ratingFormatted = ratingNum.toFixed(1).replace(".", ",");
-      const ratingCount = Number(venue.userRatingCount ?? venue.user_rating_count ?? 0);
-      const countText = ratingCount > 0 ? ` (${new Intl.NumberFormat("tr-TR").format(ratingCount)})` : "";
-      const el = document.createElement("span");
-      el.className = "istanbul-venue-tag";
-      el.setAttribute("data-info", "rating");
-      el.textContent = `★ ${ratingFormatted}${countText}`;
-      row2.appendChild(el);
-    }
+
 
     if (row2.childElementCount) {
       infoBoxes.appendChild(row2);
@@ -676,15 +800,18 @@ class FeaturedVenues {
 
   generateVenueUrl(venue) {
     const slug = String(venue.slug || "").trim();
-    return `venue-detail.html?slug=${encodeURIComponent(slug)}&venue=${encodeURIComponent(venue.name || "")}&district=${encodeURIComponent(venue.district || "")}`;
+    if (slug) {
+      return `venue-detail.html?slug=${encodeURIComponent(slug)}`;
+    }
+    return `venue-detail.html?slug=${encodeURIComponent(venue.name || "")}`;
   }
 
   generateDistrictUrl(district) {
-    return `yeme-icme.html?district=${encodeURIComponent(district || "")}`;
+    return `yeme-icme.html#district=${encodeURIComponent(district || "")}`;
   }
 
   generateNeighborhoodUrl(district, neighborhood) {
-    return `yeme-icme.html?district=${encodeURIComponent(district || "")}&neighborhood=${encodeURIComponent(neighborhood || "")}`;
+    return `yeme-icme.html#district=${encodeURIComponent(district || "")}&neighborhood=${encodeURIComponent(neighborhood || "")}`;
   }
 }
 

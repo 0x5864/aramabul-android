@@ -813,7 +813,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           '.istanbul-filter-body, .istanbul-filter-yeme-icme-sidebar, .istanbul-filter-yeme-icme-sidebar--gezi-two-up { overflow: visible !important; }' +
           '.istanbul-filter-location-box, .istanbul-filter-section-box { background: #48769f !important; border: none !important; border-radius: 14px !important; padding: 12px !important; margin-bottom: 8px !important; overflow: visible !important; position: relative !important; }' +
           '.istanbul-filter-location-box-title, .istanbul-filter-section-box-title, .istanbul-filter-gezi-category-box .istanbul-filter-section-box-title { color: #000000 !important; }' +
-          '.istanbul-filter-location-box { z-index: 200 !important; }' +
+          '.istanbul-filter-location-box { z-index: 200 !important; display: flex !important; flex-direction: row !important; gap: 0.5rem !important; align-items: flex-start !important; }' +
+          '.istanbul-filter-location-box .istanbul-filter-field { display: flex !important; flex-direction: column !important; flex: 1 !important; min-width: 0 !important; margin-bottom: 0 !important; }' +
           '.istanbul-filter-section-box { z-index: 100 !important; }' +
           '.kesfet-category-dropdown-btn, .lang-switch-btn { display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; background: #ffffff !important; color: #011d36 !important; border: 1px solid rgba(164,179,181,0.82) !important; border-radius: 6px !important; padding: 0.5rem 0.65rem !important; font-size: 0.84rem !important; cursor: pointer !important; box-sizing: border-box !important; }' +
           '.istanbul-filter-field { display: block !important; margin-bottom: 6px !important; }' +

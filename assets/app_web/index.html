@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#1f6f54" />
+    <meta name="theme-color" content="#45503f" />
     <title>İstanbul Mekan Keşfi ve Yerel Arama | AramaBul</title>
     <meta
       name="description"
@@ -28,17 +28,17 @@
       content="İstanbul'da yeme-içme, gezi, hizmetler, sağlık, kültür ve sanat kategorilerinde yerel arama yap."
     />
     <meta name="twitter:image" content="https://aramabul.com/assets/logo.png" />
-    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260508b" />
-    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260508b" />
-    <link rel="apple-touch-icon" href="assets/favicon.png?v=20260508b" />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260522d" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260516-v3" />
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3016888060216617" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styles.css?v=20260529h" />
+    
     <script async src="https://fundingchoicesmessages.google.com/i/pub-3016888060216617?ers=1" nonce=""></script>
     <script nonce="">(function(){function signalGooglefcPresent(){if(!window.frames["googlefcPresent"]){if(document.body){var a=document.createElement("iframe");a.style="width:0;height:0;border:none;z-index:-1000;left:-1000px;top:-1000px;";a.style.display="none";a.name="googlefcPresent";document.body.appendChild(a)}else{setTimeout(signalGooglefcPresent,0)}}}signalGooglefcPresent()})();</script>
     <script type="application/ld+json">
@@ -72,6 +72,31 @@
       }
     </script>
     <!-- Google tag (gtag.js) -->
+        <!-- Google Consent Mode v2 -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      (function() {
+        var consent = null;
+        try { consent = localStorage.getItem("aramabul_cookie_consent"); } catch (e) {}
+        var defaults = {
+          'ad_storage': 'denied',
+          'ad_user_data': 'denied',
+          'ad_personalization': 'denied',
+          'analytics_storage': 'denied',
+          'wait_for_update': 500
+        };
+        if (consent === 'all') {
+          defaults = {
+            'ad_storage': 'granted',
+            'ad_user_data': 'granted',
+            'ad_personalization': 'granted',
+            'analytics_storage': 'granted'
+          };
+        }
+        gtag('consent', 'default', defaults);
+      })();
+    </script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-NHE1J9FWDG"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -86,7 +111,7 @@
     <header class="global-header-band">
       <nav class="topbar global-topbar">
         <a class="brand" href="index.html" aria-label="aramabul">
-          <img class="brand-logo" src="assets/logo.png?v=20260508b" alt="aramabul logo" />
+          <img class="brand-logo" src="assets/logo.png?v=20260525a" alt="aramabul logo" />
           <span class="brand-wordmark"><span class="brand-wordmark-rest">arama</span><span class="brand-wordmark-search">bul</span></span>
         </a>
         <form class="header-search topbar-search-form" action="search.html" method="get" id="homeSearchForm">
@@ -95,7 +120,7 @@
             type="search"
             name="mekan"
             id="homeSearchInput"
-            placeholder="Ne bulmak istersin? (ör. kafe, kuaför, müze...)"
+            placeholder="Ne bulmamı istersin?"
             autocomplete="off"
             aria-label="Mekan ara"
           />
@@ -112,7 +137,6 @@
         </div>
       </section>
 
-
       <section class="home-top-category-row" aria-label="Arama kategorileri">
         <a
           class="top-city-card category-home-card"
@@ -120,21 +144,21 @@
           data-category="yeme-icme"
           aria-label="Yeme-İçme kategorisinden İstanbul'da kafe ve restoran keşfet"
         >
-          <span class="top-city-thumb" style="background-image: url('assets/yemek.png')" aria-hidden="true"></span>
+          <span class="top-city-thumb" style="background-image: url('assets/yemek.webp')" aria-hidden="true"></span>
           <span class="top-city-content">
             <span class="top-city-name">Yeme-İçme</span>
           </span>
         </a>
 
         <a class="top-city-card category-home-card" href="gezi.html" data-category="gezi" aria-label="Gezi kategorisinde ara">
-          <span class="top-city-thumb" style="background-image: url('assets/gezi.png')" aria-hidden="true"></span>
+          <span class="top-city-thumb" style="background-image: url('assets/gezi.webp')" aria-hidden="true"></span>
           <span class="top-city-content">
             <span class="top-city-name">Gezi</span>
           </span>
         </a>
 
         <a class="top-city-card category-home-card" href="hizmetler.html" data-category="hizmetler" aria-label="Hizmetler kategorisinde ara">
-          <span class="top-city-thumb" style="background-image: url('assets/sac.png')" aria-hidden="true"></span>
+          <span class="top-city-thumb" style="background-image: url('assets/sac.webp')" aria-hidden="true"></span>
           <span class="top-city-content">
             <span class="top-city-name">Hizmetler</span>
           </span>
@@ -148,7 +172,7 @@
         </a>
 
         <a class="top-city-card category-home-card" href="kultur.html" data-category="kultur" aria-label="Kültür kategorisinde ara">
-          <span class="top-city-thumb" style="background-image: url('assets/kultur.png')" aria-hidden="true"></span>
+          <span class="top-city-thumb" style="background-image: url('assets/kultur.webp')" aria-hidden="true"></span>
           <span class="top-city-content">
             <span class="top-city-name">Kültür</span>
           </span>
@@ -162,186 +186,25 @@
         </a>
       </section>
 
-
       <section class="featured-venues-section" aria-label="Rastgele mekanlar">
         <div class="featured-venues-panel">
         <div class="featured-venues-grid">
-          <article class="istanbul-venue-card" id="featured-most-comments">
-            <div class="istanbul-venue-media">
-              <img class="istanbul-venue-image" id="featured-most-comments-image" src="" alt="" loading="lazy" />
-            </div>
-            <div class="istanbul-venue-card-head">
-              <p class="istanbul-venue-eyebrow" id="featured-most-comments-eyebrow">Yükleniyor...</p>
-              <span class="istanbul-venue-distance" id="featured-most-comments-distance" hidden></span>
-            </div>
-            <h3 class="istanbul-venue-title">
-              <a class="istanbul-venue-title-link" id="featured-most-comments-link" href="yeme-icme.html"></a>
-            </h3>
-            <p class="istanbul-venue-address" id="featured-most-comments-address">Yükleniyor...</p>
-            <div class="istanbul-venue-meta">
-              <span class="istanbul-venue-rating" id="featured-most-comments-rating">Yükleniyor...</span>
-            </div>
-            <div class="istanbul-venue-pill-row">
-              <span class="istanbul-venue-budget" id="featured-most-comments-budget">Yükleniyor...</span>
-              <button class="istanbul-favorite-button" type="button">Kaydet</button>
-              <div class="card-share-wrap">
-                <button class="card-share-trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-label="Paylaş">
-                  <img class="card-share-trigger-icon" src="assets/paylas.png" alt="Paylaş" loading="lazy" />
-                  <span class="card-share-trigger-label">Paylaş</span>
-                </button>
-                <div class="card-share-menu" hidden>
-                  <button class="card-share-item card-share-icon-button card-native-share-button" type="button" hidden aria-label="Paylaş">
-                    <img class="card-share-item-icon" src="assets/insta.png" alt="Paylaş" loading="lazy" />
-                    <span class="card-share-visually-hidden">Paylaş</span>
-                  </button>
-                  <a class="card-share-item card-share-icon-button card-whatsapp-share-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp'ta paylaş" data-share-label="WhatsApp">
-                    <img class="card-share-item-icon" src="assets/wapp.jpg" alt="WhatsApp" loading="lazy" />
-                    <span class="card-share-visually-hidden">WhatsApp</span>
-                  </a>
-                  <a class="card-share-item card-share-icon-button card-facebook-share-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook'ta paylaş">
-                    <img class="card-share-item-icon" src="assets/face.png" alt="Facebook" loading="lazy" />
-                    <span class="card-share-visually-hidden">Facebook</span>
-                  </a>
-                  <a class="card-share-item card-share-icon-button card-telegram-share-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Telegram'da paylaş">
-                    <img class="card-share-item-icon" src="assets/tgram.avif" alt="Telegram" loading="lazy" />
-                    <span class="card-share-visually-hidden">Telegram</span>
-                  </a>
-                  <a class="card-share-item card-share-icon-button card-x-share-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="X'te paylaş" data-share-label="X">
-                    <img class="card-share-item-icon" src="assets/x.jpg" alt="X" loading="lazy" />
-                    <span class="card-share-visually-hidden">X</span>
-                  </a>
-                  <button class="card-share-item card-share-icon-button card-copy-share-button" type="button" aria-label="Bağlantıyı kopyala">
-                    <img class="card-share-item-icon" src="assets/copy.png" alt="Bağlantıyı kopyala" loading="lazy" />
-                    <span class="card-share-visually-hidden">Bağlantıyı kopyala</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="istanbul-venue-tags" id="featured-most-comments-tags"></div>
-            <footer class="istanbul-venue-actions">
-              <div class="istanbul-venue-action-group"></div>
-            </footer>
-          </article>
-
-          <article class="istanbul-venue-card" id="featured-highest-rated">
-            <div class="istanbul-venue-media">
-              <img class="istanbul-venue-image" id="featured-highest-rated-image" src="" alt="" loading="lazy" />
-            </div>
-            <div class="istanbul-venue-card-head">
-              <p class="istanbul-venue-eyebrow" id="featured-highest-rated-eyebrow">Yükleniyor...</p>
-              <span class="istanbul-venue-distance" id="featured-highest-rated-distance" hidden></span>
-            </div>
-            <h3 class="istanbul-venue-title">
-              <a class="istanbul-venue-title-link" id="featured-highest-rated-link" href="yeme-icme.html"></a>
-            </h3>
-            <p class="istanbul-venue-address" id="featured-highest-rated-address">Yükleniyor...</p>
-            <div class="istanbul-venue-meta">
-              <span class="istanbul-venue-rating" id="featured-highest-rated-rating">Yükleniyor...</span>
-            </div>
-            <div class="istanbul-venue-pill-row">
-              <span class="istanbul-venue-budget" id="featured-highest-rated-budget">Yükleniyor...</span>
-              <button class="istanbul-favorite-button" type="button">Kaydet</button>
-              <div class="card-share-wrap">
-                <button class="card-share-trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-label="Paylaş">
-                  <img class="card-share-trigger-icon" src="assets/paylas.png" alt="Paylaş" loading="lazy" />
-                  <span class="card-share-trigger-label">Paylaş</span>
-                </button>
-                <div class="card-share-menu" hidden>
-                  <button class="card-share-item card-share-icon-button card-native-share-button" type="button" hidden aria-label="Paylaş">
-                    <img class="card-share-item-icon" src="assets/insta.png" alt="Paylaş" loading="lazy" />
-                    <span class="card-share-visually-hidden">Paylaş</span>
-                  </button>
-                  <a class="card-share-item card-share-icon-button card-whatsapp-share-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp'ta paylaş" data-share-label="WhatsApp">
-                    <img class="card-share-item-icon" src="assets/wapp.jpg" alt="WhatsApp" loading="lazy" />
-                    <span class="card-share-visually-hidden">WhatsApp</span>
-                  </a>
-                  <a class="card-share-item card-share-icon-button card-facebook-share-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook'ta paylaş">
-                    <img class="card-share-item-icon" src="assets/face.png" alt="Facebook" loading="lazy" />
-                    <span class="card-share-visually-hidden">Facebook</span>
-                  </a>
-                  <a class="card-share-item card-share-icon-button card-telegram-share-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Telegram'da paylaş">
-                    <img class="card-share-item-icon" src="assets/tgram.avif" alt="Telegram" loading="lazy" />
-                    <span class="card-share-visually-hidden">Telegram</span>
-                  </a>
-                  <a class="card-share-item card-share-icon-button card-x-share-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="X'te paylaş" data-share-label="X">
-                    <img class="card-share-item-icon" src="assets/x.jpg" alt="X" loading="lazy" />
-                    <span class="card-share-visually-hidden">X</span>
-                  </a>
-                  <button class="card-share-item card-share-icon-button card-copy-share-button" type="button" aria-label="Bağlantıyı kopyala">
-                    <img class="card-share-item-icon" src="assets/copy.png" alt="Bağlantıyı kopyala" loading="lazy" />
-                    <span class="card-share-visually-hidden">Bağlantıyı kopyala</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="istanbul-venue-tags" id="featured-highest-rated-tags"></div>
-            <footer class="istanbul-venue-actions">
-              <div class="istanbul-venue-action-group"></div>
-            </footer>
-          </article>
-
-          <article class="istanbul-venue-card" id="featured-nearest-highest">
-            <div class="istanbul-venue-media">
-              <img class="istanbul-venue-image" id="featured-nearest-highest-image" src="" alt="" loading="lazy" />
-            </div>
-            <div class="istanbul-venue-card-head">
-              <p class="istanbul-venue-eyebrow" id="featured-nearest-highest-eyebrow">Yükleniyor...</p>
-              <span class="istanbul-venue-distance" id="featured-nearest-highest-distance"></span>
-            </div>
-            <h3 class="istanbul-venue-title">
-              <a class="istanbul-venue-title-link" id="featured-nearest-highest-link" href="yeme-icme.html"></a>
-            </h3>
-            <p class="istanbul-venue-address" id="featured-nearest-highest-address">Yükleniyor...</p>
-            <div class="istanbul-venue-meta">
-              <span class="istanbul-venue-rating" id="featured-nearest-highest-rating">Yükleniyor...</span>
-            </div>
-            <div class="istanbul-venue-pill-row">
-              <span class="istanbul-venue-budget" id="featured-nearest-highest-budget">Yükleniyor...</span>
-              <button class="istanbul-favorite-button" type="button">Kaydet</button>
-              <div class="card-share-wrap">
-                <button class="card-share-trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-label="Paylaş">
-                  <img class="card-share-trigger-icon" src="assets/paylas.png" alt="Paylaş" loading="lazy" />
-                  <span class="card-share-trigger-label">Paylaş</span>
-                </button>
-                <div class="card-share-menu" hidden>
-                  <button class="card-share-item card-share-icon-button card-native-share-button" type="button" hidden aria-label="Paylaş">
-                    <img class="card-share-item-icon" src="assets/insta.png" alt="Paylaş" loading="lazy" />
-                    <span class="card-share-visually-hidden">Paylaş</span>
-                  </button>
-                  <a class="card-share-item card-share-icon-button card-whatsapp-share-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp'ta paylaş" data-share-label="WhatsApp">
-                    <img class="card-share-item-icon" src="assets/wapp.jpg" alt="WhatsApp" loading="lazy" />
-                    <span class="card-share-visually-hidden">WhatsApp</span>
-                  </a>
-                  <a class="card-share-item card-share-icon-button card-facebook-share-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook'ta paylaş">
-                    <img class="card-share-item-icon" src="assets/face.png" alt="Facebook" loading="lazy" />
-                    <span class="card-share-visually-hidden">Facebook</span>
-                  </a>
-                  <a class="card-share-item card-share-icon-button card-telegram-share-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="Telegram'da paylaş">
-                    <img class="card-share-item-icon" src="assets/tgram.avif" alt="Telegram" loading="lazy" />
-                    <span class="card-share-visually-hidden">Telegram</span>
-                  </a>
-                  <a class="card-share-item card-share-icon-button card-x-share-link" href="#" target="_blank" rel="noopener noreferrer" aria-label="X'te paylaş" data-share-label="X">
-                    <img class="card-share-item-icon" src="assets/x.jpg" alt="X" loading="lazy" />
-                    <span class="card-share-visually-hidden">X</span>
-                  </a>
-                  <button class="card-share-item card-share-icon-button card-copy-share-button" type="button" aria-label="Bağlantıyı kopyala">
-                    <img class="card-share-item-icon" src="assets/copy.png" alt="Bağlantıyı kopyala" loading="lazy" />
-                    <span class="card-share-visually-hidden">Bağlantıyı kopyala</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="istanbul-venue-tags" id="featured-nearest-highest-tags"></div>
-            <footer class="istanbul-venue-actions">
-              <div class="istanbul-venue-action-group"></div>
-            </footer>
-          </article>
         </div>
         </div>
 
-      <div class="content-guide home-empty-box" id="homeEmptyBox">
-        <div class="home-subcategory-list" id="homeSubcategoryChipList"></div>
-      </div>
+      <section class="content-guide home-ustalara-saygi" aria-label="Ustalara Saygı">
+        <a href="lezzet-duraklari.html" class="ustalara-saygi-inner" style="text-decoration:none; color:inherit;">
+          <div class="ustalara-saygi-content">
+            <h2>Ustalara saygı!</h2>
+            <h3>Mehmet Yaşin ve Teoman Hünal — İstanbul Lezzet Durakları</h3>
+            <p>İstanbul'un zengin mutfak kültürünü keşfetmek denildiğinde akla gelen ilk isimlerden ikisi, gastronomi yazarı Mehmet Yaşin ve The North Shield Pub zincirinin kurucusu, içki kültürü uzmanı Teoman Hünal'dır.</p>
+            <p><strong>Lezzet Duraklarını AramaBul ile Keşfet!</strong></p>
+          </div>
+          <div class="ustalara-saygi-image">
+            <img src="assets/gorevimiz-yemek.webp" alt="Görevimiz Yemek — Mehmet Yaşin ve Teoman Hünal" loading="lazy" />
+          </div>
+        </a>
+      </section>
 
       <section class="content-guide" aria-label="Aramabul Platform Rehberi">
         <h2 data-i18n-key="home.guide.title">İstanbul'da aradığın her şey burada!</h2>
@@ -363,28 +226,111 @@
 
     </main>
 
+    <template id="istanbulVenueCardTemplate">
+      <article class="istanbul-venue-card">
+        <div class="istanbul-venue-media">
+          <img class="istanbul-venue-image" src="" alt="" loading="lazy" />
+        </div>
+        <div class="istanbul-venue-card-head">
+          <p class="istanbul-venue-eyebrow"></p>
+          <span class="istanbul-venue-distance" hidden></span>
+        </div>
+        <h3 class="istanbul-venue-title">
+          <a class="istanbul-venue-title-link" href="#"></a>
+        </h3>
+        <p class="istanbul-venue-address"></p>
+        <div class="istanbul-venue-meta">
+          <span class="istanbul-venue-rating"></span>
+        </div>
+        <div class="istanbul-venue-pill-row">
+          <span class="istanbul-venue-budget"></span>
+          <button class="istanbul-favorite-button" type="button">Kaydet</button>
+          <div class="card-share-wrap">
+            <button class="card-share-trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-label="Paylaş">
+              <img class="card-share-trigger-icon" src="assets/paylas.png" alt="Paylaş" loading="lazy" />
+              <span class="card-share-trigger-label">Paylaş</span>
+            </button>
+            <div class="card-share-menu" hidden>
+              <button class="card-share-item card-share-icon-button card-native-share-button" type="button" hidden aria-label="Paylaş">
+                <img class="card-share-item-icon" src="assets/insta.png" alt="Paylaş" loading="lazy" />
+                <span class="card-share-visually-hidden">Paylaş</span>
+              </button>
+              <a
+                class="card-share-item card-share-icon-button card-whatsapp-share-link"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp'ta paylaş"
+                data-share-label="WhatsApp"
+              >
+                <img class="card-share-item-icon" src="assets/wapp.jpg" alt="WhatsApp" loading="lazy" />
+                <span class="card-share-visually-hidden">WhatsApp</span>
+              </a>
+              <a
+                class="card-share-item card-share-icon-button card-facebook-share-link"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook'ta paylaş"
+              >
+                <img class="card-share-item-icon" src="assets/face.webp" alt="Facebook" loading="lazy" />
+                <span class="card-share-visually-hidden">Facebook</span>
+              </a>
+              <a
+                class="card-share-item card-share-icon-button card-telegram-share-link"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Telegram'da paylaş"
+              >
+                <img class="card-share-item-icon" src="assets/tgram.avif" alt="Telegram" loading="lazy" />
+                <span class="card-share-visually-hidden">Telegram</span>
+              </a>
+              <a
+                class="card-share-item card-share-icon-button card-x-share-link"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="X'te paylaş"
+                data-share-label="X"
+              >
+                <img class="card-share-item-icon" src="assets/x.jpg" alt="X" loading="lazy" />
+                <span class="card-share-visually-hidden">X</span>
+              </a>
+              <button class="card-share-item card-share-icon-button card-copy-share-button" type="button" aria-label="Bağlantıyı kopyala">
+                <img class="card-share-item-icon" src="assets/copy.png" alt="Bağlantıyı kopyala" loading="lazy" />
+                <span class="card-share-visually-hidden">Bağlantıyı kopyala</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="istanbul-venue-tags"></div>
+        <footer class="istanbul-venue-actions">
+          <div class="istanbul-venue-action-group"></div>
+        </footer>
+      </article>
+    </template>
+
     <footer class="yr-footer" aria-label="Alt Bant">
       <div class="yr-footer-inner">
         <div class="yr-footer-grid">
-          
 
           <section class="yr-footer-col">
-            <h4>aramabul'u keşfet</h4>
             <a href="hakkimizda.html">Hakkında</a>
             <a href="yer-ekle.html">Yer ekle</a>
             <a href="iletisim.html">İletişim</a>
           </section>
 
           <section class="yr-footer-col">
-            <h4>Yardım mı lazım?</h4>
-            <a href="sss.html">Sıkça Sorulan Sorular</a><a href="cerez-politikasi.html">Çerez Politikası</a>
+            <a href="sss.html">Sıkça Sorulan Sorular</a>
+            <a href="cerez-politikasi.html">Çerez Politikası</a>
             
           </section>
 
           <section class="yr-footer-col">
-            <h4>Kurumsal</h4>
             <a href="kullanim-kosullari.html">Kullanım Koşulları</a>
-            <a href="kvkk.html">Kişisel Verilerin Korunması</a><a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+            <a href="kvkk.html">Kişisel Verilerin Korunması</a>
+            <a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
             
           </section>
         </div>
@@ -396,16 +342,16 @@
       </div>
     </footer>
 
-    <script src="web-runtime.js?v=20260302-01"></script>
+    <script src="web-runtime.js?v=20260529d"></script>
     <script src="header-state.js?v=20260302-01"></script>
   <script src="header-i18n.js?v=20260429-i18n-page-keys-01"></script>
   <script src="header-nav.js?v=20260505-hash-auth-01"></script>
   <script src="header-shell.js?v=20260302-02"></script>
   <script src="header-search-ui.js?v=20260303-04"></script>
-  <script src="header-search-data.js?v=20260420-search-db-06"></script>
+  <script src="header-search-data.js?v=20260523-search-fix-02"></script>
     <script src="header-search.js?v=20260422-header-no-topbar-01"></script>
-    <script src="featured-venues.js?v=20260424-featured-distance-01"></script>
+    <script src="featured-venues.js?v=20260529-photo-fix-02"></script>
     <script src="home-subcategory-chips.js?v=20260506-dynamic-01"></script>
-    <script src="adsense-privacy.js?v=20260429-01"></script>
+    <script src="adsense-privacy.js?v=20260523-adsense-consent-02"></script>
   </body>
 </html>

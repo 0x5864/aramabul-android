@@ -3026,7 +3026,7 @@ body.search-choice-open {
   box-shadow: 0 24px 70px rgba(10, 18, 26, 0.28);
   overflow: hidden;
   display: grid;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto 1fr auto;
 }
 
 .map-focus-head {
@@ -3175,6 +3175,16 @@ body.search-choice-open {
   border: 1px solid var(--box-border);
   border-radius: 13px;
   background: #e8ecef;
+}
+
+.map-focus-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  padding: 0.65rem 1rem 0.95rem;
+  border-top: 1px dashed rgba(22, 33, 35, 0.12);
+  background: #fffdf8;
 }
 
 .map-focus-external {
@@ -4360,7 +4370,7 @@ body.mobile-chrome-browser.mobile-force-layout .mobile-bottom-nav-btn {
     overflow: hidden;
   }
 
-  .home-page .home-top-category-row .top-city-card {
+  .home-top-category-row .top-city-card {
     grid-template-columns: 1fr;
     justify-items: center;
     text-align: center;
@@ -4368,12 +4378,12 @@ body.mobile-chrome-browser.mobile-force-layout .mobile-bottom-nav-btn {
     overflow: hidden;
   }
 
-  .home-page .home-top-category-row .top-city-content {
+  .home-top-category-row .top-city-content {
     width: 100%;
     min-width: 0;
   }
 
-  .home-page .home-top-category-row .top-city-name {
+  .home-top-category-row .top-city-name {
     display: block;
     max-width: 100%;
     overflow-wrap: anywhere;
@@ -8043,7 +8053,7 @@ body.hizmetler-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-
 body.kultur-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:hover:not(.is-active),
 body.sanat-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:hover:not(.is-active),
 body.saglik-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:hover:not(.is-active) {
-  background: rgba(213, 232, 211, 0.45);
+  background: rgba(9, 65, 116, 0.05);
 }
 
 body.yeme-icme-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active,
@@ -8053,9 +8063,9 @@ body.kultur-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box
 body.sanat-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active,
 body.saglik-page .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active {
   font-weight: 600;
-  background: rgba(9, 56, 38, 0.14);
-  color: #093826;
-  border-left: 3px solid #165d5b;
+  background: rgba(9, 65, 116, 0.12);
+  color: #094174;
+  border-left: 3px solid #094174;
   padding-left: calc(0.75rem - 3px);
 }
 
@@ -8547,7 +8557,6 @@ body.yeme-icme-page .istanbul-results-grid {
   cursor: pointer;
 }
 
-.istanbul-venue-card .istanbul-venue-address,
 .istanbul-venue-card .istanbul-venue-meta,
 .istanbul-venue-card .istanbul-venue-pill-row,
 .istanbul-venue-card .istanbul-venue-actions {
@@ -8958,9 +8967,27 @@ body.yeme-icme-page .istanbul-results-grid {
 
 .istanbul-venue-address {
   margin: 0;
-  color: rgba(22, 33, 35, 0.8);
-  font-size: 0.92rem;
+  color: rgba(22, 33, 35, 0.70);
+  font-size: 0.82rem;
   line-height: 1.45;
+}
+
+.istanbul-venue-phone {
+  margin: 0.18rem 0 0;
+  color: rgba(22, 33, 35, 0.70);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.istanbul-venue-phone a {
+  color: #011d36;
+  text-decoration: none;
+  font-weight: normal;
+  font-size: inherit;
+}
+
+.istanbul-venue-phone a:hover {
+  text-decoration: underline;
 }
 
 .istanbul-venue-rating {
@@ -11582,24 +11609,24 @@ a.ustalara-saygi-inner,
   color: #fff !important;
 }
 
-/* --- Dropdown hover & active: #c8773e uyumlu --- */
+/* --- Dropdown hover & active: #094174 uyumlu --- */
 .kesfet-category-dropdown-btn:hover,
 .kesfet-category-dropdown.is-open .kesfet-category-dropdown-btn {
-  background: rgba(200, 119, 62, 0.10) !important;
-  border-color: rgba(200, 119, 62, 0.25) !important;
-  box-shadow: 0 3px 10px rgba(200, 119, 62, 0.12) !important;
+  background: rgba(9, 65, 116, 0.08) !important;
+  border-color: rgba(9, 65, 116, 0.20) !important;
+  box-shadow: 0 3px 10px rgba(9, 65, 116, 0.10) !important;
 }
 
 .kesfet-category-dropdown-options .istanbul-filter-chip:hover:not(.is-active),
 .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box:hover:not(.is-active) {
-  background: rgba(200, 119, 62, 0.12) !important;
+  background: rgba(9, 65, 116, 0.05) !important;
 }
 
 .kesfet-category-dropdown-options .istanbul-filter-chip.is-active,
 .kesfet-category-dropdown-options .istanbul-mvp-subcategory-box.is-active {
-  background: rgba(200, 119, 62, 0.18) !important;
-  color: #7a4420 !important;
-  border-left: 3px solid #c8773e !important;
+  background: rgba(9, 65, 116, 0.12) !important;
+  color: #094174 !important;
+  border-left: 3px solid #094174 !important;
   font-weight: 600 !important;
 }
 
@@ -12032,7 +12059,15 @@ body.saglik-page .content-guide h2,
 }
 
 .favorites-grid .istanbul-venue-map-link {
-  color: #9dc79c !important;
+  color: #1a73e7 !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: color 0.15s ease !important;
+}
+
+.favorites-grid .istanbul-venue-map-link:hover {
+  color: #155cb0 !important;
+  text-decoration: underline !important;
 }
 
 /* ================================================================== */
@@ -12160,10 +12195,17 @@ body.saglik-page .content-guide h2,
   border-bottom: 1px solid rgba(13, 32, 50, 0.08);
 }
 
+h2.bh-modal-title,
+body.yeme-icme-page h2.bh-modal-title,
+body.gezi-page h2.bh-modal-title,
+body.hizmetler-page h2.bh-modal-title,
+body.kultur-page h2.bh-modal-title,
+body.sanat-page h2.bh-modal-title,
+body.saglik-page h2.bh-modal-title,
 .bh-modal-title {
   font-size: 1.15rem;
   font-weight: 700;
-  color: #0a2540;
+  color: #000000 !important;
   margin: 0;
 }
 
@@ -12604,6 +12646,10 @@ body.venue-detail-page .admin-login-card .admin-login-copy {
   font-weight: 600 !important;
   padding: 0.25rem 0.55rem !important;
   white-space: nowrap !important;
+  height: 32px !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
 }
 
 /* ── Detay Sayfası Kart Zemin ── */
@@ -12658,3 +12704,280 @@ body:not(.admin-venue-editor-page) .featured-venues-grid,
 body:not(.admin-venue-editor-page) .home-lezzet-banner-inner {
   border: none !important;
 }
+
+/* ==========================================================================
+   HEALTH CARD ACTION BUTTONS
+   ========================================================================== */
+.health-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.55rem !important;
+  height: 32px !important; /* Exact height matching other pills with icons */
+  font-family: "Plus Jakarta Sans", sans-serif !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+  
+  /* Unified pill style matching distance & budget */
+  background: #fdf8f0 !important;
+  color: #093826 !important;
+  border: 1px solid #7bbce8 !important;
+}
+
+.health-action-btn:hover {
+  background: #fbf0dc !important;
+  border-color: #55a0d4 !important;
+  color: #093826 !important;
+}
+
+.health-action-btn img.dir-icon {
+  width: 14px !important;
+  height: 14px !important;
+  margin-right: 5px !important;
+  object-fit: contain !important;
+}
+
+.health-map-btn {
+  background: #1a73e7 !important;
+  color: #ffffff !important;
+  border-color: #1a73e7 !important;
+  font-weight: 400 !important;
+}
+
+.health-map-btn:hover {
+  background: #155cb0 !important;
+  border-color: #155cb0 !important;
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   VENUE POPUP MODAL STYLES
+   ========================================================================== */
+.venue-popup-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.venue-popup-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(1, 29, 54, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: opacity 0.25s ease;
+}
+
+.venue-popup-content {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid rgba(22, 93, 91, 0.12);
+  border-radius: 16px;
+  width: min(640px, 100%);
+  max-height: min(780px, 90vh);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(1, 29, 54, 0.18);
+  animation: venuePopupFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  z-index: 10001;
+}
+
+@keyframes venuePopupFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.venue-popup-close-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 1.2rem;
+  background: transparent;
+  border: none;
+  font-size: 2.2rem;
+  line-height: 1;
+  color: rgba(1, 29, 54, 0.45);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.venue-popup-close-btn:hover {
+  color: #011d36;
+}
+
+.venue-popup-header {
+  padding: 1.5rem 1.5rem 1rem;
+  border-bottom: 1px solid rgba(22, 33, 35, 0.08);
+}
+
+.venue-popup-title {
+  margin: 0 0 0.4rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #011d36;
+  padding-right: 2rem;
+}
+
+.venue-popup-address {
+  margin: 0;
+  font-size: 0.84rem;
+  color: rgba(22, 33, 35, 0.70);
+  line-height: 1.4;
+}
+
+.venue-popup-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  background: #bdd8e9;
+}
+
+.venue-popup-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.venue-popup-section-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #011d36;
+}
+
+.venue-popup-admin-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #3a7d44;
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: opacity 0.15s ease;
+}
+
+.venue-popup-admin-link:hover {
+  opacity: 0.85;
+}
+
+.venue-popup-admin-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+/* Similar list grid matching detail page card style */
+.venue-popup-similar-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.85rem;
+}
+
+/* Review Form inside Popup */
+.venue-popup-review-form {
+  background: #ffffff;
+  border: 1px solid rgba(22, 93, 91, 0.08);
+  border-radius: 12px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  box-shadow: 0 2px 8px rgba(1, 29, 54, 0.02);
+}
+
+.venue-popup-input-name,
+.venue-popup-textarea-text {
+  width: 100%;
+  border: 1px solid rgba(22, 33, 35, 0.14);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: #011d36;
+  outline: none;
+  background: #fafcff;
+  transition: all 0.2s ease;
+}
+
+.venue-popup-input-name:focus,
+.venue-popup-textarea-text:focus {
+  border-color: #3a7d44;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(58, 125, 68, 0.08);
+}
+
+.venue-popup-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.venue-popup-submit-btn {
+  background: #094174;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 1.2rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.venue-popup-submit-btn:hover {
+  background: #0d4c8c;
+}
+
+.venue-popup-form-status {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #3a7d44;
+}
+
+.venue-popup-form-status.is-error {
+  color: #d32f2f;
+}
+
+/* Active Category Navigation Chip Style */
+.top-city-card.category-home-card.active {
+  background: #011d36 !important;
+  border-color: #011d36 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(1, 29, 54, 0.2) !important;
+}
+
+.top-city-card.category-home-card.active .top-city-name {
+  color: #ffffff !important;
+  font-weight: 400 !important;
+}
+
+/* Force elements with the hidden attribute to stay hidden */
+[hidden],
+.hidden {
+  display: none !important;
+}
+
+
+
+
