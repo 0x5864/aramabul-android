@@ -7318,7 +7318,7 @@ body.saglik-page
 
 .istanbul-filter-location-box {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.75rem;
   padding: 1.1rem 1.1rem 1.15rem;
   border: none;
@@ -7326,6 +7326,11 @@ body.saglik-page
   background: #4b3123;
   box-shadow: 0 3px 8px rgba(75, 49, 35, 0.3);
   color: #fdf8f0;
+}
+
+.istanbul-filter-location-box .istanbul-filter-field {
+  flex: 1;
+  min-width: 0;
 }
 
 .istanbul-filter-location-box-title {
@@ -8433,8 +8438,7 @@ body.hizmetler-page .istanbul-discovery-shell > .section-head.province-head,
 body.kultur-page .istanbul-discovery-shell > .section-head.province-head,
 body.sanat-page .istanbul-discovery-shell > .section-head.province-head,
 body.saglik-page .istanbul-discovery-shell > .section-head.province-head {
-  margin-bottom: 0;
-  align-items: start;
+  display: none !important;
 }
 
 body.yeme-icme-page .istanbul-discovery-shell > .section-head.province-head > div,
@@ -12828,11 +12832,11 @@ body:not(.admin-venue-editor-page) .home-lezzet-banner-inner {
   border-bottom: 1px solid rgba(22, 33, 35, 0.08);
 }
 
-.venue-popup-title {
+.venue-popup-modal .venue-popup-title {
   margin: 0 0 0.4rem;
   font-size: 1.35rem;
   font-weight: 800;
-  color: #011d36;
+  color: #000000 !important;
   padding-right: 2rem;
 }
 
@@ -12890,8 +12894,94 @@ body:not(.admin-venue-editor-page) .home-lezzet-banner-inner {
 /* Similar list grid matching detail page card style */
 .venue-popup-similar-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 0.85rem;
+}
+
+/* Custom Similar Card in Popup Modal */
+.venue-popup-similar-card {
+  border-radius: 12px;
+  border: 1px solid rgba(1, 29, 54, 0.08);
+  background: #ffffff;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(1, 29, 54, 0.02);
+}
+
+.venue-popup-similar-card:hover {
+  border-color: rgba(1, 29, 54, 0.15);
+  box-shadow: 0 4px 12px rgba(1, 29, 54, 0.06);
+}
+
+.venue-popup-similar-card-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #011d36;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.venue-popup-similar-card-meta {
+  font-size: 0.72rem;
+  color: rgba(1, 29, 54, 0.65);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.venue-popup-distance-chip {
+  background: #eef6ff !important;
+  color: #0066cc !important;
+  border: 1px solid #0066cc !important;
+  border-radius: 8px !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  padding: 0.25rem 0.55rem !important;
+  white-space: nowrap !important;
+  height: 32px !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  width: fit-content !important;
+}
+
+.venue-popup-info-chip-btn {
+  background: #eaf8e9 !important;
+  color: #25a244 !important;
+  border: 1px solid #25a244 !important;
+  border-radius: 8px !important;
+  font-size: 0.76rem !important;
+  font-weight: 600 !important;
+  padding: 0.25rem 0.55rem !important;
+  white-space: nowrap !important;
+  height: 32px !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  text-decoration: none !important;
+  width: fit-content !important;
+}
+
+.venue-popup-info-chip-btn:hover {
+  background: #ddf3db;
+  border-color: #bee5bb;
+}
+
+.venue-popup-info-chip-btn:active {
+  transform: scale(0.96);
+}
+
+.venue-popup-chip-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
 }
 
 /* Review Form inside Popup */
