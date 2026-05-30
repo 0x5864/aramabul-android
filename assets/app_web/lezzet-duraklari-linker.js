@@ -67,15 +67,13 @@
     }
   }
 
-  /** Mekan için detay sayfası URL'si oluştur */
+  /** Mekan için Google Maps URL'si oluştur */
   function buildDetailUrl(venue) {
-    if (venue.slug) {
-      return "venue-detail.html?slug=" + encodeURIComponent(venue.slug);
+    if (venue.mapsUrl && venue.mapsUrl.trim()) {
+      return venue.mapsUrl.trim();
     }
-    var params = new URLSearchParams();
-    params.set("venue", venue.name || "");
-    if (venue.district) params.set("district", venue.district);
-    return "venue-detail.html?" + params.toString();
+    var query = (venue.name || "") + " " + (venue.district || "") + " İstanbul";
+    return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query.trim());
   }
 
   /** li içindeki mekan adını link ile değiştir */

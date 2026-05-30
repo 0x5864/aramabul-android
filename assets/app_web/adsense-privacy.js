@@ -256,6 +256,18 @@
 
   /* ── Init ── */
   function init() {
+    // Suppress custom banner if Google Funding Choices or any standard TCF CMP is present
+    const isGoogleCmp = typeof window.__tcfapi === "function" || 
+                         window.googlefc || 
+                         document.getElementById("googlefcNotification") ||
+                         window.frames["googlefcPresent"];
+    
+    if (isGoogleCmp) {
+      // Let the Google-certified CMP handle the consent dialog and ad blocking.
+      ensureAdsenseTag();
+      return;
+    }
+
     const consent = getConsent();
     if (!consent) {
       showBanner();

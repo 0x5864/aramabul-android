@@ -1433,34 +1433,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                         ),
                       ),
                     ),
-                  // Floating Refresh Icon
-                  if (_hasLoadedAtLeastOnce && !_isPageTransitioning && _lastError == null)
-                    Positioned(
-                      top: 16,
-                      right: 16,
-                      child: GestureDetector(
-                        onTap: _reload,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF094174).withValues(alpha: 0.9),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.25),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Image.asset(
-                            'assets/welcome/refresh.png',
-                            width: 22,
-                            height: 22,
-                          ),
-                        ),
-                      ),
-                    ),
+
                 ],
               ),
             ),
