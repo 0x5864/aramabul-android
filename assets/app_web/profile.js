@@ -33,10 +33,44 @@
   const feedbackPhoneNumber = document.querySelector("#settingsFeedbackPhoneNumber");
   const feedbackMessage = document.querySelector("#settingsFeedbackMessage");
   const feedbackStatus = document.querySelector("#settingsFeedbackStatus");
+
+  const settingsLoginForm = document.querySelector("#settingsLoginForm");
+  const settingsLoginEmail = document.querySelector("#settingsLoginEmail");
+  const settingsLoginPassword = document.querySelector("#settingsLoginPassword");
+  const settingsLoginPasswordToggle = document.querySelector("#settingsLoginPasswordToggle");
+  const settingsLoginRememberEmail = document.querySelector("#settingsLoginRememberEmail");
+  const settingsForgotPasswordBtn = document.querySelector("#settingsForgotPasswordBtn");
+  const settingsLoginMessage = document.querySelector("#settingsLoginMessage");
+  const settingsLoginSubmit = document.querySelector("#settingsLoginSubmit");
+
+  const settingsSignupForm = document.querySelector("#settingsSignupForm");
+  const settingsSignupFirstName = document.querySelector("#settingsSignupFirstName");
+  const settingsSignupLastName = document.querySelector("#settingsSignupLastName");
+  const settingsSignupEmail = document.querySelector("#settingsSignupEmail");
+  const settingsSignupPassword = document.querySelector("#settingsSignupPassword");
+  const settingsSignupPasswordToggle = document.querySelector("#settingsSignupPasswordToggle");
+  const settingsSignupPasswordRepeat = document.querySelector("#settingsSignupPasswordRepeat");
+  const settingsSignupPasswordRepeatToggle = document.querySelector("#settingsSignupPasswordRepeatToggle");
+  const settingsSignupMessage = document.querySelector("#settingsSignupMessage");
+  const settingsSignupSubmit = document.querySelector("#settingsSignupSubmit");
+
+  const settingsLoginFormWrapper = document.querySelector("#settingsLoginFormWrapper");
+  const settingsSignupFormWrapper = document.querySelector("#settingsSignupFormWrapper");
+  const toggleToSignupBtn = document.querySelector("#toggleToSignupBtn");
+  const toggleToLoginBtn = document.querySelector("#toggleToLoginBtn");
+  const customGoogleSignInBtn = document.querySelector("#customGoogleSignInBtn");
+  const googleChooserModal = document.querySelector("#googleChooserModal");
+  const googleChooserCancel = document.querySelector("#googleChooserCancel");
+  const googleChooserCustomEmail = document.querySelector("#googleChooserCustomEmail");
+  const googleChooserCustomSubmit = document.querySelector("#googleChooserCustomSubmit");
+
+  const REMEMBERED_LOGIN_EMAIL_KEY = "aramabul.auth.login.rememberedEmail.v1";
+
   const panelButtons = [...document.querySelectorAll("[data-settings-panel-trigger]")];
   const panels = [...document.querySelectorAll("[data-settings-panel]")];
   const settingsSidebarCard = document.querySelector(".settings-sidebar-card");
   const settingsPanelStack = document.querySelector(".settings-panel-stack");
+  let lastAdminSession = null;
   const emailVerificationState = {
     email: "",
     verified: false,
@@ -87,6 +121,30 @@
       "Yeni şifre mevcut şifre ile aynı olamaz.": "New password cannot be the same as the current password.",
       "Şifre güncellendi. Gerekirse yeni bağlantı isteyebilirsin.": "Password updated. You can request a new link if needed.",
       "Şifren güncellendi. Yeni şifrenle giriş yapabilirsin.": "Your password was updated. You can sign in with your new password.",
+      "Giriş Yap": "Sign In",
+      "Kayıt Ol": "Sign Up",
+      "Giriş yap": "Sign In",
+      "Kayıt ol": "Sign Up",
+      "E-posta": "Email",
+      "Şifre": "Password",
+      "E-postamı hatırla": "Remember my email",
+      "Şifremi unuttum": "Forgot password",
+      "Ad": "First Name",
+      "Soyad": "Last Name",
+      "Şifre tekrar": "Confirm Password",
+      "E-posta adresin ve şifrenle giriş yapabilirsin.": "You can log in with your email and password.",
+      "Hemen kayıt olup favori mekanlarını kaydetmeye başla.": "Sign up now and start saving your favorite venues.",
+      "Kayıt olarak Kullanım Koşulları ve Gizlilik Politikası hükümlerini kabul etmiş olursun.": "By registering, you accept the Terms of Use and Privacy Policy.",
+      "Geçerli bir e-posta gir.": "Please enter a valid email.",
+      "Güvenlik işlemi başarısız.": "Security operation failed.",
+      "E-posta veya şifre hatalı.": "Invalid email or password.",
+      "Ad ve soyad en az 2 karakter olmalıdır.": "First name and last name must be at least 2 characters.",
+      "Şifre en az 6 karakter olmalıdır.": "Password must be at least 6 characters.",
+      "Bu e-posta adresi zaten kayıtlı.": "This email address is already registered.",
+      "Şifre sıfırlama bağlantısı göndermek için geçerli bir e-posta adresi girin.": "Please enter a valid email address to send a password reset link.",
+      "Çıkış yap": "Sign Out",
+      "Çıkış Yap": "Sign Out",
+      "Şu anda giriş yapmış durumdasınız.": "You are currently logged in."
     }),
     RU: Object.freeze({
       "Şifre Değişikliği": "Смена пароля",
@@ -103,7 +161,7 @@
       "E-posta bağlantısı 20 dakika boyunca geçerlidir.": "Ссылка из e-mail действует 20 минут.",
       "Geçerli bir e-posta bulunamadı.": "Не найден корректный e-mail.",
       "Çok fazla istek gönderildi. Biraz sonra tekrar dene.": "Слишком много запросов. Попробуйте позже.",
-      "E-posta servisi şu an kullanılamıyor.": "Почтовый сервис сейчас недоступен.",
+      "E-posta servisi şu an kullanıлам не доступен.": "Почтовый сервис сейчас недоступен.",
       "Şifre değişikliği e-postası gönderilemedi.": "Не удалось отправить письмо для смены пароля.",
       "Şifre değişikliği bağlantısı e-posta adresine gönderildi.": "Ссылка для смены пароля отправлена на ваш e-mail.",
       "Bağlantı geçersiz veya süresi dolmuş. Yeni bağlantı iste.": "Ссылка недействительна или истекла. Запросите новую.",
@@ -120,6 +178,30 @@
       "Yeni şifre mevcut şifre ile aynı olamaz.": "Новый пароль не может совпадать с текущим.",
       "Şifre güncellendi. Gerekirse yeni bağlantı isteyebilirsin.": "Пароль обновлён. При необходимости запросите новую ссылку.",
       "Şifren güncellendi. Yeni şifrenle giriş yapabilirsin.": "Пароль обновлён. Теперь можно войти с новым паролем.",
+      "Giriş Yap": "Войти",
+      "Kayıt Ol": "Регистрация",
+      "Giriş yap": "Войти",
+      "Kayıt ol": "Регистрация",
+      "E-posta": "E-mail",
+      "Şifre": "Пароль",
+      "E-postamı hatırla": "Запомнить e-mail",
+      "Şifremi unuttum": "Забыли пароль",
+      "Ad": "Имя",
+      "Soyad": "Фамилия",
+      "Şifre tekrar": "Повторите пароль",
+      "E-posta adresin ve şifrenle giriş yapabilirsin.": "Вы можете войти с помощью e-mail и пароля.",
+      "Hemen kayıt olup favori mekanlarını kaydetmeye başla.": "Зарегистрируйтесь сейчас и сохраняйте любимые места.",
+      "Kayıt olarak Kullanım Koşulları ve Gizlilik Politikası hükümlerini kabul etmiş olursun.": "Регистрируясь, вы принимаете Условия использования и Политику конфиденциальности.",
+      "Geçerli bir e-posta gir.": "Введите корректный e-mail.",
+      "Güvenlik işlemi başarısız.": "Сбой операции безопасности.",
+      "E-posta veya şifre hatalı.": "Неверный e-mail или пароль.",
+      "Ad ve soyad en az 2 karakter olmalıdır.": "Имя и фамилия должны содержать не менее 2 символов.",
+      "Şifre en az 6 karakter olmalıdır.": "Пароль должен быть не менее 6 символов.",
+      "Bu e-posta adresi zaten kayıtlı.": "Этот e-mail уже зарегистрирован.",
+      "Şifre sıfırlama bağlantısı göndermek için geçerli bir e-posta adresi girin.": "Введите корректный e-mail для отправки ссылки сброса пароля.",
+      "Çıkış yap": "Выйти",
+      "Çıkış Yap": "Выйти",
+      "Şu anda giriş yapmış durumdasınız.": "Вы сейчас авторизованы."
     }),
     DE: Object.freeze({
       "Şifre Değişikliği": "Passwort ändern",
@@ -143,7 +225,7 @@
       "Bağlantı doğrulanamadı. Lütfen tekrar dene.": "Link konnte nicht bestätigt werden. Bitte erneut versuchen.",
       "Bağlantı doğrulandı ancak e-posta bilgisi alınamadı.": "Link bestätigt, aber E-Mail-Information konnte nicht gelesen werden.",
       "Bağlantı doğrulanamadı.": "Link konnte nicht bestätigt werden.",
-      "Kayıtlı oturum yok. Önce kayıt ol.": "Keine aktive Sitzung. Bitte zuerst registrieren.",
+      "Kayıtlı oturum yok. Önce kayıt ol.": "Keine active Sitzung. Bitte zuerst registrieren.",
       "Şifre değiştirmek için önce giriş yap.": "Melde dich zuerst an, um das Passwort zu ändern.",
       "Önce e-postadaki bağlantıyı aç.": "Öffne zuerst den Link in deiner E-Mail.",
       "Yeni şifre en az 6 karakter olmalı.": "Neues Passwort muss mindestens 6 Zeichen lang sein.",
@@ -153,6 +235,30 @@
       "Yeni şifre mevcut şifre ile aynı olamaz.": "Neues Passwort darf nicht mit dem aktuellen übereinstimmen.",
       "Şifre güncellendi. Gerekirse yeni bağlantı isteyebilirsin.": "Passwort aktualisiert. Bei Bedarf kannst du einen neuen Link anfordern.",
       "Şifren güncellendi. Yeni şifrenle giriş yapabilirsin.": "Dein Passwort wurde aktualisiert. Du kannst dich mit dem neuen Passwort anmelden.",
+      "Giriş Yap": "Anmelden",
+      "Kayıt Ol": "Registrieren",
+      "Giriş yap": "Anmelden",
+      "Kayıt ol": "Registrieren",
+      "E-posta": "E-Mail",
+      "Şifre": "Passwort",
+      "E-postamı hatırla": "E-Mail merken",
+      "Şifremi unuttum": "Passwort vergessen",
+      "Ad": "Vorname",
+      "Soyad": "Nachname",
+      "Şifre tekrar": "Passwort wiederholen",
+      "E-posta adresin ve şifrenle giriş yapabilirsin.": "Du kannst dich mit deiner E-Mail und deinem Passwort anmelden.",
+      "Hemen kayıt olup favori mekanlarını kaydetmeye başla.": "Registriere dich jetzt und speichere deine Lieblingsorte.",
+      "Kayıt olarak Kullanım Koşulları ve Gizlilik Politikası hükümlerini kabul etmiş olursun.": "Mit der Registrierung akzeptierst du die Nutzungsbedingungen und die Datenschutzrichtlinie.",
+      "Geçerli bir e-posta gir.": "Geben Sie eine gültige E-Mail ein.",
+      "Güvenlik işlemi başarısız.": "Sicherheitsoperation fehlgeschlagen.",
+      "E-posta veya şifre hatalı.": "Ungültige E-Mail oder Passwort.",
+      "Ad ve soyad en az 2 karakter olmalıdır.": "Vorname und Nachname müssen mindestens 2 Zeichen lang sein.",
+      "Şifre en az 6 karakter olmalıdır.": "Passwort muss mindestens 6 Zeichen lang sein.",
+      "Bu e-posta adresi zaten kayıtlı.": "Diese E-Mail-Adresse ist bereits registriert.",
+      "Şifre sıfırlama bağlantısı göndermek için geçerli bir e-posta adresi girin.": "Geben Sie eine gültige E-Mail-Adresse ein, um einen Link zum Zurücksetzen des Passworts zu senden.",
+      "Çıkış yap": "Abmelden",
+      "Çıkış Yap": "Abmelden",
+      "Şu anda giriş yapmış durumdasınız.": "Du bist derzeit angemeldet."
     }),
     ZH: Object.freeze({
       "Şifre Değişikliği": "修改密码",
@@ -186,6 +292,30 @@
       "Yeni şifre mevcut şifre ile aynı olamaz.": "新密码不能与当前密码相同。",
       "Şifre güncellendi. Gerekirse yeni bağlantı isteyebilirsin.": "密码已更新，如有需要可重新申请链接。",
       "Şifren güncellendi. Yeni şifrenle giriş yapabilirsin.": "密码已更新，你可以使用新密码登录。",
+      "Giriş Yap": "登录",
+      "Kayıt Ol": "注册",
+      "Giriş yap": "登录",
+      "Kayıt ol": "注册",
+      "E-posta": "电子邮箱",
+      "Şifre": "密码",
+      "E-postamı hatırla": "记住我的邮箱",
+      "Şifremi unuttum": "忘记密码",
+      "Ad": "名字",
+      "Soyad": "姓氏",
+      "Şifre tekrar": "确认密码",
+      "E-posta adresin ve şifrenle giriş yapabilirsin.": "您可以使用邮箱和密码登录。",
+      "Hemen kayıt olup favori mekanlarını kaydetmeye başla.": "立即注册并开始保存您最喜爱的地方。",
+      "Kayıt olarak Kullanım Koşulları ve Gizlilik Politikası hükümlerini kabul etmiş olursun.": "注册即表示您接受使用条款和隐私政策。",
+      "Geçerli bir e-posta gir.": "请输入有效的邮箱。",
+      "Güvenlik işlemi başarısız.": "安全操作失败。",
+      "E-posta veya şifre hatalı.": "邮箱或密码错误。",
+      "Ad ve soyad en az 2 karakter olmalıdır.": "名字和姓氏必须至少为2个字符。",
+      "Şifre en az 6 karakter olmalıdır.": "密码必须至少为6个字符。",
+      "Bu e-posta adresi zaten kayıtlı.": "此邮箱地址已注册。",
+      "Şifre sıfırlama bağlantısı göndermek için geçerli bir e-posta adresi girin.": "请输入有效的邮箱地址以发送密码重置链接。",
+      "Çıkış yap": "退出登录",
+      "Çıkış Yap": "退出登录",
+      "Şu anda giriş yapmış durumdasınız.": "您目前已登录."
     }),
   });
   const FEEDBACK_TARGETS = Object.freeze({
@@ -287,17 +417,37 @@
   }
 
   function applyAdminSettingsLinkState(session) {
+    if (session !== undefined) {
+      lastAdminSession = session;
+    }
     const adminLink = document.querySelector("[data-admin-settings-link]");
     const adminLabelNode = document.querySelector("[data-admin-settings-link-label]");
     if (!(adminLink instanceof HTMLAnchorElement) || !(adminLabelNode instanceof HTMLElement)) {
       return;
     }
 
-    const isAdminSession = Boolean(session?.email);
-    const label = isAdminSession ? "Admin Paneli" : "Admin Girişi";
-    adminLink.href = isAdminSession ? "admin-venues.html" : "admin-login.html";
-    adminLink.setAttribute("aria-label", label);
-    adminLabelNode.textContent = label;
+    const userSession = readSession();
+    const userEmail = userSession && userSession.email ? String(userSession.email).toLowerCase() : "";
+    const isUserAdmin = userEmail && (
+      userEmail === 'admin@aramabul.com' ||
+      userEmail === 'metin.tuncgenc@gmail.com' ||
+      userEmail === 'aramabul.com@gmail.com' ||
+      userEmail.startsWith('admin@') ||
+      userEmail.endsWith('.admin')
+    );
+    const isAdminSession = Boolean(lastAdminSession?.email);
+
+    const shouldShow = isUserAdmin || isAdminSession;
+
+    if (shouldShow) {
+      adminLink.style.setProperty("display", "flex", "important");
+      const label = isAdminSession ? "Admin Paneli" : "Admin Girişi";
+      adminLink.href = isAdminSession ? "admin-venues.html" : "admin-login.html";
+      adminLink.setAttribute("aria-label", label);
+      adminLabelNode.textContent = label;
+    } else {
+      adminLink.style.setProperty("display", "none", "important");
+    }
   }
 
   function readTheme() {
@@ -429,7 +579,11 @@
     if (!accountEmailVerificationStatus) {
       return;
     }
-    accountEmailVerificationStatus.textContent = text;
+    if (text && (text.includes("<a") || text.includes("</"))) {
+      accountEmailVerificationStatus.innerHTML = text;
+    } else {
+      accountEmailVerificationStatus.textContent = text;
+    }
     accountEmailVerificationStatus.classList.toggle("is-ok", !isError && Boolean(text));
   }
 
@@ -614,6 +768,10 @@
         emailVerificationState.verified = true;
         emailVerificationState.messageText = "";
         emailVerificationState.messageIsError = false;
+      } else if (payload.debugLink) {
+        emailVerificationState.messageText = translateUi("E-posta gönderilemedi ancak test için şu bağlantıyı kullanabilirsiniz:") + 
+          ` <a href="${payload.debugLink}" class="auth-inline-link" target="_blank" style="text-decoration: underline; font-weight: bold; color: #d32f2f;">${translateUi("Hesabı Doğrula")}</a>`;
+        emailVerificationState.messageIsError = false;
       } else {
         emailVerificationState.messageText = translateUi("Doğrulama bağlantısı e-posta adresine gönderildi.");
         emailVerificationState.messageIsError = false;
@@ -629,12 +787,7 @@
   }
 
   function openSignup() {
-    if (window.ARAMABUL_AUTH_MODAL?.open) {
-      window.ARAMABUL_AUTH_MODAL.open("signup", accountSignupBtn instanceof HTMLElement ? accountSignupBtn : null);
-      return;
-    }
-
-    setAccountMessage(translateUi("Kayıt ol penceresi yakında burada açılacak."), true);
+    activatePanel("signup");
   }
 
   function normalizeLegacySignupRoute() {
@@ -643,8 +796,7 @@
       return;
     }
 
-    window.history.replaceState({}, "", "profile.html?action=profile");
-    openSignup();
+    activatePanel("signup");
   }
 
   function readPasswordChangeTokenFromLocation() {
@@ -837,10 +989,11 @@
   function initialPanelFromRoute() {
     const params = new URLSearchParams(window.location.search);
     const action = String(params.get("action") || "").trim().toLocaleLowerCase("tr");
-    if (action === "feedback" || action === "help" || action === "about" || action === "password") {
+    if (action === "feedback" || action === "help" || action === "about" || action === "password" || action === "login" || action === "signup") {
       return action;
     }
-    return "account";
+    const session = readSession();
+    return session ? "account" : "login";
   }
 
   function setFeedbackStatus(text, isError = false) {
@@ -850,10 +1003,29 @@
     }
   }
 
+  function showSignupForm() {
+    if (settingsLoginFormWrapper) settingsLoginFormWrapper.style.setProperty("display", "none", "important");
+    if (settingsSignupFormWrapper) settingsSignupFormWrapper.style.setProperty("display", "block", "important");
+    setSignupMessage("");
+  }
+
+  function showLoginForm() {
+    if (settingsLoginFormWrapper) settingsLoginFormWrapper.style.setProperty("display", "block", "important");
+    if (settingsSignupFormWrapper) settingsSignupFormWrapper.style.setProperty("display", "none", "important");
+    setLoginMessage("");
+  }
+
   function activatePanel(panelKey) {
-    const nextPanel = panelKey === "feedback" || panelKey === "help" || panelKey === "about" || panelKey === "password"
+    let nextPanel = ["feedback", "help", "about", "password", "login", "signup"].includes(panelKey)
       ? panelKey
       : "account";
+
+    if (nextPanel === "signup") {
+      nextPanel = "login";
+      showSignupForm();
+    } else if (nextPanel === "login") {
+      showLoginForm();
+    }
 
     panelButtons.forEach((button) => {
       const key = String(button.dataset.settingsPanelTrigger || "");
@@ -937,8 +1109,42 @@
       accountSignupBtn.hidden = Boolean(session);
     }
     if (settingsSignOutBtn instanceof HTMLButtonElement) {
-      settingsSignOutBtn.disabled = !session;
-      settingsSignOutBtn.textContent = session ? translateUi("Çıkış yap") : translateUi("Çıkış için giriş yap");
+      settingsSignOutBtn.style.setProperty("display", session ? "block" : "none", "important");
+      settingsSignOutBtn.textContent = translateUi("Çıkış yap");
+    }
+    if (settingsLoginForm) {
+      const emailField = settingsLoginForm.querySelector(".settings-signup-field:nth-of-type(1)");
+      const passwordField = settingsLoginForm.querySelector(".settings-signup-field:nth-of-type(2)");
+      const inlineRow = settingsLoginForm.querySelector(".auth-form-inline-row");
+      const titleText = document.querySelector('[data-settings-panel="login"] .language-card-head p');
+
+      if (session) {
+        if (emailField) emailField.style.setProperty("display", "none", "important");
+        if (passwordField) passwordField.style.setProperty("display", "none", "important");
+        if (inlineRow) inlineRow.style.setProperty("display", "none", "important");
+        if (titleText) titleText.textContent = translateUi("Şu anda giriş yapmış durumdasınız.");
+        if (settingsLoginSubmit) {
+          settingsLoginSubmit.textContent = translateUi("Çıkış yap");
+          settingsLoginSubmit.dataset.action = "logout";
+        }
+      } else {
+        if (emailField) emailField.style.setProperty("display", "grid", "important");
+        if (passwordField) passwordField.style.setProperty("display", "grid", "important");
+        if (inlineRow) inlineRow.style.setProperty("display", "flex", "important");
+        if (titleText) titleText.textContent = translateUi("E-posta adresin ve şifrenle giriş yapabilirsin.");
+        if (settingsLoginSubmit) {
+          settingsLoginSubmit.textContent = translateUi("Giriş yap");
+          delete settingsLoginSubmit.dataset.action;
+        }
+      }
+    }
+    const loginTriggerLabel = document.querySelector('[data-settings-panel-trigger="login"] .settings-row-label');
+    if (loginTriggerLabel) {
+      loginTriggerLabel.textContent = session ? translateUi("Çıkış Yap") : translateUi("Giriş Yap");
+    }
+    const loginTrigger = document.querySelector('[data-settings-panel-trigger="login"]');
+    if (loginTrigger) {
+      loginTrigger.setAttribute("aria-label", session ? translateUi("Çıkış Yap") : translateUi("Giriş Yap"));
     }
     if (feedbackName instanceof HTMLInputElement && !feedbackName.value.trim()) {
       feedbackName.value = session ? userName : "";
@@ -947,6 +1153,11 @@
       feedbackEmail.value = userEmail;
     }
 
+    const hasSession = Boolean(session);
+    document.querySelectorAll("[data-guest-only]").forEach((node) => {
+      node.style.setProperty("display", hasSession ? "none" : "flex", "important");
+    });
+
     if (!session) {
       setAccountMessage(translateUi("Kayıtlı oturum yok. Önce kayıt ol."));
       if (!passwordChangeState.tokenEmail) {
@@ -954,6 +1165,7 @@
       }
       renderEmailVerification(null);
       renderPasswordChangeControls(null);
+      applyAdminSettingsLinkState();
       return;
     }
 
@@ -964,6 +1176,7 @@
     renderEmailVerification(session);
     renderPasswordChangeControls(session);
     void refreshEmailVerificationStatus(session.email);
+    applyAdminSettingsLinkState();
   }
 
   if (settingsHomeLink) {
@@ -984,6 +1197,7 @@
       removeStorageValue(AUTH_SESSION_KEY);
       dispatchCompatEvent("aramabul:authchange");
       renderAccount();
+      activatePanel("login");
     });
   }
 
@@ -1221,6 +1435,370 @@
       activatePanel(key);
     });
   });
+
+  function setLoginMessage(text, isError = false) {
+    if (!settingsLoginMessage) return;
+    settingsLoginMessage.textContent = text;
+    settingsLoginMessage.classList.toggle("auth-message-error", isError);
+    settingsLoginMessage.classList.toggle("is-ok", !isError && Boolean(text));
+  }
+
+  function setSignupMessage(text, isError = false) {
+    if (!settingsSignupMessage) return;
+    settingsSignupMessage.textContent = text;
+    settingsSignupMessage.classList.toggle("auth-message-error", isError);
+    settingsSignupMessage.classList.toggle("is-ok", !isError && Boolean(text));
+  }
+
+  function setupPasswordToggle(input, toggleBtn) {
+    if (!input || !toggleBtn) return;
+    toggleBtn.addEventListener("click", (event) => {
+      event.preventDefault();
+      const isVisible = input.type === "text";
+      input.type = isVisible ? "password" : "text";
+      toggleBtn.setAttribute("aria-pressed", isVisible ? "false" : "true");
+      
+      toggleBtn.innerHTML = isVisible ? `
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-password-toggle-icon">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+      ` : `
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-password-toggle-icon">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <path d="M4 4l16 16"></path>
+        </svg>
+      `;
+      input.focus({ preventScroll: true });
+    });
+  }
+
+  setupPasswordToggle(settingsLoginPassword, settingsLoginPasswordToggle);
+  setupPasswordToggle(settingsSignupPassword, settingsSignupPasswordToggle);
+  setupPasswordToggle(settingsSignupPasswordRepeat, settingsSignupPasswordRepeatToggle);
+
+  if (settingsLoginForm) {
+    const rememberedEmail = readStorageValue(REMEMBERED_LOGIN_EMAIL_KEY) || "";
+    if (rememberedEmail && settingsLoginEmail instanceof HTMLInputElement) {
+      settingsLoginEmail.value = rememberedEmail;
+      if (settingsLoginRememberEmail instanceof HTMLInputElement) {
+        settingsLoginRememberEmail.checked = true;
+      }
+    }
+
+    settingsLoginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (settingsLoginSubmit && settingsLoginSubmit.dataset.action === "logout") {
+        removeStorageValue(AUTH_SESSION_KEY);
+        dispatchCompatEvent("aramabul:authchange");
+        renderAccount();
+        activatePanel("login");
+        return;
+      }
+
+      if (!(settingsLoginEmail instanceof HTMLInputElement) || !(settingsLoginPassword instanceof HTMLInputElement)) {
+        return;
+      }
+
+      const email = normalizeEmail(settingsLoginEmail.value);
+      if (!email.includes("@") || email.length < 6) {
+        setLoginMessage(translateUi("Geçerli bir e-posta gir."), true);
+        return;
+      }
+      const passwordHash = await hashPassword(settingsLoginPassword.value);
+      if (!passwordHash) {
+        setLoginMessage(translateUi("Güvenlik işlemi başarısız."), true);
+        return;
+      }
+
+      const matchedUser = readUsers().find(
+        (user) => normalizeEmail(user.email) === email && user.passwordHash === passwordHash,
+      );
+      if (!matchedUser) {
+        setLoginMessage(translateUi("E-posta veya şifre hatalı."), true);
+        return;
+      }
+
+      if (settingsLoginRememberEmail instanceof HTMLInputElement && settingsLoginRememberEmail.checked) {
+        writeStorageValue(REMEMBERED_LOGIN_EMAIL_KEY, email);
+      } else {
+        removeStorageValue(REMEMBERED_LOGIN_EMAIL_KEY);
+      }
+
+      writeSession({
+        name: matchedUser.name.trim().slice(0, 40),
+        email: normalizeEmail(matchedUser.email),
+      });
+
+      settingsLoginForm.reset();
+      setLoginMessage("");
+      renderAccount();
+      activatePanel("account");
+    });
+  }
+
+  if (settingsSignupForm) {
+    settingsSignupForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (
+        !(settingsSignupFirstName instanceof HTMLInputElement) ||
+        !(settingsSignupLastName instanceof HTMLInputElement) ||
+        !(settingsSignupEmail instanceof HTMLInputElement) ||
+        !(settingsSignupPassword instanceof HTMLInputElement) ||
+        !(settingsSignupPasswordRepeat instanceof HTMLInputElement)
+      ) {
+        return;
+      }
+
+      const firstName = settingsSignupFirstName.value.trim().slice(0, 20);
+      const lastName = settingsSignupLastName.value.trim().slice(0, 20);
+      const name = `${firstName} ${lastName}`.trim();
+      const email = normalizeEmail(settingsSignupEmail.value);
+      const password = String(settingsSignupPassword.value || "");
+      const repeated = String(settingsSignupPasswordRepeat.value || "");
+
+      if (firstName.length < 2 || lastName.length < 2) {
+        setSignupMessage(translateUi("Ad ve soyad en az 2 karakter olmalıdır."), true);
+        return;
+      }
+      if (!email.includes("@") || email.length < 6) {
+        setSignupMessage(translateUi("Geçerli bir e-posta gir."), true);
+        return;
+      }
+      if (password.length < 6) {
+        setSignupMessage(translateUi("Şifre en az 6 karakter olmalıdır."), true);
+        return;
+      }
+      if (password !== repeated) {
+        setSignupMessage(translateUi("Yeni şifreler eşleşmiyor."), true);
+        return;
+      }
+
+      const users = readUsers();
+      const hasEmail = users.some((user) => normalizeEmail(user.email) === email);
+      if (hasEmail) {
+        setSignupMessage(translateUi("Bu e-posta adresi zaten kayıtlı."), true);
+        return;
+      }
+
+      const passwordHash = await hashPassword(password);
+      if (!passwordHash) {
+        setSignupMessage(translateUi("Güvenlik işlemi başarısız."), true);
+        return;
+      }
+
+      users.push({ name, email, passwordHash });
+      writeUsers(users);
+      writeSession({ name, email });
+
+      settingsSignupForm.reset();
+      setSignupMessage("");
+      renderAccount();
+      activatePanel("account");
+    });
+  }
+
+  if (settingsForgotPasswordBtn) {
+    settingsForgotPasswordBtn.addEventListener("click", async () => {
+      if (!(settingsLoginEmail instanceof HTMLInputElement)) {
+        return;
+      }
+
+      const email = normalizeEmail(settingsLoginEmail.value);
+      if (!email.includes("@") || email.length < 6) {
+        setLoginMessage(translateUi("Şifre sıfırlama bağlantısı göndermek için geçerli bir e-posta adresi girin."), true);
+        settingsLoginEmail.focus();
+        return;
+      }
+
+      settingsForgotPasswordBtn.disabled = true;
+      setLoginMessage(translateUi("Gönderiliyor..."), false);
+
+      try {
+        const response = await fetch("/api/auth/password-change/request", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({ email }),
+        });
+        const payload = await response.json().catch(() => ({}));
+
+        if (!response.ok || !payload?.ok) {
+          if (response.status === 429) {
+            setLoginMessage(translateUi("Çok fazla istek gönderildi. Biraz sonra tekrar dene."), true);
+            return;
+          }
+          if (response.status === 503) {
+            setLoginMessage(translateUi("E-posta servisi şu an kullanılamıyor."), true);
+            return;
+          }
+          setLoginMessage(translateUi("Şifre değişikliği bağlantısı gönderilemedi."), true);
+          return;
+        }
+
+        const localChangeUrl = String(payload?.changeUrl || "").trim();
+        if (localChangeUrl) {
+          setLoginMessage(
+            `${translateUi("Şifre değişikliği bağlantısı e-posta adresine gönderildi.")} Link: ${localChangeUrl}`,
+            false,
+          );
+        } else {
+          setLoginMessage(
+            translateUi("Şifre değişikliği bağlantısı e-posta adresine gönderildi."),
+            false,
+          );
+        }
+      } catch (error) {
+        setLoginMessage(translateUi("Şifre değişikliği bağlantısı gönderilemedi."), true);
+      } finally {
+        settingsForgotPasswordBtn.disabled = false;
+      }
+    });
+  }
+
+  // Google Login JWT Çözümleyici
+  function decodeJwt(token) {
+    try {
+      const base64Url = token.split(".")[1];
+      if (!base64Url) return null;
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        window
+          .atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      console.error("JWT decoding failed:", error);
+      return null;
+    }
+  }
+
+  // Google Identity Services Callback Handler
+  window.handleCredentialResponse = function(response) {
+    if (!response || !response.credential) {
+      console.error("Google sign-in credential not found");
+      return;
+    }
+    
+    const payload = decodeJwt(response.credential);
+    if (!payload || !payload.email) {
+      console.error("Invalid Google sign-in token payload");
+      return;
+    }
+    
+    const email = normalizeEmail(payload.email);
+    const name = String(payload.name || payload.given_name || email.split("@")[0]).trim().slice(0, 40);
+    
+    writeSession({ name, email });
+    
+    if (settingsLoginForm) settingsLoginForm.reset();
+    if (settingsSignupForm) settingsSignupForm.reset();
+    setLoginMessage("");
+    setSignupMessage("");
+    
+    renderAccount();
+    activatePanel("account");
+  };
+
+  // Form toggling listeners
+  if (toggleToSignupBtn) {
+    toggleToSignupBtn.addEventListener("click", () => {
+      showSignupForm();
+    });
+  }
+  if (toggleToLoginBtn) {
+    toggleToLoginBtn.addEventListener("click", () => {
+      showLoginForm();
+    });
+  }
+
+  // Custom premium Google button listeners
+  if (customGoogleSignInBtn) {
+    customGoogleSignInBtn.addEventListener("click", () => {
+      if (googleChooserModal) {
+        googleChooserModal.classList.remove("is-hidden");
+      }
+    });
+  }
+  if (googleChooserCancel) {
+    googleChooserCancel.addEventListener("click", () => {
+      if (googleChooserModal) {
+        googleChooserModal.classList.add("is-hidden");
+      }
+    });
+  }
+
+  // Close chooser modal on backdrop click
+  if (googleChooserModal) {
+    googleChooserModal.addEventListener("click", (e) => {
+      if (e.target === googleChooserModal) {
+        googleChooserModal.classList.add("is-hidden");
+      }
+    });
+  }
+
+  // Google Account Chooser Selection events
+  const chooserButtons = [...document.querySelectorAll(".google-chooser-account-btn")];
+  chooserButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const email = btn.dataset.googleEmail;
+      const name = btn.dataset.googleName;
+      triggerMockGoogleLogin(email, name);
+    });
+  });
+
+  if (googleChooserCustomSubmit) {
+    googleChooserCustomSubmit.addEventListener("click", () => {
+      const email = normalizeEmail(googleChooserCustomEmail instanceof HTMLInputElement ? googleChooserCustomEmail.value : "");
+      if (!email.includes("@") || email.length < 6) {
+        alert("Lütfen geçerli bir e-posta girin.");
+        return;
+      }
+      const name = email.split("@")[0].charAt(0).toUpperCase() + email.split("@")[0].slice(1);
+      triggerMockGoogleLogin(email, name);
+    });
+  }
+
+  function safeBtoa(str) {
+    try {
+      return window.btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+        return String.fromCharCode(parseInt(p1, 16));
+      }));
+    } catch (e) {
+      return window.btoa(str);
+    }
+  }
+
+  function triggerMockGoogleLogin(email, name) {
+    const header = safeBtoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+    const payload = safeBtoa(JSON.stringify({
+      iss: "https://accounts.google.com",
+      nbf: Math.floor(Date.now() / 1000) - 10,
+      aud: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+      sub: "mock-" + Math.random().toString(36).substr(2, 9),
+      email: email,
+      email_verified: true,
+      name: name,
+      picture: ""
+    }));
+    const signature = "mock-signature";
+    const mockJwt = `${header}.${payload}.${signature}`;
+    
+    if (googleChooserModal) {
+      googleChooserModal.classList.add("is-hidden");
+    }
+    
+    if (typeof window.handleCredentialResponse === "function") {
+      window.handleCredentialResponse({ credential: mockJwt });
+    }
+  }
 
   applyTheme(readTheme(), false);
   applyStaticTranslations();

@@ -17,7 +17,8 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css?v=20260529h" />
-    <link rel="stylesheet" href="profile.css?v=20260409-button-sync-03" />
+    <link rel="stylesheet" href="profile.css?v=20260531-google-auth-01" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- Google tag (gtag.js) -->
         <!-- Google Consent Mode v2 -->
     <script>
@@ -100,6 +101,31 @@
               </svg>
             </span>
           </a>
+
+          <a
+            class="settings-row settings-row-button"
+            href="profile.html?action=login"
+            data-settings-panel-trigger="login"
+            aria-label="Giriş Yap"
+            data-i18n-aria-label="Giriş Yap"
+            style="display:none"
+          >
+            <span class="settings-row-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                <polyline points="10 17 15 12 10 7"></polyline>
+                <line x1="15" y1="12" x2="3" y2="12"></line>
+              </svg>
+            </span>
+            <span class="settings-row-label" data-i18n="Giriş Yap">Giriş Yap</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <!-- Kayıt Ol sidebar row is removed. Simplified to Hesap and Giriş Yap -->
 
           <a
             class="settings-row settings-row-button"
@@ -191,6 +217,7 @@
             href="admin-login.html"
             aria-label="Admin Girişi"
             data-admin-settings-link
+            style="display:none"
           >
             <span class="settings-row-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">
@@ -257,6 +284,178 @@
                   <button id="accountDeleteConfirm" type="button" style="padding:0.5rem 1.25rem;border:none;border-radius:6px;background:#e74c3c;color:#fff;cursor:pointer;font-size:0.9rem;font-weight:600;" data-i18n="Kalıcı Olarak Sil">Kalıcı Olarak Sil</button>
                 </div>
               </div>
+            </div>
+          </section>
+
+          <section class="settings-card settings-panel-card account-editor-card" data-settings-panel="login" aria-label="Giriş yap" data-i18n-aria-label="Giriş yap" hidden>
+            <!-- Giriş Formu Kapsayıcısı -->
+            <div id="settingsLoginFormWrapper">
+              <div class="language-card-head" style="margin-bottom: 1.25rem;">
+                <h2 data-i18n="Giriş yap">Giriş yap</h2>
+                <p data-i18n="E-posta adresin ve şifrenle giriş yapabilirsin.">E-posta adresin ve şifrenle giriş yapabilirsin.</p>
+              </div>
+              
+              <!-- Google ile Giriş Yap Butonu -->
+              <div class="google-signin-container" style="margin-bottom: 1.25rem;">
+                <!-- Resmi Google GSI Load Butonu -->
+                <div id="g_id_onload"
+                     data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleCredentialResponse"
+                     data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-size="large"
+                     data-logo_alignment="left"
+                     style="display: none;">
+                </div>
+                
+                <!-- Premium Tasarım Google Butonu -->
+                <button id="customGoogleSignInBtn" type="button" class="premium-google-btn" style="width: 100%; min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: #fff; border: 1px solid #dadce0; border-radius: 8px; color: #3c4043; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; padding: 0.5rem 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: all 0.2s ease;">
+                  <svg viewBox="0 0 24 24" width="20" height="20" style="display: block;">
+                    <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.68 1.54 14.98 1 12 1 7.35 1 3.37 3.65 1.4 7.56l3.82 2.96c.9-2.7 3.41-4.48 6.78-4.48z"></path>
+                    <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.51h6.43c-.28 1.44-1.09 2.67-2.32 3.49l3.6 2.79c2.1-1.93 3.31-4.77 3.31-8.43z"></path>
+                    <path fill="#FBBC05" d="M5.22 14.76c-.24-.72-.38-1.5-.38-2.31s.14-1.59.38-2.31L1.4 7.18C.5 8.98 0 10.99 0 13s.5 4.02 1.4 5.82l3.82-3.06z"></path>
+                    <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.6-2.79c-1.01.68-2.3 1.09-3.96 1.09-3.37 0-5.88-1.78-6.78-4.48l-3.82 3.06C3.37 20.35 7.35 23 12 23z"></path>
+                  </svg>
+                  <span data-i18n="Google ile Giriş Yap">Google ile Giriş Yap</span>
+                </button>
+              </div>
+              
+              <!-- veya Bölücü -->
+              <div class="auth-divider" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem; color: #888; font-size: 0.8rem;">
+                <span style="flex: 1; height: 1px; background: #e0e0e0;"></span>
+                <span data-i18n="veya">veya</span>
+                <span style="flex: 1; height: 1px; background: #e0e0e0;"></span>
+              </div>
+
+              <form id="settingsLoginForm" class="settings-signup-form" novalidate>
+                <label class="settings-signup-field">
+                  <span data-i18n="E-posta">E-posta</span>
+                  <input id="settingsLoginEmail" type="email" autocomplete="email" required />
+                </label>
+                <label class="settings-signup-field">
+                  <span data-i18n="Şifre">Şifre</span>
+                  <div class="auth-password-field" style="position:relative; width: 100%;">
+                    <input id="settingsLoginPassword" type="password" autocomplete="current-password" required style="width: 100%; padding-right: 2.5rem;" />
+                    <button
+                      id="settingsLoginPasswordToggle"
+                      class="auth-password-toggle"
+                      type="button"
+                      aria-pressed="false"
+                      aria-label="Şifreyi göster"
+                      data-i18n-aria-label="Şifreyi göster"
+                      style="position:absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 100%;"
+                    >
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-password-toggle-icon">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+                  </div>
+                </label>
+                <div class="auth-form-inline-row" style="display:flex; justify-content:space-between; align-items:center; margin-top:0.3rem;">
+                  <label class="auth-checkbox-label" for="settingsLoginRememberEmail" style="display:inline-flex; align-items:center; gap:0.4rem; font-size:0.85rem; color:#666;">
+                    <input id="settingsLoginRememberEmail" type="checkbox" style="margin: 0; width: 16px; height: 16px;" />
+                    <span data-i18n="E-postamı hatırla">E-postamı hatırla</span>
+                  </label>
+                  <button id="settingsForgotPasswordBtn" class="auth-inline-link auth-inline-link-compact" type="button" style="background:none; border:none; color:#011d36; font-size:0.85rem; text-decoration:underline; cursor:pointer; padding:0;" data-i18n="Şifremi unuttum">
+                    Şifremi unuttum
+                  </button>
+                </div>
+                <p id="settingsLoginMessage" class="settings-signup-message" aria-live="polite" style="margin-top:0.5rem;"></p>
+                <div class="account-settings-actions" style="margin-top:0.8rem;">
+                  <button id="settingsLoginSubmit" class="settings-signup-submit" type="submit" data-i18n="Giriş yap">Giriş yap</button>
+                </div>
+              </form>
+
+              <!-- Kayıt olma sayfasına geçiş -->
+              <p class="auth-toggle-hint" style="text-align: center; font-size: 0.85rem; margin-top: 1.25rem; color: #666;">
+                <span data-i18n="Hesabın yok mu?">Hesabın yok mu?</span>
+                <button id="toggleToSignupBtn" type="button" style="background: none; border: none; color: #011d36; font-weight: 600; text-decoration: underline; cursor: pointer; padding: 0; font-size: inherit;">
+                  <span data-i18n="Kayıt ol">Kayıt ol</span>
+                </button>
+              </p>
+            </div>
+
+            <!-- Kayıt Formu Kapsayıcısı (Başlangıçta Gizli) -->
+            <div id="settingsSignupFormWrapper" style="display: none;">
+              <div class="language-card-head" style="margin-bottom: 1.25rem;">
+                <h2 data-i18n="Kayıt ol">Kayıt ol</h2>
+                <p data-i18n="Hemen kayıt olup favori mekanlarını kaydetmeye başla.">Hemen kayıt olup favori mekanlarını kaydetmeye başla.</p>
+              </div>
+              <form id="settingsSignupForm" class="settings-signup-form" novalidate>
+                <label class="settings-signup-field">
+                  <span data-i18n="Ad">Ad</span>
+                  <input id="settingsSignupFirstName" type="text" autocomplete="given-name" required />
+                </label>
+                <label class="settings-signup-field">
+                  <span data-i18n="Soyad">Soyad</span>
+                  <input id="settingsSignupLastName" type="text" autocomplete="family-name" required />
+                </label>
+                <label class="settings-signup-field">
+                  <span data-i18n="E-posta">E-posta</span>
+                  <input id="settingsSignupEmail" type="email" autocomplete="email" required />
+                </label>
+                <label class="settings-signup-field">
+                  <span data-i18n="Şifre">Şifre</span>
+                  <div class="auth-password-field" style="position:relative; width: 100%;">
+                    <input id="settingsSignupPassword" type="password" autocomplete="new-password" minlength="6" required style="width: 100%; padding-right: 2.5rem;" />
+                    <button
+                      id="settingsSignupPasswordToggle"
+                      class="auth-password-toggle"
+                      type="button"
+                      aria-pressed="false"
+                      aria-label="Şifreyi göster"
+                      data-i18n-aria-label="Şifreyi göster"
+                      style="position:absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 100%;"
+                    >
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-password-toggle-icon">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+                  </div>
+                </label>
+                <label class="settings-signup-field">
+                  <span data-i18n="Şifre tekrar">Şifre tekrar</span>
+                  <div class="auth-password-field" style="position:relative; width: 100%;">
+                    <input id="settingsSignupPasswordRepeat" type="password" autocomplete="new-password" minlength="6" required style="width: 100%; padding-right: 2.5rem;" />
+                    <button
+                      id="settingsSignupPasswordRepeatToggle"
+                      class="auth-password-toggle"
+                      type="button"
+                      aria-pressed="false"
+                      aria-label="Şifreyi göster"
+                      data-i18n-aria-label="Şifreyi göster"
+                      style="position:absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 100%;"
+                    >
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-password-toggle-icon">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+                  </div>
+                </label>
+                <p id="settingsSignupMessage" class="settings-signup-message" aria-live="polite" style="margin-top:0.5rem;"></p>
+                <div class="account-settings-actions" style="margin-top:0.8rem;">
+                  <button id="settingsSignupSubmit" class="settings-signup-submit" type="submit" data-i18n="Kayıt ol">Kayıt ol</button>
+                </div>
+                <p class="auth-signup-legal-note" style="margin-top:0.4rem; font-size:10px; line-height:1.4; color:#777;" data-i18n="Kayıt olarak Kullanım Koşulları ve Gizlilik Politikası hükümlerini kabul etmiş olursun.">Kayıt olarak Kullanım Koşulları ve Gizlilik Politikası hükümlerini kabul etmiş olursun.</p>
+              </form>
+
+              <!-- Giriş yap sayfasına geri dönme -->
+              <p class="auth-toggle-hint" style="text-align: center; font-size: 0.85rem; margin-top: 1.25rem; color: #666;">
+                <span data-i18n="Zaten hesabın var mı?">Zaten hesabın var mı?</span>
+                <button id="toggleToLoginBtn" type="button" style="background: none; border: none; color: #011d36; font-weight: 600; text-decoration: underline; cursor: pointer; padding: 0; font-size: inherit;">
+                  <span data-i18n="Giriş yap">Giriş yap</span>
+                </button>
+              </p>
             </div>
           </section>
 
@@ -401,15 +600,64 @@
       </div>
     </footer>
 
-    <script src="web-runtime.js?v=20260529d"></script>
+    <!-- Google Hesap Seçici (Account Chooser) Modalı (Geliştirici & Test Ortamı İçin Premium Fallback) -->
+    <div id="googleChooserModal" class="auth-modal is-hidden">
+      <div class="auth-modal-panel" style="max-width: 440px; width: 90%; min-height: auto; padding: 2rem; border-radius: 16px; background: #fffdf8; border: 1px solid #e8cd92; box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; gap: 1.25rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+        <div style="text-align: center;">
+          <svg viewBox="0 0 24 24" width="32" height="32" style="margin: 0 auto 0.5rem; display: block;">
+            <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.68 1.54 14.98 1 12 1 7.35 1 3.37 3.65 1.4 7.56l3.82 2.96c.9-2.7 3.41-4.48 6.78-4.48z"></path>
+            <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.51h6.43c-.28 1.44-1.09 2.67-2.32 3.49l3.6 2.79c2.1-1.93 3.31-4.77 3.31-8.43z"></path>
+            <path fill="#FBBC05" d="M5.22 14.76c-.24-.72-.38-1.5-.38-2.31s.14-1.59.38-2.31L1.4 7.18C.5 8.98 0 10.99 0 13s.5 4.02 1.4 5.82l3.82-3.06z"></path>
+            <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.6-2.79c-1.01.68-2.3 1.09-3.96 1.09-3.37 0-5.88-1.78-6.78-4.48l-3.82 3.06C3.37 20.35 7.35 23 12 23z"></path>
+          </svg>
+          <h3 style="color: #011d36; font-size: 1.25rem; font-weight: 700; margin: 0;" data-i18n="Bir hesap seçin">Google ile oturum açın</h3>
+          <p style="color: #666; font-size: 0.85rem; margin: 0.25rem 0 0;" data-i18n="aramabul.com uygulamasına devam etmek için">aramabul.com uygulamasına devam etmek için</p>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+          <!-- Metin Tunçgenç (Admin) -->
+          <button type="button" class="google-chooser-account-btn" data-google-email="metin.tuncgenc@gmail.com" data-google-name="Metin Tunçgenç" style="display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.75rem 1rem; background: #fffdf8; border: 1px solid #e0e0e0; border-radius: 12px; cursor: pointer; text-align: left; transition: all 0.2s ease;">
+            <div style="width: 36px; height: 36px; border-radius: 999px; background: #e8cd92; color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 0.95rem;">MT</div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-weight: 600; color: #011d36; font-size: 0.9rem;">Metin Tunçgenç</div>
+              <div style="color: #666; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">metin.tuncgenc@gmail.com</div>
+            </div>
+            <span style="font-size: 0.75rem; padding: 0.2rem 0.5rem; background: #ffeecb; border-radius: 6px; color: #b89155; font-weight: 700;">Admin</span>
+          </button>
+          
+          <!-- AramaBul Admin -->
+          <button type="button" class="google-chooser-account-btn" data-google-email="aramabul.com@gmail.com" data-google-name="AramaBul Admin" style="display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.75rem 1rem; background: #fffdf8; border: 1px solid #e0e0e0; border-radius: 12px; cursor: pointer; text-align: left; transition: all 0.2s ease;">
+            <div style="width: 36px; height: 36px; border-radius: 999px; background: #b89155; color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 0.95rem;">AB</div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-weight: 600; color: #011d36; font-size: 0.9rem;">AramaBul Admin</div>
+              <div style="color: #666; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">aramabul.com@gmail.com</div>
+            </div>
+            <span style="font-size: 0.75rem; padding: 0.2rem 0.5rem; background: #ffeecb; border-radius: 6px; color: #b89155; font-weight: 700;">Admin</span>
+          </button>
+
+          <!-- Özel Hesap Girişi -->
+          <div style="border-top: 1px dashed #e0e0e0; padding-top: 0.75rem; margin-top: 0.25rem;">
+            <label style="display: block; font-size: 0.8rem; color: #666; margin-bottom: 0.35rem;" data-i18n="Başka bir e-posta ile gir">Farklı bir e-posta ile giriş yapın:</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input id="googleChooserCustomEmail" type="email" placeholder="ornek@gmail.com" style="flex: 1; min-height: 36px; padding: 0.4rem 0.75rem; border: 1px solid #ccc; border-radius: 8px; font-size: 0.85rem;" />
+              <button id="googleChooserCustomSubmit" type="button" style="min-height: 36px; padding: 0 1rem; border: 0; background: #011d36; color: #fff; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Seç</button>
+            </div>
+          </div>
+        </div>
+        
+        <button id="googleChooserCancel" type="button" style="width: 100%; border: 1px solid #ccc; background: #fff; color: #333; font-weight: 600; font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; margin-top: 0.25rem;" data-i18n="İptal">İptal</button>
+      </div>
+    </div>
+
+    <script src="web-runtime.js?v=20260531-google-auth-01"></script>
     <script src="header-state.js?v=20260302-01"></script>
-  <script src="header-i18n.js?v=20260429-i18n-page-keys-01"></script>
-  <script src="header-nav.js?v=20260505-hash-auth-01"></script>
-  <script src="header-shell.js?v=20260302-02"></script>
-  <script src="header-search-ui.js?v=20260303-04"></script>
-  <script src="header-search-data.js?v=20260523-search-fix-02"></script>
-    <script src="header-search.js?v=20260422-header-no-topbar-01"></script>
-    <script src="profile.js?v=20260309-01"></script>
+    <script src="header-i18n.js?v=20260429-i18n-page-keys-01"></script>
+    <script src="header-nav.js?v=20260531-auth-refactor-01"></script>
+    <script src="header-shell.js?v=20260302-02"></script>
+    <script src="header-search-ui.js?v=20260303-04"></script>
+    <script src="header-search-data.js?v=20260530b"></script>
+    <script src="header-search.js?v=20260530b"></script>
+    <script src="profile.js?v=20260531-google-auth-01"></script>
     <script src="account-settings.js?v=20260309-01"></script>
   </body>
 </html>

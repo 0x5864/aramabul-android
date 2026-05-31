@@ -1929,8 +1929,21 @@ function resolvePhoneText(payload) {
 }
 
 function isCoordinateQuery(queryText) {
-  const compact = String(queryText || "").trim().replace(/\s+/g, "");
-  return /^-?\d{1,3}(?:\.\d+)?,-?\d{1,3}(?:\.\d+)?$/.test(compact);
+  const raw = String(queryText || "").trim();
+  const compact = raw.replace(/\s+/g, "");
+  if (/^-?\d{1,3}(?:\.\d+)?,-?\d{1,3}(?:\.\d+)?$/.test(compact)) {
+    return true;
+  }
+  if (/^\d{1,3}°\d{1,2}'\d{1,2}(?:\.\d+)?"[NSEWnsew][+\s]?\d{1,3}°\d{1,2}'\d{1,2}(?:\.\d+)?"[NSEWnsew]$/.test(compact)) {
+    return true;
+  }
+  const lettersOnly = raw.replace(/[^a-zA-Z]/g, "").toUpperCase();
+  if (raw.length > 0 && !/[A-Z]/.test(raw.replace(/[NSEWnsew°'"\s,.\-+\d]/g, ""))) {
+    if (/^[NSEW]*$/.test(lettersOnly)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function buildVenueQueryText(venue) {
@@ -2039,6 +2052,28 @@ function mapsPlaceUrl(venue) {
       const placeId = parsed.searchParams.get("query_place_id") || "";
 
       if (isCoordinateQuery(query) && !placeId) {
+        return buildMapsSearchUrl(venue);
+      }
+
+      // /maps/place/ içinde salt koordinat kontrolü
+      var isCoordsOnly = false;
+      var placeMatch = raw.match(/\/maps\/place\/([^/]+)/);
+      if (placeMatch) {
+        var decodedPlace = "";
+        try {
+          decodedPlace = decodeURIComponent(placeMatch[1]);
+        } catch (e) {
+          decodedPlace = placeMatch[1];
+        }
+        isCoordsOnly = !/[a-zA-Z]/.test(decodedPlace.replace(/[NSEWnsew°'"\s,.\-+\d]/g, ""));
+      }
+
+      // Genel harita URL'inde harf içermeme kontrolü (salt koordinat)
+      if (!isCoordsOnly && !/[a-zA-Z]/.test(raw.replace("https://", "").replace("http://", "").replace("www.google.com/maps", "").replace(/[NSEWnsew°'"\s,.\-+\d]/g, ""))) {
+        isCoordsOnly = true;
+      }
+
+      if (isCoordsOnly) {
         return buildMapsSearchUrl(venue);
       }
 

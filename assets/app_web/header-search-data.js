@@ -291,10 +291,7 @@
       }
 
       const pageBase = sanitizeText(venue.pageBase);
-      const idKey = sanitizeText(venue.id);
-      const slugKey = sanitizeText(venue.slug);
-      const stableKey = idKey ? `id:${idKey}` : slugKey ? `slug:${slugKey}` : "";
-      const locationKey = stableKey || `${pageBase}|${canonicalize(venue.city)}|${canonicalize(venue.district)}|${venue.canonicalName}`;
+      const locationKey = `${pageBase}|${canonicalize(venue.city)}|${canonicalize(venue.district)}|${venue.canonicalName}`;
       const bucket = buckets.get(locationKey) || [];
       bucket.push(venue);
       buckets.set(locationKey, bucket);
@@ -697,6 +694,7 @@
 
     return {
       type: "choices",
+      pageBase: orderedRecords[0]?.pageBase || "yeme-icme",
       choices: orderedRecords.map((record) => ({
         title: record.name,
         subtitle: choiceLabelFor(record),

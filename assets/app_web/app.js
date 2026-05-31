@@ -111,7 +111,7 @@ const fallbackVenues = [
     city: "Adana",
     district: "Seyhan",
     name: "Köz Ustası",
-    cuisine: "Kebap",
+    cuisine: "Kebap-Et",
     rating: 4.8,
     budget: "₺₺",
   },
@@ -303,7 +303,7 @@ const fallbackVenues = [
     city: "Kahramanmaraş",
     district: "Dulkadiroğlu",
     name: "Maraş Dondurma Konağı",
-    cuisine: "Tatlı",
+    cuisine: "Tatlı-Pasta",
     rating: 4.5,
     budget: "₺",
   },
@@ -357,7 +357,7 @@ const cityProfiles = {
 
 const featuredCategories = [
   {
-    name: "Kebap",
+    name: "Kebap-Et",
     count: 48291,
     image:
       "https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&w=900&q=80",
@@ -387,7 +387,7 @@ const featuredCategories = [
       "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=900&q=80",
   },
   {
-    name: "Tatlı",
+    name: "Tatlı-Pasta",
     count: 33218,
     image:
       "https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=900&q=80",
@@ -409,7 +409,7 @@ const categoryTags = [
   "Deniz Ürünleri",
   "Sokak Lezzetleri",
   "Dondurma",
-  "Tatlı",
+  "Tatlı-Pasta",
   "Kahvaltı",
   "Vegan",
   "Vejetaryen",
@@ -421,7 +421,7 @@ const categoryTags = [
   "Noodle",
   "Tost",
   "Döner",
-  "Kebap",
+  "Kebap-Et",
   "Börek",
 ];
 
@@ -1242,7 +1242,7 @@ function normalizeCuisineLabel(value, fallback = "Yerel") {
   const normalized = normalizeForSearch(cleaned);
 
   if (normalized === "baklava" || normalized === "kunefe") {
-    return "Tatlı";
+    return "Tatlı-Pasta";
   }
 
   return cleaned;

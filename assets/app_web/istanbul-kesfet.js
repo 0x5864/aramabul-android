@@ -862,7 +862,7 @@
       return "";
     }
     if (normalizeText(name) === normalizeText("Pasta-Tatlı-Unlu mamuller")) {
-      return "Tatlı";
+      return "Tatlı-Pasta";
     }
     if (normalizeText(name) === normalizeText("Asya Mutfağı")) {
       return "Asya";
@@ -879,17 +879,16 @@
     { slug: "kafe", name: "Kafe", sortOrder: 20 },
     { slug: "kahvalti", name: "Kahvaltı", sortOrder: 30 },
     { slug: "bar", name: "Bar", sortOrder: 40 },
-    { slug: "tatli", name: "Tatlı", sortOrder: 50 },
+    { slug: "tatli", name: "Tatlı-Pasta", sortOrder: 50 },
     { slug: "burger", name: "Burger", sortOrder: 60 },
     { slug: "pizza", name: "Pizza", sortOrder: 70 },
     { slug: "kokorec", name: "Kokoreç", sortOrder: 72 },
     { slug: "kofte", name: "Köfte", sortOrder: 74 },
     { slug: "balik", name: "Balık", sortOrder: 80 },
-    { slug: "kebap", name: "Kebap", sortOrder: 90 },
+    { slug: "kebap", name: "Kebap-Et", sortOrder: 90 },
     { slug: "doner", name: "Döner", sortOrder: 100 },
     { slug: "lahmacun", name: "Lahmacun", sortOrder: 105 },
     { slug: "pide", name: "Pide", sortOrder: 106 },
-    { slug: "firin", name: "Fırın", sortOrder: 107 },
     { slug: "meyhane", name: "Meyhane", sortOrder: 108 },
     { slug: "cigkofte", name: "Çiğ Köfte", sortOrder: 109 },
     { slug: "tantuni", name: "Tantuni", sortOrder: 110 },
@@ -905,7 +904,7 @@
   const MVP_IMPORT_CUISINES_LABEL_ORDER = [
     "Restoran",
     "Kafe",
-    "Kebap",
+    "Kebap-Et",
     "Balık",
     "Bar",
     "Köfte",
@@ -913,10 +912,9 @@
     "Lahmacun",
     "Kahvaltı",
     "Pide",
-    "Tatlı",
+    "Tatlı-Pasta",
     "Burger",
     "Pizza",
-    "Fırın",
     "Meyhane",
     "Çiğ Köfte",
     "Kokoreç",
@@ -995,7 +993,7 @@
     { label: "Kafeler", file: "data/yeme-icme-kafe.json", category: "Kafe" },
     { label: "Restoranlar", file: "data/yeme-icme-restoran.json", category: "Restoran" },
     { label: "Kahvaltı Mekanları", file: "data/yeme-icme-kahvalti.json", category: "Kahvaltı" },
-    { label: "Kebapçılar", file: "data/yeme-icme-kebap.json", category: "Kebap" },
+    { label: "Kebapçılar", file: "data/yeme-icme-kebap.json", category: "Kebap-Et" },
     { label: "Pide ve Lahmacun", file: "data/yeme-icme-pide.json", category: "Pide & Lahmacun" },
     { label: "Dönerciler", file: "data/yeme-icme-doner.json", category: "Döner" },
     { label: "Çiğ Köfteciler", file: "data/yeme-icme-cigkofte.json", category: "Çiğ Köfte" },
@@ -1554,12 +1552,80 @@
     if (normalized.includes("kultur") || normalized.includes("kültür") || normalized.includes("muze") || normalized.includes("müze") || normalized.includes("cami") || normalized.includes("kilise") || normalized.includes("sinagog") || mvpMainCategoryKey === "kultur") {
       return "assets/kultur.webp";
     }
+    if (normalized.includes("balik") || normalized.includes("balık")) {
+      return "assets/balik.png";
+    }
+    if (normalized.includes("bar") || normalized.includes("pub")) {
+      return "assets/bar.png";
+    }
+    if (normalized.includes("borek") || normalized.includes("börek")) {
+      return "assets/borek.png";
+    }
+    if (normalized.includes("burger")) {
+      return "assets/burger.png";
+    }
+    if (normalized.includes("cig kofte") || normalized.includes("çiğ köfte")) {
+      return "assets/cigkofte.png";
+    }
+    if (normalized.includes("corba") || normalized.includes("çorba")) {
+      return "assets/corba.png";
+    }
+    if (normalized.includes("doner") || normalized.includes("döner")) {
+      return "assets/doner.png";
+    }
+    if (normalized.includes("kahvalti") || normalized.includes("kahvaltı")) {
+      return "assets/kahvalti.jpeg";
+    }
+    if (normalized.includes("kebap") || normalized.includes("et") || normalized.includes("mangal")) {
+      return "assets/kebap-et.png";
+    }
+    if (normalized.includes("kofte") || normalized.includes("köfte")) {
+      return "assets/kofte.png";
+    }
+    if (normalized.includes("kokorec") || normalized.includes("kokoreç")) {
+      return "assets/kokorec.png";
+    }
+    if (normalized.includes("lahmacun")) {
+      return "assets/lahmacun.png";
+    }
+    if (normalized.includes("manti") || normalized.includes("mantı")) {
+      return "assets/manti.jpeg";
+    }
+    if (normalized.includes("meyhane")) {
+      return "assets/meyhane.png";
+    }
+    if (normalized.includes("pide")) {
+      return "assets/pide.png";
+    }
+    if (normalized.includes("pizza")) {
+      return "assets/pizza.png";
+    }
+    if (normalized.includes("sushi") || normalized.includes("asya") || normalized.includes("asian")) {
+      return "assets/sushi.png";
+    }
+    if (normalized.includes("tatli") || normalized.includes("tatlı") || normalized.includes("pasta") || normalized.includes("pastane") || normalized.includes("firin") || normalized.includes("fırın")) {
+      return "assets/tatli-pasta.png";
+    }
+    if (normalized.includes("tavuk") || normalized.includes("tantuni")) {
+      return "assets/tavuk.png";
+    }
+    if (normalized.includes("restoran") || normalized.includes("lokanta")) {
+      return "assets/restoran.png";
+    }
     return SLEEK_SVG_FALLBACK;
   }
 
   function isPlaceholderImage(src) {
     if (!src) return false;
-    return src.startsWith("data:image/svg+xml") || src.includes("no-image-icon.webp") || src.includes("assets/eczane.webp") || src.includes("assets/hasta.webp") || src.includes("assets/kafe.png") || src.includes("assets/yemek.webp") || src.includes("assets/pompa.webp") || src.includes("assets/veteriner.webp") || src.includes("assets/sac.webp") || src.includes("assets/kultur.webp") || src.includes("assets/berber.webp");
+    return src.startsWith("data:image/svg+xml") ||
+      src.includes("no-image-icon.webp") ||
+      src.includes("assets/eczane.webp") ||
+      src.includes("assets/hasta.webp") ||
+      src.includes("assets/pompa.webp") ||
+      src.includes("assets/veteriner.webp") ||
+      src.includes("assets/sac.webp") ||
+      src.includes("assets/kultur.webp") ||
+      src.includes("assets/berber.webp");
   }
 
   function readVenueSlugFromUrl() {
@@ -3559,6 +3625,39 @@
       const row2 = document.createElement("div");
       row2.className = "venue-card-info-row";
 
+      // 1. Favorilere Ekle / Favorilerde Chip'i (fav.png ile) - En Sola Konur
+      const favChip = document.createElement("button");
+      favChip.type = "button";
+      favChip.className = "venue-popup-info-chip-btn istanbul-favorite-chip";
+      
+      const updateFavChipVisual = () => {
+        const isFav = isFavoriteVenue(item.id);
+        favChip.innerHTML = `<img src="assets/fav.png" class="venue-popup-chip-icon" alt="" />${isFav ? "Favorilerde" : "Favorilere Ekle"}`;
+        favChip.classList.toggle("is-favorited", isFav);
+        favChip.setAttribute("aria-pressed", isFav ? "true" : "false");
+      };
+      
+      updateFavChipVisual();
+      
+      favChip.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        try {
+          favChip.disabled = true;
+          await toggleFavorite(item.id);
+          updateFavChipVisual();
+          // Ayrıca harita paneli üzerindeki favori butonunu da eşle (eğer açıksa)
+          if (typeof window.syncMapPanelFavoriteButton === "function") {
+            window.syncMapPanelFavoriteButton();
+          }
+        } catch (error) {
+          console.error("Favori işlemi hatası:", error);
+        } finally {
+          favChip.disabled = false;
+        }
+      });
+      row2.appendChild(favChip);
+
+      // 2. Mesafe Chip'i
       const rawDistanceMeters = (item.distanceMeters != null && item.distanceMeters !== "") ? Number(item.distanceMeters) : NaN;
       const computedDistanceMeters = Number.isFinite(rawDistanceMeters)
         ? rawDistanceMeters
@@ -3571,8 +3670,7 @@
         row2.appendChild(el);
       }
 
-
-
+      // 3. Ayrıntılı Bilgi Chip'i
       const detailLink = document.createElement("button");
       detailLink.type = "button";
       detailLink.className = "venue-popup-info-chip-btn";

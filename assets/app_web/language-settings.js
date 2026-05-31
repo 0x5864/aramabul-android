@@ -37,6 +37,7 @@
   const panels = [...document.querySelectorAll("[data-settings-panel]")];
   const settingsSidebarCard = document.querySelector(".settings-sidebar-card");
   const settingsPanelStack = document.querySelector(".settings-panel-stack");
+  let lastAdminSession = null;
   const FEEDBACK_TARGETS = Object.freeze({
     destek: {
       address: "destek@aramabul.com",
@@ -110,17 +111,37 @@
   }
 
   function applyAdminSettingsLinkState(session) {
+    if (session !== undefined) {
+      lastAdminSession = session;
+    }
     const adminLink = document.querySelector("[data-admin-settings-link]");
     const adminLabelNode = document.querySelector("[data-admin-settings-link-label]");
     if (!(adminLink instanceof HTMLAnchorElement) || !(adminLabelNode instanceof HTMLElement)) {
       return;
     }
 
-    const isAdminSession = Boolean(session?.email);
-    const label = isAdminSession ? "Admin Paneli" : "Admin Girişi";
-    adminLink.href = isAdminSession ? "admin-venues.html" : "admin-login.html";
-    adminLink.setAttribute("aria-label", label);
-    adminLabelNode.textContent = label;
+    const userSession = readSession();
+    const userEmail = userSession && userSession.email ? String(userSession.email).toLowerCase() : "";
+    const isUserAdmin = userEmail && (
+      userEmail === 'admin@aramabul.com' ||
+      userEmail === 'metin.tuncgenc@gmail.com' ||
+      userEmail === 'aramabul.com@gmail.com' ||
+      userEmail.startsWith('admin@') ||
+      userEmail.endsWith('.admin')
+    );
+    const isAdminSession = Boolean(lastAdminSession?.email);
+
+    const shouldShow = isUserAdmin || isAdminSession;
+
+    if (shouldShow) {
+      adminLink.style.setProperty("display", "flex", "important");
+      const label = isAdminSession ? "Admin Paneli" : "Admin Girişi";
+      adminLink.href = isAdminSession ? "admin-venues.html" : "admin-login.html";
+      adminLink.setAttribute("aria-label", label);
+      adminLabelNode.textContent = label;
+    } else {
+      adminLink.style.setProperty("display", "none", "important");
+    }
   }
 
   function readTheme() {
@@ -186,8 +207,8 @@
       settingsHandle.textContent = toHandleText(session);
     }
     if (settingsSignOutBtn instanceof HTMLButtonElement) {
-      settingsSignOutBtn.disabled = !session;
-      settingsSignOutBtn.textContent = session ? translateUi("Çıkış yap") : translateUi("Çıkış için giriş yap");
+      settingsSignOutBtn.style.setProperty("display", session ? "block" : "none", "important");
+      settingsSignOutBtn.textContent = translateUi("Çıkış yap");
     }
     if (feedbackName instanceof HTMLInputElement && !feedbackName.value.trim()) {
       feedbackName.value = session ? userName : "";
@@ -195,6 +216,7 @@
     if (feedbackEmail instanceof HTMLInputElement && !feedbackEmail.value.trim()) {
       feedbackEmail.value = userEmail;
     }
+    applyAdminSettingsLinkState();
   }
 
   function setMessage(text) {

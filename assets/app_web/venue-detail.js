@@ -1,6 +1,10 @@
 "use strict";
 
 (function initVenueDetailPage() {
+  // Eski detay sayfasına doğrudan erişim engellendi, anasayfaya yönlendiriliyor.
+  window.location.replace("index.html");
+  return;
+
   const _t = window.ARAMABUL_HEADER_I18N?.getStaticUiTranslation || ((t) => t);
   const VENUES_LIST_CITY = "İstanbul";
 
@@ -795,27 +799,62 @@
     if (cat.includes("veteriner")) return "assets/veteriner.webp";
     if (cat.includes("akaryak")) return "assets/pompa.webp";
     if (cat.includes("eczane")) return "assets/eczane.webp";
+    if (cat.includes("balik") || cat.includes("balık")) return "assets/balik.png";
+    if (cat.includes("bar") || cat.includes("pub")) return "assets/bar.png";
+    if (cat.includes("borek") || cat.includes("börek")) return "assets/borek.png";
+    if (cat.includes("burger")) return "assets/burger.png";
+    if (cat.includes("cig kofte") || cat.includes("çiğ köfte")) return "assets/cigkofte.png";
+    if (cat.includes("corba") || cat.includes("çorba")) return "assets/corba.png";
+    if (cat.includes("doner") || cat.includes("döner")) return "assets/doner.png";
+    if (cat.includes("kahvalti") || cat.includes("kahvaltı")) return "assets/kahvalti.jpeg";
+    if (cat.includes("kebap") || cat.includes("et") || cat.includes("mangal")) return "assets/kebap-et.png";
+    if (cat.includes("kofte") || cat.includes("köfte")) return "assets/kofte.png";
+    if (cat.includes("kokorec") || cat.includes("kokoreç")) return "assets/kokorec.png";
+    if (cat.includes("lahmacun")) return "assets/lahmacun.png";
+    if (cat.includes("manti") || cat.includes("mantı")) return "assets/manti.jpeg";
+    if (cat.includes("meyhane")) return "assets/meyhane.png";
+    if (cat.includes("pide")) return "assets/pide.png";
+    if (cat.includes("pizza")) return "assets/pizza.png";
+    if (cat.includes("sushi") || cat.includes("asya") || cat.includes("asian")) return "assets/sushi.png";
+    if (cat.includes("tatli") || cat.includes("tatlı") || cat.includes("pasta") || cat.includes("pastane") || cat.includes("firin") || cat.includes("fırın")) return "assets/tatli-pasta.png";
+    if (cat.includes("tavuk") || cat.includes("tantuni")) return "assets/tavuk.png";
+    if (cat.includes("restoran") || cat.includes("lokanta")) return "assets/restoran.png";
+    if (cat.includes("kafe") || cat.includes("cafe")) return "assets/kafe.png";
     return "assets/no-image-icon.webp";
   }
 
   function setImageSource(imageEl, src, alt, fallback) {
     const cleanFallback = fallback && fallback !== "assets/yemek.webp" ? fallback : "assets/no-image-icon.webp";
     imageEl.alt = alt;
+    
+    function isIconPlaceholder(url) {
+      if (!url) return false;
+      return url.startsWith("data:image/svg+xml") ||
+        url.includes("no-image-icon.webp") ||
+        url.includes("assets/eczane.webp") ||
+        url.includes("assets/pompa.webp") ||
+        url.includes("assets/veteriner.webp") ||
+        url.includes("assets/sac.webp") ||
+        url.includes("assets/berber.webp");
+    }
+
     imageEl.onerror = () => {
       imageEl.onerror = null;
       imageEl.src = cleanFallback;
-      imageEl.classList.add("is-placeholder");
-    };
-    if (src === cleanFallback || !src || src === "assets/yemek.webp") {
-      imageEl.classList.add("is-placeholder");
-      imageEl.src = cleanFallback;
-    } else {
-      if (src.startsWith("data:image/svg+xml") || src.includes("no-image-icon.webp") || src.includes("assets/eczane.webp") || src.includes("assets/pompa.webp") || src.includes("assets/veteriner.webp") || src.includes("assets/sac.webp") || src.includes("assets/berber.webp")) {
+      if (isIconPlaceholder(cleanFallback)) {
         imageEl.classList.add("is-placeholder");
       } else {
         imageEl.classList.remove("is-placeholder");
       }
-      imageEl.src = src;
+    };
+
+    const finalSrc = src || cleanFallback;
+    imageEl.src = finalSrc;
+
+    if (isIconPlaceholder(finalSrc)) {
+      imageEl.classList.add("is-placeholder");
+    } else {
+      imageEl.classList.remove("is-placeholder");
     }
   }
 
@@ -1610,6 +1649,55 @@
 
   function tryShowAdminEditLink(venue) {
     if (!venue || !venue.id || !titleNode) return;
+
+    function insertAdminLink() {
+      var existing = document.getElementById("venueDetailAdminEditLink");
+      if (existing) existing.remove();
+      var link = document.createElement("a");
+      link.id = "venueDetailAdminEditLink";
+      link.href = "admin-venues.html?venueId=" + encodeURIComponent(venue.id);
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.title = "Admin'de düzenle";
+      link.setAttribute("aria-label", "Admin'de düzenle");
+      link.style.cssText =
+        "display:inline-flex;align-items:center;justify-content:center;" +
+        "width:32px;height:32px;border-radius:8px;background:transparent;" +
+        "margin-left:8px;vertical-align:middle;text-decoration:none;" +
+        "flex-shrink:0;transition:opacity 0.15s ease;opacity:0.85;";
+      var img = document.createElement("img");
+      img.src = "/assets/edit.png";
+      img.alt = "Düzenle";
+      img.style.cssText = "width:28px;height:28px;display:block;pointer-events:none;";
+      link.appendChild(img);
+      link.addEventListener("mouseenter", function () {
+        link.style.opacity = "1";
+      });
+      link.addEventListener("mouseleave", function () {
+        link.style.opacity = "0.85";
+      });
+      titleNode.parentNode.insertBefore(link, titleNode.nextSibling);
+    }
+
+    // Require local user session — if not logged in, never show admin icon
+    var appRuntime = window.ARAMABUL_RUNTIME;
+    var localSession = appRuntime && typeof appRuntime.readAuthSession === "function" ? appRuntime.readAuthSession() : null;
+    if (!localSession) return;
+
+    var localEmail = (localSession.email || "").trim().toLowerCase();
+    var isLocalAdmin = localEmail && (
+      localEmail === 'admin@aramabul.com' ||
+      localEmail === 'metin.tuncgenc@gmail.com' ||
+      localEmail === 'aramabul.com@gmail.com' ||
+      localEmail.startsWith('admin@') ||
+      localEmail.endsWith('.admin')
+    );
+    if (isLocalAdmin) {
+      insertAdminLink();
+      return;
+    }
+
+    // Fallback: check server-side admin session
     fetch("/api/admin/auth/session", {
       credentials: "include",
       headers: { Accept: "application/json" },
@@ -1619,32 +1707,7 @@
       })
       .then(function (data) {
         if (!data || !data.session) return;
-        var existing = document.getElementById("venueDetailAdminEditLink");
-        if (existing) existing.remove();
-        var link = document.createElement("a");
-        link.id = "venueDetailAdminEditLink";
-        link.href = "admin-venues.html?venueId=" + encodeURIComponent(venue.id);
-        link.target = "_blank";
-        link.rel = "noopener";
-        link.title = "Admin'de düzenle";
-        link.setAttribute("aria-label", "Admin'de düzenle");
-        link.style.cssText =
-          "display:inline-flex;align-items:center;justify-content:center;" +
-          "width:32px;height:32px;border-radius:8px;background:transparent;" +
-          "margin-left:8px;vertical-align:middle;text-decoration:none;" +
-          "flex-shrink:0;transition:opacity 0.15s ease;opacity:0.85;";
-        var img = document.createElement("img");
-        img.src = "/assets/edit.png";
-        img.alt = "Düzenle";
-        img.style.cssText = "width:28px;height:28px;display:block;pointer-events:none;";
-        link.appendChild(img);
-        link.addEventListener("mouseenter", function () {
-          link.style.opacity = "1";
-        });
-        link.addEventListener("mouseleave", function () {
-          link.style.opacity = "0.85";
-        });
-        titleNode.parentNode.insertBefore(link, titleNode.nextSibling);
+        insertAdminLink();
       })
       .catch(function () {
         // Not an admin or network error — silently ignore.

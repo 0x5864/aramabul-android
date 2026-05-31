@@ -1118,18 +1118,6 @@
       authNav.className = "desktop-auth-links";
       authNav.setAttribute("aria-label", labels.nav);
       authNav.innerHTML = `
-        <a
-          class="desktop-auth-link desktop-auth-link-signin"
-          data-desktop-auth="signin"
-          href="#login"
-          aria-label="${labels.signin}"
-          title="${labels.signin}"
-        >
-          <span class="desktop-auth-link-icon-wrap" aria-hidden="true">
-            <img class="desktop-auth-link-image" src="assets/giris.png" alt="" />
-          </span>
-          <span class="visually-hidden desktop-auth-link-text">${labels.signin}</span>
-        </a>
         <div class="lang-switch desktop-lang-switch" data-lang-switch>
           <button
             class="lang-switch-btn"
@@ -1264,17 +1252,6 @@
             <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="11" cy="11" r="6.5"></circle>
               <path d="m16 16 4.5 4.5"></path>
-            </svg>
-          </span>
-        </button>
-        <button class="mobile-bottom-nav-btn" data-mobile-nav="signin" type="button" aria-label="${authLabels.signin}" title="${authLabels.signin}">
-          <span class="mobile-bottom-nav-chip" aria-hidden="true">
-            <img class="mobile-bottom-nav-icon-img" src="assets/giris.png" alt="" />
-            <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="10" cy="8.2" r="3.4"></circle>
-              <path d="M4.5 18.5c.8-2.9 2.9-4.8 5.5-4.8s4.7 1.9 5.5 4.8"></path>
-              <path d="M17.5 8v5"></path>
-              <path d="M15 10.5h5"></path>
             </svg>
           </span>
         </button>
@@ -1478,15 +1455,11 @@
 
   window.ARAMABUL_AUTH_MODAL = {
     open(mode = "signup", trigger = null) {
-      openAuthModal(mode, trigger);
+      window.location.href = `profile.html?action=${mode === "signup" ? "signup" : "login"}`;
     },
-    close() {
-      if (authController) {
-        authController.close();
-      }
-    },
+    close() {},
     isOpen() {
-      return authController ? authController.isOpen() : false;
+      return false;
     },
   };
 
@@ -1532,11 +1505,9 @@
   function checkHashForAuthModal() {
     const hash = window.location.hash.toLowerCase().replace(/^#/, "");
     if (hash === "login") {
-      openAuthModal("login");
-      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      window.location.href = "profile.html?action=login";
     } else if (hash === "register" || hash === "signup") {
-      openAuthModal("signup");
-      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      window.location.href = "profile.html?action=signup";
     }
   }
 

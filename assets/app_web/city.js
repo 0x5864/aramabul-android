@@ -63,7 +63,7 @@ const fallbackVenues = [
     city: "Bursa",
     district: "Osmangazi",
     name: "İskender Konağı",
-    cuisine: "Kebap",
+    cuisine: "Kebap-Et",
     rating: 4.7,
     budget: "₺₺",
   },
@@ -100,7 +100,7 @@ const mainPageCategoryTags = [
   "Deniz Ürünleri",
   "Sokak Lezzetleri",
   "Dondurma",
-  "Tatlı",
+  "Tatlı-Pasta",
   "Kahvaltı",
   "Vegan",
   "Vejetaryen",
@@ -112,7 +112,7 @@ const mainPageCategoryTags = [
   "Noodle",
   "Tost",
   "Döner",
-  "Kebap",
+  "Kebap-Et",
   "Börek",
 ];
 
@@ -828,7 +828,7 @@ function normalizeCuisineLabel(value, fallback = "Yerel") {
   const normalized = normalizeForSearch(cleaned);
 
   if (normalized === "baklava" || normalized === "kunefe") {
-    return "Tatlı";
+    return "Tatlı-Pasta";
   }
 
   return cleaned;

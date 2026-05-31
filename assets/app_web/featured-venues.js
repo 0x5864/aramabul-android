@@ -64,7 +64,7 @@ class FeaturedVenues {
     } else {
       this.favoriteIds.add(key);
     }
-    this.updateFavoriteButton(btn, key);
+    this.syncAllFavoriteButtons();
   }
 
   async loadFavoriteIds() {
@@ -90,17 +90,31 @@ class FeaturedVenues {
     const grid = document.querySelector(".featured-venues-grid");
     if (!grid) return;
     grid.querySelectorAll(".istanbul-venue-card").forEach((card) => {
+      if (!card.venue) return;
+      
       const btn = card.querySelector(".istanbul-favorite-button");
-      if (!btn || !card.venue) return;
-      this.updateFavoriteButton(btn, String(card.venue.id));
+      if (btn) {
+        this.updateFavoriteButton(btn, String(card.venue.id));
+      }
+      
+      const chip = card.querySelector(".istanbul-favorite-chip");
+      if (chip) {
+        this.updateFavoriteButton(chip, String(card.venue.id));
+      }
     });
   }
 
   updateFavoriteButton(btn, venueId) {
     const isFav = this.favoriteIds.has(String(venueId));
-    btn.textContent = isFav ? this.t("Kaydedildi") : this.t("Kaydet");
-    btn.classList.toggle("is-active", isFav);
-    btn.setAttribute("aria-pressed", isFav ? "true" : "false");
+    if (btn.classList.contains("istanbul-favorite-chip")) {
+      btn.innerHTML = `<img src="assets/fav.png" class="venue-popup-chip-icon" alt="" />${isFav ? this.t("Favorilerde") : this.t("Favorilere Ekle")}`;
+      btn.classList.toggle("is-favorited", isFav);
+      btn.setAttribute("aria-pressed", isFav ? "true" : "false");
+    } else {
+      btn.textContent = isFav ? this.t("Kaydedildi") : this.t("Kaydet");
+      btn.classList.toggle("is-active", isFav);
+      btn.setAttribute("aria-pressed", isFav ? "true" : "false");
+    }
   }
 
   bindFeaturedCardOpenDetail() {
@@ -114,7 +128,9 @@ class FeaturedVenues {
       if (!venue) {
         return;
       }
-      window.location.assign(this.generateVenueUrl(venue));
+      if (typeof window.openVenuePopup === "function") {
+        window.openVenuePopup(venue);
+      }
     };
 
     grid.addEventListener("click", (event) => {
@@ -122,6 +138,18 @@ class FeaturedVenues {
       if (!(target instanceof Element)) {
         return;
       }
+
+      const titleLink = target.closest(".istanbul-venue-title-link");
+      if (titleLink) {
+        event.preventDefault();
+        event.stopPropagation();
+        const card = titleLink.closest(".istanbul-venue-card");
+        if (card && grid.contains(card)) {
+          go(card);
+        }
+        return;
+      }
+
       if (target.closest("a, button")) {
         return;
       }
@@ -140,6 +168,18 @@ class FeaturedVenues {
       if (!(target instanceof Element)) {
         return;
       }
+
+      const titleLink = target.closest(".istanbul-venue-title-link");
+      if (titleLink) {
+        event.preventDefault();
+        event.stopPropagation();
+        const card = titleLink.closest(".istanbul-venue-card");
+        if (card && grid.contains(card)) {
+          go(card);
+        }
+        return;
+      }
+
       if (target.closest("a, button")) {
         return;
       }
@@ -169,12 +209,12 @@ class FeaturedVenues {
     if (typeof photo !== "string") return false;
     const val = photo.trim().toLowerCase();
     if (!val) return false;
-    if (val.includes("al8-snh-") || val.includes("al8-snhylsmxv7pa75n") || val.includes("staticmap") || val.includes("maps.google") || val.includes("assets/") || val.includes("static-maps.yandex") || val.includes("s100x100")) return false;
+    if (val.includes("al8-snh-") || val.includes("al8-snhylsmxv7pa75n") || val.includes("staticmap") || val.includes("maps.google") || val.includes("static-maps.yandex") || val.includes("s100x100")) return false;
     if (val === "null" || val === "undefined" || val === "none" || val === "placeholder" || val === "empty" || val === "false") return false;
     if (val.includes("no-image") || val.includes("noimage") || val.includes("no_image") || val.includes("no-photo") || val.includes("nophoto")) return false;
     if (val.includes("placeholder") || val.includes("upload-img") || val.includes("upload_img") || val.includes("<img")) return false;
     if (val.includes("default-") || val.includes("default_") || val.includes("/default.") || val.includes("/defaultog") || val.includes("og-image") || val.includes("social-image") || val.includes("stock/")) return false;
-    if (!val.startsWith("http://") && !val.startsWith("https://") && !val.startsWith("/")) return false;
+    if (!val.startsWith("http://") && !val.startsWith("https://")) return false;
     return true;
   }
 
@@ -224,13 +264,68 @@ class FeaturedVenues {
     }
 
     const seed = Math.floor(Math.random() * 2000000000);
-    const items = await this.fetchMvpVenues("random", 50, { randomSeed: seed });
-    const picks = this.pickRandomUnique(items, 3);
+    // Fetch random active food & drink (yeme-icme) venues from API.
+    // Note: Do NOT use photoState: "has_photo" here because the database's PRIMARY_VENUE_PHOTO_SQL
+    // filters out anything with "assets/" (our fallback generic category photos).
+    const items = await this.fetchMvpVenues("random", 100, {
+      domainKey: "yeme-icme",
+      randomSeed: seed
+    });
+
+    // Group by cuisine to ensure cuisine-diverse featured cards
+    const groups = new Map();
+    for (const v of items) {
+      const key = String(v.cuisine || v.categoryName || "_unknown").trim();
+      if (!groups.has(key)) {
+        groups.set(key, []);
+      }
+      groups.get(key).push(v);
+    }
+
+    // Shuffle each cuisine group
+    for (const [, arr] of groups) {
+      for (let i = arr.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    // Shuffle cuisine keys (excluding unknown) to ensure random category distribution
+    const groupKeys = Array.from(groups.keys()).filter((k) => k !== "_unknown" && k !== "");
+    for (let i = groupKeys.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [groupKeys[i], groupKeys[j]] = [groupKeys[j], groupKeys[i]];
+    }
+
+    const picks = [];
+    const seen = new Set();
+
+    // Pick 1 venue per different cuisine.
+    // We prefer venues with real external photos (starts with http/https) but fallback to generic photos.
+    for (const gk of groupKeys) {
+      if (picks.length >= 3) break;
+      const arr = groups.get(gk);
+      
+      const withExternal = arr.filter((v) => v.photoUri && (v.photoUri.startsWith("http://") || v.photoUri.startsWith("https://")));
+      const withoutExternal = arr.filter((v) => !withExternal.includes(v));
+      const combinedArr = [...withExternal, ...withoutExternal];
+
+      for (const v of combinedArr) {
+        const k = this.getVenueKey(v);
+        if (k && !seen.has(k)) {
+          seen.add(k);
+          picks.push(v);
+          break;
+        }
+      }
+    }
+
     const cardIds = ["featured-most-comments", "featured-highest-rated", "featured-nearest-highest"];
     const keys = ["mostCommented", "highestRated", "nearestHighest"];
     this.featuredVenues.mostCommented = null;
     this.featuredVenues.highestRated = null;
     this.featuredVenues.nearestHighest = null;
+
     for (let i = 0; i < 3; i += 1) {
       const venue = picks[i] || null;
       this.featuredVenues[keys[i]] = venue;
@@ -428,7 +523,7 @@ class FeaturedVenues {
     const titleLinkEl = card.querySelector(".istanbul-venue-title-link");
     if (titleLinkEl) {
       titleLinkEl.textContent = venue.name || this.t("Bilinmeyen mekan");
-      titleLinkEl.href = options.placeholder ? "yeme-icme.html" : venueUrl;
+      titleLinkEl.href = options.placeholder ? "yeme-icme.html" : "#";
     }
 
     // Adres
@@ -517,7 +612,26 @@ class FeaturedVenues {
         const row2 = document.createElement("div");
         row2.className = "venue-card-info-row";
 
-        // Ayrıntılı Bilgi Button
+        // 1. Favorilere Ekle / Favorilerde Chip'i (fav.png ile) - En Sola Konur
+        const favChip = document.createElement("button");
+        favChip.type = "button";
+        favChip.className = "venue-popup-info-chip-btn istanbul-favorite-chip";
+        this.updateFavoriteButton(favChip, venue.id);
+        
+        favChip.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          try {
+            favChip.disabled = true;
+            await this.toggleFavorite(venue.id, favChip);
+          } catch (error) {
+            console.error("Favori işlemi hatası:", error);
+          } finally {
+            favChip.disabled = false;
+          }
+        });
+        row2.appendChild(favChip);
+
+        // 2. Ayrıntılı Bilgi Button
         const detailLink = document.createElement("button");
         detailLink.type = "button";
         detailLink.className = "venue-popup-info-chip-btn";
@@ -589,7 +703,7 @@ class FeaturedVenues {
         if (row2) {
           distanceChip = document.createElement("span");
           distanceChip.className = "venue-popup-distance-chip";
-          const detailBtn = row2.querySelector(".venue-popup-info-chip-btn");
+          const detailBtn = row2.querySelector(".venue-popup-info-chip-btn:not(.istanbul-favorite-chip)");
           if (detailBtn) {
             row2.insertBefore(distanceChip, detailBtn);
           } else {
@@ -608,20 +722,54 @@ class FeaturedVenues {
     }
   }
 
+  getCategoryFallbackImage(venue) {
+    if (!venue) return "assets/no-image-icon.webp";
+    const cuisine = String(venue.cuisine || venue.categoryName || "").trim().toLowerCase();
+    
+    if (cuisine.includes("balik") || cuisine.includes("balık")) return "assets/balik.png";
+    if (cuisine.includes("bar") || cuisine.includes("pub")) return "assets/bar.png";
+    if (cuisine.includes("borek") || cuisine.includes("börek")) return "assets/borek.png";
+    if (cuisine.includes("burger")) return "assets/burger.png";
+    if (cuisine.includes("cig kofte") || cuisine.includes("çiğ köfte")) return "assets/cigkofte.png";
+    if (cuisine.includes("corba") || cuisine.includes("çorba")) return "assets/corba.png";
+    if (cuisine.includes("doner") || cuisine.includes("döner")) return "assets/doner.png";
+    if (cuisine.includes("kahvalti") || cuisine.includes("kahvaltı")) return "assets/kahvalti.jpeg";
+    if (cuisine.includes("kebap") || cuisine.includes("et") || cuisine.includes("mangal")) return "assets/kebap-et.png";
+    if (cuisine.includes("kofte") || cuisine.includes("köfte")) return "assets/kofte.png";
+    if (cuisine.includes("kokorec") || cuisine.includes("kokoreç")) return "assets/kokorec.png";
+    if (cuisine.includes("lahmacun")) return "assets/lahmacun.png";
+    if (cuisine.includes("manti") || cuisine.includes("mantı")) return "assets/manti.jpeg";
+    if (cuisine.includes("meyhane")) return "assets/meyhane.png";
+    if (cuisine.includes("pide")) return "assets/pide.png";
+    if (cuisine.includes("pizza")) return "assets/pizza.png";
+    if (cuisine.includes("sushi") || cuisine.includes("asya") || cuisine.includes("asian")) return "assets/sushi.png";
+    if (cuisine.includes("tatli") || cuisine.includes("tatlı") || cuisine.includes("pasta") || cuisine.includes("pastane") || cuisine.includes("firin") || cuisine.includes("fırın")) return "assets/tatli-pasta.png";
+    if (cuisine.includes("tavuk") || cuisine.includes("tantuni")) return "assets/tavuk.png";
+    if (cuisine.includes("restoran") || cuisine.includes("lokanta")) return "assets/restoran.png";
+    if (cuisine.includes("kafe") || cuisine.includes("cafe")) return "assets/kafe.png";
+    
+    return "assets/no-image-icon.webp";
+  }
+
   applyVenueImage(imageEl, venue, isPlaceholder) {
-    const fallback = "assets/no-image-icon.webp";
+    const fallback = this.getCategoryFallbackImage(venue);
     imageEl.onerror = () => {
       imageEl.onerror = null;
       imageEl.src = fallback;
-      imageEl.classList.add("is-placeholder");
+      if (fallback === "assets/no-image-icon.webp") {
+        imageEl.classList.add("is-placeholder");
+      } else {
+        imageEl.classList.remove("is-placeholder");
+      }
     };
     const raw = isPlaceholder ? fallback : this.normalizeVenueImageUrl(venue.photoUri || venue.photoUrl || venue.imageUrl || venue.image);
-    if (isPlaceholder || !raw || raw === fallback) {
+    const src = raw || fallback;
+    if (isPlaceholder || src === "assets/no-image-icon.webp") {
       imageEl.classList.add("is-placeholder");
     } else {
       imageEl.classList.remove("is-placeholder");
     }
-    imageEl.src = raw || fallback;
+    imageEl.src = src;
     imageEl.alt = isPlaceholder ? "" : `${venue.name || "Mekan"} fotoğrafı`;
   }
 

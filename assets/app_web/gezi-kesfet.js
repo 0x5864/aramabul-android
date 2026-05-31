@@ -2091,6 +2091,39 @@
       const row2 = document.createElement("div");
       row2.className = "venue-card-info-row";
 
+      // 1. Favorilere Ekle / Favorilerde Chip'i (fav.png ile) - En Sola Konur
+      const favChip = document.createElement("button");
+      favChip.type = "button";
+      favChip.className = "venue-popup-info-chip-btn istanbul-favorite-chip";
+      
+      const updateFavChipVisual = () => {
+        const isFav = isFavoriteVenue(item.id);
+        favChip.innerHTML = `<img src="assets/fav.png" class="venue-popup-chip-icon" alt="" />${isFav ? "Favorilerde" : "Favorilere Ekle"}`;
+        favChip.classList.toggle("is-favorited", isFav);
+        favChip.setAttribute("aria-pressed", isFav ? "true" : "false");
+      };
+      
+      updateFavChipVisual();
+      
+      favChip.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        try {
+          favChip.disabled = true;
+          await toggleFavorite(item.id);
+          updateFavChipVisual();
+          // Ayrıca harita paneli üzerindeki favori butonunu da eşle (eğer açıksa)
+          if (typeof window.syncMapPanelFavoriteButton === "function") {
+            window.syncMapPanelFavoriteButton();
+          }
+        } catch (error) {
+          console.error("Favori işlemi hatası:", error);
+        } finally {
+          favChip.disabled = false;
+        }
+      });
+      row2.appendChild(favChip);
+
+      // 2. Mesafe Chip'i
       const rawDistanceMeters2 = (item.distanceMeters != null && item.distanceMeters !== "") ? Number(item.distanceMeters) : NaN;
       const computedDistanceMeters2 = Number.isFinite(rawDistanceMeters2)
         ? rawDistanceMeters2
@@ -2103,8 +2136,7 @@
         row2.appendChild(el);
       }
 
-
-
+      // 3. Ayrıntılı Bilgi Chip'i
       const detailLink = document.createElement("button");
       detailLink.type = "button";
       detailLink.className = "venue-popup-info-chip-btn";

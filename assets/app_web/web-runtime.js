@@ -364,8 +364,12 @@
       <div class="venue-popup-overlay"></div>
       <div class="venue-popup-content">
         <button class="venue-popup-close-btn" aria-label="Kapat">&times;</button>
-        <div class="venue-popup-header">
-          <h2 class="venue-popup-title">${venue.name || "Mekan"}</h2>
+        <div class="venue-popup-header" style="display: flex; flex-direction: column; gap: 0.35rem; padding-right: 3rem;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; width: 100%;">
+            <h2 class="venue-popup-title" style="margin: 0; padding-right: 0; font-size: 1.35rem; font-weight: 800; color: #000!important;">${venue.name || "Mekan"}</h2>
+            <button class="venue-popup-info-chip-btn venue-popup-main-detail-btn" type="button" style="flex-shrink: 0;"><img src="assets/detail.png" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi</button>
+          </div>
+          ${venue.address ? `<p class="venue-popup-address" style="margin: 0; font-size: 0.85rem; color: #5d6a75; line-height: 1.3; font-weight: 500;">${venue.address}</p>` : ""}
         </div>
         
         <div class="venue-popup-body">
@@ -414,6 +418,62 @@
 
     modal.querySelector(".venue-popup-close-btn").onclick = closePopup;
     modal.querySelector(".venue-popup-overlay").onclick = closePopup;
+
+    const mainDetailBtn = modal.querySelector(".venue-popup-main-detail-btn");
+    if (mainDetailBtn) {
+      let rawMapsUrl = (venue.mapsUrl || venue.mapUrl || "").trim();
+      let isCoordsOnly = false;
+      if (rawMapsUrl) {
+        let queryPart = rawMapsUrl.split("query=")[1] || rawMapsUrl.split("destination=")[1] || "";
+        let decodedQuery = "";
+        try {
+          decodedQuery = decodeURIComponent(queryPart);
+        } catch (e) {
+          decodedQuery = queryPart;
+        }
+        isCoordsOnly = rawMapsUrl.includes("query=") && !/[a-zA-Z]/.test(decodedQuery.replace(/[NSEWnsew°'"\s,.\-+\d]/g, ""));
+        
+        if (!isCoordsOnly) {
+          let placeMatch = rawMapsUrl.match(/\/maps\/place\/([^/]+)/);
+          if (placeMatch) {
+            let decodedPlace = "";
+            try {
+              decodedPlace = decodeURIComponent(placeMatch[1]);
+            } catch (e) {
+              decodedPlace = placeMatch[1];
+            }
+            isCoordsOnly = !/[a-zA-Z]/.test(decodedPlace.replace(/[NSEWnsew°'"\s,.\-+\d]/g, ""));
+          }
+        }
+        
+        if (!isCoordsOnly && !/[a-zA-Z]/.test(rawMapsUrl.replace("https://", "").replace("http://", "").replace("www.google.com/maps", "").replace(/[NSEWnsew°'"\s,.\-+\d]/g, ""))) {
+          isCoordsOnly = true;
+        }
+      }
+
+      let primaryMapsUrl = "";
+      if (rawMapsUrl && !isCoordsOnly) {
+        primaryMapsUrl = rawMapsUrl;
+      } else if (venue.sourcePlaceId || venue.placeId) {
+        primaryMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((venue.name || "") + " " + (venue.district || "") + " İstanbul")}&query_place_id=${venue.sourcePlaceId || venue.placeId}`;
+      } else if (venue.name && venue.district) {
+        primaryMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((venue.name || "") + " " + (venue.district || "") + " İstanbul")}`;
+      } else if (venue.latitude && venue.longitude) {
+        primaryMapsUrl = `https://maps.google.com/maps?q=loc:${venue.latitude},${venue.longitude}(${encodeURIComponent(venue.name || "Mekan")})&hl=tr`;
+      } else {
+        const urlObj = new URL("https://www.google.com/maps/search/");
+        urlObj.searchParams.set("api", "1");
+        const query = [venue.name, venue.address, venue.district, "İstanbul"].filter(Boolean).join(" ");
+        urlObj.searchParams.set("query", query);
+        primaryMapsUrl = urlObj.toString();
+      }
+
+      mainDetailBtn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(primaryMapsUrl, "_blank", "noopener,noreferrer");
+      };
+    }
 
     // Fetch and render similar venues
     const similarList = modal.querySelector(".venue-popup-similar-list");
@@ -494,7 +554,8 @@
       if (lower === "restoran" || lower === "restaurant") return "Restoranlar";
       if (lower === "meyhane") return "Meyhaneler";
       if (lower === "doner" || lower === "döner") return "Dönerciler";
-      if (lower === "kebap") return "Kebapçılar";
+      if (lower === "kebap-et" || lower === "kebapet" || lower === "kebap") return "Kebap-Et Mekanları";
+      if (lower === "tatlı-pasta" || lower === "tatli-pasta" || lower === "tatlı" || lower === "tatli") return "Tatlı-Pasta Mekanları";
       if (lower === "çiğköfte" || lower === "cigkofte") return "Çiğköfteciler";
       if (lower === "pide") return "Pideciler";
       if (lower === "kahvaltı" || lower === "kahvalti") return "Kahvaltı Mekanları";
@@ -587,14 +648,34 @@
 
             items.slice(0, 6).forEach((v) => {
               let rawMapsUrl = (v.mapsUrl || v.mapUrl || "").trim();
-              let queryPart = rawMapsUrl.split("query=")[1] || rawMapsUrl.split("destination=")[1] || "";
-              let decodedQuery = "";
-              try {
-                decodedQuery = decodeURIComponent(queryPart);
-              } catch (e) {
-                decodedQuery = queryPart;
+              let isCoordsOnly = false;
+              if (rawMapsUrl) {
+                let queryPart = rawMapsUrl.split("query=")[1] || rawMapsUrl.split("destination=")[1] || "";
+                let decodedQuery = "";
+                try {
+                  decodedQuery = decodeURIComponent(queryPart);
+                } catch (e) {
+                  decodedQuery = queryPart;
+                }
+                isCoordsOnly = rawMapsUrl.includes("query=") && !/[a-zA-Z]/.test(decodedQuery.replace(/[NSEWnsew°'"\s,.\-+\d]/g, ""));
+                
+                if (!isCoordsOnly) {
+                  let placeMatch = rawMapsUrl.match(/\/maps\/place\/([^/]+)/);
+                  if (placeMatch) {
+                    let decodedPlace = "";
+                    try {
+                      decodedPlace = decodeURIComponent(placeMatch[1]);
+                    } catch (e) {
+                      decodedPlace = placeMatch[1];
+                    }
+                    isCoordsOnly = !/[a-zA-Z]/.test(decodedPlace.replace(/[NSEWnsew°'"\s,.\-+\d]/g, ""));
+                  }
+                }
+                
+                if (!isCoordsOnly && !/[a-zA-Z]/.test(rawMapsUrl.replace("https://", "").replace("http://", "").replace("www.google.com/maps", "").replace(/[NSEWnsew°'"\s,.\-+\d]/g, ""))) {
+                  isCoordsOnly = true;
+                }
               }
-              let isCoordsOnly = rawMapsUrl.includes("query=") && !/[a-zA-Z]/.test(decodedQuery);
 
               let mapsUrl = "";
               if (rawMapsUrl && !isCoordsOnly) {
@@ -615,6 +696,11 @@
 
               const card = document.createElement("div");
               card.className = "venue-popup-similar-card";
+              card.style.cursor = "pointer";
+              card.onclick = () => {
+                closePopup();
+                window.openVenuePopup(v);
+              };
 
               const metaText = [v.district, v.neighborhood].filter(Boolean).join(" - ");
               
@@ -665,20 +751,43 @@
       similarList.innerHTML = '<p class="venue-popup-loading">Benzer mekan bulunamadı.</p>';
     }
 
-    // Load admin edit icon if user is admin
+    // Load admin edit icon if user is admin (local session + server session)
     const adminContainer = modal.querySelector(".venue-popup-admin-container");
-    fetch("/api/admin/auth/session", { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (data && data.session) {
-          adminContainer.innerHTML = `
-            <a href="admin-venues.html?venueId=${encodeURIComponent(venue.id)}" target="_blank" rel="noopener" class="venue-popup-admin-link" title="Admin'de düzenle">
-              <img src="/assets/edit.png" alt="Düzenle" class="venue-popup-admin-icon" />
-            </a>
-          `;
-        }
-      })
-      .catch(() => {});
+    function renderAdminEditLink() {
+      if (!venue.id) return;
+      adminContainer.innerHTML = `
+        <a href="admin-venues.html?venueId=${encodeURIComponent(venue.id)}" target="_blank" rel="noopener" class="venue-popup-admin-link" title="Admin'de düzenle">
+          <img src="/assets/edit.png" alt="Düzenle" class="venue-popup-admin-icon" />
+        </a>
+      `;
+    }
+    // Require local user session — if not logged in, never show admin icon
+    const localSession = readAuthSession();
+    if (!localSession) {
+      // Not logged in — skip admin checks entirely
+    } else {
+      const localEmail = (localSession.email || "").trim().toLowerCase();
+      const isLocalAdmin = localEmail && (
+        localEmail === 'admin@aramabul.com' ||
+        localEmail === 'metin.tuncgenc@gmail.com' ||
+        localEmail === 'aramabul.com@gmail.com' ||
+        localEmail.startsWith('admin@') ||
+        localEmail.endsWith('.admin')
+      );
+      if (isLocalAdmin) {
+        renderAdminEditLink();
+      } else {
+        // Fallback: check server-side admin session
+        fetch("/api/admin/auth/session", { credentials: "include" })
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data) => {
+            if (data && data.session) {
+              renderAdminEditLink();
+            }
+          })
+          .catch(() => {});
+      }
+    }
 
     // Review form submission
     const form = modal.querySelector(".venue-popup-review-form");

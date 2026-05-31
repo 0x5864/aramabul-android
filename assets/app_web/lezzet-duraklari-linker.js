@@ -69,10 +69,47 @@
 
   /** Mekan için Google Maps URL'si oluştur */
   function buildDetailUrl(venue) {
-    if (venue.mapsUrl && venue.mapsUrl.trim()) {
-      return venue.mapsUrl.trim();
+    var rawMapsUrl = (venue.mapsUrl || "").trim();
+    var isCoordsOnly = false;
+    if (rawMapsUrl) {
+      // 1) query= veya destination= enlem/boylam check
+      var queryPart = rawMapsUrl.split("query=")[1] || rawMapsUrl.split("destination=")[1] || "";
+      var decodedQuery = "";
+      try {
+        decodedQuery = decodeURIComponent(queryPart);
+      } catch (e) {
+        decodedQuery = queryPart;
+      }
+      isCoordsOnly = rawMapsUrl.includes("query=") && !/[a-zA-Z]/.test(decodedQuery.replace(/[NSEWnsew°'"\s,.\-+\d]/g, ""));
+      
+      // 2) /maps/place/ koordinat check (place name kısmı sadece koordinat ise)
+      if (!isCoordsOnly) {
+        var placeMatch = rawMapsUrl.match(/\/maps\/place\/([^/]+)/);
+        if (placeMatch) {
+          var decodedPlace = "";
+          try {
+            decodedPlace = decodeURIComponent(placeMatch[1]);
+          } catch (e) {
+            decodedPlace = placeMatch[1];
+          }
+          isCoordsOnly = !/[a-zA-Z]/.test(decodedPlace.replace(/[NSEWnsew°'"\s,.\-+\d]/g, ""));
+        }
+      }
+      
+      // 3) Genel adres çubuğu salt koordinat check (harf içermeyen URL)
+      if (!isCoordsOnly && !/[a-zA-Z]/.test(rawMapsUrl.replace("https://", "").replace("http://", "").replace("www.google.com/maps", "").replace(/[NSEWnsew°'"\s,.\-+\d]/g, ""))) {
+        isCoordsOnly = true;
+      }
+    }
+
+    if (rawMapsUrl && !isCoordsOnly) {
+      return rawMapsUrl;
     }
     var query = (venue.name || "") + " " + (venue.district || "") + " İstanbul";
+    var placeId = venue.sourcePlaceId || venue.placeId || "";
+    if (placeId) {
+      return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query.trim()) + "&query_place_id=" + placeId;
+    }
     return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(query.trim());
   }
 

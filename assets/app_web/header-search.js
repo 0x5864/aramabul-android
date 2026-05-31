@@ -305,6 +305,30 @@
   let searchChoiceModalApi = null;
   let autoResolvedSearchParam = false;
 
+  async function handleVenueDetailNavigation(urlStr) {
+    try {
+      const url = new URL(urlStr, window.location.href);
+      const slug = url.searchParams.get("slug") || "";
+      if (slug && typeof window.openVenuePopup === "function") {
+        setLoadingState(true);
+        const res = await fetch(`/api/mvp/istanbul/venues/${encodeURIComponent(slug)}`);
+        if (res.ok) {
+          const payload = await res.json();
+          const venue = payload.venue || payload;
+          if (venue) {
+            window.openVenuePopup(venue);
+            return true;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Mekan detay popupu açma hatası:", e);
+    } finally {
+      setLoadingState(false);
+    }
+    return false;
+  }
+
   function currentLanguageCode() {
     if (typeof window.ARAMABUL_GET_LANGUAGE === "function") {
       return window.ARAMABUL_GET_LANGUAGE();
@@ -469,8 +493,12 @@
         subtitle.hidden = !subtitle.textContent;
 
         option.append(title, subtitle);
-        option.addEventListener("click", () => {
+        option.addEventListener("click", async () => {
           close();
+          if (href.startsWith("venue-detail.html") || href.includes("/venue-detail.html")) {
+            const intercepted = await handleVenueDetailNavigation(href);
+            if (intercepted) return;
+          }
           window.location.assign(href);
         });
         listNode.append(option);
@@ -522,7 +550,9 @@
     try {
       const result = await headerSearchData.resolveQuery(normalizedQuery);
       if (result && typeof result === "object" && result.type === "choices") {
-        ensureSearchChoiceModal()?.open(result);
+        const pageBase = result.pageBase || "yeme-icme";
+        const targetUrl = `${pageBase}.html?q=${encodeURIComponent(normalizedQuery)}`;
+        window.location.assign(targetUrl);
         return;
       }
 
@@ -539,6 +569,10 @@
             ? String(result.href || "").trim()
             : "";
       if (targetUrl) {
+        if (targetUrl.startsWith("venue-detail.html") || targetUrl.includes("/venue-detail.html")) {
+          const intercepted = await handleVenueDetailNavigation(targetUrl);
+          if (intercepted) return;
+        }
         window.location.assign(targetUrl);
       } else if (result && typeof result === "object" && result.type === "navigate") {
         ensureSearchNotFoundToast()?.show();
