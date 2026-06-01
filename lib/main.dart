@@ -762,11 +762,54 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           launchUrl(Uri.parse('https://wa.me/?text=${Uri.encodeComponent('$title $url')}'),
               mode: LaunchMode.externalApplication);
           break;
+        case 'google_signin':
+          _handleGoogleSignInFromWebView();
+          break;
+        case 'logout':
+          // Clear auth from SharedPreferences so _injectAppFlag won't re-inject session
+          SharedPreferences.getInstance().then((prefs) {
+            prefs.remove('auth_user_name');
+            prefs.remove('auth_user_email');
+          });
+          break;
         default:
           debugPrint('Unknown JS action: $action');
       }
     } catch (e) {
       debugPrint('JS bridge parse error: $e');
+    }
+  }
+
+  /// Handle Google Sign-In triggered from WebView (account-settings login form)
+  Future<void> _handleGoogleSignInFromWebView() async {
+    try {
+      await GoogleSignIn.instance.initialize(
+        serverClientId: '481244794487-v5at2f43oeth0cqef3bhr6u5rc7lo7ef.apps.googleusercontent.com',
+      );
+      final account = await GoogleSignIn.instance.authenticate();
+      if (account == null) return; // User cancelled
+
+      final name = account.displayName ?? '';
+      final email = account.email;
+
+      // Save session to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_user_name', name);
+      await prefs.setString('auth_user_email', email);
+
+      // Sync session to WebView localStorage and reload
+      final sessionJson = '{"name":"${name.replaceAll('"', '\\"')}","email":"${email.replaceAll('"', '\\"')}"}';
+      await _controller.runJavaScript('''
+        try { localStorage.setItem('aramabul.auth.session.v1', '$sessionJson'); } catch(e) {}
+        try { document.dispatchEvent(new CustomEvent('aramabul:authchange')); } catch(e) {}
+        window.location.href = window.location.href.split('#')[0] + '?t=' + Date.now();
+      ''');
+    } catch (e) {
+      debugPrint('Google Sign-In from WebView failed: $e');
+      _controller.runJavaScript('''
+        var msg = document.getElementById('appLoginMsg');
+        if (msg) msg.textContent = 'Google ile giriş başarısız oldu.';
+      ''');
     }
   }
 
@@ -1066,6 +1109,165 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             });
           });
         }, 500);
+      }
+
+      // =====================================================================
+      // PROFILE PAGE FIXES
+      // =====================================================================
+
+      // Hide duplicate "Çıkış yap" button at bottom of sidebar
+      var signOutBtn = document.getElementById('settingsSignOutBtn');
+      if (signOutBtn) { signOutBtn.style.display = 'none'; }
+
+      // Intercept sidebar "Çıkış Yap" (loginTrigger) clicks to also clear native SharedPreferences
+      document.querySelectorAll('[data-settings-panel-trigger="login"]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          try { AramaBulAndroid.postMessage(JSON.stringify({action:'logout'})); } catch(e) {}
+        });
+      });
+
+      // Inject "Çıkış Yap" sidebar item after "Hesap" when logged in
+      (function injectSidebarLogout() {
+        var sessionRaw = '';
+        try { sessionRaw = localStorage.getItem('aramabul.auth.session.v1') || ''; } catch(e) {}
+        var hasSession = false;
+        try { if (sessionRaw) { var p = JSON.parse(sessionRaw); hasSession = !!(p && p.name && p.email); } } catch(e) {}
+        if (!hasSession) return;
+        var sidebar = document.querySelector('.settings-sidebar-card');
+        if (!sidebar || document.getElementById('appSidebarLogout')) return;
+        var hesapBtn = sidebar.querySelector('[data-settings-panel-trigger="account"]');
+        if (!hesapBtn) return;
+        var logoutLink = document.createElement('a');
+        logoutLink.id = 'appSidebarLogout';
+        logoutLink.href = '#';
+        logoutLink.className = hesapBtn.className;
+        logoutLink.style.cssText = hesapBtn.style.cssText || '';
+        logoutLink.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span style="flex:1">Çıkış Yap</span>';
+        logoutLink.addEventListener('click', function(evt) {
+          evt.preventDefault();
+          evt.stopPropagation();
+          try { AramaBulAndroid.postMessage(JSON.stringify({action:'logout'})); } catch(e) {}
+          try { localStorage.setItem('aramabul.auth.session.v1', ''); } catch(e) {}
+          try { document.dispatchEvent(new CustomEvent('aramabul:authchange')); } catch(e) {}
+          window.location.href = window.location.href.split('#')[0] + '?t=' + Date.now();
+        });
+        hesapBtn.parentNode.insertBefore(logoutLink, hesapBtn.nextSibling);
+      })();
+
+      // =====================================================================
+      // ACCOUNT-SETTINGS PAGE FIXES
+      // =====================================================================
+      // On account-settings.html, if not logged in, hide account form and show login UI
+      if (window.location.pathname.indexOf('account-settings') !== -1 || window.location.href.indexOf('account-settings') !== -1) {
+        var _fixAttempts = 0;
+        function _tryFixAccountPage() {
+          _fixAttempts++;
+          (function fixAccountPage() {
+          var sessionRaw = '';
+          try { sessionRaw = localStorage.getItem('aramabul.auth.session.v1') || ''; } catch(e) {}
+          var hasSession = false;
+          try {
+            if (sessionRaw) {
+              var parsed = JSON.parse(sessionRaw);
+              hasSession = !!(parsed && parsed.name && parsed.email);
+            }
+          } catch(e) {}
+
+          var shell = document.querySelector('.account-shell');
+          if (!shell) return;
+
+          if (!hasSession) {
+            // Hide all existing content
+            Array.from(shell.children).forEach(function(child) {
+              if (child.id !== 'appLoginSection') child.style.display = 'none';
+            });
+
+            // Only inject once
+            if (document.getElementById('appLoginSection')) return;
+
+            var loginDiv = document.createElement('section');
+            loginDiv.id = 'appLoginSection';
+            loginDiv.className = 'settings-card account-editor-card';
+            loginDiv.innerHTML =
+              '<div class="language-card-head" style="margin-bottom:1.25rem"><h2>Giriş yap</h2><p>E-posta adresin ve şifrenle giriş yapabilirsin.</p></div>' +
+              '<div style="margin-bottom:1.25rem"><button id="appGoogleSignInBtn" type="button" style="width:100%;min-height:42px;display:flex;align-items:center;justify-content:center;gap:0.75rem;background:#fff;border:1px solid #dadce0;border-radius:8px;color:#3c4043;font-family:inherit;font-size:0.9rem;font-weight:600;cursor:pointer;padding:0.5rem 1rem">' +
+              '<svg viewBox="0 0 24 24" width="20" height="20"><path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.68 1.54 14.98 1 12 1 7.35 1 3.37 3.65 1.4 7.56l3.82 2.96c.9-2.7 3.41-4.48 6.78-4.48z"/><path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.51h6.43c-.28 1.44-1.09 2.67-2.32 3.49l3.6 2.79c2.1-1.93 3.31-4.77 3.31-8.43z"/><path fill="#FBBC05" d="M5.22 14.76c-.24-.72-.38-1.5-.38-2.31s.14-1.59.38-2.31L1.4 7.18C.5 8.98 0 10.99 0 13s.5 4.02 1.4 5.82l3.82-3.06z"/><path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.6-2.79c-1.01.68-2.3 1.09-3.96 1.09-3.37 0-5.88-1.78-6.78-4.48l-3.82 3.06C3.37 20.35 7.35 23 12 23z"/></svg>' +
+              '<span>Google ile Giriş Yap</span></button></div>' +
+              '<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1.25rem;color:#888;font-size:0.8rem"><span style="flex:1;height:1px;background:#e0e0e0"></span><span>veya</span><span style="flex:1;height:1px;background:#e0e0e0"></span></div>' +
+              '<form id="appLoginForm" class="settings-signup-form" novalidate>' +
+              '<label class="settings-signup-field"><span>E-posta</span><input id="appLoginEmail" type="email" autocomplete="email" required></label>' +
+              '<label class="settings-signup-field"><span>Şifre</span><input id="appLoginPassword" type="password" autocomplete="current-password" required></label>' +
+              '<p style="text-align:right;margin:0.4rem 0 0"><a href="profile.html?action=password" style="color:#4a90d9;font-size:0.82rem;text-decoration:none">Şifremi unuttum</a></p>' +
+              '<p id="appLoginMsg" class="settings-signup-message" style="margin-top:0.5rem"></p>' +
+              '<div class="account-settings-actions" style="margin-top:0.8rem"><button class="settings-signup-submit" type="submit">Giriş yap</button></div>' +
+              '</form>' +
+              '<p style="text-align:center;font-size:0.85rem;margin-top:1.25rem;color:#666">Hesabın yok mu? <a href="profile.html?action=signup" style="color:#011d36;font-weight:600">Kayıt ol</a></p>';
+            shell.insertBefore(loginDiv, shell.firstChild);
+
+            // Google sign-in
+            var gBtn = document.getElementById('appGoogleSignInBtn');
+            if (gBtn) {
+              gBtn.addEventListener('click', function() {
+                try { AramaBulAndroid.postMessage(JSON.stringify({action:'google_signin'})); } catch(e) {}
+              });
+            }
+
+            // Login form
+            var loginForm = document.getElementById('appLoginForm');
+            if (loginForm) {
+              loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                var email = (document.getElementById('appLoginEmail').value || '').trim().toLowerCase();
+                var password = document.getElementById('appLoginPassword').value || '';
+                var msg = document.getElementById('appLoginMsg');
+                if (!email || !email.includes('@')) { if (msg) msg.textContent = 'Geçerli bir e-posta gir.'; return; }
+                if (!password) { if (msg) msg.textContent = 'Şifre gir.'; return; }
+                var usersRaw = '[]'; try { usersRaw = localStorage.getItem('aramabul.auth.users.v1') || '[]'; } catch(le) {}
+                var users = JSON.parse(usersRaw);
+                var user = users.find(function(u) { return (u.email || '').toLowerCase() === email; });
+                if (!user) { if (msg) msg.textContent = 'Bu e-posta ile kayıtlı hesap bulunamadı.'; return; }
+                try {
+                  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password));
+                  var hash = Array.from(new Uint8Array(buf)).map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+                  if (hash !== user.passwordHash) { if (msg) msg.textContent = 'Şifre hatalı.'; return; }
+                } catch(err) { if (msg) msg.textContent = 'Giriş doğrulanamadı.'; return; }
+                try { localStorage.setItem('aramabul.auth.session.v1', JSON.stringify({name: user.name, email: user.email})); } catch(le) {}
+                try { document.dispatchEvent(new CustomEvent('aramabul:authchange')); } catch(le) {}
+                window.location.href = window.location.href.split('#')[0] + '?t=' + Date.now();
+              });
+            }
+          } else {
+            // User IS logged in: add logout button if not already there
+            if (!document.getElementById('appLogoutBtn')) {
+              var editorCard = document.querySelector('.account-editor-card');
+              if (editorCard) {
+                var hr = document.createElement('hr');
+                hr.style.cssText = 'border:none;border-top:1px solid #e0e0e0;margin:1.5rem 0 1rem';
+                var logoutDiv = document.createElement('div');
+                logoutDiv.style.textAlign = 'center';
+                var logoutBtn = document.createElement('button');
+                logoutBtn.id = 'appLogoutBtn';
+                logoutBtn.type = 'button';
+                logoutBtn.textContent = 'Çıkış Yap';
+                logoutBtn.style.cssText = 'width:100%;padding:0.65rem 1.5rem;border:1px solid #011d36;border-radius:8px;background:transparent;color:#011d36;font-size:0.9rem;font-weight:600;cursor:pointer;font-family:inherit';
+                logoutBtn.addEventListener('click', function(evt) {
+                  evt.preventDefault();
+                  evt.stopPropagation();
+                  // Tell native app to clear SharedPreferences
+                  try { AramaBulAndroid.postMessage(JSON.stringify({action:'logout'})); } catch(e) {}
+                  try { localStorage.setItem('aramabul.auth.session.v1', ''); } catch(e) {}
+                  try { document.dispatchEvent(new CustomEvent('aramabul:authchange')); } catch(e) {}
+                  window.location.href = window.location.href.split('#')[0] + '?t=' + Date.now();
+                });
+                logoutDiv.appendChild(logoutBtn);
+                editorCard.appendChild(hr);
+                editorCard.appendChild(logoutDiv);
+              }
+            }
+          }
+        })();
+        }
+        setTimeout(_tryFixAccountPage, 500);
       }
     ''');
   }

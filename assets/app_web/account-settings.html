@@ -80,47 +80,122 @@
     </form>
 
     <main class="settings-shell account-shell">
-      <section class="settings-card account-info-card">
-        <div class="settings-account-head">
-          <div class="settings-avatar" id="accountAvatar" aria-hidden="true">M</div>
-          <div>
-            <h2 id="accountDisplayName">Misafir</h2>
-          </div>
+      <!-- ========== LOGIN FORM (shown when NOT logged in) ========== -->
+      <section id="accountLoginSection" class="settings-card account-editor-card" style="display:none;">
+        <div class="language-card-head" style="margin-bottom: 1.25rem;">
+          <h2>Giriş yap</h2>
+          <p>E-posta adresin ve şifrenle giriş yapabilirsin.</p>
         </div>
-      </section>
 
-      <section class="settings-card account-editor-card" aria-label="Hesap düzenleme">
-        <div class="language-card-head">
-          <h2>Hesap bilgileri</h2>
-          <p>Adını ve e-postanı burada güncelleyebilirsin.</p>
+        <!-- Google ile Giriş Yap Butonu -->
+        <div class="google-signin-container" style="margin-bottom: 1.25rem;">
+          <button id="accountGoogleSignInBtn" type="button" style="width: 100%; min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: #fff; border: 1px solid #dadce0; border-radius: 8px; color: #3c4043; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; padding: 0.5rem 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: all 0.2s ease;">
+            <svg viewBox="0 0 24 24" width="20" height="20" style="display: block;">
+              <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.68 1.54 14.98 1 12 1 7.35 1 3.37 3.65 1.4 7.56l3.82 2.96c.9-2.7 3.41-4.48 6.78-4.48z"></path>
+              <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.51h6.43c-.28 1.44-1.09 2.67-2.32 3.49l3.6 2.79c2.1-1.93 3.31-4.77 3.31-8.43z"></path>
+              <path fill="#FBBC05" d="M5.22 14.76c-.24-.72-.38-1.5-.38-2.31s.14-1.59.38-2.31L1.4 7.18C.5 8.98 0 10.99 0 13s.5 4.02 1.4 5.82l3.82-3.06z"></path>
+              <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.6-2.79c-1.01.68-2.3 1.09-3.96 1.09-3.37 0-5.88-1.78-6.78-4.48l-3.82 3.06C3.37 20.35 7.35 23 12 23z"></path>
+            </svg>
+            <span>Google ile Giriş Yap</span>
+          </button>
         </div>
-        <form id="accountSettingsForm" class="settings-signup-form" novalidate>
-          <label class="settings-signup-field">
-            <span>Ad Soyad</span>
-            <input id="accountNameInput" type="text" name="name" autocomplete="name" required />
-          </label>
+
+        <!-- veya Bölücü -->
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem; color: #888; font-size: 0.8rem;">
+          <span style="flex: 1; height: 1px; background: #e0e0e0;"></span>
+          <span>veya</span>
+          <span style="flex: 1; height: 1px; background: #e0e0e0;"></span>
+        </div>
+
+        <form id="accountLoginForm" class="settings-signup-form" novalidate>
           <label class="settings-signup-field">
             <span>E-posta</span>
-            <input id="accountEmailInput" type="email" name="email" autocomplete="email" required />
+            <input id="accountLoginEmail" type="email" autocomplete="email" required />
           </label>
-          <div class="account-email-verification-box" aria-live="polite">
-            <p id="accountEmailVerificationStatus" class="settings-signup-message account-email-verification-status"></p>
-            <button id="accountEmailVerifyBtn" class="account-secondary-btn account-verify-btn" type="button">Doğrulama e-postası gönder</button>
+          <label class="settings-signup-field">
+            <span>Şifre</span>
+            <div style="position:relative; width: 100%;">
+              <input id="accountLoginPassword" type="password" autocomplete="current-password" required style="width: 100%; padding-right: 2.5rem;" />
+              <button id="accountLoginPasswordToggle" type="button" aria-pressed="false" aria-label="Şifreyi göster" style="position:absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 100%;">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </label>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.3rem;">
+            <label for="accountLoginRememberEmail" style="display:inline-flex; align-items:center; gap:0.4rem; font-size:0.85rem; color:#666;">
+              <input id="accountLoginRememberEmail" type="checkbox" style="margin: 0; width: 16px; height: 16px;" />
+              <span>E-postamı hatırla</span>
+            </label>
+            <button id="accountForgotPasswordBtn" type="button" style="background:none; border:none; color:#011d36; font-size:0.85rem; text-decoration:underline; cursor:pointer; padding:0;">
+              Şifremi unuttum
+            </button>
           </div>
-          <p id="accountSettingsMessage" class="settings-signup-message" aria-live="polite"></p>
-          <div class="account-settings-actions">
-            <button id="accountSaveBtn" class="settings-signup-submit" type="submit">Kaydet</button>
-            <button id="accountSignupBtn" class="account-secondary-btn" type="button">Kayıt ol</button>
+          <p id="accountLoginMessage" class="settings-signup-message" aria-live="polite" style="margin-top:0.5rem;"></p>
+          <div class="account-settings-actions" style="margin-top:0.8rem;">
+            <button id="accountLoginSubmit" class="settings-signup-submit" type="submit">Giriş yap</button>
           </div>
         </form>
 
-        <hr style="border:none;border-top:1px solid #e0e0e0;margin:1.5rem 0 1rem;" />
+        <p style="text-align: center; font-size: 0.85rem; margin-top: 1.25rem; color: #666;">
+          <span>Hesabın yok mu?</span>
+          <button id="accountToggleToSignupBtn" type="button" style="background: none; border: none; color: #011d36; font-weight: 600; text-decoration: underline; cursor: pointer; padding: 0; font-size: inherit;">
+            Kayıt ol
+          </button>
+        </p>
+      </section>
 
-        <div style="padding-top:0.5rem;">
-          <h3 style="color:#011d36;font-size:0.95rem;margin-bottom:0.4rem;">Hesabımı Sil</h3>
-          <p style="font-size:0.85rem;color:#666;margin-bottom:0.75rem;">Hesabını kalıcı olarak silmek istiyorsan aşağıdaki butona bas. Bu işlem geri alınamaz.</p>
-          <div style="text-align:right;"><button id="accountDeleteBtn" type="button" style="background:#e74c3c;border:1px solid #c0392b;color:#fff;padding:0.45rem 1.1rem;border-radius:6px;font-size:0.85rem;font-weight:600;cursor:pointer;">Hesabımı Sil</button></div>
-        </div>
+      <!-- ========== ACCOUNT FORM (shown when logged in) ========== -->
+      <section id="accountLoggedInSection" style="display:none;">
+        <section class="settings-card account-info-card">
+          <div class="settings-account-head">
+            <div class="settings-avatar" id="accountAvatar" aria-hidden="true">M</div>
+            <div>
+              <h2 id="accountDisplayName">Misafir</h2>
+            </div>
+          </div>
+        </section>
+
+        <section class="settings-card account-editor-card" aria-label="Hesap düzenleme">
+          <div class="language-card-head">
+            <h2>Hesap bilgileri</h2>
+            <p>Adını ve e-postanı burada güncelleyebilirsin.</p>
+          </div>
+          <form id="accountSettingsForm" class="settings-signup-form" novalidate>
+            <label class="settings-signup-field">
+              <span>Ad Soyad</span>
+              <input id="accountNameInput" type="text" name="name" autocomplete="name" required />
+            </label>
+            <label class="settings-signup-field">
+              <span>E-posta</span>
+              <input id="accountEmailInput" type="email" name="email" autocomplete="email" required />
+            </label>
+            <div class="account-email-verification-box" aria-live="polite">
+              <p id="accountEmailVerificationStatus" class="settings-signup-message account-email-verification-status"></p>
+              <button id="accountEmailVerifyBtn" class="account-secondary-btn account-verify-btn" type="button">Doğrulama e-postası gönder</button>
+            </div>
+            <p id="accountSettingsMessage" class="settings-signup-message" aria-live="polite"></p>
+            <div class="account-settings-actions">
+              <button id="accountSaveBtn" class="settings-signup-submit" type="submit">Kaydet</button>
+            </div>
+          </form>
+
+          <hr style="border:none;border-top:1px solid #e0e0e0;margin:1.5rem 0 1rem;" />
+
+          <div style="text-align:center;">
+            <button id="accountLogoutBtn" type="button" style="width:100%;padding:0.65rem 1.5rem;border:1px solid #011d36;border-radius:8px;background:transparent;color:#011d36;font-size:0.9rem;font-weight:600;cursor:pointer;font-family:inherit;">Çıkış Yap</button>
+          </div>
+
+          <hr style="border:none;border-top:1px solid #e0e0e0;margin:1.5rem 0 1rem;" />
+
+          <div style="padding-top:0.5rem;">
+            <h3 style="color:#011d36;font-size:0.95rem;margin-bottom:0.4rem;">Hesabımı Sil</h3>
+            <p style="font-size:0.85rem;color:#666;margin-bottom:0.75rem;">Hesabını kalıcı olarak silmek istiyorsan aşağıdaki butona bas. Bu işlem geri alınamaz.</p>
+            <div style="text-align:right;"><button id="accountDeleteBtn" type="button" style="background:#e74c3c;border:1px solid #c0392b;color:#fff;padding:0.45rem 1.1rem;border-radius:6px;font-size:0.85rem;font-weight:600;cursor:pointer;">Hesabımı Sil</button></div>
+          </div>
+        </section>
       </section>
 
       <!-- Account Deletion Confirmation Modal -->

@@ -488,7 +488,139 @@
   }
 
   applyTheme(readTheme());
-  renderAccount();
+
+  const accountLoginSection = document.querySelector("#accountLoginSection");
+  const accountLoggedInSection = document.querySelector("#accountLoggedInSection");
+  const accountLoginForm = document.querySelector("#accountLoginForm");
+  const accountLoginEmail = document.querySelector("#accountLoginEmail");
+  const accountLoginPassword = document.querySelector("#accountLoginPassword");
+  const accountLoginPasswordToggle = document.querySelector("#accountLoginPasswordToggle");
+  const accountLoginRememberEmail = document.querySelector("#accountLoginRememberEmail");
+  const accountLoginSubmit = document.querySelector("#accountLoginSubmit");
+  const accountLoginMessage = document.querySelector("#accountLoginMessage");
+  const accountGoogleSignInBtn = document.querySelector("#accountGoogleSignInBtn");
+  const accountToggleToSignupBtn = document.querySelector("#accountToggleToSignupBtn");
+  const REMEMBERED_EMAIL_KEY = "aramabul_login_remembered_email";
+
+  function showLoginView() {
+    if (accountLoginSection) accountLoginSection.style.display = "";
+    if (accountLoggedInSection) accountLoggedInSection.style.display = "none";
+  }
+
+  function showAccountView() {
+    if (accountLoginSection) accountLoginSection.style.display = "none";
+    if (accountLoggedInSection) accountLoggedInSection.style.display = "";
+  }
+
+  function setLoginMsg(text, isError) {
+    if (accountLoginMessage) {
+      accountLoginMessage.textContent = text;
+      accountLoginMessage.classList.toggle("auth-message-error", !!isError);
+      accountLoginMessage.classList.toggle("is-ok", !isError && !!text);
+    }
+  }
+
+  // Show correct section based on session
+  if (readSession()) {
+    showAccountView();
+    renderAccount();
+  } else {
+    showLoginView();
+    // Load remembered email
+    try {
+      const rem = readStorageValue(REMEMBERED_EMAIL_KEY) || "";
+      if (rem && accountLoginEmail instanceof HTMLInputElement) {
+        accountLoginEmail.value = rem;
+        if (accountLoginRememberEmail instanceof HTMLInputElement) accountLoginRememberEmail.checked = true;
+      }
+    } catch(_) {}
+  }
+
+  // Password toggle
+  if (accountLoginPasswordToggle && accountLoginPassword instanceof HTMLInputElement) {
+    accountLoginPasswordToggle.addEventListener("click", () => {
+      const isPassword = accountLoginPassword.type === "password";
+      accountLoginPassword.type = isPassword ? "text" : "password";
+      accountLoginPasswordToggle.setAttribute("aria-pressed", isPassword ? "true" : "false");
+    });
+  }
+
+  // Login form submit
+  if (accountLoginForm) {
+    accountLoginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const email = normalizeEmail(accountLoginEmail instanceof HTMLInputElement ? accountLoginEmail.value : "");
+      const password = accountLoginPassword instanceof HTMLInputElement ? accountLoginPassword.value : "";
+
+      if (!email || !email.includes("@")) {
+        setLoginMsg(translateUi("Geçerli bir e-posta gir."), true);
+        return;
+      }
+      if (!password) {
+        setLoginMsg(translateUi("Şifre gir."), true);
+        return;
+      }
+
+      // Remember email
+      if (accountLoginRememberEmail instanceof HTMLInputElement && accountLoginRememberEmail.checked) {
+        writeStorageValue(REMEMBERED_EMAIL_KEY, email);
+      } else {
+        writeStorageValue(REMEMBERED_EMAIL_KEY, "");
+      }
+
+      const users = readUsers();
+      const user = users.find((u) => normalizeEmail(u.email) === email);
+      if (!user) {
+        setLoginMsg(translateUi("Bu e-posta ile kayıtlı hesap bulunamadı."), true);
+        return;
+      }
+
+      try {
+        const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(password));
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+
+        if (hashHex !== user.passwordHash) {
+          setLoginMsg(translateUi("Şifre hatalı."), true);
+          return;
+        }
+      } catch (_err) {
+        setLoginMsg(translateUi("Giriş doğrulanamadı."), true);
+        return;
+      }
+
+      writeSession({ name: user.name, email: user.email });
+      setLoginMsg("");
+      showAccountView();
+      renderAccount();
+    });
+  }
+
+  // Google sign-in button
+  if (accountGoogleSignInBtn) {
+    accountGoogleSignInBtn.addEventListener("click", () => {
+      if (typeof window.ARAMABUL_GOOGLE_SIGN_IN === "function") {
+        window.ARAMABUL_GOOGLE_SIGN_IN();
+      }
+    });
+  }
+
+  // "Kayıt ol" toggle
+  if (accountToggleToSignupBtn) {
+    accountToggleToSignupBtn.addEventListener("click", () => {
+      try { window.location.href = "profile.html?action=signup"; } catch(_) {}
+    });
+  }
+
+  // Logout button
+  const accountLogoutBtn = document.querySelector("#accountLogoutBtn");
+  if (accountLogoutBtn) {
+    accountLogoutBtn.addEventListener("click", () => {
+      writeStorageValue(AUTH_SESSION_KEY, "");
+      dispatchCompatEvent("aramabul:authchange");
+      showLoginView();
+    });
+  }
 
   // -------------------------------------------------------------------------
   // Account Deletion

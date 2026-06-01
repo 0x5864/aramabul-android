@@ -787,7 +787,7 @@
   }
 
   function openSignup() {
-    activatePanel("signup");
+    activatePanel("signup", true);
   }
 
   function normalizeLegacySignupRoute() {
@@ -796,7 +796,7 @@
       return;
     }
 
-    activatePanel("signup");
+    activatePanel("signup", true);
   }
 
   function readPasswordChangeTokenFromLocation() {
@@ -971,7 +971,7 @@
       passwordChangeState.hintText = translateUi("Bağlantı doğrulandı. Yeni şifreni belirleyebilirsin.");
       passwordChangeState.hintIsError = false;
       clearPasswordChangeTokenFromLocation();
-      activatePanel("password");
+      activatePanel("password", true);
       setPasswordMessage("");
       if (accountPasswordForm instanceof HTMLFormElement) {
         accountPasswordForm.reset();
@@ -1015,10 +1015,15 @@
     setLoginMessage("");
   }
 
-  function activatePanel(panelKey) {
+  function activatePanel(panelKey, userInitiated = false) {
     let nextPanel = ["feedback", "help", "about", "password", "login", "signup"].includes(panelKey)
       ? panelKey
       : "account";
+
+    // If not logged in, redirect account/password to login
+    if (!readSession() && (nextPanel === "account" || nextPanel === "password")) {
+      nextPanel = "login";
+    }
 
     if (nextPanel === "signup") {
       nextPanel = "login";
@@ -1042,9 +1047,27 @@
     panels.forEach((panel) => {
       panel.hidden = String(panel.dataset.settingsPanel || "") !== nextPanel;
     });
+
+    // In force-mobile mode, switch from sidebar to panel view
+    if (shouldForceMobileLayout() && settingsSidebarCard && settingsPanelStack) {
+      // Auto-switch only for login/signup (user not logged in) or explicit user clicks
+      if (userInitiated || nextPanel === "login" || nextPanel === "signup") {
+        settingsSidebarCard.style.setProperty("display", "none", "important");
+        settingsPanelStack.style.setProperty("display", "block", "important");
+      }
+    }
+  }
+
+  function showSidebarOnly() {
+    if (settingsSidebarCard) settingsSidebarCard.style.removeProperty("display");
+    if (settingsPanelStack) settingsPanelStack.style.removeProperty("display");
   }
 
   function shouldForceMobileLayout() {
+    // Always force mobile layout inside the native app
+    if (window.__ARAMABUL_APP__ && window.__ARAMABUL_APP__.isApp) {
+      return true;
+    }
     const screenWidth = Number(window.screen?.width || 0);
     const screenHeight = Number(window.screen?.height || 0);
     const screenMin = Math.min(screenWidth, screenHeight);
@@ -1144,6 +1167,7 @@
     }
     const loginTrigger = document.querySelector('[data-settings-panel-trigger="login"]');
     if (loginTrigger) {
+      loginTrigger.style.setProperty("display", "flex", "important");
       loginTrigger.setAttribute("aria-label", session ? translateUi("Çıkış Yap") : translateUi("Giriş Yap"));
     }
     if (feedbackName instanceof HTMLInputElement && !feedbackName.value.trim()) {
@@ -1197,7 +1221,7 @@
       removeStorageValue(AUTH_SESSION_KEY);
       dispatchCompatEvent("aramabul:authchange");
       renderAccount();
-      activatePanel("login");
+      activatePanel("login", true);
     });
   }
 
@@ -1425,14 +1449,21 @@
         return;
       }
 
+      // If login trigger is clicked and user is logged in, perform logout
+      if (key === "login" && readSession()) {
+        event.preventDefault();
+        removeStorageValue(AUTH_SESSION_KEY);
+        dispatchCompatEvent("aramabul:authchange");
+        renderAccount();
+        activatePanel("login", true);
+        return;
+      }
+
       if (button instanceof HTMLAnchorElement) {
-        if (!shouldUseInlinePanels()) {
-          return;
-        }
         event.preventDefault();
       }
 
-      activatePanel(key);
+      activatePanel(key, true);
     });
   });
 
@@ -1493,7 +1524,7 @@
         removeStorageValue(AUTH_SESSION_KEY);
         dispatchCompatEvent("aramabul:authchange");
         renderAccount();
-        activatePanel("login");
+        activatePanel("login", true);
         return;
       }
 
@@ -1534,7 +1565,7 @@
       settingsLoginForm.reset();
       setLoginMessage("");
       renderAccount();
-      activatePanel("account");
+      activatePanel("account", true);
     });
   }
 
@@ -1596,7 +1627,7 @@
       settingsSignupForm.reset();
       setSignupMessage("");
       renderAccount();
-      activatePanel("account");
+      activatePanel("account", true);
     });
   }
 
@@ -1704,7 +1735,7 @@
     setSignupMessage("");
     
     renderAccount();
-    activatePanel("account");
+    activatePanel("account", true);
   };
 
   // Form toggling listeners
