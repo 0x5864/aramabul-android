@@ -801,6 +801,7 @@
     items: [],
     pagination: null,
     selectedVenueSlug: "",
+    initialVenuePopupOpened: false,
     favoriteVenueIds: new Set(),
     discoveryShuffleFilterKey: "",
     discoveryRandomSeed: "",
@@ -2063,10 +2064,16 @@
   function buildDetailUrl(item) {
     saveReturnUrl();
     const slug = String(item?.slug || "").trim();
+    const targetUrl = new URL(mvpPageFile, window.location.href);
     if (slug) {
-      return `venue-detail.html?slug=${encodeURIComponent(slug)}`;
+      targetUrl.searchParams.set("venue", slug);
+      return `${targetUrl.pathname}${targetUrl.search}`;
     }
-    return `venue-detail.html?slug=${encodeURIComponent(item.name || "")}`;
+    const name = String(item?.name || "").trim();
+    if (name) {
+      targetUrl.searchParams.set("q", name);
+    }
+    return `${targetUrl.pathname}${targetUrl.search}`;
   }
 
   /** Same filter URLs as homepage featured cards (featured-venues.js). */
@@ -2228,6 +2235,14 @@
                 </dd>
               </div>
             </dl>
+            <div class="map-focus-ad-wrapper" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(0,0,0,0.08); width: 100%; min-height: 100px; overflow: hidden;">
+              <ins class="adsbygoogle"
+                   style="display:block;margin:0 auto;"
+                   data-ad-client="ca-pub-3016888060216617"
+                   data-ad-slot="5198808205"
+                   data-ad-format="auto"
+                   data-full-width-responsive="true"></ins>
+            </div>
           </aside>
           <div class="map-focus-frame-wrap">
             <iframe
@@ -2357,6 +2372,17 @@
       iframeNode.src = embedUrl;
       modal.hidden = false;
       document.body.classList.add("map-focus-open");
+
+      // Dynamic AdSense load inside venue details modal when opened
+      const adIns = modal.querySelector(".adsbygoogle");
+      if (adIns && adIns.getAttribute("data-ad-status") !== "filled" && !adIns.hasAttribute("data-ad-initialized")) {
+        adIns.setAttribute("data-ad-initialized", "true");
+        try {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (e) {
+          console.error("AdSense in mapFocusModal error:", e);
+        }
+      }
     };
 
     closeNode.addEventListener("click", close);
@@ -2725,6 +2751,39 @@
     syncVenueSlugToUrl(slug);
     renderVenueCards();
     renderMapPanel();
+  }
+
+  async function openInitialVenuePopupFromUrl(slug) {
+    const cleanSlug = String(slug || "").trim();
+    if (!cleanSlug || state.initialVenuePopupOpened || typeof window.openVenuePopup !== "function") {
+      return;
+    }
+
+    state.initialVenuePopupOpened = true;
+    let venue = state.items.find((item) => item.slug === cleanSlug) || null;
+    if (!venue) {
+      try {
+        const response = await fetch(`/api/mvp/istanbul/venues/${encodeURIComponent(cleanSlug)}`, {
+          headers: { Accept: "application/json" },
+        });
+        if (response.ok) {
+          const payload = await response.json();
+          venue = payload.venue || payload.item || payload;
+        }
+      } catch (error) {
+        console.warn("Derin link mekan popupu açılamadı:", error);
+      }
+    }
+
+    if (venue && typeof venue === "object") {
+      if (venue.slug) {
+        state.selectedVenueSlug = venue.slug;
+        syncVenueSlugToUrl(venue.slug);
+        renderVenueCards();
+        renderMapPanel();
+      }
+      window.openVenuePopup(venue);
+    }
   }
 
   function setLocationMessage(message, isError) {
@@ -3674,7 +3733,7 @@
       const detailLink = document.createElement("button");
       detailLink.type = "button";
       detailLink.className = "venue-popup-info-chip-btn";
-      detailLink.innerHTML = `<img src="assets/detail.png" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi`;
+      detailLink.innerHTML = `<img src="assets/detail.png?v=20260601b" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi`;
       detailLink.addEventListener("click", (e) => {
         e.stopPropagation();
         const mapsUrl = item.mapsUrl || item.maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((item.name || "") + " " + (item.district || "") + " İstanbul")}`;
@@ -4320,7 +4379,8 @@
 
   async function main() {
     try {
-      state.selectedVenueSlug = readVenueSlugFromUrl();
+      const initialVenueSlug = readVenueSlugFromUrl();
+      state.selectedVenueSlug = initialVenueSlug;
       await loadFilters();
       await applyInitialFiltersFromUrl();
       if (mvpSubcategoryBoxGrid) {
@@ -4342,6 +4402,7 @@
       updateModeHeading();
       syncActiveFilterPills();
       await loadVenues();
+      await openInitialVenuePopupFromUrl(initialVenueSlug);
       requestDistanceHints();
     } catch (error) {
       setLoading(false, error instanceof Error ? error.message : "Sayfa başlatılamadı.");

@@ -518,7 +518,8 @@
   min-height: 1.1rem;
   margin: 0.1rem 0 0;
   font-size: 0.8rem;
-  color: #c92a4a;
+  color: #fffdf8;
+  text-shadow: 0 1px 2px rgba(22, 33, 35, 0.12);
 }
 
 .settings-signup-message.is-ok {
@@ -1172,5 +1173,264 @@ body.settings-page.settings-force-mobile .settings-panel-stack {
   inset: 0 !important;
   background: rgba(0, 0, 0, 0.5) !important;
   z-index: 100000 !important;
+}
+
+
+
+/* ── Mockup Flat Redesign ── */
+html body.settings-page {
+  background: #ffffff !important;
+}
+
+#aramabulAppSettingsBreadcrumb, .aramabul-app-settings-breadcrumb {
+  display: none !important;
+}
+
+#aramabul-custom-settings-header-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  width: 100% !important;
+  height: 56px !important;
+  border-bottom: none !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+}
+
+#aramabul-custom-settings-title {
+  font-family: "Plus Jakarta Sans", sans-serif !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  color: #000000 !important;
+  text-align: center !important;
+}
+
+#aramabul-custom-settings-back-btn {
+  position: absolute !important;
+  left: 12px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 8px !important;
+  cursor: pointer !important;
+  display: none;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: none !important;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+#aramabul-custom-settings-back-btn svg {
+  width: 24px !important;
+  height: 24px !important;
+  stroke: #000000 !important;
+  stroke-width: 2.5 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  fill: none !important;
+}
+
+html body.settings-page, 
+body.settings-page,
+.settings-shell, 
+.settings-dashboard-shell,
+.settings-layout, 
+.settings-sidebar-card, 
+.settings-card {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.settings-sidebar-card {
+  background: #ffffff !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+.settings-sidebar-card .settings-row,
+.settings-sidebar-card .settings-row:last-of-type {
+  background: #ffffff !important;
+  border: none !important;
+  border-bottom: 1px solid #f2f2f5 !important;
+  border-radius: 0 !important;
+  padding: 1.1rem 1.25rem !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.settings-sidebar-card .settings-row:hover,
+.settings-sidebar-card .settings-row:active,
+.settings-sidebar-card .settings-row.is-active {
+  background: #ffffff !important;
+}
+
+.settings-sidebar-card .settings-row-chevron {
+  display: none !important;
+}
+
+.settings-sidebar-card .settings-row-label {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: #000000 !important;
+}
+
+.settings-sidebar-card .settings-row-icon {
+  color: #000000 !important;
+  width: 24px !important;
+  height: 24px !important;
+  margin-right: 0.5rem !important;
+}
+
+.settings-sidebar-card .settings-row-icon svg {
+  stroke: #000000 !important;
+  fill: none !important;
+  stroke-width: 2.3 !important;
+}
+
+/* Email change custom outlined design overrides */
+.email-change-warning-banner {
+  display: flex !important;
+  gap: 10px !important;
+  align-items: flex-start !important;
+  background: transparent !important;
+  margin-bottom: 24px !important;
+  padding: 0 !important;
+}
+
+.email-change-warning-icon {
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  margin-top: 2px !important;
+}
+
+.email-change-warning-banner p {
+  margin: 0 !important;
+  font-size: 13.5px !important;
+  line-height: 1.45 !important;
+  color: #333333 !important;
+  font-weight: 500 !important;
+  text-shadow: none !important;
+}
+
+.outlined-input-group {
+  position: relative !important;
+  margin-bottom: 20px !important;
+  width: 100% !important;
+}
+
+.outlined-input {
+  width: 100% !important;
+  height: 52px !important;
+  min-height: 52px !important;
+  border: 1px solid #c4c4c4 !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  color: #000000 !important;
+  padding: 0 16px !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  outline: none !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.2s ease !important;
+}
+
+.outlined-input:focus {
+  border-color: #000000 !important;
+  border-width: 1.5px !important;
+}
+
+.disabled-input {
+  background: #ffffff !important;
+  border-color: #c4c4c4 !important;
+  color: #555555 !important;
+  cursor: not-allowed !important;
+}
+
+.outlined-input-group label {
+  position: absolute !important;
+  left: 12px !important;
+  top: 0 !important;
+  transform: translateY(-50%) !important;
+  background: #ffffff !important;
+  padding: 0 6px !important;
+  font-size: 11.5px !important;
+  color: #757575 !important;
+  font-weight: 500 !important;
+  pointer-events: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.outlined-input:placeholder-shown:not(:focus) ~ label {
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  font-size: 15px !important;
+  color: #757575 !important;
+  font-weight: 400 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  left: 16px !important;
+}
+
+.outlined-input:focus ~ label {
+  top: 0 !important;
+  transform: translateY(-50%) !important;
+  font-size: 11.5px !important;
+  color: #000000 !important;
+  font-weight: 600 !important;
+  background: #ffffff !important;
+  padding: 0 6px !important;
+  left: 12px !important;
+}
+
+.black-pill-btn {
+  width: 100% !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 24px !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background-color 0.2s ease !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.black-pill-btn:active {
+  background: #333333 !important;
+}
+
+.email-change-actions {
+  margin-top: 8px !important;
+  width: 100% !important;
+}
+
+/* Ensure the settings cards and panels always display with a clean white background */
+.settings-panel-card,
+.account-editor-card {
+  background: #ffffff !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 

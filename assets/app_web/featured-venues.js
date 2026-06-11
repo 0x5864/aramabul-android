@@ -320,6 +320,27 @@ class FeaturedVenues {
       }
     }
 
+    // Fallback: If we couldn't find 3 venues from unique cuisine groups, fill the remaining slots from all items
+    if (picks.length < 3) {
+      const remainingItems = items.filter((v) => {
+        const k = this.getVenueKey(v);
+        return k && !seen.has(k);
+      });
+
+      const withExternal = remainingItems.filter((v) => v.photoUri && (v.photoUri.startsWith("http://") || v.photoUri.startsWith("https://")));
+      const withoutExternal = remainingItems.filter((v) => !withExternal.includes(v));
+      const combinedRemaining = [...withExternal, ...withoutExternal];
+
+      for (const v of combinedRemaining) {
+        if (picks.length >= 3) break;
+        const k = this.getVenueKey(v);
+        if (k) {
+          seen.add(k);
+          picks.push(v);
+        }
+      }
+    }
+
     const cardIds = ["featured-most-comments", "featured-highest-rated", "featured-nearest-highest"];
     const keys = ["mostCommented", "highestRated", "nearestHighest"];
     this.featuredVenues.mostCommented = null;
@@ -635,7 +656,7 @@ class FeaturedVenues {
         const detailLink = document.createElement("button");
         detailLink.type = "button";
         detailLink.className = "venue-popup-info-chip-btn";
-        detailLink.innerHTML = `<img src="assets/detail.png" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi`;
+        detailLink.innerHTML = `<img src="assets/detail.png?v=20260601b" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi`;
         detailLink.addEventListener("click", (e) => {
           e.stopPropagation();
           const mapsUrl = venue.mapsUrl || venue.maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((venue.name || "") + " " + (venue.district || "") + " İstanbul")}`;
@@ -948,10 +969,16 @@ class FeaturedVenues {
 
   generateVenueUrl(venue) {
     const slug = String(venue.slug || "").trim();
+    const targetUrl = new URL("yeme-icme.html", window.location.href);
     if (slug) {
-      return `venue-detail.html?slug=${encodeURIComponent(slug)}`;
+      targetUrl.searchParams.set("venue", slug);
+      return `${targetUrl.pathname.replace(/^\//, "")}${targetUrl.search}`;
     }
-    return `venue-detail.html?slug=${encodeURIComponent(venue.name || "")}`;
+    const name = String(venue.name || "").trim();
+    if (name) {
+      targetUrl.searchParams.set("q", name);
+    }
+    return `${targetUrl.pathname.replace(/^\//, "")}${targetUrl.search}`;
   }
 
   generateDistrictUrl(district) {

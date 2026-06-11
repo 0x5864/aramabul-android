@@ -708,6 +708,11 @@
       return;
     }
 
+    const slugValue = sanitizeText(record.slug) || buildDerivedVenueSlug(record);
+    if (slugValue) {
+      targetUrl.searchParams.set("venue", slugValue);
+    }
+
     if (record.name) {
       targetUrl.searchParams.set("mekan", String(record.name).trim());
     }
@@ -723,19 +728,14 @@
       return cityUrlFor(record.city || record.name || "");
     }
 
-    {
-      const targetUrl = new URL("venue-detail.html", window.location.href);
-      const slugValue = sanitizeText(record.slug) || buildDerivedVenueSlug(record);
-      if (slugValue) {
-        targetUrl.searchParams.set("slug", slugValue);
-        return `${targetUrl.pathname}${targetUrl.search}`;
+    if (pageBase === "yeme-icme") {
+      const targetUrl = new URL("yeme-icme.html", window.location.href);
+      applyVenueParams(targetUrl, record);
+      const district = sanitizeText(record.district || "");
+      if (district) {
+        targetUrl.searchParams.set("district", district);
       }
-      const venueName = sanitizeText(record.name);
-      if (venueName) {
-        targetUrl.searchParams.set("venue", venueName);
-        targetUrl.searchParams.set("district", sanitizeText(record.district || ""));
-        return `${targetUrl.pathname}${targetUrl.search}`;
-      }
+      return `${targetUrl.pathname}${targetUrl.search}`;
     }
 
     const dynamicType = sanitizeText(record.dynamicType);

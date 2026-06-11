@@ -9,67 +9,45 @@ const Map<String, Map<String, String>> _welcomeStrings = {
     'hello': 'Merhaba',
     'subtitle': "AramaBul'a hoşgeldiniz!",
     'login': 'Giriş Yap',
-    'or': 'veya',
-    'signup_with': 'ile kaydol',
-    'no_account': 'Hesabın yok mu? ',
-    'create_account': 'Hesap Oluştur',
     'policy':
         'Devam ederek Gizlilik Politikası ve\nKullanım Koşullarını kabul etmiş olursunuz.',
     'privacy': 'Gizlilik Politikası',
     'terms': 'Kullanım Koşulları',
-    'skip': 'Giriş yapmadan keşfet',
   },
   'EN': {
     'hello': 'Hello',
     'subtitle': 'Welcome to AramaBul!',
     'login': 'Sign In',
-    'or': 'or',
-    'signup_with': 'sign up with',
-    'no_account': "Don't have an account? ",
-    'create_account': 'Create Account',
     'policy':
         'By continuing, you agree to our Privacy Policy\nand Terms of Service.',
     'privacy': 'Privacy Policy',
     'terms': 'Terms of Service',
-    'skip': 'Browse without signing in',
   },
   'DE': {
     'hello': 'Hallo',
     'subtitle': 'Willkommen bei AramaBul!',
     'login': 'Anmelden',
-    'or': 'oder',
-    'signup_with': 'registrieren mit',
-    'no_account': 'Kein Konto? ',
-    'create_account': 'Konto erstellen',
     'policy':
         'Durch Fortfahren akzeptieren Sie unsere\nDatenschutzrichtlinie und Nutzungsbedingungen.',
     'privacy': 'Datenschutzrichtlinie',
     'terms': 'Nutzungsbedingungen',
-    'skip': 'Ohne Anmeldung erkunden',
   },
   'RU': {
     'hello': 'Привет',
     'subtitle': 'Добро пожаловать в AramaBul!',
     'login': 'Войти',
-    'or': 'или',
-    'signup_with': 'зарегистрироваться через',
-    'no_account': 'Нет аккаунта? ',
-    'create_account': 'Создать аккаунт',
     'policy':
         'Продолжая, вы принимаете Политику\nконфиденциальности и Условия использования.',
     'privacy': 'Политика конфиденциальности',
     'terms': 'Условия использования',
-    'skip': 'Просмотр без входа',
   },
 };
 
-// ─── Color palette ─────────────────────────────────────────────────────
-const _kPrimaryBlue = Color(0xFF1565C0);
-const _kDeepBlue = Color(0xFF0D47A1);
-const _kAccentBlue = Color(0xFF42A5F5);
-const _kLightBlue = Color(0xFF90CAF9);
-const _kDarkBg = Color(0xFF0A1A2E);
-const _kCardBg = Color(0xFF0F2744);
+// ─── Warm color palette ────────────────────────────────────────────────
+const _kPrimaryBlue = Color(0xFF8A5C3B);
+const _kDeepBlue = Color(0xFF4B3528);
+const _kAccentBlue = Color(0xFFB08968);
+const _kLightBlue = Color(0xFFF4E8D8);
 
 /// AramaBul Welcome / Onboarding screen.
 class WelcomeScreen extends StatefulWidget {
@@ -132,12 +110,14 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           // ── Full-screen background image ──
           Positioned.fill(
             child: Image.asset(
-              'assets/welcome/wellcome.jpg',
+              'assets/welcome/coffee.jpeg',
               fit: BoxFit.cover,
+              color: const Color(0xFF5A3C2B).withValues(alpha: 0.18),
+              colorBlendMode: BlendMode.darken,
             ),
           ),
 
-          // ── Blue gradient overlay ──
+          // ── Warm overlay ──
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -146,10 +126,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   end: Alignment.bottomCenter,
                   stops: const [0.0, 0.25, 0.5, 1.0],
                   colors: [
-                    _kDarkBg.withValues(alpha: 0.3),
-                    _kDarkBg.withValues(alpha: 0.45),
-                    _kDarkBg.withValues(alpha: 0.7),
-                    _kDarkBg.withValues(alpha: 0.95),
+                    const Color(0xFF3B281F).withValues(alpha: 0.10),
+                    const Color(0xFF3B281F).withValues(alpha: 0.18),
+                    const Color(0xFF2F241E).withValues(alpha: 0.42),
+                    const Color(0xFF2F241E).withValues(alpha: 0.84),
                   ],
                 ),
               ),
@@ -165,7 +145,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 child: Column(
                   children: [
                     // ── Greeting text (upper area, left-aligned) ──
-                    const SizedBox(height: 60),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.20),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 28),
                       child: Align(
@@ -178,7 +158,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 42,
                                 fontWeight: FontWeight.w300,
-                                color: Colors.white,
+                                color: const Color(0xFFF7F1E6),
                                 letterSpacing: -0.5,
                                 height: 1.1,
                               ),
@@ -189,7 +169,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w300,
-                                color: _kLightBlue.withValues(alpha: 0.9),
+                                color: _kLightBlue.withValues(alpha: 0.92),
                                 height: 1.4,
                               ),
                             ),
@@ -200,7 +180,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
                     const Spacer(),
 
-                    // ── Login button ──
+                    // ── Main action only ──
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 28),
                       child: Center(
@@ -209,116 +189,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           icon: Icons.login_rounded,
                           gradient: const [_kPrimaryBlue, _kDeepBlue],
                           onTap: () => widget.onContinue('login'),
-                          shrinkWrap: true,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-
-                    // ── Divider ──
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 28),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              height: 0.5,
-                              color: _kLightBlue.withValues(alpha: 0.25),
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 14),
-                            child: Text(
-                              _t['or']!,
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: _kLightBlue.withValues(alpha: 0.5),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              height: 0.5,
-                              color: _kLightBlue.withValues(alpha: 0.25),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-
-                    // ── Social login ──
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _SocialButtonImage(
-                          assetPath: 'assets/welcome/google_g.png',
-                          size: 26,
-                          onTap: () => widget.onContinue('google_signin'),
-                        ),
-                        const SizedBox(width: 16),
-                        _SocialButton(
-                          icon: Icons.apple,
-                          iconSize: 30,
-                          color: Colors.white,
-                          onTap: () => widget.onContinue('apple_signin'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      _t['signup_with']!,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: _kLightBlue.withValues(alpha: 0.45),
-                      ),
-                    ),
-
-                    const SizedBox(height: 18),
-
-                    // ── Skip / Guest button ──
-                    GestureDetector(
-                      onTap: () => widget.onContinue(null),
-                      child: Text(
-                        _t['skip']!,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: _kAccentBlue,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // ── Register link ──
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          _t['no_account']!,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.white.withValues(alpha: 0.5),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => widget.onContinue('register'),
-                          child: Text(
-                            _t['create_account']!,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: _kAccentBlue,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 22),
 
                     // ── Policy text ──
                     Padding(
@@ -410,146 +284,70 @@ class _ActionButton extends StatelessWidget {
   final IconData icon;
   final List<Color> gradient;
   final VoidCallback onTap;
-  final bool shrinkWrap;
 
   const _ActionButton({
     required this.label,
     required this.icon,
     required this.gradient,
     required this.onTap,
-    this.shrinkWrap = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Ink(
-          height: 54,
-          padding: shrinkWrap ? const EdgeInsets.symmetric(horizontal: 28) : null,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: gradient,
-            ),
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: [
-              BoxShadow(
-                color: _kPrimaryBlue.withValues(alpha: 0.4),
-                blurRadius: 18,
-                offset: const Offset(0, 6),
+    final radius = BorderRadius.circular(999);
+
+    return ClipRRect(
+      borderRadius: radius,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: radius,
+          child: Ink(
+            height: 56,
+            padding: const EdgeInsets.symmetric(horizontal: 18),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: gradient,
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: Colors.white, size: 20),
-              const SizedBox(width: 10),
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  letterSpacing: 0.3,
+              borderRadius: radius,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  blurRadius: 12,
+                  offset: const Offset(-1, -2),
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Social button with a Material icon ────────────────────────────────
-class _SocialButton extends StatelessWidget {
-  final IconData icon;
-  final double iconSize;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _SocialButton({
-    required this.icon,
-    required this.iconSize,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: _kCardBg.withValues(alpha: 0.8),
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: _kAccentBlue.withValues(alpha: 0.2),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
+                BoxShadow(
+                  color: _kPrimaryBlue.withValues(alpha: 0.44),
+                  blurRadius: 24,
+                  offset: const Offset(0, 12),
+                ),
+                BoxShadow(
+                  color: _kDeepBlue.withValues(alpha: 0.26),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Center(
-          child: Icon(icon, color: color, size: iconSize * 0.8),
-        ),
-      ),
-    );
-  }
-}
-
-// ─── Social button with a PNG image asset ──────────────────────────────
-class _SocialButtonImage extends StatelessWidget {
-  final String assetPath;
-  final double size;
-  final VoidCallback onTap;
-
-  const _SocialButtonImage({
-    required this.assetPath,
-    required this.size,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 48,
-        height: 48,
-        decoration: BoxDecoration(
-          color: _kCardBg.withValues(alpha: 0.8),
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: _kAccentBlue.withValues(alpha: 0.2),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, color: Colors.white, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Center(
-          child: Image.asset(
-            assetPath,
-            width: size * 0.96,
-            height: size * 0.96,
-            fit: BoxFit.contain,
           ),
         ),
       ),

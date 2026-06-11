@@ -1003,13 +1003,14 @@
       ],
     },
     iletisim: {
+      hideHero: true,
       eyebrow: "Destek",
       title: "İletişim",
-      lead: "Soru, öneri ve iş talepleriniz için aşağıdaki formu doldurunuz.",
+      lead: "",
       form: {
         kind: "contact",
-        title: "",
-        description: "",
+        title: "İletişim",
+        description: "Soru, öneri ve iş talepleriniz için aşağıdaki formu doldurunuz.",
         submitLabel: "Gönder",
         successText: "Mesajın hazırlandı. İlgili ekibe en kısa sürede yönlendireceğiz.",
       },

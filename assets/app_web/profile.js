@@ -25,6 +25,11 @@
   const accountPasswordMessage = document.querySelector("#accountPasswordMessage");
   const accountPasswordTokenHint = document.querySelector("#accountPasswordTokenHint");
   const accountPasswordSaveBtn = document.querySelector("#accountPasswordSaveBtn");
+  const accountEmailChangeForm = document.querySelector("#accountEmailChangeForm");
+  const accountCurrentEmailInput = document.querySelector("#accountCurrentEmailInput");
+  const accountNewEmailInput = document.querySelector("#accountNewEmailInput");
+  const accountNewEmailRepeatInput = document.querySelector("#accountNewEmailRepeatInput");
+  const accountEmailChangeMessage = document.querySelector("#accountEmailChangeMessage");
   const feedbackForm = document.querySelector("#settingsFeedbackForm");
   const feedbackName = document.querySelector("#settingsFeedbackName");
   const feedbackEmail = document.querySelector("#settingsFeedbackEmail");
@@ -90,6 +95,12 @@
   };
   const PROFILE_TRANSLATIONS = Object.freeze({
     EN: Object.freeze({
+      "E-posta Değişikliği": "Email Change",
+      "E-posta değişikliği": "Email change",
+      "Yeni E-posta": "New Email",
+      "E-postayı güncelle": "Update Email",
+      "Yeni e-posta mevcut e-posta ile aynı olamaz.": "New email cannot be the same as the current email.",
+      "E-posta adresi başarıyla güncellendi.": "Email address successfully updated.",
       "Şifre Değişikliği": "Password Change",
       "Şifre değişikliği": "Password change",
       "Önce e-posta bağlantısı al, bağlantıdan açılan ekranda yeni şifreni belirle.": "First get an email link, then set your new password on the page opened by that link.",
@@ -147,6 +158,12 @@
       "Şu anda giriş yapmış durumdasınız.": "You are currently logged in."
     }),
     RU: Object.freeze({
+      "E-posta Değişikliği": "Изменение E-mail",
+      "E-posta değişikliği": "Изменение E-mail",
+      "Yeni E-posta": "Новый E-mail",
+      "E-postayı güncelle": "Обновить E-mail",
+      "Yeni e-posta mevcut e-posta ile aynı olamaz.": "Новый e-mail не может совпадать с текущим.",
+      "E-posta adresi başarıyla güncellendi.": "Адрес электронной почты успешно обновлен.",
       "Şifre Değişikliği": "Смена пароля",
       "Şifre değişikliği": "Смена пароля",
       "Önce e-posta bağlantısı al, bağlantıdan açılan ekranda yeni şifreni belirle.": "Сначала получите ссылку по e-mail, затем задайте новый пароль на открывшейся странице.",
@@ -813,6 +830,10 @@
     return String(searchParams.get("pwtoken") || "").trim();
   }
 
+  function hasPasswordChangeTokenInLocation() {
+    return Boolean(readPasswordChangeTokenFromLocation());
+  }
+
   function clearPasswordChangeTokenFromLocation() {
     const url = new URL(window.location.href);
     url.searchParams.delete("pwtoken");
@@ -915,7 +936,8 @@
           throw new Error("Çok fazla istek gönderildi. Biraz sonra tekrar dene.");
         }
         if (response.status === 503) {
-          throw new Error("E-posta servisi şu an kullanılamıyor.");
+          const hint = String(payload?.hint || "").trim();
+          throw new Error(hint ? `E-posta servisi şu an kullanılamıyor. ${hint}` : "E-posta servisi şu an kullanılamıyor.");
         }
         throw new Error("Şifre değişikliği e-postası gönderilemedi.");
       }
@@ -989,7 +1011,7 @@
   function initialPanelFromRoute() {
     const params = new URLSearchParams(window.location.search);
     const action = String(params.get("action") || "").trim().toLocaleLowerCase("tr");
-    if (action === "feedback" || action === "help" || action === "about" || action === "password" || action === "login" || action === "signup") {
+    if (action === "feedback" || action === "help" || action === "about" || action === "password" || action === "email" || action === "login" || action === "signup" || action === "delete-account" || action === "kurumsal") {
       return action;
     }
     const session = readSession();
@@ -1016,13 +1038,15 @@
   }
 
   function activatePanel(panelKey, userInitiated = false) {
-    let nextPanel = ["feedback", "help", "about", "password", "login", "signup"].includes(panelKey)
+    let nextPanel = ["feedback", "help", "about", "password", "email", "login", "signup", "delete-account", "kurumsal"].includes(panelKey)
       ? panelKey
       : "account";
 
-    // If not logged in, redirect account/password to login
-    if (!readSession() && (nextPanel === "account" || nextPanel === "password")) {
-      nextPanel = "login";
+    // If not logged in, redirect account/password to login (unless we have a validated password reset token)
+    if (!readSession() && (nextPanel === "account" || nextPanel === "password" || nextPanel === "email" || nextPanel === "delete-account")) {
+      if (!(nextPanel === "password" && (passwordChangeState.tokenEmail || hasPasswordChangeTokenInLocation()))) {
+        nextPanel = "login";
+      }
     }
 
     if (nextPanel === "signup") {
@@ -1118,6 +1142,17 @@
     if (accountSaveBtn instanceof HTMLButtonElement) {
       accountSaveBtn.disabled = !session;
     }
+    if (accountCurrentEmailInput instanceof HTMLInputElement) {
+      accountCurrentEmailInput.value = userEmail;
+    }
+    if (accountNewEmailInput instanceof HTMLInputElement) {
+      accountNewEmailInput.value = "";
+      accountNewEmailInput.disabled = !session;
+    }
+    if (accountNewEmailRepeatInput instanceof HTMLInputElement) {
+      accountNewEmailRepeatInput.value = "";
+      accountNewEmailRepeatInput.disabled = !session;
+    }
     if (accountNewPasswordInput instanceof HTMLInputElement) {
       if (!passwordChangeState.tokenEmail) {
         accountNewPasswordInput.value = "";
@@ -1169,6 +1204,12 @@
     if (loginTrigger) {
       loginTrigger.style.setProperty("display", "flex", "important");
       loginTrigger.setAttribute("aria-label", session ? translateUi("Çıkış Yap") : translateUi("Giriş Yap"));
+      const iconWrap = loginTrigger.querySelector(".settings-row-icon");
+      if (iconWrap) {
+        iconWrap.innerHTML = session
+          ? '<svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>'
+          : '<svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>';
+      }
     }
     if (feedbackName instanceof HTMLInputElement && !feedbackName.value.trim()) {
       feedbackName.value = session ? userName : "";
@@ -1316,6 +1357,89 @@
       emailVerificationState.messageIsError = false;
       renderAccount();
       setAccountMessage(translateUi("Hesap bilgileri kaydedildi."));
+    });
+  }
+
+  function setEmailChangeMessage(text, isError = false) {
+    if (!accountEmailChangeMessage) return;
+    accountEmailChangeMessage.textContent = text;
+    accountEmailChangeMessage.classList.toggle("is-ok", !isError && Boolean(text));
+  }
+
+  if (accountEmailChangeForm) {
+    accountEmailChangeForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const currentSession = readSession();
+      if (!currentSession) {
+        openSignup();
+        return;
+      }
+
+      const newEmail = normalizeEmail(accountNewEmailInput instanceof HTMLInputElement ? accountNewEmailInput.value : "");
+      const repeatEmail = normalizeEmail(accountNewEmailRepeatInput instanceof HTMLInputElement ? accountNewEmailRepeatInput.value : "");
+
+      if (!newEmail.includes("@") || newEmail.length < 6) {
+        setEmailChangeMessage(translateUi("Geçerli bir e-posta gir."), true);
+        return;
+      }
+
+      if (newEmail !== repeatEmail) {
+        setEmailChangeMessage(translateUi("Yeni e-postalar eşleşmiyor."), true);
+        return;
+      }
+
+      const users = readUsers();
+      const resolvedUser = resolveSessionUser(users, currentSession);
+      if (!resolvedUser) {
+        setEmailChangeMessage(translateUi("Hesap güvenliği doğrulanamadı. Lütfen çıkış yapıp yeniden giriş yap."), true);
+        return;
+      }
+      const { sourceUser, sourceEmail } = resolvedUser;
+
+      if (normalizeEmail(sourceEmail) === newEmail) {
+        setEmailChangeMessage(translateUi("Yeni e-posta mevcut e-posta ile aynı olamaz."), true);
+        return;
+      }
+
+      const duplicate = users.some((user) => {
+        const userEmail = normalizeEmail(user.email);
+        return userEmail === newEmail && userEmail !== sourceEmail;
+      });
+
+      if (duplicate) {
+        setEmailChangeMessage(translateUi("Bu e-posta başka bir hesapta kayıtlı."), true);
+        return;
+      }
+
+      const nextUsers = users.map((user) => {
+        const userEmail = normalizeEmail(user.email);
+        if (userEmail !== sourceEmail) {
+          return user;
+        }
+
+        return {
+          ...user,
+          email: newEmail,
+        };
+      });
+
+      writeUsers(nextUsers);
+
+      // Perform automatic logout after email change
+      removeStorageValue(AUTH_SESSION_KEY);
+      dispatchCompatEvent("aramabul:authchange");
+
+      emailVerificationState.email = "";
+      emailVerificationState.verified = false;
+      emailVerificationState.messageText = "";
+      emailVerificationState.messageIsError = false;
+
+      renderAccount();
+      
+      // Go to login panel and show success message
+      activatePanel("login", true);
+      setLoginMessage(translateUi("E-posta adresi güncellendi. Yeni e-postanızla giriş yapabilirsiniz."), false);
     });
   }
 
@@ -1639,7 +1763,7 @@
 
       const email = normalizeEmail(settingsLoginEmail.value);
       if (!email.includes("@") || email.length < 6) {
-        setLoginMessage(translateUi("Şifre sıfırlama bağlantısı göndermek için geçerli bir e-posta adresi girin."), true);
+        setLoginMessage(translateUi("Önce e-posta adresini gir."), true);
         settingsLoginEmail.focus();
         return;
       }
@@ -1663,11 +1787,7 @@
             setLoginMessage(translateUi("Çok fazla istek gönderildi. Biraz sonra tekrar dene."), true);
             return;
           }
-          if (response.status === 503) {
-            setLoginMessage(translateUi("E-posta servisi şu an kullanılamıyor."), true);
-            return;
-          }
-          setLoginMessage(translateUi("Şifre değişikliği bağlantısı gönderilemedi."), true);
+          setLoginMessage(translateUi("E-posta servisi şu an kullanılamıyor. Lütfen daha sonra tekrar dene."), true);
           return;
         }
 
@@ -1684,7 +1804,7 @@
           );
         }
       } catch (error) {
-        setLoginMessage(translateUi("Şifre değişikliği bağlantısı gönderilemedi."), true);
+        setLoginMessage(translateUi("E-posta servisi şu an kullanılamıyor. Lütfen daha sonra tekrar dene."), true);
       } finally {
         settingsForgotPasswordBtn.disabled = false;
       }
@@ -1831,6 +1951,22 @@
     }
   }
 
+  function shouldAutoOpenGoogleChooser() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("app_google_chooser") === "1";
+    } catch (_error) {
+      return false;
+    }
+  }
+
+  function openGoogleChooserModal() {
+    if (!googleChooserModal) {
+      return;
+    }
+    googleChooserModal.classList.remove("is-hidden");
+  }
+
   applyTheme(readTheme(), false);
   applyStaticTranslations();
   void fetchAdminSession().then((session) => {
@@ -1841,6 +1977,18 @@
   normalizeLegacySignupRoute();
   activatePanel(initialPanelFromRoute());
   void consumePasswordChangeTokenFromLocation();
+
+  if (shouldAutoOpenGoogleChooser()) {
+    setTimeout(() => {
+      openGoogleChooserModal();
+      try {
+        const input = googleChooserCustomEmail instanceof HTMLInputElement ? googleChooserCustomEmail : null;
+        if (input) {
+          input.focus();
+        }
+      } catch (_error) {}
+    }, 250);
+  }
 
   window.addEventListener("resize", applyForcedMobileLayoutClass, { passive: true });
   window.addEventListener("orientationchange", applyForcedMobileLayoutClass);

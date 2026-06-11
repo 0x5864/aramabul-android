@@ -308,7 +308,7 @@
   async function handleVenueDetailNavigation(urlStr) {
     try {
       const url = new URL(urlStr, window.location.href);
-      const slug = url.searchParams.get("slug") || "";
+      const slug = url.searchParams.get("venue") || url.searchParams.get("slug") || "";
       if (slug && typeof window.openVenuePopup === "function") {
         setLoadingState(true);
         const res = await fetch(`/api/mvp/istanbul/venues/${encodeURIComponent(slug)}`);

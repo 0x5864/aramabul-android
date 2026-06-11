@@ -1995,10 +1995,16 @@ function buildMapsEmbedUrl(venue) {
 
 function buildVenueUrl(venue) {
   const slug = String(venue.slug || "").trim();
+  const targetUrl = new URL("yeme-icme.html", window.location.href);
   if (slug) {
-    return `venue-detail.html?slug=${encodeURIComponent(slug)}`;
+    targetUrl.searchParams.set("venue", slug);
+    return `${targetUrl.pathname}${targetUrl.search}`;
   }
-  return `venue-detail.html?slug=${encodeURIComponent(venue.name || '')}`;
+  const name = String(venue.name || '').trim();
+  if (name) {
+    targetUrl.searchParams.set("q", name);
+  }
+  return `${targetUrl.pathname}${targetUrl.search}`;
 }
 
 function sanitizeUrl(rawUrl) {
@@ -2137,6 +2143,14 @@ function ensureMapFocusModal() {
               </dd>
             </div>
           </dl>
+          <div class="map-focus-ad-wrapper" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(0,0,0,0.08); width: 100%; min-height: 100px; overflow: hidden;">
+            <ins class="adsbygoogle"
+                 style="display:block;margin:0 auto;"
+                 data-ad-client="ca-pub-3016888060216617"
+                 data-ad-slot="5198808205"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+          </div>
         </aside>
         <div class="map-focus-frame-wrap">
           <iframe
@@ -2264,6 +2278,17 @@ function ensureMapFocusModal() {
     iframeNode.src = embedUrl;
     modal.hidden = false;
     document.body.classList.add("map-focus-open");
+
+    // Dynamic AdSense load inside venue details modal when opened
+    const adIns = modal.querySelector(".adsbygoogle");
+    if (adIns && adIns.getAttribute("data-ad-status") !== "filled" && !adIns.hasAttribute("data-ad-initialized")) {
+      adIns.setAttribute("data-ad-initialized", "true");
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (e) {
+        console.error("AdSense in mapFocusModal error:", e);
+      }
+    }
   };
 
   closeNode?.addEventListener("click", close);
@@ -3246,7 +3271,7 @@ function renderVenueRow(title, venues, subtitle = "", options = {}) {
     venueCard.setAttribute('data-venue', JSON.stringify(venue));
     
     const tagsHtml = `
-      <button class="venue-popup-info-chip-btn istanbul-detail-trigger-btn" type="button"><img src="assets/detail.png" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi</button>
+      <button class="venue-popup-info-chip-btn istanbul-detail-trigger-btn" type="button"><img src="assets/detail.png?v=20260601b" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi</button>
     `;
 
     const phoneHtml = String(venue.phone || "").trim()

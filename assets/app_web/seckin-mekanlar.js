@@ -393,6 +393,14 @@ function ensureFeaturedVenueModal() {
               <dd data-info-field="phone">-</dd>
             </div>
           </dl>
+          <div class="map-focus-ad-wrapper" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed rgba(0,0,0,0.08); width: 100%; min-height: 100px; overflow: hidden;">
+            <ins class="adsbygoogle"
+                 style="display:block;margin:0 auto;"
+                 data-ad-client="ca-pub-3016888060216617"
+                 data-ad-slot="5198808205"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+          </div>
         </aside>
         <div class="map-focus-frame-wrap">
           <iframe
@@ -463,6 +471,17 @@ function ensureFeaturedVenueModal() {
     iframeNode.src = maps.embedUrl;
     modal.hidden = false;
     document.body.classList.add("map-focus-open");
+
+    // Dynamic AdSense load inside featured venue modal when opened
+    const adIns = modal.querySelector(".adsbygoogle");
+    if (adIns && adIns.getAttribute("data-ad-status") !== "filled" && !adIns.hasAttribute("data-ad-initialized")) {
+      adIns.setAttribute("data-ad-initialized", "true");
+      try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      } catch (e) {
+        console.error("AdSense in featuredVenueModal error:", e);
+      }
+    }
   }
 
   closeNode?.addEventListener("click", close);

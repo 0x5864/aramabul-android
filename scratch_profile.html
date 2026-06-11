@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#45503f" />
+    <title>AramaBul</title>
+    <meta name="description" content="Hesap bilgilerin ve uygulama ayarların." />
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260522d" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260529h" />
+    <link rel="stylesheet" href="profile.css?v=20260531-google-auth-01" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Google tag (gtag.js) -->
+        <!-- Google Consent Mode v2 -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      (function() {
+        var consent = null;
+        try { consent = localStorage.getItem("aramabul_cookie_consent"); } catch (e) {}
+        var defaults = {
+          'ad_storage': 'denied',
+          'ad_user_data': 'denied',
+          'ad_personalization': 'denied',
+          'analytics_storage': 'denied',
+          'wait_for_update': 500
+        };
+        if (consent === 'all') {
+          defaults = {
+            'ad_storage': 'granted',
+            'ad_user_data': 'granted',
+            'ad_personalization': 'granted',
+            'analytics_storage': 'granted'
+          };
+        }
+        gtag('consent', 'default', defaults);
+      })();
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NHE1J9FWDG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "G-NHE1J9FWDG");
+    </script>
+  </head>
+  <body class="profile-page settings-page">
+    <div class="texture"></div>
+
+    <header class="global-header-band" role="banner">
+      <nav class="topbar global-topbar">
+        <a class="brand" href="index.html" aria-label="aramabul">
+          <img class="brand-logo" src="assets/logo.png?v=20260525a" alt="aramabul logo" />
+          <span class="brand-wordmark"><span class="brand-wordmark-rest">arama</span><span class="brand-wordmark-search">bul</span></span>
+        </a>
+      </nav>
+      <div class="global-topline">
+        <div class="global-topline-inner">
+          <a href="index.html">Anasayfa</a>
+          <span>/</span>
+          <span>Ayarlar</span>
+        </div>
+      </div>
+    </header>
+
+    <form class="header-search profile-hidden-search" action="search.html" method="get" role="search" aria-label="Genel arama">
+      <label class="visually-hidden" for="headerSearchInput">Arama ifadesi</label>
+      <input id="headerSearchInput" class="header-search-input" type="search" name="mekan" placeholder="Ne bulmamı istersin?" />
+      <button class="header-search-btn" type="submit">Bul</button>
+    </form>
+
+    <main class="settings-shell settings-dashboard-shell">
+      <div class="settings-layout">
+        <aside class="settings-card settings-sidebar-card" aria-label="Ayar bölümleri">
+          <a
+            class="settings-row settings-row-button is-active"
+            href="account-settings.html"
+            data-settings-panel-trigger="account"
+            aria-label="Hesap"
+            aria-current="page"
+          >
+            <span class="settings-row-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="8.2" r="3.3"></circle>
+                <path d="M5 18.5c1-3 3.5-4.8 7-4.8s6 1.8 7 4.8"></path>
+              </svg>
+            </span>
+            <span class="settings-row-label">Hesap</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a
+            class="settings-row settings-row-button"
+            href="profile.html?action=login"
+            data-settings-panel-trigger="login"
+            aria-label="Giriş Yap"
+            data-i18n-aria-label="Giriş Yap"
+            style="display:none"
+          >
+            <span class="settings-row-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                <polyline points="10 17 15 12 10 7"></polyline>
+                <line x1="15" y1="12" x2="3" y2="12"></line>
+              </svg>
+            </span>
+            <span class="settings-row-label" data-i18n="Giriş Yap">Giriş Yap</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <!-- Kayıt Ol sidebar row is removed. Simplified to Hesap and Giriş Yap -->
+
+          <a
+            class="settings-row settings-row-button"
+            href="profile.html?action=password"
+            data-settings-panel-trigger="password"
+            aria-label="Şifre Değişikliği"
+            data-i18n-aria-label="Şifre Değişikliği"
+          >
+            <span class="settings-row-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="5" y="10" width="14" height="10" rx="2"></rect>
+                <path d="M8.5 10V7.8a3.5 3.5 0 1 1 7 0V10"></path>
+                <circle cx="12" cy="15" r="1"></circle>
+              </svg>
+            </span>
+            <span class="settings-row-label" data-i18n="Şifre Değişikliği">Şifre Değişikliği</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a
+            class="settings-row settings-row-button"
+            href="feedback-settings.html"
+            data-settings-panel-trigger="feedback"
+            aria-label="Geribildirim"
+          >
+            <span class="settings-row-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M5 7.5A2.5 2.5 0 0 1 7.5 5h9A2.5 2.5 0 0 1 19 7.5v5A2.5 2.5 0 0 1 16.5 15H11l-4 4v-4H7.5A2.5 2.5 0 0 1 5 12.5z"></path>
+                <path d="M9 9.5h6"></path>
+                <path d="M9 12h4"></path>
+              </svg>
+            </span>
+            <span class="settings-row-label">Geribildirim</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a
+            class="settings-row settings-row-button"
+            href="help-settings.html"
+            data-settings-panel-trigger="help"
+            aria-label="Yardım"
+          >
+            <span class="settings-row-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8"></circle>
+                <path d="M9.8 9.7a2.5 2.5 0 0 1 4.4 1.6c0 1.8-2.2 2.1-2.2 3.5"></path>
+                <path d="M12 17h.1"></path>
+              </svg>
+            </span>
+            <span class="settings-row-label">Yardım</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a
+            class="settings-row settings-row-button"
+            href="about-settings.html"
+            data-settings-panel-trigger="about"
+            aria-label="Hakkında"
+          >
+            <span class="settings-row-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="5" y="4" width="14" height="16" rx="2"></rect>
+                <path d="M12 8h.1"></path>
+                <path d="M10.9 12H12v3"></path>
+              </svg>
+            </span>
+            <span class="settings-row-label">Hakkında</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a
+            class="settings-row settings-row-button"
+            href="admin-login.html"
+            aria-label="Admin Girişi"
+            data-admin-settings-link
+            style="display:none"
+          >
+            <span class="settings-row-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="5" y="10" width="14" height="10" rx="2"></rect>
+                <path d="M8.5 10V7.8a3.5 3.5 0 1 1 7 0V10"></path>
+                <path d="M12 15h.1"></path>
+              </svg>
+            </span>
+            <span class="settings-row-label" data-admin-settings-link-label>Admin Girişi</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+        </aside>
+
+        <section class="settings-panel-stack" aria-live="polite">
+          <section class="settings-card settings-panel-card account-editor-card" data-settings-panel="account" aria-label="Hesap bilgileri">
+            <div class="language-card-head">
+              <h2>Hesap bilgileri</h2>
+              <p>Adını ve e-postanı burada güncelleyebilirsin.</p>
+            </div>
+            <form id="accountSettingsForm" class="settings-signup-form" novalidate>
+              <label class="settings-signup-field">
+                <span>Ad Soyad</span>
+                <input id="accountNameInput" type="text" name="name" autocomplete="name" required />
+              </label>
+              <label class="settings-signup-field">
+                <span>E-posta</span>
+                <input id="accountEmailInput" type="email" name="email" autocomplete="email" required />
+              </label>
+              <div class="account-email-verification-box" aria-live="polite">
+                <p id="accountEmailVerificationStatus" class="settings-signup-message account-email-verification-status"></p>
+                <button id="accountEmailVerifyBtn" class="account-secondary-btn account-verify-btn" type="button">Doğrulama e-postası gönder</button>
+              </div>
+              <p id="accountSettingsMessage" class="settings-signup-message" aria-live="polite"></p>
+              <div class="account-settings-actions">
+                <button id="accountSaveBtn" class="settings-signup-submit" type="submit">Kaydet</button>
+                <button id="accountSignupBtn" class="account-secondary-btn" type="button">Kayıt ol</button>
+              </div>
+            </form>
+
+            <hr style="border:none;border-top:1px solid #e0e0e0;margin:1.5rem 0 1rem;" />
+
+            <div style="padding-top:0.5rem;">
+              <h3 style="color:#011d36;font-size:0.95rem;margin-bottom:0.4rem;" data-i18n="Hesabımı Sil">Hesabımı Sil</h3>
+              <p style="font-size:0.85rem;color:#666;margin-bottom:0.75rem;" data-i18n="Hesabını kalıcı olarak silmek istiyorsan aşağıdaki butona bas. Bu işlem geri alınamaz.">Hesabını kalıcı olarak silmek istiyorsan aşağıdaki butona bas. Bu işlem geri alınamaz.</p>
+              <div style="text-align:right;"><button id="accountDeleteBtn" class="settings-signout" type="button" data-i18n="Hesabımı Sil">Hesabımı Sil</button></div>
+            </div>
+
+            <!-- Account Deletion Confirmation Modal -->
+            <div id="accountDeleteModal" class="auth-modal is-hidden" style="z-index:100000;background:rgba(0,0,0,0.6);">
+              <div class="auth-modal-panel" style="max-width:420px;min-height:auto;padding:2rem;margin:auto;margin-top:20vh;border-radius:12px;background:#fffaed;">
+                <h3 style="color:#e74c3c;margin-bottom:1rem;font-size:1.2rem;" data-i18n="Hesap Silme Onayı">Hesap Silme Onayı</h3>
+                <p style="margin-bottom:1rem;font-size:0.9rem;color:#333;" data-i18n="Bu işlem geri alınamaz. Tüm verileriniz (yorumlar, favoriler, hesap bilgileri) kalıcı olarak silinecektir.">Bu işlem geri alınamaz. Tüm verileriniz (yorumlar, favoriler, hesap bilgileri) kalıcı olarak silinecektir.</p>
+                <p style="margin-bottom:0.75rem;font-size:0.9rem;color:#333;" data-i18n="Onaylamak için e-posta adresinizi yazın:">Onaylamak için e-posta adresinizi yazın:</p>
+                <input id="accountDeleteConfirmEmail" type="email" class="settings-signup-field" placeholder="E-posta adresiniz" style="width:100%;padding:0.6rem;border:1px solid #ccc;border-radius:6px;margin-bottom:1rem;font-size:0.9rem;" />
+                <p id="accountDeleteMessage" style="color:#e74c3c;font-size:0.85rem;margin-bottom:0.75rem;min-height:1.2em;"></p>
+                <div style="display:flex;gap:0.75rem;justify-content:flex-end;">
+                  <button id="accountDeleteCancel" type="button" style="padding:0.5rem 1.25rem;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;font-size:0.9rem;" data-i18n="Vazgeç">Vazgeç</button>
+                  <button id="accountDeleteConfirm" type="button" style="padding:0.5rem 1.25rem;border:none;border-radius:6px;background:#e74c3c;color:#fff;cursor:pointer;font-size:0.9rem;font-weight:600;" data-i18n="Kalıcı Olarak Sil">Kalıcı Olarak Sil</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="settings-card settings-panel-card account-editor-card" data-settings-panel="login" aria-label="Giriş yap" data-i18n-aria-label="Giriş yap" hidden>
+            <!-- Giriş Formu Kapsayıcısı -->
+            <div id="settingsLoginFormWrapper">
+              <div class="language-card-head" style="margin-bottom: 1.25rem;">
+                <h2 data-i18n="Giriş yap">Giriş yap</h2>
+                <p data-i18n="E-posta adresin ve şifrenle giriş yapabilirsin.">E-posta adresin ve şifrenle giriş yapabilirsin.</p>
+              </div>
+              
+              <!-- Google ile Giriş Yap Butonu -->
+              <div class="google-signin-container" style="margin-bottom: 1.25rem;">
+                <!-- Resmi Google GSI Load Butonu -->
+                <div id="g_id_onload"
+                     data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleCredentialResponse"
+                     data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-size="large"
+                     data-logo_alignment="left"
+                     style="display: none;">
+                </div>
+                
+                <!-- Premium Tasarım Google Butonu -->
+                <button id="customGoogleSignInBtn" type="button" class="premium-google-btn" style="width: 100%; min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: #fff; border: 1px solid #dadce0; border-radius: 8px; color: #3c4043; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; padding: 0.5rem 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: all 0.2s ease;">
+                  <svg viewBox="0 0 24 24" width="20" height="20" style="display: block;">
+                    <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.68 1.54 14.98 1 12 1 7.35 1 3.37 3.65 1.4 7.56l3.82 2.96c.9-2.7 3.41-4.48 6.78-4.48z"></path>
+                    <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.51h6.43c-.28 1.44-1.09 2.67-2.32 3.49l3.6 2.79c2.1-1.93 3.31-4.77 3.31-8.43z"></path>
+                    <path fill="#FBBC05" d="M5.22 14.76c-.24-.72-.38-1.5-.38-2.31s.14-1.59.38-2.31L1.4 7.18C.5 8.98 0 10.99 0 13s.5 4.02 1.4 5.82l3.82-3.06z"></path>
+                    <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.6-2.79c-1.01.68-2.3 1.09-3.96 1.09-3.37 0-5.88-1.78-6.78-4.48l-3.82 3.06C3.37 20.35 7.35 23 12 23z"></path>
+                  </svg>
+                  <span data-i18n="Google ile Giriş Yap">Google ile Giriş Yap</span>
+                </button>
+              </div>
+              
+              <!-- veya Bölücü -->
+              <div class="auth-divider" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem; color: #888; font-size: 0.8rem;">
+                <span style="flex: 1; height: 1px; background: #e0e0e0;"></span>
+                <span data-i18n="veya">veya</span>
+                <span style="flex: 1; height: 1px; background: #e0e0e0;"></span>
+              </div>
+
+              <form id="settingsLoginForm" class="settings-signup-form" novalidate>
+                <label class="settings-signup-field">
+                  <span data-i18n="E-posta">E-posta</span>
+                  <input id="settingsLoginEmail" type="email" autocomplete="email" required />
+                </label>
+                <label class="settings-signup-field">
+                  <span data-i18n="Şifre">Şifre</span>
+                  <div class="auth-password-field" style="position:relative; width: 100%;">
+                    <input id="settingsLoginPassword" type="password" autocomplete="current-password" required style="width: 100%; padding-right: 2.5rem;" />
+                    <button
+                      id="settingsLoginPasswordToggle"
+                      class="auth-password-toggle"
+                      type="button"
+                      aria-pressed="false"
+                      aria-label="Şifreyi göster"
+                      data-i18n-aria-label="Şifreyi göster"
+                      style="position:absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 100%;"
+                    >
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-password-toggle-icon">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+                  </div>
+                </label>
+                <div class="auth-form-inline-row" style="display:flex; justify-content:space-between; align-items:center; margin-top:0.3rem;">
+                  <label class="auth-checkbox-label" for="settingsLoginRememberEmail" style="display:inline-flex; align-items:center; gap:0.4rem; font-size:0.85rem; color:#666;">
+                    <input id="settingsLoginRememberEmail" type="checkbox" style="margin: 0; width: 16px; height: 16px;" />
+                    <span data-i18n="E-postamı hatırla">E-postamı hatırla</span>
+                  </label>
+                  <button id="settingsForgotPasswordBtn" class="auth-inline-link auth-inline-link-compact" type="button" style="background:none; border:none; color:#011d36; font-size:0.85rem; text-decoration:underline; cursor:pointer; padding:0;" data-i18n="Şifremi unuttum">
+                    Şifremi unuttum
+                  </button>
+                </div>
+                <p id="settingsLoginMessage" class="settings-signup-message" aria-live="polite" style="margin-top:0.5rem;"></p>
+                <div class="account-settings-actions" style="margin-top:0.8rem;">
+                  <button id="settingsLoginSubmit" class="settings-signup-submit" type="submit" data-i18n="Giriş yap">Giriş yap</button>
+                </div>
+              </form>
+
+              <!-- Kayıt olma sayfasına geçiş -->
+              <p class="auth-toggle-hint" style="text-align: center; font-size: 0.85rem; margin-top: 1.25rem; color: #666;">
+                <span data-i18n="Hesabın yok mu?">Hesabın yok mu?</span>
+                <button id="toggleToSignupBtn" type="button" style="background: none; border: none; color: #011d36; font-weight: 600; text-decoration: underline; cursor: pointer; padding: 0; font-size: inherit;">
+                  <span data-i18n="Kayıt ol">Kayıt ol</span>
+                </button>
+              </p>
+            </div>
+
+            <!-- Kayıt Formu Kapsayıcısı (Başlangıçta Gizli) -->
+            <div id="settingsSignupFormWrapper" style="display: none;">
+              <div class="language-card-head" style="margin-bottom: 1.25rem;">
+                <h2 data-i18n="Kayıt ol">Kayıt ol</h2>
+                <p data-i18n="Hemen kayıt olup favori mekanlarını kaydetmeye başla.">Hemen kayıt olup favori mekanlarını kaydetmeye başla.</p>
+              </div>
+              <form id="settingsSignupForm" class="settings-signup-form" novalidate>
+                <label class="settings-signup-field">
+                  <span data-i18n="Ad">Ad</span>
+                  <input id="settingsSignupFirstName" type="text" autocomplete="given-name" required />
+                </label>
+                <label class="settings-signup-field">
+                  <span data-i18n="Soyad">Soyad</span>
+                  <input id="settingsSignupLastName" type="text" autocomplete="family-name" required />
+                </label>
+                <label class="settings-signup-field">
+                  <span data-i18n="E-posta">E-posta</span>
+                  <input id="settingsSignupEmail" type="email" autocomplete="email" required />
+                </label>
+                <label class="settings-signup-field">
+                  <span data-i18n="Şifre">Şifre</span>
+                  <div class="auth-password-field" style="position:relative; width: 100%;">
+                    <input id="settingsSignupPassword" type="password" autocomplete="new-password" minlength="6" required style="width: 100%; padding-right: 2.5rem;" />
+                    <button
+                      id="settingsSignupPasswordToggle"
+                      class="auth-password-toggle"
+                      type="button"
+                      aria-pressed="false"
+                      aria-label="Şifreyi göster"
+                      data-i18n-aria-label="Şifreyi göster"
+                      style="position:absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 100%;"
+                    >
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-password-toggle-icon">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+                  </div>
+                </label>
+                <label class="settings-signup-field">
+                  <span data-i18n="Şifre tekrar">Şifre tekrar</span>
+                  <div class="auth-password-field" style="position:relative; width: 100%;">
+                    <input id="settingsSignupPasswordRepeat" type="password" autocomplete="new-password" minlength="6" required style="width: 100%; padding-right: 2.5rem;" />
+                    <button
+                      id="settingsSignupPasswordRepeatToggle"
+                      class="auth-password-toggle"
+                      type="button"
+                      aria-pressed="false"
+                      aria-label="Şifreyi göster"
+                      data-i18n-aria-label="Şifreyi göster"
+                      style="position:absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; height: 100%;"
+                    >
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="auth-password-toggle-icon">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                    </button>
+                  </div>
+                </label>
+                <p id="settingsSignupMessage" class="settings-signup-message" aria-live="polite" style="margin-top:0.5rem;"></p>
+                <div class="account-settings-actions" style="margin-top:0.8rem;">
+                  <button id="settingsSignupSubmit" class="settings-signup-submit" type="submit" data-i18n="Kayıt ol">Kayıt ol</button>
+                </div>
+                <p class="auth-signup-legal-note" style="margin-top:0.4rem; font-size:10px; line-height:1.4; color:#777;" data-i18n="Kayıt olarak Kullanım Koşulları ve Gizlilik Politikası hükümlerini kabul etmiş olursun.">Kayıt olarak Kullanım Koşulları ve Gizlilik Politikası hükümlerini kabul etmiş olursun.</p>
+              </form>
+
+              <!-- Giriş yap sayfasına geri dönme -->
+              <p class="auth-toggle-hint" style="text-align: center; font-size: 0.85rem; margin-top: 1.25rem; color: #666;">
+                <span data-i18n="Zaten hesabın var mı?">Zaten hesabın var mı?</span>
+                <button id="toggleToLoginBtn" type="button" style="background: none; border: none; color: #011d36; font-weight: 600; text-decoration: underline; cursor: pointer; padding: 0; font-size: inherit;">
+                  <span data-i18n="Giriş yap">Giriş yap</span>
+                </button>
+              </p>
+            </div>
+          </section>
+
+          <section class="settings-card settings-panel-card account-editor-card" data-settings-panel="password" aria-label="Şifre değişikliği" data-i18n-aria-label="Şifre değişikliği" hidden>
+            <div class="language-card-head">
+              <h2 data-i18n="Şifre değişikliği">Şifre değişikliği</h2>
+              <p data-i18n="Önce e-posta bağlantısı al, bağlantıdan açılan ekranda yeni şifreni belirle.">Önce e-posta bağlantısı al, bağlantıdan açılan ekranda yeni şifreni belirle.</p>
+            </div>
+            <div id="accountPasswordRequestBlock" class="settings-signup-form">
+              <button id="accountPasswordRequestBtn" class="settings-signup-submit" type="button" data-i18n="Şifre değişikliği e-postası gönder">Şifre değişikliği e-postası gönder</button>
+            </div>
+            <form id="accountPasswordForm" class="settings-signup-form" novalidate hidden>
+              <label class="settings-signup-field">
+                <span data-i18n="Yeni şifre">Yeni şifre</span>
+                <input id="accountNewPasswordInput" type="password" autocomplete="new-password" minlength="6" required />
+              </label>
+              <label class="settings-signup-field">
+                <span data-i18n="Yeni şifre tekrar">Yeni şifre tekrar</span>
+                <input id="accountNewPasswordRepeatInput" type="password" autocomplete="new-password" minlength="6" required />
+              </label>
+              <p id="accountPasswordMessage" class="settings-signup-message" aria-live="polite"></p>
+              <div class="account-settings-actions account-password-actions">
+                <button id="accountPasswordSaveBtn" class="settings-signup-submit" type="submit" data-i18n="Şifreyi güncelle">Şifreyi güncelle</button>
+              </div>
+            </form>
+            <p id="accountPasswordTokenHint" class="settings-signup-message" aria-live="polite"></p>
+          </section>
+
+          <section class="settings-card settings-panel-card account-editor-card settings-feedback-form-card" data-settings-panel="feedback" aria-label="Geribildirim" hidden>
+            <div class="language-card-head">
+              <h2>Geribildirim</h2>
+              <p>Mesajını konu seçerek hızlıca iletebilirsin.</p>
+            </div>
+            <form class="settings-feedback-form" id="settingsFeedbackForm" novalidate>
+              <div class="settings-feedback-grid">
+                <label class="settings-feedback-field" data-span="full">
+                  <input id="settingsFeedbackName" type="text" name="name" placeholder="Ad Soyad" autocomplete="name" aria-label="Ad Soyad" required />
+                </label>
+                <label class="settings-feedback-field" data-span="full">
+                  <input id="settingsFeedbackEmail" type="email" name="email" placeholder="E-posta" autocomplete="email" aria-label="E-posta" required />
+                </label>
+                <label class="settings-feedback-field" data-span="full">
+                  <select id="settingsFeedbackSubject" name="subject" aria-label="Konu" required>
+                    <option value="">Konu</option>
+                    <option value="destek">Genel Konular</option>
+                    <option value="ortaklik">İş Birliği</option>
+                    <option value="icerik">İçerik Düzeltmeleri</option>
+                  </select>
+                </label>
+
+                <label class="settings-feedback-field" data-span="full">
+                  <textarea id="settingsFeedbackMessage" name="message" rows="6" placeholder="Mesaj" aria-label="Mesaj" required></textarea>
+                </label>
+              </div>
+              <div class="settings-feedback-actions">
+                <button class="settings-feedback-submit" type="submit">Gönder</button>
+              </div>
+              <p id="settingsFeedbackStatus" class="settings-signup-message" aria-live="polite"></p>
+            </form>
+          </section>
+
+          <section class="settings-card settings-panel-card account-editor-card" data-settings-panel="help" aria-label="Yardım" hidden>
+            <div class="language-card-head">
+              <h2>Yardım</h2>
+              <p>En çok sorulan temel konuları kısa cevaplarla burada topladık.</p>
+            </div>
+            <div class="settings-help-content">
+              <div class="settings-help-item">
+                <strong>Nasıl arama yaparım?</strong>
+                <p>Üst arama alanından doğrudan mekan adı yazabilir ya da anasayfadan kategori seçebilirsin.</p>
+              </div>
+              <div class="settings-help-item">
+                <strong>Bilgi yanlışsa ne yapmalıyım?</strong>
+                <p>Geribildirim sekmesinden kısa bir not bırakabilir ya da iletişim sayfasından bize yazabilirsin.</p>
+              </div>
+              <div class="settings-help-item">
+                <strong>Hesap şart mı?</strong>
+                <p>Temel gezinme için hesap gerekmez. Kayıtlı kullanıcı ayarları için hesap alanını kullanabilirsin.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="settings-card settings-panel-card account-editor-card" data-settings-panel="about" aria-label="Hakkında" hidden>
+            <div class="settings-help-content">
+              <div class="settings-help-item">
+                <strong data-i18n-key="about.title">Hakkında</strong>
+                <p data-i18n-key="about.intro">Aramabul, kullanıcının bir yeri ararken, en kısa yoldan ve net bilgi bulmasını amaçlayan sade tasarımlı bir yardımcıdır.</p>
+              </div>
+              <div class="settings-help-item">
+                <strong data-i18n-key="about.why">Neden var?</strong>
+                <p data-i18n-key="about.why.p1">İnsanlar çoğu zaman bir yerin adını değil, ihtiyacını bilir. Biz de aramayı ihtiyaçtan başlatıyoruz.</p>
+                <p data-i18n-key="about.why.p2">Amaç, gereksiz kalabalığı ve çabayı azaltarak, ihtiyaç duyduğunuz hizmet ve ürüne daha hızlı ulaşmanızı sağlamak.</p>
+              </div>
+              <div class="settings-help-item">
+                <strong data-i18n-key="about.how">Nasıl çalışır?</strong>
+                <p data-i18n-key="about.how.p1">Aramabul, kullanıcının ihtiyaç duyduğu kategorideki mekana, istediği ilçe ve mahalle bilgisi ile kısa yoldan ulaşmasını sağlar.</p>
+                <p data-i18n-key="about.how.p2">Kategoriler, kullanıcı ihtiyacına göre; yeme-içme, gezi, hizmet, sağlık, kültür ve sanat başlıkları altında oluşturulmuştur. Mekân listeleri karar vermeyi hızlandıracak ihtiyaca göre filtrelenerek, sade ve kullanıcı dostu bir biçimde sunulur.</p>
+                <p data-i18n-key="about.how.p3">Seçtiğiniz mekanın, adres, telefon, varsa web sitesi ve Instagram sayfası bilgileri, haritadaki yeri ve Google veri tabanındaki kullanıcıların değerlendirme puan ve adetleri ile son üç adet yorum gibi ayrıntılı bilgileri gösterilir.</p>
+              </div>
+              <div class="settings-help-item">
+                <strong data-i18n-key="about.approach">Temel yaklaşımımız</strong>
+                <ul>
+                  <li data-i18n-key="about.approach.simple">Basit arayüz</li>
+                  <li data-i18n-key="about.approach.clear">Açık bilgi</li>
+                  <li data-i18n-key="about.approach.fast">Hızlı ve ayrıntılı yönlendirme</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <footer class="yr-footer" aria-label="Alt Bant">
+      <div class="yr-footer-inner">
+        <div class="yr-footer-grid">
+
+          <section class="yr-footer-col">
+            <a href="hakkimizda.html">Hakkında</a>
+            <a href="yer-ekle.html">Yer ekle</a>
+            <a href="iletisim.html">İletişim</a>
+          </section>
+
+          <section class="yr-footer-col">
+            <a href="sss.html">Sıkça Sorulan Sorular</a>
+            <a href="cerez-politikasi.html">Çerez Politikası</a>
+            
+          </section>
+
+          <section class="yr-footer-col">
+            <a href="kullanim-kosullari.html">Kullanım Koşulları</a>
+            <a href="kvkk.html">Kişisel Verilerin Korunması</a>
+            <a href="gizlilik-politikasi.html">Gizlilik Politikası</a>
+            
+          </section>
+        </div>
+
+        <div class="yr-footer-bottom">
+          <p>© 2026 aramabul</p>
+        
+        </div>
+      </div>
+    </footer>
+
+    <!-- Google Hesap Seçici (Account Chooser) Modalı (Geliştirici & Test Ortamı İçin Premium Fallback) -->
+    <div id="googleChooserModal" class="auth-modal is-hidden">
+      <div class="auth-modal-panel" style="max-width: 440px; width: 90%; min-height: auto; padding: 2rem; border-radius: 16px; background: #fffdf8; border: 1px solid #e8cd92; box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; gap: 1.25rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+        <div style="text-align: center;">
+          <svg viewBox="0 0 24 24" width="32" height="32" style="margin: 0 auto 0.5rem; display: block;">
+            <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.68 1.54 14.98 1 12 1 7.35 1 3.37 3.65 1.4 7.56l3.82 2.96c.9-2.7 3.41-4.48 6.78-4.48z"></path>
+            <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.51h6.43c-.28 1.44-1.09 2.67-2.32 3.49l3.6 2.79c2.1-1.93 3.31-4.77 3.31-8.43z"></path>
+            <path fill="#FBBC05" d="M5.22 14.76c-.24-.72-.38-1.5-.38-2.31s.14-1.59.38-2.31L1.4 7.18C.5 8.98 0 10.99 0 13s.5 4.02 1.4 5.82l3.82-3.06z"></path>
+            <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.6-2.79c-1.01.68-2.3 1.09-3.96 1.09-3.37 0-5.88-1.78-6.78-4.48l-3.82 3.06C3.37 20.35 7.35 23 12 23z"></path>
+          </svg>
+          <h3 style="color: #011d36; font-size: 1.25rem; font-weight: 700; margin: 0;" data-i18n="Bir hesap seçin">Google ile oturum açın</h3>
+          <p style="color: #666; font-size: 0.85rem; margin: 0.25rem 0 0;" data-i18n="aramabul.com uygulamasına devam etmek için">aramabul.com uygulamasına devam etmek için</p>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem;">
+          <!-- Metin Tunçgenç (Admin) -->
+          <button type="button" class="google-chooser-account-btn" data-google-email="metin.tuncgenc@gmail.com" data-google-name="Metin Tunçgenç" style="display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.75rem 1rem; background: #fffdf8; border: 1px solid #e0e0e0; border-radius: 12px; cursor: pointer; text-align: left; transition: all 0.2s ease;">
+            <div style="width: 36px; height: 36px; border-radius: 999px; background: #e8cd92; color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 0.95rem;">MT</div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-weight: 600; color: #011d36; font-size: 0.9rem;">Metin Tunçgenç</div>
+              <div style="color: #666; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">metin.tuncgenc@gmail.com</div>
+            </div>
+            <span style="font-size: 0.75rem; padding: 0.2rem 0.5rem; background: #ffeecb; border-radius: 6px; color: #b89155; font-weight: 700;">Admin</span>
+          </button>
+          
+          <!-- AramaBul Admin -->
+          <button type="button" class="google-chooser-account-btn" data-google-email="aramabul.com@gmail.com" data-google-name="AramaBul Admin" style="display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.75rem 1rem; background: #fffdf8; border: 1px solid #e0e0e0; border-radius: 12px; cursor: pointer; text-align: left; transition: all 0.2s ease;">
+            <div style="width: 36px; height: 36px; border-radius: 999px; background: #b89155; color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 0.95rem;">AB</div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-weight: 600; color: #011d36; font-size: 0.9rem;">AramaBul Admin</div>
+              <div style="color: #666; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">aramabul.com@gmail.com</div>
+            </div>
+            <span style="font-size: 0.75rem; padding: 0.2rem 0.5rem; background: #ffeecb; border-radius: 6px; color: #b89155; font-weight: 700;">Admin</span>
+          </button>
+
+          <!-- Özel Hesap Girişi -->
+          <div style="border-top: 1px dashed #e0e0e0; padding-top: 0.75rem; margin-top: 0.25rem;">
+            <label style="display: block; font-size: 0.8rem; color: #666; margin-bottom: 0.35rem;" data-i18n="Başka bir e-posta ile gir">Farklı bir e-posta ile giriş yapın:</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input id="googleChooserCustomEmail" type="email" placeholder="ornek@gmail.com" style="flex: 1; min-height: 36px; padding: 0.4rem 0.75rem; border: 1px solid #ccc; border-radius: 8px; font-size: 0.85rem;" />
+              <button id="googleChooserCustomSubmit" type="button" style="min-height: 36px; padding: 0 1rem; border: 0; background: #011d36; color: #fff; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Seç</button>
+            </div>
+          </div>
+        </div>
+        
+        <button id="googleChooserCancel" type="button" style="width: 100%; border: 1px solid #ccc; background: #fff; color: #333; font-weight: 600; font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer; margin-top: 0.25rem;" data-i18n="İptal">İptal</button>
+      </div>
+    </div>
+
+    <script src="web-runtime.js?v=20260531-google-auth-01"></script>
+    <script src="header-state.js?v=20260302-01"></script>
+    <script src="header-i18n.js?v=20260429-i18n-page-keys-01"></script>
+    <script src="header-nav.js?v=20260531-auth-refactor-01"></script>
+    <script src="header-shell.js?v=20260302-02"></script>
+    <script src="header-search-ui.js?v=20260303-04"></script>
+    <script src="header-search-data.js?v=20260530b"></script>
+    <script src="header-search.js?v=20260530b"></script>
+    <script src="profile.js?v=20260531-google-auth-01"></script>
+    <script src="account-settings.js?v=20260309-01"></script>
+  </body>
+</html>

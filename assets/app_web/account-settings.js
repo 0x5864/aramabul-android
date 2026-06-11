@@ -321,7 +321,8 @@
           throw new Error("Doğrulama e-postası sınırına ulaşıldı. Biraz sonra tekrar dene.");
         }
         if (response.status === 503) {
-          throw new Error("E-posta servisi şu an kullanılamıyor.");
+          const hint = String(payload?.hint || "").trim();
+          throw new Error(hint ? `E-posta servisi şu an kullanılamıyor. ${hint}` : "E-posta servisi şu an kullanılamıyor.");
         }
         throw new Error("Doğrulama e-postası gönderilemedi.");
       }

@@ -28,6 +28,7 @@
     items: [],
     pagination: null,
     selectedVenueSlug: "",
+    initialVenuePopupOpened: false,
     favoriteVenueIds: new Set(),
     discoveryShuffleFilterKey: "",
     discoveryRandomSeed: "",
@@ -900,7 +901,12 @@
 
   function buildDetailUrl(slug) {
     saveReturnUrl();
-    return `venue-detail.html?slug=${encodeURIComponent(slug)}`;
+    const targetUrl = new URL(window.location.pathname || "gezi-kesfet.html", window.location.href);
+    const cleanSlug = String(slug || "").trim();
+    if (cleanSlug) {
+      targetUrl.searchParams.set("venue", cleanSlug);
+    }
+    return `${targetUrl.pathname}${targetUrl.search}`;
   }
 
   function buildAbsoluteUrl(path) {
@@ -1309,6 +1315,39 @@
     syncVenueSlugToUrl(slug);
     renderVenueCards();
     renderMapPanel();
+  }
+
+  async function openInitialVenuePopupFromUrl(slug) {
+    const cleanSlug = String(slug || "").trim();
+    if (!cleanSlug || state.initialVenuePopupOpened || typeof window.openVenuePopup !== "function") {
+      return;
+    }
+
+    state.initialVenuePopupOpened = true;
+    let venue = state.items.find((item) => item.slug === cleanSlug) || null;
+    if (!venue) {
+      try {
+        const response = await fetch(`/api/mvp/istanbul/venues/${encodeURIComponent(cleanSlug)}`, {
+          headers: { Accept: "application/json" },
+        });
+        if (response.ok) {
+          const payload = await response.json();
+          venue = payload.venue || payload.item || payload;
+        }
+      } catch (error) {
+        console.warn("Derin link mekan popupu açılamadı:", error);
+      }
+    }
+
+    if (venue && typeof venue === "object") {
+      if (venue.slug) {
+        state.selectedVenueSlug = venue.slug;
+        syncVenueSlugToUrl(venue.slug);
+        renderVenueCards();
+        renderMapPanel();
+      }
+      window.openVenuePopup(venue);
+    }
   }
 
   function setLocationMessage(message, isError) {
@@ -2140,7 +2179,7 @@
       const detailLink = document.createElement("button");
       detailLink.type = "button";
       detailLink.className = "venue-popup-info-chip-btn";
-      detailLink.innerHTML = `<img src="assets/detail.png" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi`;
+      detailLink.innerHTML = `<img src="assets/detail.png?v=20260601b" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi`;
       detailLink.addEventListener("click", (e) => {
         e.stopPropagation();
         const mapsUrl = item.mapsUrl || item.maps_url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((item.name || "") + " " + (item.district || "") + " İstanbul")}`;
@@ -2574,7 +2613,8 @@
 
   async function main() {
     try {
-      state.selectedVenueSlug = readVenueSlugFromUrl();
+      const initialVenueSlug = readVenueSlugFromUrl();
+      state.selectedVenueSlug = initialVenueSlug;
       await loadFilters();
 
       // Anasayfa chip'lerinden gelen subcategoryId parametresini oku
@@ -2622,6 +2662,7 @@
       updateModeHeading();
       syncActiveFilterPills();
       await loadVenues();
+      await openInitialVenuePopupFromUrl(initialVenueSlug);
       requestDistanceHints();
     } catch (error) {
       setLoading(false, error instanceof Error ? error.message : "Sayfa başlatılamadı.");
