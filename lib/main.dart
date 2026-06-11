@@ -26,7 +26,8 @@ const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.0';
 
-const Color kAppBackgroundColor = Color(0xFF094174);
+const Color kAppBackgroundColor = Colors.white;
+const Color kAppProgressColor = Color(0xFFE30A17);
 
 const String _kNativeUsersKey = 'native_auth_users';
 
@@ -86,7 +87,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: kAppBackgroundColor,
-        statusBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
       ),
     );
     _controller = WebViewController()
@@ -432,6 +434,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     required String email,
     required String name,
     required String providerId,
+    required String idToken,
   }) async {
     final client = HttpClient();
     try {
@@ -446,6 +449,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           'email': email,
           'name': name,
           'providerId': providerId,
+          'idToken': idToken,
         }),
       );
       final response = await request.close();
@@ -473,7 +477,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     await prefs.setString('auth_user_name', name);
     await prefs.setString('auth_user_email', email);
 
-    final sessionLiteral = jsonEncode(jsonEncode({'name': name, 'email': email}));
+    final sessionLiteral = jsonEncode(
+      jsonEncode({'name': name, 'email': email}),
+    );
     await _controller.runJavaScript('''
       try { localStorage.setItem('aramabul.auth.session.v1', $sessionLiteral); } catch(e) {}
       try { document.dispatchEvent(new CustomEvent('aramabul:authchange')); } catch(e) {}
@@ -492,6 +498,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     try {
       await _initGoogleSignIn();
       final account = await GoogleSignIn.instance.authenticate();
+      final idToken = account.authentication.idToken ?? '';
+      if (idToken.isEmpty) {
+        throw const FormatException('Google kimlik belirteci alınamadı.');
+      }
 
       final name = account.displayName ?? '';
       final email = account.email;
@@ -501,6 +511,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         email: email,
         name: name,
         providerId: account.id,
+        idToken: idToken,
       );
       await _syncSocialSessionToWeb(
         name: session['name'] ?? name,
@@ -538,8 +549,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         ),
       );
       final providerId = credential.userIdentifier?.trim() ?? '';
+      final idToken = credential.identityToken?.trim() ?? '';
       if (providerId.isEmpty) {
         throw const FormatException('Apple kullanıcı kimliği alınamadı.');
+      }
+      if (idToken.isEmpty) {
+        throw const FormatException('Apple kimlik belirteci alınamadı.');
       }
 
       final prefs = await SharedPreferences.getInstance();
@@ -563,6 +578,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         email: email,
         name: name,
         providerId: providerId,
+        idToken: idToken,
       );
       final sessionName = session['name'] ?? name;
       final sessionEmail = session['email'] ?? email;
@@ -704,8 +720,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             if (showProgress)
               LinearProgressIndicator(
                 value: _progress / 100,
-                color: const Color(0xFF7bbce8),
-                backgroundColor: const Color(0xFF094174),
+                color: kAppProgressColor,
+                backgroundColor: const Color(0xFFF1F3F5),
               ),
             Expanded(
               child: Stack(
@@ -723,7 +739,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                       child: Container(
                         color: kAppBackgroundColor,
                         child: const Center(
-                          child: CircularProgressIndicator(color: Colors.white),
+                          child: CircularProgressIndicator(
+                            color: kAppProgressColor,
+                          ),
                         ),
                       ),
                     ),

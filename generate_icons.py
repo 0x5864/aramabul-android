@@ -78,13 +78,6 @@ for filename, size in ios_icons.items():
     out_img.save(os.path.join(ios_dir, filename), "PNG")
     print(f"  Saved AppIcon.appiconset/{filename} ({size}x{size})")
 
-# Generate logoNew.png in assets/
-print("Generating logoNew.png...")
-assets_logo_path = "/Users/metintuncgenc/Documents/aramabul-android/assets/logoNew.png"
-logo_new = img.resize((512, 512), Image.Resampling.LANCZOS)
-logo_new.save(assets_logo_path, "PNG")
-print(f"  Saved assets/logoNew.png (512x512)")
-
 # Generate ic_launcher-playstore.png in android/app/src/main/
 print("Generating ic_launcher-playstore.png...")
 playstore_logo_path = "/Users/metintuncgenc/Documents/aramabul-android/android/app/src/main/ic_launcher-playstore.png"
