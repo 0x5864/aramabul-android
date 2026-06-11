@@ -16,8 +16,8 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260611-bottom-nav-v2" />
-    <link rel="stylesheet" href="profile.css?v=20260307-48" />
+    <link rel="stylesheet" href="styles.css?v=20260611-subcategory-scroll-v1" />
+    <link rel="stylesheet" href="profile.css?v=20260611-clamp-v2" />
     <!-- Google tag (gtag.js) -->
         <!-- Google Consent Mode v2 -->
     <script>
@@ -55,29 +55,41 @@
   <body class="profile-page settings-page about-page">
     <div class="texture"></div>
 
-    <header class="global-header-band" role="banner">
+    <header class="global-header-band">
       <nav class="topbar global-topbar">
+        <button class="header-hamburger-btn" id="drawerTrigger" aria-label="Menü" type="button">☰</button>
         <a class="brand" href="index.html" aria-label="aramabul">
-          <img class="brand-logo" src="assets/logo.png?v=20260525a" alt="aramabul logo" />
           <span class="brand-wordmark"><span class="brand-wordmark-rest">arama</span><span class="brand-wordmark-search">bul</span></span>
         </a>
-      </nav>
-      <div class="global-topline">
-        <div class="global-topline-inner">
-          <a href="index.html">Anasayfa</a>
-          <span>/</span>
-          <a href="profile.html?action=profile">Ayarlar</a>
-          <span>/</span>
-          <span>Hakkında</span>
-        </div>
-      </div>
-    </header>
-
-    <form class="header-search profile-hidden-search" action="search.html" method="get" role="search" aria-label="Genel arama">
+        <form class="header-search topbar-search-form" action="search.html" method="get" role="search" aria-label="Genel arama">
       <label class="visually-hidden" for="headerSearchInput">Arama ifadesi</label>
-      <input id="headerSearchInput" class="header-search-input" type="search" name="mekan" placeholder="Ne bulmamı istersin?" />
+      <input id="headerSearchInput" class="header-search-input" type="search" name="mekan" placeholder="Ne bulmamı istersiniz?" />
       <button class="header-search-btn" type="submit">Bul</button>
     </form>
+      </nav>
+      <div class="global-topline"></div>
+    </header>
+<!-- Navigation Drawer -->
+    <div class="nav-drawer" id="navDrawer">
+      <div class="drawer-header">
+        <span class="drawer-title">arama<span style="color: #e34b32 !important;">bul</span></span>
+        <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="Kapat" type="button">×</button>
+      </div>
+      <nav class="drawer-content">
+        <div class="drawer-nav-section">
+          <span class="drawer-section-title">Keşfet</span>
+          <a class="drawer-link" href="index.html"><span class="drawer-link-icon">⌂</span> Anasayfa</a>
+          <a class="drawer-link" href="favorites.html"><span class="drawer-link-icon">♡</span> Favoriler</a>
+          <a class="drawer-link" href="profile.html?action=profile"><span class="drawer-link-icon">◎</span> Hesap</a>
+          <a class="drawer-link" href="isbirligi.html"><span class="drawer-link-icon">↗</span> İşbirliği</a>
+          <a class="drawer-link" href="lezzet-duraklari.html"><span class="drawer-link-icon">★</span> Lezzet Durakları</a>
+        </div>
+
+        </nav>
+    </div>
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+    
 
     <main class="settings-shell">
       <section class="settings-card settings-panel-card" aria-label="Hakkında">
@@ -109,13 +121,13 @@
       </section>
     </main>
 
-    <script src="web-runtime.js?v=20260530a"></script>
+    <script src="web-runtime.js?v=20260611-subcategory-12col-v6"></script>
     <script src="header-state.js?v=20260302-01"></script>
-    <script src="header-i18n.js?v=20260429-i18n-page-keys-01"></script>
+    <script src="header-i18n.js?v=20260610-i18n-footer-01"></script>
     <script src="header-nav.js?v=20260611-bottom-nav-v2"></script>
     <script src="header-shell.js?v=20260302-02"></script>
-    <script src="header-search-ui.js?v=20260303-04"></script>
+    <script src="header-search-ui.js?v=20260606-search-header-01"></script>
     <script src="header-search-data.js?v=20260530b"></script>
-    <script src="header-search.js?v=20260530b"></script>
+    <script src="header-search.js?v=20260611-subcategory-12col-v6"></script>
   </body>
 </html>

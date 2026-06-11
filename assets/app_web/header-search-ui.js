@@ -14,18 +14,18 @@
     ZH: { idle: "查找", loading: "查找中..." },
   };
   const SEARCH_PLACEHOLDER_TEXT = {
-    TR: "Ne bulmamı istersin?",
-    EN: "What should I find?",
-    RU: "Что мне найти?",
-    DE: "Was soll ich finden?",
-    ZH: "你想让我找什么？",
+    TR: "Ne bulmamı istersiniz?",
+    EN: "Search",
+    RU: "Поиск",
+    DE: "Suchen",
+    ZH: "搜索",
   };
   const SEARCH_PAGE_PLACEHOLDER_TEXT = {
-    TR: "Ne bulmamı istersin?",
-    EN: "What should I find?",
-    RU: "Что мне найти?",
-    DE: "Was soll ich finden?",
-    ZH: "你想让我找什么？",
+    TR: "Ne bulmamı istersiniz?",
+    EN: "Search",
+    RU: "Поиск",
+    DE: "Suchen",
+    ZH: "搜索",
   };
   const SEARCH_FORM_ARIA_TEXT = {
     TR: "Genel arama",

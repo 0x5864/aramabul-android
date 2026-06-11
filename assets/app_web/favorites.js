@@ -1,175 +1,133 @@
 "use strict";
 
-(function initFavoritesPage() {
-  const grid = document.getElementById("favoritesGrid");
-  if (!grid) {
-    return;
-  }
+(function () {
+  const favoritesGrid = document.getElementById("favoritesGrid");
+  if (!favoritesGrid) return;
 
-  const titleNode = document.getElementById("favoritesTitle");
-  const metaNode = document.getElementById("favoritesMeta");
-  const stateNode = document.getElementById("favoritesState");
-  const template = document.getElementById("favoriteVenueCardTemplate");
+  const favoritesTitle = document.getElementById("favoritesTitle");
+  const favoritesMeta = document.getElementById("favoritesMeta");
+  const favoritesState = document.getElementById("favoritesState");
+  const favoriteVenueCardTemplate = document.getElementById("favoriteVenueCardTemplate");
 
-  function buildDetailUrl(slug) {
-    return `venue-detail.html?slug=${encodeURIComponent(slug)}`;
-  }
-
-  function formatCount(count) {
-    return new Intl.NumberFormat("tr-TR").format(Number(count || 0));
-  }
-
-  function formatDistance(distanceMeters) {
-    if (!Number.isFinite(distanceMeters)) {
-      return "";
-    }
-    if (distanceMeters < 1000) {
-      return `${Math.round(distanceMeters)} m`;
-    }
-    return `${(distanceMeters / 1000).toFixed(1).replace(".", ",")} km`;
-  }
-
-  function formatVenueRatingText(ratingValue, reviewCount) {
-    const rating = Number(ratingValue);
-    if (!Number.isFinite(rating) || rating <= 0) {
-      return "Puan yok";
-    }
-    const roundedStars = Math.max(1, Math.min(5, Math.round(rating)));
-    const stars = "★".repeat(roundedStars);
-    const formattedRating = rating.toFixed(1).replace(".", ",");
-    const count = Number(reviewCount);
-    if (Number.isFinite(count) && count > 0) {
-      return `${stars} ${formattedRating} Google Puanı (${new Intl.NumberFormat("tr-TR").format(count)} yorum)`;
-    }
-    return `${stars} ${formattedRating} Google Puanı`;
-  }
-
-  function formatBudgetLabel(value) {
-    const normalized = String(value || "").trim().toLocaleLowerCase("tr-TR");
-    if (!normalized) {
-      return "";
-    }
-    if (normalized === "budget" || normalized === "₺" || normalized === "₺₺") {
-      return "Uygun";
-    }
-    if (normalized === "mid" || normalized === "₺₺₺") {
-      return "Makul";
-    }
-    if (normalized === "high" || normalized === "₺₺₺₺") {
-      return "Yüksek";
-    }
-    return String(value);
-  }
-
-  async function removeFavorite(venueId) {
-    const response = await fetch(`/api/mvp/favorites/${encodeURIComponent(venueId)}`, {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-      },
+  async function loadFavorites() {
+    favoritesState.hidden = false;
+    favoritesState.textContent = "Favoriler getiriliyor.";
+    
+    const response = await fetch("/api/mvp/favorites", {
+      headers: { Accept: "application/json" }
     });
-
     if (!response.ok) {
-      throw new Error("Favori kaldırılamadı.");
+      throw new Error("Favoriler yüklenemedi.");
     }
+    const data = await response.json();
+    renderFavorites(Array.isArray(data.items) ? data.items : []);
   }
 
-  function renderItems(items) {
-    grid.innerHTML = "";
-
+  function renderFavorites(items) {
+    favoritesGrid.innerHTML = "";
     if (!items.length) {
-      grid.hidden = true;
-      stateNode.hidden = false;
-      stateNode.textContent = "Henüz kayıtlı mekanın yok.";
-      titleNode.textContent = "Favori mekanların burada görünecek";
-      metaNode.textContent = "Yeme-İçme ekranından mekan kaydetmeye başlayabilirsin.";
+      favoritesGrid.hidden = true;
+      favoritesState.hidden = false;
+      favoritesState.textContent = "Henüz kayıtlı mekanın yok.";
+      favoritesTitle.textContent = "Favori mekanların burada görünecek";
+      favoritesMeta.textContent = "Yeme-İçme ekranından mekan kaydetmeye başlayabilirsin.";
       return;
     }
 
-    grid.hidden = false;
-    stateNode.hidden = true;
-    titleNode.textContent = "Favorilerim";
-    metaNode.textContent = `${formatCount(items.length)} mekan kayıtlı`;
+    favoritesGrid.hidden = false;
+    favoritesState.hidden = true;
+    favoritesTitle.textContent = "Favorilerim";
+    favoritesMeta.textContent = `${new Intl.NumberFormat("tr-TR").format(items.length)} mekan kayıtlı`;
 
-    items.forEach((item) => {
-      const fragment = template.content.cloneNode(true);
-      const eyebrow = fragment.querySelector(".istanbul-venue-eyebrow");
-      const titleLink = fragment.querySelector(".istanbul-venue-title-link");
-      const address = fragment.querySelector(".istanbul-venue-address");
-      const rating = fragment.querySelector(".istanbul-venue-rating");
-      const budget = fragment.querySelector(".istanbul-venue-budget");
-      const tags = fragment.querySelector(".istanbul-venue-tags");
-      const favoriteButton = fragment.querySelector(".istanbul-favorite-button");
-      const mapLink = fragment.querySelector(".istanbul-venue-map-link");
+    items.forEach(venue => {
+      const clone = favoriteVenueCardTemplate.content.cloneNode(true);
+      const eyebrow = clone.querySelector(".istanbul-venue-eyebrow");
+      const titleLink = clone.querySelector(".istanbul-venue-title-link");
+      const address = clone.querySelector(".istanbul-venue-address");
+      const rating = clone.querySelector(".istanbul-venue-rating");
+      const budget = clone.querySelector(".istanbul-venue-budget");
+      const tagsContainer = clone.querySelector(".istanbul-venue-tags");
+      const favoriteButton = clone.querySelector(".istanbul-favorite-button");
+      const mapLink = clone.querySelector(".istanbul-venue-map-link");
 
-      const distanceText = formatDistance(Number(item.distanceMeters));
-      eyebrow.textContent = [item.district, item.neighborhood, distanceText].filter(Boolean).join(" / ");
-      titleLink.textContent = item.name || "İsimsiz mekan";
-      titleLink.href = "#";
-      titleLink.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (typeof window.openVenuePopup === "function") {
-          window.openVenuePopup(item);
-        }
-      });
-      address.textContent = item.address || "Adres bilgisi bulunmuyor.";
+      const distVal = Number(venue.distanceMeters);
+      const distText = Number.isFinite(distVal)
+        ? (distVal < 1000 ? `${Math.round(distVal)} m` : `${(distVal / 1000).toFixed(1).replace(".", ",")} km`)
+        : "";
+
+      eyebrow.textContent = [venue.district, venue.neighborhood, distText].filter(Boolean).join(" / ");
+      
+      titleLink.textContent = venue.name || "İsimsiz mekan";
+      const targetUrl = `${venue.domainKey || "yeme-icme"}.html?venue=${venue.slug}`;
+      titleLink.href = targetUrl;
+
+      const cardElement = clone.querySelector(".istanbul-venue-card");
+      if (cardElement) {
+        cardElement.addEventListener("click", e => {
+          if (!e.target.closest("a, button")) {
+            window.location.href = targetUrl;
+          }
+        });
+      }
+
+      address.textContent = venue.address || "Adres bilgisi bulunmuyor.";
       rating.textContent = "";
       rating.hidden = true;
-      budget.textContent = formatBudgetLabel(item.budget) || "Bütçe yok";
 
-      if (item.mapsUrl) {
-        mapLink.href = item.mapsUrl;
+      budget.textContent = (function (b) {
+        const cleaned = String(b || "").trim().toLowerCase();
+        if (!cleaned) return "";
+        if (cleaned === "budget" || cleaned === "₺" || cleaned === "₺₺") return "Uygun";
+        if (cleaned === "mid" || cleaned === "₺₺₺") return "Makul";
+        if (cleaned === "high" || cleaned === "₺₺₺₺") return "Yüksek";
+        return String(b);
+      })(venue.budget) || "Bütçe yok";
+
+      if (venue.mapsUrl) {
+        mapLink.href = venue.mapsUrl;
       } else {
         mapLink.hidden = true;
       }
 
-      if (Array.isArray(item.tags) && item.tags.length) {
-        item.tags.forEach((tagValue) => {
-          const badge = document.createElement("span");
-          badge.className = "istanbul-venue-tag";
-          badge.textContent = tagValue;
-          tags.appendChild(badge);
+      if (Array.isArray(venue.tags) && venue.tags.length) {
+        venue.tags.forEach(tag => {
+          const span = document.createElement("span");
+          span.className = "istanbul-venue-tag";
+          span.textContent = tag;
+          tagsContainer.appendChild(span);
         });
       }
 
       favoriteButton.addEventListener("click", async () => {
         try {
           favoriteButton.disabled = true;
-          await removeFavorite(item.id);
+          await deleteFavorite(venue.id);
           await loadFavorites();
-        } catch (error) {
-          stateNode.hidden = false;
-          stateNode.textContent = error instanceof Error ? error.message : "Favori kaldırılamadı.";
+        } catch (err) {
+          favoritesState.hidden = false;
+          favoritesState.textContent = err instanceof Error ? err.message : "Favori kaldırılamadı.";
         } finally {
           favoriteButton.disabled = false;
         }
       });
 
-      grid.appendChild(fragment);
+      favoritesGrid.appendChild(clone);
     });
   }
 
-  async function loadFavorites() {
-    stateNode.hidden = false;
-    stateNode.textContent = "Favoriler getiriliyor.";
-
-    const response = await fetch("/api/mvp/favorites", {
-      headers: {
-        Accept: "application/json",
-      },
+  async function deleteFavorite(venueId) {
+    const res = await fetch(`/api/mvp/favorites/${encodeURIComponent(venueId)}`, {
+      method: "DELETE",
+      headers: { Accept: "application/json" }
     });
-
-    if (!response.ok) {
-      throw new Error("Favoriler yüklenemedi.");
+    if (!res.ok) {
+      throw new Error("Favori kaldırılamadı.");
     }
-
-    const payload = await response.json();
-    renderItems(Array.isArray(payload.items) ? payload.items : []);
   }
 
-  loadFavorites().catch((error) => {
-    stateNode.hidden = false;
-    stateNode.textContent = error instanceof Error ? error.message : "Favoriler yüklenemedi.";
-    grid.hidden = true;
+  loadFavorites().catch(err => {
+    favoritesState.hidden = false;
+    favoritesState.textContent = err instanceof Error ? err.message : "Favoriler yüklenemedi.";
+    favoritesGrid.hidden = true;
   });
 })();
