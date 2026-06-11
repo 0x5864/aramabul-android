@@ -1,51 +1,41 @@
 # AramaBul Android
 
-Flutter WebView shell for [AramaBul](https://aramabul.com) – Turkey venue discovery.
+AramaBul is an Istanbul-first venue discovery app.
 
-## Package Info
+## Architecture
 
-| Key | Value |
-|-----|-------|
-| Package ID | `com.aramabul.app` |
-| Min SDK | Flutter default |
-| Entry point | `assets/app_web/index.html` |
+The app uses the deployed web product at `https://aramabul.com` as its only
+interface source. Flutter provides the native Android shell:
 
-## Working Model
+- Google and Apple sign-in bridges
+- native sharing
+- external map handling
+- nearby location permission
+- connectivity monitoring
+- a native offline state
 
-The source of truth is the web repo (`aramabul`).
-This Android repo receives stable web snapshots.
-It should not mirror every web change right away.
+The repository does not keep a copied web snapshot. Web design and venue
+behavior must be changed in the main AramaBul web repository and deployed
+before they appear in the app.
 
-## Run The App
+## Run
 
-```bash
-cd /Users/metintuncgenc/Documents/aramabul-android
+"""
+flutter pub get
 flutter run
-```
+"""
 
-## Run With A Different Start URL
+## Verify
 
-```bash
-flutter run --dart-define=APP_START_URL=https://example.com
-```
+"""
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze
+flutter test
+flutter build apk --debug
+"""
 
-## Refresh The Bundled Web Snapshot
+## Release
 
-Sync stable web changes into `assets/app_web/`:
-
-```bash
-./scripts/sync_web_assets.sh
-```
-
-If the source web repo is in a custom location:
-
-```bash
-WEB_REPO_ROOT=/path/to/aramabul ./scripts/sync_web_assets.sh
-```
-
-## Notes
-
-- Internet access is enabled in the app.
-- Android back button navigates WebView history before exiting.
-- Local HTTP testing can still be used when needed.
-- Sync the Android snapshot only after the web change is tested.
+Update the version in `pubspec.yaml`, verify the deployed website, then build
+the Android App Bundle. The `kAppVersion` value in `lib/main.dart` must match
+the pubspec version name.

@@ -162,13 +162,13 @@
 
           <section class="home-top-category-row" aria-label="Arama kategorileri">
             <a
-              class="top-city-card category-home-card"
+              class="top-city-card category-home-card active is-expanded"
               href="yeme-icme.html"
               data-category="yeme-icme"
               data-home-subcategory-trigger="yeme-icme"
               aria-label="Yeme-İçme alt kategorilerini aç"
               aria-controls="homeYemeIcmeSubcategories"
-              aria-expanded="false"
+              aria-expanded="true"
             >
               <span class="top-city-thumb" style="background-image: url('assets/yemek.webp')" aria-hidden="true"></span>
               <span class="top-city-content">
@@ -257,7 +257,6 @@
             id="homeYemeIcmeSubcategories"
             data-home-subcategory-panel="yeme-icme"
             aria-label="Yeme-İçme alt kategorileri"
-            hidden
           >
             <div class="home-subcategory-panel-head">
               <div>
@@ -377,7 +376,7 @@
             <div id="homeResultsState" class="istanbul-results-state" style="text-align: center; padding: 2rem; color: var(--home-muted);" hidden>Mekanlar yükleniyor...</div>
           </section>
 
-          <section class="home-food-explore" aria-label="Popüler yeme içme seçenekleri">
+          <section class="home-food-explore" aria-label="Popüler yeme içme seçenekleri" hidden>
             <div class="home-section-title-row">
               <h2>Yeme-içme seçenekleri</h2>
             </div>

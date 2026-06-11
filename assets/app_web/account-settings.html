@@ -18,6 +18,7 @@
     />
     <link rel="stylesheet" href="styles.css?v=20260611-subcategory-scroll-v1" />
     <link rel="stylesheet" href="profile.css?v=20260611-clamp-v2" />
+    <link rel="stylesheet" href="social-auth.css?v=20260611-01" />
     <!-- Google tag (gtag.js) -->
         <!-- Google Consent Mode v2 -->
     <script>
@@ -100,8 +101,8 @@
         </div>
 
         <!-- Google ile Giriş Yap Butonu -->
-        <div class="google-signin-container" style="margin-bottom: 1.25rem;">
-          <button id="accountGoogleSignInBtn" type="button" style="width: 100%; min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: #fff; border: 1px solid #dadce0; border-radius: 8px; color: #3c4043; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; padding: 0.5rem 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: all 0.2s ease;">
+        <div class="social-signin-stack">
+          <button id="accountGoogleSignInBtn" type="button" class="social-auth-button social-auth-button-google" data-native-social-provider="google">
             <svg viewBox="0 0 24 24" width="20" height="20" style="display: block;">
               <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.68 1.54 14.98 1 12 1 7.35 1 3.37 3.65 1.4 7.56l3.82 2.96c.9-2.7 3.41-4.48 6.78-4.48z"></path>
               <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.51h6.43c-.28 1.44-1.09 2.67-2.32 3.49l3.6 2.79c2.1-1.93 3.31-4.77 3.31-8.43z"></path>
@@ -109,6 +110,12 @@
               <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.6-2.79c-1.01.68-2.3 1.09-3.96 1.09-3.37 0-5.88-1.78-6.78-4.48l-3.82 3.06C3.37 20.35 7.35 23 12 23z"></path>
             </svg>
             <span>Google ile Giriş Yap</span>
+          </button>
+          <button id="accountAppleSignInBtn" type="button" class="social-auth-button social-auth-button-apple" data-native-social-provider="apple" hidden>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <path fill="currentColor" d="M17.1 12.5c0-2.5 2.1-3.7 2.2-3.8-1.2-1.7-3-1.9-3.7-1.9-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.8 1.3 10.3.9 1.3 1.9 2.7 3.3 2.6 1.3-.1 1.8-.8 3.4-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.2-2.6 1-1.5 1.4-2.9 1.5-3-.1 0-3.2-1.2-3.2-4.1ZM14.6 5.2c.7-.9 1.2-2.1 1.1-3.2-1.1 0-2.4.7-3.2 1.6-.7.8-1.3 2-1.1 3.1 1.2.1 2.4-.6 3.2-1.5Z"></path>
+            </svg>
+            <span>Apple ile Giriş Yap</span>
           </button>
         </div>
 
@@ -234,6 +241,7 @@
   <script src="header-search-ui.js?v=20260606-search-header-01"></script>
   <script src="header-search-data.js?v=20260530b"></script>
     <script src="header-search.js?v=20260611-subcategory-12col-v6"></script>
+    <script src="social-auth-bridge.js?v=20260611-01"></script>
     <script src="account-settings.js?v=20260309-01"></script>
   </body>
 </html>

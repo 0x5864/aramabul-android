@@ -1,0 +1,62 @@
+.social-signin-stack {
+  display: grid;
+  gap: 0.55rem;
+  margin-bottom: 1.25rem;
+}
+
+.social-auth-button {
+  width: 100%;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border-radius: 4px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  box-shadow: none;
+  transition:
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    opacity 0.16s ease;
+}
+
+.social-auth-button svg {
+  display: block;
+  flex: 0 0 auto;
+}
+
+.social-auth-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.social-auth-button-google {
+  background: #fff;
+  border: 1px solid #d7dce1;
+  color: #263238;
+}
+
+.social-auth-button-google:hover {
+  background: #f7f9fb;
+  border-color: #bcc5cd;
+}
+
+.social-auth-button-apple {
+  background: #050505;
+  border: 1px solid #050505;
+  color: #fff;
+}
+
+.social-auth-button-apple:hover {
+  background: #202020;
+  border-color: #202020;
+}
+
+.social-auth-button:focus-visible {
+  outline: 2px solid rgba(30, 167, 255, 0.72);
+  outline-offset: 2px;
+}
