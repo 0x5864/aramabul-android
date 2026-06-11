@@ -86,3 +86,27 @@ input,select,textarea{border-radius:8px!important}
 .mobile-bottom-nav-btn.active .mobile-bottom-nav-icon-img {
   filter: brightness(0) saturate(100%) invert(0%) sepia(100%) saturate(7500%) hue-rotate(180deg) brightness(0%) contrast(100%) !important; /* Black color #000000 */
 }
+
+@media (max-width: 620px) {
+  .category-card-grid {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 0.65rem !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 1.2rem !important;
+    scroll-snap-type: x mandatory !important;
+    scrollbar-width: none !important;
+  }
+  .category-card-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+  .category-card {
+    flex: 0 0 135px !important;
+    width: 135px !important;
+    min-height: 128px !important;
+    background-size: 80px !important;
+    scroll-snap-align: start !important;
+  }
+}
