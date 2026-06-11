@@ -3782,6 +3782,28 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
   Future<void> _goNativeNav(int index) async {
     if (index == _nativeNavIndex) {
+      if (index == 3) {
+        try {
+          await _controller.runJavaScript('''
+            (function() {
+              var path = window.location.pathname || '';
+              if (path.indexOf('profile.html') !== -1) {
+                var sidebar = document.querySelector('.settings-sidebar-card');
+                var panelStack = document.querySelector('.settings-panel-stack');
+                if (sidebar && panelStack) {
+                  sidebar.style.removeProperty('display');
+                  panelStack.style.removeProperty('display');
+                  return;
+                }
+              }
+              window.location.href = 'profile.html?action=profile';
+            })();
+          ''');
+        } catch (e) {
+          debugPrint('[NavHesapReset] Error: $e');
+        }
+        return;
+      }
       final url = await _controller.currentUrl();
       final currentIndex = _nativeNavIndexForUrl(url);
       if (currentIndex == index) return;
