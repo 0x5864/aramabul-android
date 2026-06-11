@@ -16,7 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260529h" />
+    <link rel="stylesheet" href="styles.css?v=20260611-bottom-nav-v1" />
     <style>
       .admin-users-card {
         background: var(--paper);
@@ -352,7 +352,6 @@
         }
       }
 
-      loadPageStats();
       const stateEl = document.getElementById("adminUsersState");
       const tableWrap = document.getElementById("adminUsersTableWrap");
       const tbody = document.getElementById("adminUsersList");
@@ -444,13 +443,33 @@
         }
       }
 
+      async function init() {
+        if (!window.AramaBulAdminAuth) {
+          stateEl.textContent = "Admin oturumu kontrol edilemedi.";
+          return;
+        }
+
+        try {
+          const session = await window.AramaBulAdminAuth.ensureSession();
+          window.AramaBulAdminAuth.bindSessionUi(session);
+          await loadPageStats();
+          await loadUsers();
+        } catch (err) {
+          stateEl.textContent = err.message || "Admin oturumu gerekli.";
+          stateEl.hidden = false;
+          tableWrap.hidden = true;
+        }
+      }
+
       refreshBtn.addEventListener("click", loadUsers);
 
       // Auto-load on page ready
       if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", () => setTimeout(loadUsers, 300));
+        document.addEventListener("DOMContentLoaded", () => {
+          void init();
+        });
       } else {
-        setTimeout(loadUsers, 300);
+        void init();
       }
     })();
     </script>
