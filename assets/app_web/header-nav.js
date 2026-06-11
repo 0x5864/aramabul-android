@@ -462,6 +462,14 @@
           <p id="globalSignupLegalNote" class="auth-signup-legal-note">${copy.signupLegalNote}</p>
         </form>
         <p id="globalAuthMessage" class="auth-message" aria-live="polite"></p>
+        <div class="auth-modal-ad-wrapper" style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed rgba(0,0,0,0.08); width: 100%; min-height: 100px; overflow: hidden;">
+          <ins class="adsbygoogle"
+               style="display:block;margin:0 auto;"
+               data-ad-client="ca-pub-3016888060216617"
+               data-ad-slot="5198808205"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+        </div>
       </div>
     `;
     document.body.appendChild(modal);
@@ -728,6 +736,17 @@
       modal.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
       window.requestAnimationFrame(focusCurrentField);
+
+      // Load AdSense ad inside modal once it becomes visible
+      const adIns = modal.querySelector(".adsbygoogle");
+      if (adIns && adIns.getAttribute("data-ad-status") !== "filled" && !adIns.hasAttribute("data-ad-initialized")) {
+        adIns.setAttribute("data-ad-initialized", "true");
+        try {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (e) {
+          console.error("AdSense in modal error:", e);
+        }
+      }
     }
 
     async function handleLoginSubmit(event) {
@@ -848,14 +867,6 @@
       forgotPasswordButton.disabled = true;
       setMessage(copy.forgotPasswordSending, false);
 
-      const activateLocalResetFallback = (messageText) => {
-        if (resetEmail instanceof HTMLInputElement) {
-          resetEmail.value = email;
-        }
-        setMode("reset");
-        setMessage(messageText, false);
-      };
-
       try {
         const response = await fetch("/api/auth/password-change/request", {
           method: "POST",
@@ -873,14 +884,10 @@
             return;
           }
           if (response.status === 503) {
-            activateLocalResetFallback(
-              `${copy.forgotPasswordServiceUnavailable} E-posta beklemeden şifreni şimdi yenileyebilirsin.`,
-            );
+            setMessage(copy.forgotPasswordServiceUnavailable, true);
             return;
           }
-          activateLocalResetFallback(
-            `${copy.forgotPasswordFailed} E-posta beklemeden şifreni şimdi yenileyebilirsin.`,
-          );
+          setMessage(copy.forgotPasswordFailed, true);
           return;
         }
 
@@ -932,9 +939,7 @@
           false,
         );
       } catch (_error) {
-        activateLocalResetFallback(
-          `${copy.forgotPasswordFailed} E-posta beklemeden şifreni şimdi yenileyebilirsin.`,
-        );
+        setMessage(copy.forgotPasswordFailed, true);
       } finally {
         forgotPasswordButton.disabled = false;
       }
@@ -1128,7 +1133,7 @@
             aria-label="Dil seç"
             title="Dil seç"
           >
-            <img class="lang-switch-code" data-lang-current src="assets/dil.png?v=20260504" alt="TR" style="width: 23px; height: 23px;">
+            <img class="lang-switch-code" data-lang-current src="assets/dil.png?v=20260603a" alt="TR" style="width: 23px; height: 23px;">
           </button>
           <div class="lang-switch-menu" data-lang-menu hidden>
             <button class="lang-switch-option active" data-lang-option="TR" type="button" aria-pressed="true">TR</button>
@@ -1144,7 +1149,7 @@
           aria-label="${labels.favorites}"
           title="${labels.favorites}"
         >
-          <img class="desktop-favorites-icon" src="assets/fav.png?v=20260504" alt="" width="19" height="19" />
+          <img class="desktop-favorites-icon" src="assets/fav.png?v=20260603a" alt="" width="19" height="19" />
           <span class="visually-hidden desktop-favorites-link-text">${labels.favorites}</span>
         </a>
         <a
@@ -1155,7 +1160,7 @@
           title="${labels.settings || labels.profile || labels.signin}"
         >
           <span class="desktop-auth-link-icon-wrap" aria-hidden="true">
-            <img class="desktop-auth-link-image" src="assets/ayar1.png?v=20260226-2" alt="" />
+            <img class="desktop-auth-link-image" src="assets/ayar.png?v=20260603a" alt="" />
           </span>
           <span class="visually-hidden desktop-auth-link-text">${labels.settings || labels.profile || labels.signin}</span>
         </a>
@@ -1239,14 +1244,6 @@
             </svg>
           </span>
         </button>
-        <button class="mobile-bottom-nav-btn" data-mobile-nav="favorites" type="button" aria-label="${labels.favorites}" title="${labels.favorites}">
-          <span class="mobile-bottom-nav-chip" aria-hidden="true">
-            <img class="mobile-bottom-nav-icon-img" src="assets/fav.svg" alt="" />
-            <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="m12 20.2-6.3-3.3 1.2-7L12 4.8l5.1 5.1 1.2 7z"></path>
-            </svg>
-          </span>
-        </button>
         <button class="mobile-bottom-nav-btn" data-mobile-nav="search" type="button" aria-label="${labels.search}" title="${labels.search}">
           <span class="mobile-bottom-nav-chip icon-load-failed" aria-hidden="true">
             <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -1255,19 +1252,20 @@
             </svg>
           </span>
         </button>
+        <button class="mobile-bottom-nav-btn" data-mobile-nav="favorites" type="button" aria-label="${labels.favorites}" title="${labels.favorites}">
+          <span class="mobile-bottom-nav-chip" aria-hidden="true">
+            <img class="mobile-bottom-nav-icon-img" src="assets/fav.svg" alt="" />
+            <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m12 20.2-6.3-3.3 1.2-7L12 4.8l5.1 5.1 1.2 7z"></path>
+            </svg>
+          </span>
+        </button>
         <button class="mobile-bottom-nav-btn" data-mobile-nav="profile" type="button" aria-label="${labels.profile}" title="${labels.profile}">
           <span class="mobile-bottom-nav-chip" aria-hidden="true">
-            <img class="mobile-bottom-nav-icon-img" src="assets/ayar.svg" alt="" />
+            <img class="mobile-bottom-nav-icon-img" src="assets/hesap.svg" alt="" />
             <svg class="mobile-bottom-nav-icon-svg mobile-bottom-nav-icon-svg-fallback" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M12 3.8v2.2"></path>
-              <path d="M12 18v2.2"></path>
-              <path d="m5.6 5.6 1.5 1.5"></path>
-              <path d="m16.9 16.9 1.5 1.5"></path>
-              <path d="M3.8 12H6"></path>
-              <path d="M18 12h2.2"></path>
-              <path d="m5.6 18.4 1.5-1.5"></path>
-              <path d="m16.9 7.1 1.5-1.5"></path>
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             </svg>
           </span>
         </button>
