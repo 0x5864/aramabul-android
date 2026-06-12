@@ -169,7 +169,7 @@
 
       <!-- ========== ACCOUNT FORM (shown when logged in) ========== -->
       <section id="accountLoggedInSection" style="display:none;">
-        <section class="settings-card account-info-card">
+        <section class="settings-card account-info-card" data-email-change-secondary>
           <div class="settings-account-head">
             <div class="settings-avatar" id="accountAvatar" aria-hidden="true">M</div>
             <div>
@@ -184,7 +184,7 @@
             <p>Adını ve e-postanı burada güncelleyebilirsin.</p>
           </div>
           <form id="accountSettingsForm" class="settings-signup-form" novalidate>
-            <label class="settings-signup-field">
+            <label class="settings-signup-field" data-email-change-secondary>
               <span>Ad Soyad</span>
               <input id="accountNameInput" type="text" name="name" autocomplete="name" required />
             </label>
@@ -244,5 +244,6 @@
     <script src="header-search.js?v=20260611-subcategory-12col-v6"></script>
     <script src="social-auth-bridge.js?v=20260611-01"></script>
     <script src="account-settings.js?v=20260309-01"></script>
+    <script src="email-change-settings.js?v=20260612-01"></script>
   </body>
 </html>

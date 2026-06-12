@@ -5,7 +5,7 @@
 @media (max-width: 699px) {
   body.profile-page.settings-page {
     min-height: 100dvh;
-    background: #f4f4f4 !important;
+    background: #ffffff !important;
   }
 
   body.profile-page.settings-page .global-header-band,
@@ -39,28 +39,29 @@
   body.profile-page.settings-page .settings-shell {
     min-height: calc(100dvh - 72px);
     padding: 0 0 calc(88px + env(safe-area-inset-bottom, 0));
-    background: #f4f4f4;
+    background: #ffffff !important;
   }
 
   body.profile-page.settings-page .settings-layout {
     display: block;
     width: 100%;
+    background: #ffffff !important;
   }
 
   body.profile-page.settings-page .settings-sidebar-card {
     width: 100%;
     padding: 0 !important;
-    border: 0;
+    border: 1px solid #ffffff !important;
     border-radius: 0 !important;
-    background: #fff;
-    box-shadow: none;
+    background: #ffffff !important;
+    box-shadow: none !important;
   }
 
   body.profile-page.settings-page .settings-sidebar-card .settings-row {
-    width: auto !important;
-    min-height: 68px;
-    margin: 0 20px !important;
-    padding: 0;
+    width: 100% !important;
+    min-height: 52px;
+    margin: 0 !important;
+    padding: 0 20px !important;
     gap: 12px;
     border: 0 !important;
     border-bottom: 1px solid #e7e7e7 !important;
@@ -68,10 +69,7 @@
     background: #fff !important;
     box-shadow: none !important;
     color: #111;
-  }
-
-  body.profile-page.settings-page .settings-sidebar-card .settings-row:last-of-type {
-    border-bottom: 0 !important;
+    box-sizing: border-box;
   }
 
   body.profile-page.settings-page .settings-sidebar-card .settings-row-icon {
@@ -80,7 +78,7 @@
 
   body.profile-page.settings-page .settings-sidebar-card .settings-row-label {
     min-width: 0;
-    padding-left: 8px;
+    padding-left: 0 !important;
     font-size: 1rem;
     font-weight: 500;
     line-height: 1.25;
@@ -88,9 +86,9 @@
 
   body.profile-page.settings-page .settings-sidebar-card .settings-row-chevron {
     display: grid;
-    flex: 0 0 36px;
-    width: 36px;
-    height: 36px;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
     place-items: center;
     border-radius: 999px;
     background: #f5f5f5;
@@ -98,8 +96,8 @@
   }
 
   body.profile-page.settings-page .settings-sidebar-card .settings-row-chevron svg {
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
     stroke-width: 1.8;
   }
 
