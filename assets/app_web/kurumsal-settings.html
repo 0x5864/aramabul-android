@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#45503f" />
+    <meta name="theme-color" content="#ffffff" />
     <title>AramaBul</title>
-    <meta name="description" content="Yardım ve sık sorulan sorular." />
+    <meta name="description" content="AramaBul kurumsal bilgileri ve kullanım koşulları." />
     <meta name="robots" content="noindex,nofollow" />
     <link rel="icon" type="image/png" href="assets/favicon.png?v=20260524b" />
     <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260524b" />
@@ -13,47 +13,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css?v=20260611-subcategory-scroll-v1" />
     <link rel="stylesheet" href="mobile-search-header.css?v=20260612-v2" />
     <link rel="stylesheet" href="profile.css?v=20260612-v4" />
-    <!-- Google tag (gtag.js) -->
-        <!-- Google Consent Mode v2 -->
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      (function() {
-        var consent = null;
-        try { consent = localStorage.getItem("aramabul_cookie_consent"); } catch (e) {}
-        var defaults = {
-          'ad_storage': 'denied',
-          'ad_user_data': 'denied',
-          'ad_personalization': 'denied',
-          'analytics_storage': 'denied',
-          'wait_for_update': 500
-        };
-        if (consent === 'all') {
-          defaults = {
-            'ad_storage': 'granted',
-            'ad_user_data': 'granted',
-            'ad_personalization': 'granted',
-            'analytics_storage': 'granted'
-          };
-        }
-        gtag('consent', 'default', defaults);
-      })();
-    </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NHE1J9FWDG"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag("js", new Date());
-      gtag("config", "G-NHE1J9FWDG");
-    </script>
   </head>
-  <body class="profile-page settings-page help-page">
+  <body class="profile-page settings-page corporate-page">
     <div class="texture"></div>
 
     <header class="global-header-band">
@@ -63,14 +30,14 @@
           <span class="brand-wordmark"><span class="brand-wordmark-rest">arama</span><span class="brand-wordmark-search">bul</span></span>
         </a>
         <form class="header-search topbar-search-form" action="search.html" method="get" role="search" aria-label="Genel arama">
-      <label class="visually-hidden" for="headerSearchInput">Arama ifadesi</label>
-      <input id="headerSearchInput" class="header-search-input" type="search" name="mekan" placeholder="Ne bulmamı istersiniz?" />
-      <button class="header-search-btn" type="submit">Bul</button>
-    </form>
+          <label class="visually-hidden" for="headerSearchInput">Arama ifadesi</label>
+          <input id="headerSearchInput" class="header-search-input" type="search" name="mekan" placeholder="Ne bulmamı istersiniz?" />
+          <button class="header-search-btn" type="submit">Bul</button>
+        </form>
       </nav>
       <div class="global-topline"></div>
     </header>
-<!-- Navigation Drawer -->
+
     <div class="nav-drawer" id="navDrawer">
       <div class="drawer-header">
         <span class="drawer-title">arama<span style="color: #e34b32 !important;">bul</span></span>
@@ -85,33 +52,47 @@
           <a class="drawer-link" href="isbirligi.html"><span class="drawer-link-icon">↗</span> İşbirliği</a>
           <a class="drawer-link" href="lezzet-duraklari.html"><span class="drawer-link-icon">★</span> Lezzet Durakları</a>
         </div>
-
-        </nav>
+      </nav>
     </div>
     <div class="drawer-backdrop" id="drawerBackdrop"></div>
 
-    
-
     <main class="settings-shell">
-      <section class="settings-card settings-panel-card" aria-label="Yardım">
+      <section class="settings-card settings-panel-card" aria-label="Kurumsal">
         <div class="language-card-head">
-          <h2>Yardım</h2>
-          <p>En çok sorulan temel konuları kısa cevaplarla burada topladık.</p>
+          <h2>Kurumsal</h2>
         </div>
-        <div class="settings-help-content">
-          <div class="settings-help-item">
-            <strong>Nasıl arama yaparım?</strong>
-            <p>Üst arama alanından doğrudan mekan adı yazabilir ya da anasayfadan kategori seçebilirsin.</p>
-          </div>
-          <div class="settings-help-item">
-            <strong>Bilgi yanlışsa ne yapmalıyım?</strong>
-            <p>Geribildirim sekmesinden kısa bir not bırakabilir ya da iletişim sayfasından bize yazabilirsin.</p>
-          </div>
-          <div class="settings-help-item">
-            <strong>Hesap şart mı?</strong>
-            <p>Temel gezinme için hesap gerekmez. Kayıtlı kullanıcı ayarları için hesap alanını kullanabilirsin.</p>
-          </div>
-        </div>
+        <nav aria-label="Kurumsal sayfalar">
+          <a class="settings-row" href="about-settings.html">
+            <span class="settings-row-label">Hakkımızda</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"></path></svg>
+            </span>
+          </a>
+          <a class="settings-row" href="kullanim-kosullari.html">
+            <span class="settings-row-label">Kullanım Koşulları</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"></path></svg>
+            </span>
+          </a>
+          <a class="settings-row" href="gizlilik-politikasi.html">
+            <span class="settings-row-label">Gizlilik Politikası</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"></path></svg>
+            </span>
+          </a>
+          <a class="settings-row" href="cerez-politikasi.html">
+            <span class="settings-row-label">Çerez Politikası</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"></path></svg>
+            </span>
+          </a>
+          <a class="settings-row" href="kvkk.html">
+            <span class="settings-row-label">Kişisel Verilerin Korunması</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"></path></svg>
+            </span>
+          </a>
+        </nav>
       </section>
     </main>
 
