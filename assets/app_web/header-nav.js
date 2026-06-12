@@ -1518,3 +1518,170 @@
 
   window.addEventListener("hashchange", checkHashForAuthModal);
 })();
+
+// --- Navigation Drawer open/close/filter handling ---
+(() => {
+  function initDrawer() {
+    const hamburgerBtns = document.querySelectorAll(".header-hamburger-btn");
+    const drawer = document.getElementById("navDrawer");
+    const backdrop = document.getElementById("drawerBackdrop");
+    const closeBtn = document.getElementById("drawerCloseBtn");
+
+    if (!drawer || !backdrop) return;
+
+    function openDrawer() {
+      drawer.classList.add("drawer-open");
+      backdrop.classList.add("drawer-open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeDrawer() {
+      drawer.classList.remove("drawer-open");
+      backdrop.classList.remove("drawer-open");
+      document.body.style.overflow = "";
+    }
+
+    hamburgerBtns.forEach((btn) => {
+      btn.removeEventListener("click", openDrawer);
+      btn.addEventListener("click", openDrawer);
+    });
+
+    if (closeBtn) {
+      closeBtn.removeEventListener("click", closeDrawer);
+      closeBtn.addEventListener("click", closeDrawer);
+    }
+
+    backdrop.removeEventListener("click", closeDrawer);
+    backdrop.addEventListener("click", closeDrawer);
+
+    // Swipe open helper from left edge
+    let isSwipeReady = false;
+    document.addEventListener("mousemove", (e) => {
+      if (e.clientX <= 10) {
+        if (!isSwipeReady && !drawer.classList.contains("drawer-open") && window.matchMedia("(pointer:fine)").matches) {
+          openDrawer();
+          isSwipeReady = true;
+        }
+      } else {
+        isSwipeReady = false;
+      }
+    });
+
+    // Drawer filters for yeme-icme category on Istanbul MVP
+    const districtSelect = document.getElementById("drawerDistrictSelect");
+    const neighborhoodSelect = document.getElementById("drawerNeighborhoodSelect");
+    const nearbyBtn = document.getElementById("drawerNearbyButton");
+
+    if (districtSelect && neighborhoodSelect) {
+      fetch("/api/mvp/istanbul/filters?mainCategoryKey=yeme-icme", {
+        headers: { Accept: "application/json" },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to load drawer location filters");
+          return res.json();
+        })
+        .then((data) => {
+          const districts = Array.isArray(data.districts) ? data.districts : [];
+          const neighborhoodsByDistrict = data.neighborhoodsByDistrict || {};
+
+          districtSelect.innerHTML = "<option value=\"\">Tüm ilçeler</option>";
+          districts.forEach((dist) => {
+            const opt = document.createElement("option");
+            opt.value = dist;
+            opt.textContent = dist;
+            districtSelect.appendChild(opt);
+          });
+
+          const params = new URLSearchParams(window.location.search);
+          const activeDistrict = params.get("district") || "";
+          const activeNeighborhood = params.get("neighborhood") || "";
+
+          if (activeDistrict) {
+            districtSelect.value = activeDistrict;
+            neighborhoodSelect.innerHTML = "<option value=\"\">Tüm mahalleler</option>";
+            neighborhoodSelect.disabled = false;
+            (neighborhoodsByDistrict[activeDistrict] || []).forEach((neigh) => {
+              const opt = document.createElement("option");
+              opt.value = neigh;
+              opt.textContent = neigh;
+              neighborhoodSelect.appendChild(opt);
+            });
+            if (activeNeighborhood) {
+              neighborhoodSelect.value = activeNeighborhood;
+            }
+          }
+
+          districtSelect.addEventListener("change", () => {
+            const selectedDist = districtSelect.value;
+            neighborhoodSelect.innerHTML = "";
+            const defaultOpt = document.createElement("option");
+            defaultOpt.value = "";
+            defaultOpt.textContent = selectedDist ? "Tüm mahalleler" : "Önce ilçe seç";
+            neighborhoodSelect.appendChild(defaultOpt);
+            neighborhoodSelect.disabled = !selectedDist;
+
+            if (selectedDist) {
+              (neighborhoodsByDistrict[selectedDist] || []).forEach((neigh) => {
+                const opt = document.createElement("option");
+                opt.value = neigh;
+                opt.textContent = neigh;
+                neighborhoodSelect.appendChild(opt);
+              });
+              window.location.assign("yeme-icme.html?district=" + encodeURIComponent(selectedDist));
+            } else {
+              window.location.assign("yeme-icme.html");
+            }
+          });
+
+          neighborhoodSelect.addEventListener("change", () => {
+            const selectedDist = districtSelect.value;
+            const selectedNeigh = neighborhoodSelect.value;
+            if (!selectedDist) return;
+
+            const newParams = new URLSearchParams({ district: selectedDist });
+            if (selectedNeigh) {
+              newParams.set("neighborhood", selectedNeigh);
+            }
+            window.location.assign("yeme-icme.html?" + newParams.toString());
+          });
+        })
+        .catch((err) => {
+          console.error("Drawer location filters error:", err);
+        });
+    }
+
+    if (nearbyBtn) {
+      const handleNearbyClick = () => {
+        const pageNearbyBtn = document.querySelector(".istanbul-filter-nearby-panel-button, #nearbyButton:not(#drawerNearbyButton)");
+        if (pageNearbyBtn) {
+          pageNearbyBtn.click();
+        } else {
+          window.location.assign("yeme-icme.html?nearby=1");
+        }
+      };
+      nearbyBtn.removeEventListener("click", handleNearbyClick);
+      nearbyBtn.addEventListener("click", handleNearbyClick);
+    }
+
+    // Sync nearby location message text inside drawer if exists
+    const pageLocationMessage = document.querySelector("#locationMessage:not(#drawerLocationMessage)");
+    const drawerLocationMessage = document.getElementById("drawerLocationMessage");
+    if (pageLocationMessage && drawerLocationMessage) {
+      drawerLocationMessage.textContent = pageLocationMessage.textContent;
+      new MutationObserver(() => {
+        drawerLocationMessage.textContent = pageLocationMessage.textContent;
+      }).observe(pageLocationMessage, {
+        childList: true,
+        characterData: true,
+        subtree: true,
+      });
+    } 
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initDrawer);
+  } else {
+    initDrawer();
+  }
+})();
+
