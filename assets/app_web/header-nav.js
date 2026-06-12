@@ -1231,7 +1231,7 @@
       <nav class="mobile-bottom-nav-actions" aria-label="${labels.nav}">
         <button class="mobile-bottom-nav-btn" data-mobile-nav="home" type="button" aria-label="${labels.home}" title="${labels.home}">
           <span class="mobile-bottom-nav-chip" aria-hidden="true">
-            <img class="mobile-bottom-nav-icon-img" src="assets/home.png?v=20260611" alt="" />
+            <img class="mobile-bottom-nav-icon-img" src="assets/home.png?v=20260612" alt="" />
             <svg class="mobile-bottom-nav-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
               <path d="m3 11 9-7 9 7"></path>
               <path d="M7 10v9h10v-9"></path>
