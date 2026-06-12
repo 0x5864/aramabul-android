@@ -34,5 +34,6 @@ fi
 
 # Clean up large unnecessary files from the snapshot
 find "$TARGET_DIR" -type f \( -name "*.backup.json" -o -name "*.xls" -o -name "*.csv" -o -name "*.log" -o -name "*.sql" \) -delete
+rm -f "$TARGET_DIR/ferrero-profile.css"
 
 echo "Sync done."

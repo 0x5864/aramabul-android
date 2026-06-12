@@ -672,45 +672,6 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             }
           };
           try {
-            var isProfilePage = (window.location.pathname || '').toLowerCase().endsWith('/profile.html');
-            if (isProfilePage) {
-              var ferreroStyle = document.getElementById('aramabul-ferrero-profile-style');
-              if (!ferreroStyle) {
-                ferreroStyle = document.createElement('style');
-                ferreroStyle.id = 'aramabul-ferrero-profile-style';
-                (document.head || document.documentElement).appendChild(ferreroStyle);
-              }
-              ferreroStyle.textContent = [
-                'html body.settings-page { background: #f8f2e8 !important; color: #3c2a20 !important; }',
-                'html body.settings-page .settings-shell { padding-top: .25rem !important; background: transparent !important; }',
-                '.ferrero-settings-heading { width: 100% !important; padding: .8rem .35rem .45rem !important; color: #3c2418 !important; box-sizing: border-box !important; }',
-                '.ferrero-settings-heading h1 { margin: .08rem 0 0 !important; color: #3c2418 !important; font-family: Georgia, "Times New Roman", serif !important; font-size: clamp(1.8rem, 7vw, 2.35rem) !important; font-weight: 600 !important; letter-spacing: -.035em !important; line-height: 1 !important; }',
-                '.ferrero-settings-kicker { display: block !important; color: #a77b43 !important; font-size: .68rem !important; font-weight: 700 !important; letter-spacing: .18em !important; text-transform: uppercase !important; }',
-                'html body.settings-page .settings-sidebar-card { padding: .72rem !important; overflow: visible !important; border: 1px solid rgba(169,126,67,.28) !important; border-radius: 22px !important; background: linear-gradient(155deg, rgba(255,253,248,.98), rgba(247,237,222,.96)) !important; box-shadow: 0 18px 46px rgba(76,43,25,.12), inset 0 1px 0 rgba(255,255,255,.95) !important; }',
-                'html body.settings-page .settings-sidebar-card .settings-row { min-height: 64px !important; margin: 0 0 .58rem !important; padding: 0 1rem !important; color: #3c2a20 !important; border: 1px solid rgba(162,119,62,.18) !important; border-radius: 16px !important; background: rgba(255,255,255,.72) !important; box-shadow: 0 5px 14px rgba(75,45,28,.055) !important; }',
-                'html body.settings-page .settings-sidebar-card .settings-row:last-of-type { margin-bottom: 0 !important; }',
-                'html body.settings-page .settings-sidebar-card .settings-row.is-active { color: #fff8eb !important; border-color: #8c633c !important; background: linear-gradient(135deg, #4b2d1f 0%, #6b422c 100%) !important; box-shadow: 0 10px 22px rgba(74,43,27,.23), inset 0 1px 0 rgba(255,255,255,.14) !important; }',
-                'html body.settings-page .settings-sidebar-card .settings-row-icon { width: 28px !important; height: 28px !important; color: #6a432d !important; }',
-                'html body.settings-page .settings-sidebar-card .settings-row-icon svg { width: 25px !important; height: 25px !important; stroke-width: 1.85 !important; }',
-                'html body.settings-page .settings-sidebar-card .settings-row-label { color: #3c2a20 !important; font-size: 1rem !important; font-weight: 500 !important; letter-spacing: -.015em !important; }',
-                'html body.settings-page .settings-sidebar-card .settings-row-chevron { color: #b08a57 !important; }',
-                'html body.settings-page .settings-sidebar-card .settings-row.is-active .settings-row-icon, html body.settings-page .settings-sidebar-card .settings-row.is-active .settings-row-chevron, html body.settings-page .settings-sidebar-card .settings-row.is-active .settings-row-label { color: #fff8eb !important; stroke: #fff8eb !important; }',
-                'html body.settings-page .settings-sidebar-card .settings-row:hover { border-color: rgba(162,119,62,.34) !important; background: #fffaf2 !important; }',
-                'html body.settings-page .settings-sidebar-card .settings-row.is-active:hover { background: linear-gradient(135deg, #4b2d1f 0%, #6b422c 100%) !important; }'
-              ].join('');
-
-              var shell = document.querySelector('.settings-shell');
-              var layout = shell && shell.querySelector('.settings-layout');
-              var heading = shell && shell.querySelector('.ferrero-settings-heading');
-              if (shell && layout && !heading) {
-                heading = document.createElement('header');
-                heading.className = 'ferrero-settings-heading';
-                heading.innerHTML = '<span class="ferrero-settings-kicker">Profil</span><h1>Ayarlar</h1>';
-                shell.insertBefore(heading, layout);
-              }
-            }
-          } catch(e) {}
-          try {
             document.dispatchEvent(new CustomEvent('aramabul:appready'));
           } catch(e) {}
           try {

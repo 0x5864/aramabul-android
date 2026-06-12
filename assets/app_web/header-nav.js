@@ -1198,6 +1198,29 @@
       return;
     }
 
+    const profileSectionPages = new Set([
+      "profile.html",
+      "account-settings.html",
+      "language-settings.html",
+      "feedback-settings.html",
+      "help-settings.html",
+      "about-settings.html",
+      "kullanim-kosullari.html",
+      "gizlilik-politikasi.html",
+    ]);
+
+    function isProfileSectionPage() {
+      return profileSectionPages.has(currentPageName());
+    }
+
+    function isProfileMenuPage() {
+      if (currentPageName() !== "profile.html") {
+        return false;
+      }
+      const action = new URLSearchParams(window.location.search).get("action");
+      return !action || action === "profile";
+    }
+
     const existing = document.querySelector(".mobile-bottom-nav");
     if (existing) {
       return;
@@ -1368,7 +1391,7 @@
           (type === "nearby" &&
             currentPageName() === "yeme-icme.html" &&
             new URLSearchParams(window.location.search).get("nearby") === "1") ||
-          (type === "profile" && currentPageName() === "profile.html") ||
+          (type === "profile" && isProfileSectionPage()) ||
           false;
         button.classList.toggle("active", active);
       });
@@ -1377,8 +1400,6 @@
     buttons.forEach((button) => {
       button.addEventListener("click", () => {
         const type = button.dataset.mobileNav;
-        const isProfilePage = currentPageName() === "profile.html";
-
         if (type === "home") {
           window.location.assign("index.html");
           return;
@@ -1403,8 +1424,8 @@
           return;
         }
 
-        if (type === "profile" && !isProfilePage) {
-          window.location.assign("profile.html?action=profile");
+        if (type === "profile" && !isProfileMenuPage()) {
+          window.location.assign("profile.html");
         }
       });
     });
@@ -1684,4 +1705,3 @@
     initDrawer();
   }
 })();
-

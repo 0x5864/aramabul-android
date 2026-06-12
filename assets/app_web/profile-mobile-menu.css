@@ -18,7 +18,7 @@
     top: 0;
     z-index: 30;
     display: grid;
-    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    grid-template-columns: minmax(0, 1fr);
     align-items: center;
     min-height: 72px;
     padding: env(safe-area-inset-top, 0) 12px 0;
@@ -27,39 +27,13 @@
   }
 
   .profile-mobile-header h1 {
-    grid-column: 2;
+    grid-column: 1;
     margin: 0;
     color: #111;
     font-size: 1.18rem;
     font-weight: 500;
     line-height: 1.2;
     text-align: center;
-  }
-
-  .profile-mobile-back {
-    grid-column: 1;
-    display: grid;
-    width: 44px;
-    height: 44px;
-    place-items: center;
-    color: #1f2933;
-    text-decoration: none;
-  }
-
-  .profile-mobile-back svg {
-    width: 27px;
-    height: 27px;
-    fill: none;
-    stroke: currentColor;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-width: 1.8;
-  }
-
-  .profile-mobile-back:focus-visible {
-    border-radius: 999px;
-    outline: 2px solid rgba(11, 92, 148, 0.5);
-    outline-offset: 1px;
   }
 
   body.profile-page.settings-page .settings-shell {
@@ -106,6 +80,7 @@
 
   body.profile-page.settings-page .settings-sidebar-card .settings-row-label {
     min-width: 0;
+    padding-left: 8px;
     font-size: 1rem;
     font-weight: 500;
     line-height: 1.25;
