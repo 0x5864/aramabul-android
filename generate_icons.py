@@ -1,7 +1,7 @@
 import os
 from PIL import Image
 
-src_path = "/Users/metintuncgenc/Downloads/logo.png"
+src_path = "/Users/metintuncgenc/Documents/aramabul/assets/home.png"
 img = Image.open(src_path)
 
 # Legacy launcher icon sizes
