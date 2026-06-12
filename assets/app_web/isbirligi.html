@@ -65,50 +65,45 @@
     </div>
     <div class="drawer-backdrop" id="drawerBackdrop"></div>
 
-    <main class="hero settings-shell isbirligi-shell">
-      <section class="home-browse-shell isbirligi-browse-shell" aria-label="İşbirliği başvurusu">
-        
-
+    <main class="settings-shell isbirligi-shell">
+      <section class="settings-card settings-panel-card isbirligi-browse-shell" aria-label="İşbirliği başvurusu" style="max-width: 600px; margin: 2rem auto; min-height: auto; padding: 2rem;">
         <section class="isbirligi-main" aria-labelledby="isbirligiTitle">
-          <h1 id="isbirligiTitle">İşletmenizi öne çıkarmak ister misiniz?</h1>
-          <p class="isbirligi-copy">
+          <h1 id="isbirligiTitle" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; color: #011d36;">İşletmenizi öne çıkarmak ister misiniz?</h1>
+          <p class="isbirligi-copy" style="font-size: 0.9rem; color: #666; margin-bottom: 1.5rem;">
             AramaBul'da daha görünür olmak ve doğru kullanıcılarla buluşmak için formu doldurun. Ekibimiz en kısa sürede sizinle iletişime geçer.
           </p>
 
-          <form id="bhForm" class="bh-form isbirligi-form" novalidate>
-            <label class="bh-field bh-field--required">
-              <span class="bh-field-label">İşletme Adı <abbr title="zorunlu">*</abbr></span>
-              <input type="text" name="businessName" class="bh-input" required placeholder="ör. Lezzet Durağı" autocomplete="organization" />
-            </label>
+          <form id="bhForm" class="settings-feedback-form isbirligi-form" novalidate>
+            <div class="settings-feedback-grid">
+              <label class="settings-feedback-field" data-span="full">
+                <input type="text" name="businessName" class="bh-input" required placeholder="İşletme Adı *" autocomplete="organization" />
+              </label>
 
-            <label class="bh-field bh-field--required">
-              <span class="bh-field-label">İşletmeci Adı Soyadı <abbr title="zorunlu">*</abbr></span>
-              <input type="text" name="ownerName" class="bh-input" required placeholder="ör. Ahmet Yılmaz" autocomplete="name" />
-            </label>
+              <label class="settings-feedback-field" data-span="full">
+                <input type="text" name="ownerName" class="bh-input" required placeholder="İşletmeci Adı Soyadı *" autocomplete="name" />
+              </label>
 
-            <label class="bh-field bh-field--required">
-              <span class="bh-field-label">Telefon <abbr title="zorunlu">*</abbr></span>
-              <input type="tel" name="phone" class="bh-input" required placeholder="05XX XXX XX XX" autocomplete="tel" />
-            </label>
+              <label class="settings-feedback-field" data-span="full">
+                <input type="tel" name="phone" class="bh-input" required placeholder="Telefon (05XX XXX XX XX) *" autocomplete="tel" />
+              </label>
 
-            <label class="bh-field">
-              <span class="bh-field-label">Adres <span class="bh-field-optional">(isteğe bağlı)</span></span>
-              <input type="text" name="address" class="bh-input" placeholder="İstanbul, ilçe, mahalle, sokak..." autocomplete="street-address" />
-            </label>
+              <label class="settings-feedback-field" data-span="full">
+                <input type="text" name="address" class="bh-input" placeholder="Adres (isteğe bağlı)" autocomplete="street-address" />
+              </label>
 
-            <label class="bh-field">
-              <span class="bh-field-label">E-posta <span class="bh-field-optional">(isteğe bağlı)</span></span>
-              <input type="email" name="email" class="bh-input" placeholder="info@isletme.com" autocomplete="email" />
-            </label>
+              <label class="settings-feedback-field" data-span="full">
+                <input type="email" name="email" class="bh-input" placeholder="E-posta (isteğe bağlı)" autocomplete="email" />
+              </label>
+            </div>
 
-            <div class="bh-form-actions">
-              <button type="submit" class="bh-submit-btn" id="bhSubmitBtn">
+            <div class="settings-feedback-actions bh-form-actions" style="margin-top: 1rem;">
+              <button type="submit" class="settings-feedback-submit bh-submit-btn" id="bhSubmitBtn">
                 <span class="bh-submit-label">Gönder</span>
                 <span class="bh-submit-spinner" hidden></span>
               </button>
             </div>
 
-            <div id="bhFormMessage" class="bh-form-message" hidden></div>
+            <div id="bhFormMessage" class="bh-form-message" style="margin-top: 1rem; font-size: 0.9rem;" hidden></div>
           </form>
         </section>
       </section>

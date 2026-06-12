@@ -1201,12 +1201,17 @@
     const profileSectionPages = new Set([
       "profile.html",
       "account-settings.html",
+      "email-change-settings.html",
       "language-settings.html",
       "feedback-settings.html",
       "help-settings.html",
       "about-settings.html",
+      "kurumsal-settings.html",
       "kullanim-kosullari.html",
       "gizlilik-politikasi.html",
+      "cerez-politikasi.html",
+      "kvkk.html",
+      "verify-email.html",
     ]);
 
     function isProfileSectionPage() {
