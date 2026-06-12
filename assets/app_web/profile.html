@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="styles.css?v=20260611-subcategory-scroll-v1" />
     <link rel="stylesheet" href="mobile-search-header.css?v=20260612-v2" />
     <link rel="stylesheet" href="profile.css?v=20260611-clamp-v2" />
+    <link rel="stylesheet" href="profile-mobile-menu.css?v=20260612-v1" />
     <link rel="stylesheet" href="social-auth.css?v=20260611-01" />
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- Google tag (gtag.js) -->
@@ -92,7 +93,14 @@
     </div>
     <div class="drawer-backdrop" id="drawerBackdrop"></div>
 
-    
+    <header class="profile-mobile-header">
+      <a class="profile-mobile-back" href="index.html" aria-label="Anasayfaya dön">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+      </a>
+      <h1>Hesabım</h1>
+    </header>
 
     <main class="settings-shell settings-dashboard-shell">
       <div class="settings-layout">
@@ -101,7 +109,7 @@
             class="settings-row settings-row-button is-active"
             href="account-settings.html"
             data-settings-panel-trigger="account"
-            aria-label="Hesap"
+            aria-label="Hesap Bilgileri"
             aria-current="page"
           >
             <span class="settings-row-icon" aria-hidden="true">
@@ -110,7 +118,7 @@
                 <path d="M5 18.5c1-3 3.5-4.8 7-4.8s6 1.8 7 4.8"></path>
               </svg>
             </span>
-            <span class="settings-row-label">Hesap</span>
+            <span class="settings-row-label">Hesap Bilgileri</span>
             <span class="settings-row-chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24">
                 <path d="m9 5 7 7-7 7"></path>
@@ -165,6 +173,24 @@
             </span>
           </a>
 
+          <a class="settings-row settings-row-button" href="favorites.html" aria-label="Favorilerim">
+            <span class="settings-row-label">Favorilerim</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a class="settings-row settings-row-button" href="language-settings.html" aria-label="Dil Ayarları">
+            <span class="settings-row-label">Dil Ayarları</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
           <a
             class="settings-row settings-row-button"
             href="feedback-settings.html"
@@ -179,6 +205,51 @@
               </svg>
             </span>
             <span class="settings-row-label">Geribildirim</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a class="settings-row settings-row-button" href="help-settings.html" aria-label="Yardım">
+            <span class="settings-row-label">Yardım</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a class="settings-row settings-row-button" href="about-settings.html" aria-label="Hakkında">
+            <span class="settings-row-label">Hakkında</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a class="settings-row settings-row-button" href="kullanim-kosullari.html" aria-label="Kullanım Koşulları">
+            <span class="settings-row-label">Kullanım Koşulları</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a class="settings-row settings-row-button" href="gizlilik-politikasi.html" aria-label="Gizlilik Politikası">
+            <span class="settings-row-label">Gizlilik Politikası</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a class="settings-row settings-row-button" href="isbirligi.html" aria-label="İşbirliği">
+            <span class="settings-row-label">İşbirliği</span>
             <span class="settings-row-chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24">
                 <path d="m9 5 7 7-7 7"></path>
