@@ -16,9 +16,9 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260611-subcategory-scroll-v1" />
+    <link rel="stylesheet" href="styles.css?v=20260613d" />
     <link rel="stylesheet" href="mobile-search-header.css?v=20260612-v2" />
-    <link rel="stylesheet" href="profile.css?v=20260612-v4" />
+    <link rel="stylesheet" href="profile.css?v=20260613-v1" />
     <link rel="stylesheet" href="profile-mobile-menu.css?v=20260612-v3" />
     <link rel="stylesheet" href="social-auth.css?v=20260611-01" />
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -94,7 +94,12 @@
     <div class="drawer-backdrop" id="drawerBackdrop"></div>
 
     <header class="profile-mobile-header">
-      <h1>Hesabım</h1>
+      <button id="profileMobileBackBtn" class="profile-mobile-back-btn" style="display:none;" aria-label="Geri">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <path d="M15 19l-7-7 7-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <h1 id="profileMobileTitle" data-i18n="Hesabım">Hesabım</h1>
     </header>
 
     <main class="settings-shell settings-dashboard-shell">
@@ -148,6 +153,27 @@
 
           <a
             class="settings-row settings-row-button"
+            href="profile.html?action=email"
+            data-settings-panel-trigger="email"
+            aria-label="E-posta Değişikliği"
+            data-i18n-aria-label="E-posta Değişikliği"
+          >
+            <span class="settings-row-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </span>
+            <span class="settings-row-label" data-i18n="E-posta Değişikliği">E-posta Değişikliği</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a
+            class="settings-row settings-row-button"
             href="profile.html?action=password"
             data-settings-panel-trigger="password"
             aria-label="Şifre Değişikliği"
@@ -198,7 +224,19 @@
             </span>
           </a>
 
-          <a class="settings-row settings-row-button" href="help-settings.html" aria-label="Yardım">
+          <a
+            class="settings-row settings-row-button"
+            href="profile.html?action=help"
+            data-settings-panel-trigger="help"
+            aria-label="Yardım"
+          >
+            <span class="settings-row-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+            </span>
             <span class="settings-row-label">Yardım</span>
             <span class="settings-row-chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24">
@@ -235,21 +273,13 @@
           <section class="settings-card settings-panel-card account-editor-card" data-settings-panel="account" aria-label="Hesap bilgileri">
             <div class="language-card-head">
               <h2>Hesap bilgileri</h2>
-              <p>Adını ve e-postanı burada güncelleyebilirsin.</p>
+              <p>Adını burada güncelleyebilirsin.</p>
             </div>
             <form id="accountSettingsForm" class="settings-signup-form" novalidate>
               <label class="settings-signup-field">
                 <span>Ad Soyad</span>
                 <input id="accountNameInput" type="text" name="name" autocomplete="name" required />
               </label>
-              <label class="settings-signup-field">
-                <span>E-posta</span>
-                <input id="accountEmailInput" type="email" name="email" autocomplete="email" required />
-              </label>
-              <div class="account-email-verification-box" aria-live="polite">
-                <p id="accountEmailVerificationStatus" class="settings-signup-message account-email-verification-status"></p>
-                <button id="accountEmailVerifyBtn" class="account-secondary-btn account-verify-btn" type="button">Doğrulama e-postası gönder</button>
-              </div>
               <p id="accountSettingsMessage" class="settings-signup-message" aria-live="polite"></p>
               <div class="account-settings-actions">
                 <button id="accountSaveBtn" class="settings-signup-submit" type="submit">Kaydet</button>
@@ -286,7 +316,6 @@
             <div id="settingsLoginFormWrapper">
               <div class="language-card-head" style="margin-bottom: 1.25rem;">
                 <h2 data-i18n="Giriş yap">Giriş yap</h2>
-                <p data-i18n="E-posta adresin ve şifrenle giriş yapabilirsin.">E-posta adresin ve şifrenle giriş yapabilirsin.</p>
               </div>
               
               <!-- Google ile Giriş Yap Butonu -->
@@ -333,6 +362,8 @@
                 <span data-i18n="veya">veya</span>
                 <span style="flex: 1; height: 1px; background: #e0e0e0;"></span>
               </div>
+              
+              <p data-i18n="E-posta adresin ve şifrenle giriş yapabilirsin." style="font-size: 0.82rem; color: rgba(22, 33, 35, 0.66); margin: 0 0 1rem;">E-posta adresin ve şifrenle giriş yapabilirsin.</p>
 
               <form id="settingsLoginForm" class="settings-signup-form" novalidate>
                 <label class="settings-signup-field">
@@ -459,12 +490,42 @@
             </div>
           </section>
 
-          <section class="settings-card settings-panel-card account-editor-card" data-settings-panel="password" aria-label="Şifre değişikliği" data-i18n-aria-label="Şifre değişikliği" hidden>
-            <div class="language-card-head">
-              <h2 data-i18n="Şifre değişikliği">Şifre değişikliği</h2>
-              <p data-i18n="Önce e-posta bağlantısı al, bağlantıdan açılan ekranda yeni şifreni belirle.">Önce e-posta bağlantısı al, bağlantıdan açılan ekranda yeni şifreni belirle.</p>
+          <section class="settings-card settings-panel-card account-editor-card" data-settings-panel="email" aria-label="E-posta değişikliği" data-i18n-aria-label="E-posta değişikliği" hidden>
+            <div class="language-card-head" style="margin-bottom: 1.5rem;">
+              <h2 data-i18n="E-posta değişikliği">E-posta değişikliği</h2>
             </div>
-            <div id="accountPasswordRequestBlock" class="settings-signup-form">
+            
+            <div class="email-change-info-box">
+              E-posta değişikliği sonrası hesabınızdan otomatik olarak çıkış yapılacaktır.
+            </div>
+
+            <form id="accountEmailForm" class="settings-signup-form" novalidate>
+              <div class="outlined-input-container">
+                <input type="email" id="accountCurrentEmail" placeholder=" " readonly disabled />
+                <label for="accountCurrentEmail">Mevcut E-Posta</label>
+              </div>
+              
+              <div class="outlined-input-container">
+                <input type="email" id="accountNewEmail" placeholder=" " required />
+                <label for="accountNewEmail">Yeni E-Posta</label>
+              </div>
+              
+              <div class="outlined-input-container">
+                <input type="email" id="accountRepeatNewEmail" placeholder=" " required />
+                <label for="accountRepeatNewEmail">Tekrar Yeni E-Posta</label>
+              </div>
+
+              <p id="accountEmailSettingsMessage" class="settings-signup-message" aria-live="polite"></p>
+
+              <button id="accountEmailSaveBtn" type="submit" class="email-change-submit-btn">Güncelle</button>
+            </form>
+          </section>
+
+          <section class="settings-card settings-panel-card account-editor-card" data-settings-panel="password" aria-label="Şifre değişikliği" data-i18n-aria-label="Şifre değişikliği" hidden>
+            <div class="language-card-head" style="margin-bottom: 3rem;">
+              <h2 data-i18n="Şifre değişikliği">Şifre değişikliği</h2>
+            </div>
+            <div id="accountPasswordRequestBlock" class="settings-signup-form" style="margin-bottom: 1.5rem;">
               <button id="accountPasswordRequestBtn" class="settings-signup-submit" type="button" data-i18n="Şifre değişikliği e-postası gönder">Şifre değişikliği e-postası gönder</button>
             </div>
             <form id="accountPasswordForm" class="settings-signup-form" novalidate hidden>
@@ -517,6 +578,26 @@
             </form>
           </section>
 
+          <section class="settings-card settings-panel-card account-editor-card" data-settings-panel="help" aria-label="Yardım" hidden>
+            <div class="language-card-head">
+              <h2>Yardım</h2>
+              <p>En çok sorulan temel konuları kısa cevaplarla burada topladık.</p>
+            </div>
+            <div class="settings-help-content">
+              <div class="settings-help-item">
+                <strong>Nasıl arama yaparım?</strong>
+                <p>Üst arama alanından doğrudan mekan adı yazabilir ya da anasayfadan kategori seçebilirsin.</p>
+              </div>
+              <div class="settings-help-item">
+                <strong>Bilgi yanlışsa ne yapmalıyım?</strong>
+                <p>Geribildirim sekmesinden kısa bir not bırakabilir ya da iletişim sayfasından bize yazabilirsin.</p>
+              </div>
+              <div class="settings-help-item">
+                <strong>Hesap şart mı?</strong>
+                <p>Temel gezinme için hesap gerekmez. Kayıtlı kullanıcı ayarları için hesap alanını kullanabilirsin.</p>
+              </div>
+            </div>
+          </section>
 
         </section>
       </div>
@@ -621,7 +702,7 @@
     <script src="header-search-data.js?v=20260530b"></script>
     <script src="header-search.js?v=20260611-subcategory-12col-v6"></script>
     <script src="social-auth-bridge.js?v=20260611-01"></script>
-    <script src="profile.js?v=20260603b"></script>
+    <script src="profile.js?v=20260613-eposta"></script>
     <script src="account-settings.js?v=20260309-01"></script>
   </body>
 </html>

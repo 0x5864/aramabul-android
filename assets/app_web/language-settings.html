@@ -16,9 +16,10 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260611-subcategory-scroll-v1" />
+    <link rel="stylesheet" href="styles.css?v=20260613d" />
     <link rel="stylesheet" href="mobile-search-header.css?v=20260612-v2" />
-    <link rel="stylesheet" href="profile.css?v=20260612-v4" />
+    <link rel="stylesheet" href="profile.css?v=20260613-v1" />
+    <link rel="stylesheet" href="profile-mobile-menu.css?v=20260612-v3" />
     <!-- Google tag (gtag.js) -->
         <!-- Google Consent Mode v2 -->
     <script>
@@ -55,6 +56,15 @@
   </head>
   <body class="profile-page settings-page language-page">
     <div class="texture"></div>
+
+    <header class="profile-mobile-header">
+      <button id="profileMobileBackBtn" class="profile-mobile-back-btn" style="display:none;" aria-label="Geri">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <path d="M15 19l-7-7 7-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <h1 id="profileMobileTitle" data-i18n="Dil Ayarları">Dil Ayarları</h1>
+    </header>
 
     <header class="global-header-band">
       <nav class="topbar global-topbar">
@@ -95,14 +105,19 @@
     <main class="settings-shell settings-dashboard-shell language-shell">
       <div class="settings-layout">
         <aside class="settings-card settings-sidebar-card" aria-label="Ayar bölümleri">
-          <a class="settings-row" href="profile.html?action=profile" aria-label="Hesap">
+          <a
+            class="settings-row settings-row-button"
+            href="account-settings.html"
+            data-settings-panel-trigger="account"
+            aria-label="Hesap Bilgileri"
+          >
             <span class="settings-row-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">
                 <circle cx="12" cy="8.2" r="3.3"></circle>
                 <path d="M5 18.5c1-3 3.5-4.8 7-4.8s6 1.8 7 4.8"></path>
               </svg>
             </span>
-            <span class="settings-row-label">Hesap</span>
+            <span class="settings-row-label">Hesap Bilgileri</span>
             <span class="settings-row-chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24">
                 <path d="m9 5 7 7-7 7"></path>
@@ -110,7 +125,78 @@
             </span>
           </a>
 
-          <button class="settings-row settings-row-button is-active" type="button" data-settings-panel-trigger="language" aria-pressed="true" aria-label="Diller">
+          <a
+            class="settings-row settings-row-button"
+            href="profile.html?action=login"
+            data-settings-panel-trigger="login"
+            aria-label="Giriş Yap"
+            data-i18n-aria-label="Giriş Yap"
+            style="display:none"
+          >
+            <span class="settings-row-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                <polyline points="10 17 15 12 10 7"></polyline>
+                <line x1="15" y1="12" x2="3" y2="12"></line>
+              </svg>
+            </span>
+            <span class="settings-row-label" data-i18n="Giriş Yap">Giriş Yap</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a
+            class="settings-row settings-row-button"
+            href="profile.html?action=email"
+            data-settings-panel-trigger="email"
+            aria-label="E-posta Değişikliği"
+            data-i18n-aria-label="E-posta Değişikliği"
+          >
+            <span class="settings-row-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+            </span>
+            <span class="settings-row-label" data-i18n="E-posta Değişikliği">E-posta Değişikliği</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a
+            class="settings-row settings-row-button"
+            href="profile.html?action=password"
+            data-settings-panel-trigger="password"
+            aria-label="Şifre Değişikliği"
+            data-i18n-aria-label="Şifre Değişikliği"
+          >
+            <span class="settings-row-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <rect x="5" y="10" width="14" height="10" rx="2"></rect>
+                <path d="M8.5 10V7.8a3.5 3.5 0 1 1 7 0V10"></path>
+                <circle cx="12" cy="15" r="1"></circle>
+              </svg>
+            </span>
+            <span class="settings-row-label" data-i18n="Şifre Değişikliği">Şifre Değişikliği</span>
+            <span class="settings-row-chevron" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m9 5 7 7-7 7"></path>
+              </svg>
+            </span>
+          </a>
+
+          <a
+            class="settings-row settings-row-button is-active"
+            href="language-settings.html"
+            aria-label="Dil Ayarları"
+            aria-current="page"
+          >
             <span class="settings-row-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="8"></circle>
@@ -119,15 +205,20 @@
                 <path d="M12 4.4a11.8 11.8 0 0 0 0 15.2"></path>
               </svg>
             </span>
-            <span class="settings-row-label">Diller</span>
+            <span class="settings-row-label">Dil Ayarları</span>
             <span class="settings-row-chevron" aria-hidden="true">
               <svg viewBox="0 0 24 24">
                 <path d="m9 5 7 7-7 7"></path>
               </svg>
             </span>
-          </button>
+          </a>
 
-          <button class="settings-row settings-row-button" type="button" data-settings-panel-trigger="feedback" aria-pressed="false" aria-label="Geribildirim">
+          <a
+            class="settings-row settings-row-button"
+            href="feedback-settings.html"
+            data-settings-panel-trigger="feedback"
+            aria-label="Geribildirim"
+          >
             <span class="settings-row-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">
                 <path d="M5 7.5A2.5 2.5 0 0 1 7.5 5h9A2.5 2.5 0 0 1 19 7.5v5A2.5 2.5 0 0 1 16.5 15H11l-4 4v-4H7.5A2.5 2.5 0 0 1 5 12.5z"></path>
@@ -141,14 +232,19 @@
                 <path d="m9 5 7 7-7 7"></path>
               </svg>
             </span>
-          </button>
+          </a>
 
-          <button class="settings-row settings-row-button" type="button" data-settings-panel-trigger="help" aria-pressed="false" aria-label="Yardım">
+          <a
+            class="settings-row settings-row-button"
+            href="profile.html?action=help"
+            data-settings-panel-trigger="help"
+            aria-label="Yardım"
+          >
             <span class="settings-row-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="8"></circle>
-                <path d="M9.8 9.7a2.5 2.5 0 0 1 4.4 1.6c0 1.8-2.2 2.1-2.2 3.5"></path>
-                <path d="M12 17h.1"></path>
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
               </svg>
             </span>
             <span class="settings-row-label">Yardım</span>
@@ -157,9 +253,15 @@
                 <path d="m9 5 7 7-7 7"></path>
               </svg>
             </span>
-          </button>
+          </a>
 
-          <a class="settings-row settings-row-button" href="admin-login.html" aria-label="Admin Girişi" data-admin-settings-link style="display:none">
+          <a
+            class="settings-row settings-row-button"
+            href="admin-login.html"
+            aria-label="Admin Girişi"
+            data-admin-settings-link
+            style="display:none"
+          >
             <span class="settings-row-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24">
                 <rect x="5" y="10" width="14" height="10" rx="2"></rect>
@@ -174,19 +276,10 @@
               </svg>
             </span>
           </a>
-
-          <button id="settingsSignOutBtn" class="settings-signout" type="button">Çıkış yap</button>
         </aside>
 
         <section class="settings-panel-stack">
-          <section class="settings-card settings-account-card">
-            <div class="settings-account-head">
-              <div class="settings-avatar" id="settingsAvatar" aria-hidden="true">M</div>
-              <div>
-                <h2 id="settingsName">Misafir</h2>
-              </div>
-            </div>
-          </section>
+
 
           <section class="settings-card settings-panel-card language-card" data-settings-panel="language" aria-label="Dil seçenekleri">
             <div class="language-card-head">

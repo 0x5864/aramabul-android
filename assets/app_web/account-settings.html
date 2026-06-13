@@ -16,9 +16,10 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260611-subcategory-scroll-v1" />
+    <link rel="stylesheet" href="styles.css?v=20260613d" />
     <link rel="stylesheet" href="mobile-search-header.css?v=20260612-v2" />
-    <link rel="stylesheet" href="profile.css?v=20260612-v4" />
+    <link rel="stylesheet" href="profile.css?v=20260613-v1" />
+    <link rel="stylesheet" href="profile-mobile-menu.css?v=20260612-v3" />
     <link rel="stylesheet" href="social-auth.css?v=20260611-01" />
     <!-- Google tag (gtag.js) -->
         <!-- Google Consent Mode v2 -->
@@ -56,6 +57,15 @@
   </head>
   <body class="profile-page settings-page account-page">
     <div class="texture"></div>
+
+    <header class="profile-mobile-header">
+      <button id="profileMobileBackBtn" class="profile-mobile-back-btn" style="display:none;" aria-label="Geri">
+        <svg viewBox="0 0 24 24" width="24" height="24">
+          <path d="M15 19l-7-7 7-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <h1 id="profileMobileTitle" data-i18n="Hesap Bilgileri">Hesap Bilgileri</h1>
+    </header>
 
     <header class="global-header-band">
       <nav class="topbar global-topbar">
@@ -216,6 +226,38 @@
             <div style="text-align:right;"><button id="accountDeleteBtn" type="button" style="background:#e74c3c;border:1px solid #c0392b;color:#fff;padding:0.45rem 1.1rem;border-radius:6px;font-size:0.85rem;font-weight:600;cursor:pointer;">Hesabımı Sil</button></div>
           </div>
         </section>
+      </section>
+
+      <!-- ========== EMAIL CHANGE FORM (shown when hash is #email-change) ========== -->
+      <section id="emailChangeSection" class="settings-card account-editor-card" style="display:none;" aria-label="E-posta değişikliği">
+        <div class="language-card-head" style="margin-bottom: 1.5rem;">
+          <h2>E-posta değişikliği</h2>
+        </div>
+        
+        <div class="email-change-info-box">
+          E-posta değişikliği sonrası hesabınızdan otomatik olarak çıkış yapılacaktır.
+        </div>
+
+        <form id="mobileEmailChangeForm" class="settings-signup-form" novalidate>
+          <div class="outlined-input-container">
+            <input type="email" id="mobileCurrentEmail" placeholder=" " readonly disabled />
+            <label for="mobileCurrentEmail">Mevcut E-Posta</label>
+          </div>
+          
+          <div class="outlined-input-container">
+            <input type="email" id="mobileNewEmail" placeholder=" " required />
+            <label for="mobileNewEmail">Yeni E-Posta</label>
+          </div>
+          
+          <div class="outlined-input-container">
+            <input type="email" id="mobileRepeatNewEmail" placeholder=" " required />
+            <label for="mobileRepeatNewEmail">Tekrar Yeni E-Posta</label>
+          </div>
+
+          <p id="mobileEmailChangeMessage" class="settings-signup-message" aria-live="polite"></p>
+
+          <button id="mobileEmailChangeSaveBtn" type="submit" class="email-change-submit-btn">Güncelle</button>
+        </form>
       </section>
 
       <!-- Account Deletion Confirmation Modal -->

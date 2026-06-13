@@ -38,6 +38,7 @@
   background: #fff;
   border: 1px solid #d7dce1;
   color: #263238;
+  border-radius: 8px;
 }
 
 .social-auth-button-google:hover {
