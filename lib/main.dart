@@ -24,7 +24,7 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.0';
+const String kAppVersion = '1.6.3';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -107,6 +107,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           onPageFinished: (_) {
             if (!mounted) return;
             _injectAppBridge();
+            _injectAppVisualOverrides();
             _controller.currentUrl().then((currentUrl) {
               debugPrint('[HomeWebView] page finished: $currentUrl');
             });
@@ -694,6 +695,78 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       ''');
     } catch (error) {
       debugPrint('[HomeWebView] App bridge injection failed: $error');
+    }
+  }
+
+  Future<void> _injectAppVisualOverrides() async {
+    try {
+      await _controller.runJavaScript(r'''
+        (function () {
+          var styleId = 'aramabul-android-visual-overrides';
+          var style = document.getElementById(styleId);
+          if (!style) {
+            style = document.createElement('style');
+            style.id = styleId;
+            document.head.appendChild(style);
+          }
+
+          style.textContent = `
+            .favorites-page-shell {
+              width: min(1220px, calc(100% - 4.8rem)) !important;
+            }
+
+            .favorites-page-shell .favorites-page-title {
+              font-size: clamp(1.2rem, 1.8vw, 1.8rem) !important;
+              font-weight: 650 !important;
+              line-height: 1 !important;
+              letter-spacing: 0 !important;
+            }
+
+            .favorites-page-shell .favorites-grid .istanbul-venue-card {
+              border: 1px solid #c9ced4 !important;
+              border-radius: 8px !important;
+            }
+
+            @media (max-width: 699px) {
+              body.profile-page.settings-page,
+              body.profile-page.settings-page .settings-shell,
+              body.profile-page.settings-page .settings-layout,
+              body.profile-page.settings-page .settings-sidebar-card {
+                background: #ffffff !important;
+              }
+
+              body.profile-page.settings-page .settings-sidebar-card {
+                border: 1px solid #ffffff !important;
+                box-shadow: none !important;
+              }
+
+              body.profile-page.settings-page
+                .settings-sidebar-card
+                .settings-row {
+                min-height: 48px !important;
+              }
+
+              body.profile-page.settings-page
+                .settings-sidebar-card
+                .settings-row-chevron {
+                flex-basis: 28px !important;
+                width: 28px !important;
+                height: 28px !important;
+              }
+
+              body.profile-page.settings-page
+                .settings-sidebar-card
+                .settings-row-chevron
+                svg {
+                width: 15px !important;
+                height: 15px !important;
+              }
+            }
+          `;
+        })();
+      ''');
+    } catch (error) {
+      debugPrint('[HomeWebView] Visual override injection failed: $error');
     }
   }
 

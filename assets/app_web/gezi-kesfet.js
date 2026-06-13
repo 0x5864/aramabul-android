@@ -1,1 +1,2110 @@
-"use strict";!function(){const e=document.getElementById("resultsGrid");if(!e)return;const t={filters:{districts:[],categoryOptions:[],categories:[],tags:[]},dataMode:"api",localData:[],localDataLoaded:!1,localFavoritesKey:"geziKesfetFavorites",selectedDistrict:"",selectedCategory:"",query:"",page:1,limit:24,nearbyMode:!1,userLocation:null,loading:!1,items:[],pagination:null,selectedVenueSlug:"",initialVenueSelectionHandled:!1,favoriteVenueIds:new Set,discoveryShuffleFilterKey:"",discoveryRandomSeed:""};function n(){t.discoveryShuffleFilterKey="",t.discoveryRandomSeed=""}const i=["Camping","Günübirlik Tesis","Kongre Ve Sergi Merkezi","Otel","Pansiyon","Plaj","Yat Limanı"],a="Gezi Tesis Tipleri",r=[{label:"Kamp Alanları",file:"data/gezi-kamp-alanlari.json",category:"Kamp Alanları"},{label:"Butik Oteller",file:"data/gezi-butik-oteller.json",category:"Otel"},{label:"5 Yıldızlı Oteller",file:"data/gezi-oteller-5-yildiz.json",category:"Otel"},{label:"4 Yıldızlı Oteller",file:"data/gezi-oteller-4-yildiz.json",category:"Otel"},{label:"3 Yıldızlı Oteller",file:"data/gezi-oteller-3-yildiz.json",category:"Otel"},{label:"2 Yıldızlı Oteller",file:"data/gezi-oteller-2-yildiz.json",category:"Otel"},{label:"1 Yıldızlı Oteller",file:"data/gezi-oteller-1-yildiz.json",category:"Otel"},{label:"Diğer Oteller",file:"data/gezi-oteller-diger.json",category:"Otel"},{label:"KTB tesis kayıtları (İstanbul)",file:"data/ktb-tesis-kayitlari-gezi.json",categoryFromField:"sourceTesisTuru"}],o={current:null},s=new Map,l={trigger:null,menu:null};function c(e){return e?String(e).trim().toLocaleLowerCase("tr-TR").normalize("NFKD").replace(/\p{Diacritic}/gu,""):""}function d(e){return e?c(e).replace(/[^a-z0-9\s-]/g,"").replace(/\s+/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,""):""}function u(e){const t=String(e||"").trim();if(!t)return"";const n=c(t);return"otel"===n?"Otel":"pansiyon"===n?"Pansiyon":"camping"===n||"kamp alanlari"===n?"Kamp Alanı":"plaj"===n?"Plaj":"yat limani"===n?"Yat Limanı":"butik oteller"===n||"butik otel"===n?"Butik Otel":"5 yildizli oteller"===n||"5 yildizli otel"===n?"5 Yıldızlı Otel":"4 yildizli oteller"===n||"4 yildizli otel"===n?"4 Yıldızlı Otel":"3 yildizli oteller"===n||"3 yildizli otel"===n?"3 Yıldızlı Otel":"2 yildizli oteller"===n||"2 yildizli otel"===n?"2 Yıldızlı Otel":"1 yildizli oteller"===n||"1 yildizli otel"===n?"1 Yıldızlı Otel":t.charAt(0).toLocaleUpperCase("tr-TR")+t.slice(1)}function m(e){let t=c(e).replace(/[^a-z0-9]+/g," ").trim();const n=new Set(["istanbul","turkiye","turkey"]);return t.split(/\s+/).filter(e=>e.length>1&&!n.has(e)).sort().join(" ")}function g(e,t,n,i){const a=e=>e*Math.PI/180,r=a(n-e),o=a(i-t),s=Math.sin(r/2)**2+Math.cos(a(e))*Math.cos(a(n))*Math.sin(o/2)**2;return 12742e3*Math.asin(Math.min(1,Math.sqrt(s)))}function p(e){let t=0;e.photoUri&&(t+=4);const n=Number(e.latitude),i=Number(e.longitude);return Number.isFinite(n)&&Number.isFinite(i)&&(t+=3),e.mapsUrl&&(t+=2),e.phone&&(t+=1),e.website&&(t+=1),String(e.address||"").length>55&&(t+=2),e.editorialSummary&&(t+=1),e.fromKtbRegistry&&e.sourceBelgeNo&&(t+=2),t}function f(e,t){if(!t||e===t)return;!e.photoUri&&t.photoUri&&(e.photoUri=t.photoUri),!e.mapsUrl&&t.mapsUrl&&(e.mapsUrl=t.mapsUrl),!e.phone&&t.phone&&(e.phone=t.phone),!e.website&&t.website&&(e.website=t.website);const n=Number(e.latitude),i=Number(e.longitude),a=Number(t.latitude),r=Number(t.longitude);Number.isFinite(n)&&Number.isFinite(i)||!Number.isFinite(a)||!Number.isFinite(r)||(e.latitude=t.latitude,e.longitude=t.longitude),String(e.address||"").length<String(t.address||"").length&&(e.address=t.address),!e.rating&&t.rating&&(e.rating=t.rating)}async function y(){return t.localDataLoaded?t.localData:(o.current||(o.current=(async()=>{const e=(await Promise.all(r.map(async e=>{try{const t=await fetch(e.file,{headers:{Accept:"application/json"}});if(!t.ok)return[];const n=await t.json();return(Array.isArray(n)?n:[]).filter(e=>{return e&&(!e.city||!!(t=e.city)&&"istanbul"===c(t));var t}).map(t=>function(e,t){const n=e.name||e.title||e.adi||"",i=e.district||e.ilce||"",a=e.neighborhood||e.mahalle||"",r=e.address||e.adres||"",o=e.mapsUrl||e.mapUrl||"";let s=t.category,l=!1;if(t.categoryFromField){l=!0;const n=e[t.categoryFromField]||e.cuisine||"";s=String(n).trim()||"Otel"}const c=d([n,i,a,s].filter(Boolean).join(" "))||d(n),u=`${c||d(n)||"venue"}-${s}`,m="string"==typeof e.phone?e.phone.trim():"",g="string"==typeof e.website?e.website.trim():"",p="string"==typeof e.editorialSummary?e.editorialSummary.trim():"";return{id:u,slug:c||u,name:n,address:r,district:i,neighborhood:a,cuisine:e.cuisine||"",category:s,fromKtbRegistry:l,sourceLabel:t.label,source:e.source||"",rating:e.rating||e.googleRating||"",budget:e.budget||"",tags:Array.isArray(e.tags)?e.tags:[],mapsUrl:o,photoUri:("string"==typeof e.photoUri?e.photoUri:"string"==typeof e.photoUrl?e.photoUrl:"").trim(),latitude:e.latitude||e.lat||null,longitude:e.longitude||e.lng||null,sourceBelgeNo:"string"==typeof e.sourceBelgeNo?e.sourceBelgeNo.trim():"",sourceTesisTuru:"string"==typeof e.sourceTesisTuru?e.sourceTesisTuru.trim():"",sourcePlaceId:"string"==typeof e.sourcePlaceId?e.sourcePlaceId.trim():"",phone:m,website:g,editorialSummary:p}}(t,e))}catch(e){return[]}}))).flat();return t.localData=function(e){const t=new Map,n=[];for(const i of e){const e=String(i.sourceBelgeNo||"").trim();if(e){const n=t.get(e);(!n||p(i)>p(n))&&t.set(e,i)}else n.push(i)}const i=new Map;for(const e of n){const t=String(e.sourcePlaceId||"").trim();if(t){const n=`pid:${t}`,a=i.get(n);(!a||p(e)>p(a))&&i.set(n,e);continue}const n=[c(e.name),c(e.district),m(e.address)].join("|"),a=i.get(n);(!a||p(e)>p(a))&&i.set(n,e)}const a=[...t.values(),...i.values()],r=new Map,o=e=>`${c(e.name)}|${c(e.district)}`;for(const e of a){const t=o(e);r.has(t)||r.set(t,[]),r.get(t).push(e)}const s=[];for(const[,e]of r){if(1===e.length){s.push(e[0]);continue}const t=e.filter(e=>String(e.sourceBelgeNo||"").trim());if(1===t.length){const n=t[0],i=e.filter(e=>!String(e.sourceBelgeNo||"").trim()).sort((e,t)=>p(t)-p(e))[0];i&&f(n,i),s.push(n);continue}t.length,s.push(...e)}const l=[...s].sort((e,t)=>p(t)-p(e)),d=[],u=new Map;for(const e of l){const t=Number(e.latitude),n=Number(e.longitude);let i=!1;if(Number.isFinite(t)&&Number.isFinite(n)){const a=`${c(e.name)}|${c(e.district)}`,r=u.get(a)||[];for(const e of r){const a=Number(e.latitude),r=Number(e.longitude);if(Number.isFinite(a)&&Number.isFinite(r)&&g(t,n,a,r)<220){i=!0;break}}}if(!i){d.push(e);const t=`${c(e.name)}|${c(e.district)}`,n=u.get(t)||[];n.push(e),u.set(t,n)}}return d}(e),t.localDataLoaded=!0,t.localData})()),o.current)}function h(){return t.userLocation?[Number(t.userLocation.lat||0).toFixed(3),Number(t.userLocation.lng||0).toFixed(3),c(t.query),c(t.selectedDistrict),c(t.selectedCategory)].join("|"):""}function b(e,t){if(!e)return null;const n=Number(t.latitude),i=Number(t.longitude);if(!(t.latitude&&t.longitude&&Number.isFinite(n)&&Number.isFinite(i)))return null;if(n<35||n>43||i<25||i>45)return null;const a=e=>Number(e)*Math.PI/180,r=a(e.lat),o=a(e.lng),s=a(t.latitude),l=s-r,c=a(t.longitude)-o,d=Math.sin(l/2)**2+Math.cos(r)*Math.cos(s)*Math.sin(c/2)**2,u=2*Math.atan2(Math.sqrt(d),Math.sqrt(1-d))*6371e3;return u>5e5?null:u}function v(e){return c(e).includes("otel")?"assets/otel.png":"assets/no-image-icon.webp"}function S(e){const t=new URL(window.location.href);e?t.searchParams.set("venue",e):t.searchParams.delete("venue"),window.history.replaceState({},"",t.toString())}const w=document.getElementById("queryInput"),k=document.getElementById("districtOptions"),L=document.querySelector("[data-kesfet-district-switch]"),M=document.querySelector("[data-kesfet-district-trigger]"),C=document.querySelector("[data-kesfet-district-menu]"),E=document.querySelector("[data-kesfet-district-current]"),x=document.getElementById("categoryChipRow"),A=document.querySelector("[data-kesfet-category-switch]"),N=document.querySelector("[data-kesfet-category-trigger]"),T=document.querySelector("[data-kesfet-category-menu]"),I=document.querySelector("[data-kesfet-category-current]"),z=document.getElementById("categorySelect"),P=document.getElementById("nearbyButton"),q=document.getElementById("locationMessage"),F=document.getElementById("resultsTitle"),$=document.getElementById("resultsMeta"),B=document.getElementById("resultsState"),U=document.getElementById("resultsLayout"),O=document.getElementById("pagination"),R=document.getElementById("activeFilterPills"),j=document.getElementById("istanbulVenueCardTemplate"),D=document.getElementById("mapPanelTitle"),H=document.getElementById("mapPanelMeta"),V=document.getElementById("mapPanelTags"),K=document.getElementById("mapPanelFrame"),Y=document.getElementById("mapPanelAddress"),G=document.getElementById("mapPanelRating"),W=document.getElementById("mapPanelStatus"),_=document.getElementById("mapPanelFavoriteButton"),J=document.getElementById("mapPanelDetailLink"),Q=document.getElementById("mapPanelExternalLink"),X=document.getElementById("mapPanelContact"),Z=document.getElementById("mapPanelPhone"),ee=document.getElementById("mapPanelVenueTypeWrap"),te=document.getElementById("mapPanelVenueTypeChip"),ne=Boolean(D&&H&&K&&Y&&G&&W),ie=!ne;function ae(){if(!x)return;const e=String(t.selectedCategory||"").trim();x.querySelectorAll(".istanbul-filter-chip").forEach(t=>{t.classList.remove("is-active");const n="true"===t.getAttribute("data-clear"),i=t.getAttribute("data-category-id"),a=t.getAttribute("data-category-value");let r=!1;if(e)if(n)r=!1;else{const t=null==i?"":String(i).trim();if(t)r=t===String(e);else{const t=null==a?"":String(a).trim();t&&(r=c(t)===c(String(e)))}}else r=n;r&&t.classList.add("is-active"),t.setAttribute("aria-checked",r?"true":"false")}),Ae()}function re(e,n){t.loading=e,B&&(B.hidden=!n,B.textContent=n||""),P&&(P.disabled=e)}function oe(){if(!P)return;const e=Boolean(t.nearbyMode&&t.userLocation);P.classList.toggle("is-active",e),P.setAttribute("aria-pressed",e?"true":"false"),P.dataset.state=e?"on":"off"}function se(){l.trigger&&l.trigger.setAttribute("aria-expanded","false"),l.menu&&(l.menu.hidden=!0),l.trigger=null,l.menu=null}function le(){return t.items.find(e=>e.slug===t.selectedVenueSlug)||null}function ce(){const e=le();if(e)return S(e.slug||""),e;if(!t.items.length)return t.selectedVenueSlug="",S(""),null;if(!ne)return t.selectedVenueSlug="",S(""),null;t.selectedVenueSlug=t.items[0].slug||"";const n=le();return S(n?.slug||""),n}function de(e){return t.favoriteVenueIds.has(String(e))}async function ue(){if("local"===t.dataMode)return void(t.favoriteVenueIds=function(){try{const e=window.localStorage.getItem(t.localFavoritesKey);if(!e)return new Set;const n=JSON.parse(e);return Array.isArray(n)?new Set(n.map(e=>String(e))):new Set}catch(e){return new Set}}());const e=t.items.map(e=>Number(e.id)).filter(e=>Number.isFinite(e)&&e>0);if(!e.length)return void(t.favoriteVenueIds=new Set);const n=new URLSearchParams;n.set("venueIds",e.join(","));const i=await fetch(`/api/mvp/favorites/ids?${n.toString()}`,{headers:{Accept:"application/json"}});if(!i.ok)throw new Error("Favori durumları yüklenemedi.");const a=await i.json();t.favoriteVenueIds=new Set(Array.isArray(a.ids)?a.ids.map(e=>String(e)):[])}async function me(e){if(!e)return;if("local"===t.dataMode){const n=String(e);return de(e)?(t.favoriteVenueIds.delete(n),fe("Mekan favorilerden çıkarıldı.",!1)):(t.favoriteVenueIds.add(n),fe("Mekan favorilere kaydedildi.",!1)),function(e){try{const n=JSON.stringify(Array.from(e));window.localStorage.setItem(t.localFavoritesKey,n)}catch(e){}}(t.favoriteVenueIds),Pe(),void ge()}const n=de(e),i=`/api/mvp/favorites/${encodeURIComponent(e)}`;if(!(await fetch(i,{method:n?"DELETE":"POST",headers:{Accept:"application/json"}})).ok)throw new Error("Favori işlemi tamamlanamadı.");n?(t.favoriteVenueIds.delete(String(e)),fe("Mekan favorilerden çıkarıldı.",!1)):(t.favoriteVenueIds.add(String(e)),fe("Mekan favorilere kaydedildi.",!1)),Pe(),ge()}function ge(){if(!ne)return void(U&&(U.hidden=!t.items.length));const e=ce();if(!e)return ee instanceof HTMLElement&&(ee.hidden=!0),void(U&&(U.hidden=!0));if(U&&(U.hidden=!1),document.querySelector(".map-panel-details")&&(document.querySelector(".map-panel-details").scrollTop=0),D.textContent=e.name||"İsimsiz mekan",H.textContent=u(e.cuisine||e.category||""),Y.textContent=e.address||"Adres bilgisi bulunmuyor.",Z&&(e.phone?(Z.innerHTML=`Tel: <a href="tel:${e.phone}">${e.phone}</a>`,Z.hidden=!1):Z.hidden=!0),X){const t=function(e){const t=[],n=String(e.phone||"").trim(),i=String(e.email||"").trim(),a=String(e.website||"").trim(),r=String(e.instagram||"").trim();return n&&t.push(`Tel: ${n}`),i&&t.push(i),a&&t.push(a),r&&t.push(r.includes("http")?r:`Instagram: ${r}`),t.join(" · ")}(e);t?(X.hidden=!1,X.textContent=t):(X.hidden=!0,X.textContent="")}if(ee&&te){const n=String(e.cuisine||e.category||"").trim();n?(ee.hidden=!1,te.textContent=u(n),te.setAttribute("aria-label",`${n} türündeki mekanları göster`),te.onclick=n=>{n.preventDefault(),n.stopPropagation(),function(e){const n=function(e){const n=String(e.cuisine||e.category||"").trim();if(!n)return"";const a=Array.isArray(t.filters.categoryOptions)?t.filters.categoryOptions:[];if(a.length){const e=a.find(e=>c(String(e.name||""))===c(n));if(e)return null!=e.id&&""!==String(e.id).trim()?String(e.id):String(e.name||"").trim()||n}return(Array.isArray(t.filters.categories)?t.filters.categories:i.slice()).find(e=>c(String(e))===c(n))||n}(e);if(!n)return;t.selectedCategory=n,t.page=1,ae(),he(),Fe();const a=document.querySelector(".istanbul-filter-card");a instanceof HTMLElement&&a.scrollIntoView({behavior:"smooth",block:"start"})}(e)}):(ee.hidden=!0,te.textContent="",te.onclick=null)}G.textContent=function(e,t){const n=Number(e);if(!Number.isFinite(n)||n<=0)return"Puan yok";const i=Math.max(1,Math.min(5,Math.round(n))),a="★".repeat(i),r=n.toFixed(1).replace(".",","),o=Number(t);return Number.isFinite(o)&&o>0?`${a} ${r} Google Puanı (${new Intl.NumberFormat("tr-TR").format(o)} yorum)`:`${a} ${r} Google Puanı`}(e.rating,e.userRatingCount),W.textContent=function(e){return e.temporarilyClosed?"Geçici olarak kapalı":!0===e.isOpenNow?e.openingStatusText||"Şu an açık":!1===e.isOpenNow?e.openingStatusText||"Şu an kapalı":e.openingStatusText||""}(e),J.href=function(e){!function(){try{const e=window.location.pathname.replace(/^\//,"")+window.location.search;sessionStorage.setItem("aramabul:venue-list-return-url",e)}catch(e){}}();const t=new URL(window.location.pathname||"gezi-kesfet.html",window.location.href),n=String(e||"").trim();return n&&t.searchParams.set("venue",n),`${t.pathname}${t.search}`}(e.slug),Q.href=e.mapsUrl||`https://www.google.com/maps?q=${encodeURIComponent(e.address||e.name||"İstanbul")}`,K.src=function(e){const t=(()=>{try{if(!e.mapsUrl)return"";const t=new URL(e.mapsUrl),n=t.searchParams.get("query")||t.searchParams.get("q")||"";if(n)return`https://maps.google.com/maps?hl=tr&q=${encodeURIComponent(n)}&z=15&output=embed`;const i=t.searchParams.get("cid")||"";return i?`https://www.google.com/maps?cid=${encodeURIComponent(i)}&hl=tr&output=embed`:""}catch(e){return""}})();if(t)return t;if(Number.isFinite(Number(e.latitude))&&Number.isFinite(Number(e.longitude))){const t=Number(e.latitude),n=Number(e.longitude);return`https://maps.google.com/maps?hl=tr&q=${encodeURIComponent(`${t},${n}`)}&z=15&output=embed`}const n=e.address||e.name||"İstanbul";return`https://maps.google.com/maps?hl=tr&q=${encodeURIComponent(n)}&z=15&output=embed`}(e);const n=null!=e.distanceMeters&&""!==e.distanceMeters?Number(e.distanceMeters):NaN,a=Number.isFinite(n)?n:b(t.userLocation,e),r=Number.isFinite(a)?a<1e3?`${Math.round(a)} m`:`${(a/1e3).toFixed(1).replace(".",",")} km`:"",o=document.getElementById("mapPanelDistance"),s=document.getElementById("mapPanelDistanceText");if(o&&s&&(r?(s.textContent=r,o.hidden=!1):o.hidden=!0),_){const t=de(e.id);_.textContent=t?"Kaydedildi":"Kaydet",_.classList.toggle("is-active",t),_.setAttribute("aria-pressed",t?"true":"false")}V.innerHTML="";const l=Array.isArray(e.tags)?e.tags:[];if(!l.length){const t=document.createElement("span");return t.className="istanbul-active-pill",t.textContent=function(e){const t=c(e);return t?t===c("bilinmiyor")?"Bilinmiyor":"budget"===t||"₺"===t||"₺₺"===t?"Uygun":"mid"===t||"₺₺₺"===t?"Makul":"high"===t||"₺₺₺₺"===t?"Yüksek":String(e):""}(e.budget)||"Etiket yok",void V.appendChild(t)}l.forEach(e=>{const n=document.createElement("span");n.className="istanbul-active-pill";const i=t.filters.tags.find(t=>t.key===e);n.textContent=i?i.label:e,V.appendChild(n)});let d=document.getElementById("mapPanelSimilarSection");if(!d){d=document.createElement("div"),d.id="mapPanelSimilarSection",d.className="map-panel-similar-section",d.style.cssText="margin-top: 1.2rem; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 1rem;",d.innerHTML='\n      <h4 style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700; color: #011d36;">Benzer Mekanlar</h4>\n      <div id="mapPanelSimilarList" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;"></div>\n    ';const e=document.querySelector(".map-panel-details");e&&e.appendChild(d)}const m=document.getElementById("mapPanelSimilarList");if(m){m.innerHTML='<p style="grid-column: span 3; font-size: 0.72rem; color: #5d6a75; margin: 0;">Yükleniyor...</p>';const n=(e.district||"").trim(),i=(e.cuisine||e.categoryName||"").trim(),a=d.querySelector("h4");if(a&&(a.textContent=n?n+" ilçesindeki benzer mekanlar":"Benzer Mekanlar"),n||i){const a=new URLSearchParams;n&&a.set("district",n),i&&a.set("category",i),a.set("limit","4"),a.set("sort","rating"),t.userLocation&&(a.set("lat",String(t.userLocation.lat)),a.set("lng",String(t.userLocation.lng))),fetch("/api/mvp/istanbul/venues?"+a.toString()).then(e=>e.json()).then(n=>{const i=(n.items||[]).filter(t=>String(t.id)!==String(e.id)&&String(t.slug)!==String(e.slug)).slice(0,3);m.innerHTML="",i.length?i.forEach(e=>{const n=document.createElement("div");n.className="map-panel-similar-card";const i="string"==typeof e.photoUri&&e.photoUri.trim()?e.photoUri.trim():v(e.category||e.cuisine||"");n.style.cssText="position: relative; display: flex; flex-direction: column; background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; padding: 0.45rem; cursor: pointer; aspect-ratio: 1/1; justify-content: flex-end; box-sizing: border-box; transition: transform 0.2s, box-shadow 0.2s; overflow: hidden; background-size: cover; background-position: center; background-repeat: no-repeat; background-image: linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(0,0,0,0.85) 90%), url('"+i.replace(/'/g,"\\'")+"');";const a=null!=e.distanceMeters&&""!==e.distanceMeters?Number(e.distanceMeters):NaN,r=Number.isFinite(a)?a:(()=>{if(!(t.userLocation&&e.latitude&&e.longitude))return null;const n=e=>e*Math.PI/180,i=n(t.userLocation.lat),a=n(t.userLocation.lng),r=n(e.latitude),o=r-i,s=n(e.longitude)-a,l=Math.sin(o/2)*Math.sin(o/2)+Math.cos(i)*Math.cos(r)*Math.sin(s/2)*Math.sin(s/2),c=2*Math.atan2(Math.sqrt(l),Math.sqrt(1-l));return Math.round(6371e3*c)})(),o=Number.isFinite(r)&&r<2e7?r<1e3?`${Math.round(r)} m`:`${(r/1e3).toFixed(1).replace(".",",")} km`:"";n.innerHTML=`\n              <span class="map-panel-similar-card-name" style="font-size: 0.72rem; font-weight: 700; color: #ffffff; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; word-break: break-word; text-shadow: 0 1px 2px rgba(0,0,0,0.8);" title="${e.name||""}">${e.name||""}</span>\n              ${o?`<span class="map-panel-similar-card-distance" style="font-size: 0.65rem; color: #64b5f6; font-weight: 700; display: flex; align-items: center; gap: 0.15rem; text-shadow: 0 1px 2px rgba(0,0,0,0.8);"><img src="assets/uzak.png" style="width: 10px; height: 10px; object-fit: contain; filter: brightness(0) invert(1);" alt="" />dots{} ${o}</span>`:""}\n            `,n.innerHTML=n.innerHTML.replace("\\dots{}",""),n.addEventListener("click",()=>{pe(e.slug)}),n.addEventListener("mouseenter",()=>{n.style.transform="translateY(-2px)",n.style.boxShadow="0 4px 8px rgba(0,0,0,0.15)",n.style.borderColor="#1a73e8"}),n.addEventListener("mouseleave",()=>{n.style.transform="none",n.style.boxShadow="none",n.style.borderColor="rgba(0,0,0,0.06)"}),m.appendChild(n)}):m.innerHTML='<p style="grid-column: span 3; font-size: 0.72rem; color: #5d6a75; margin: 0;">Benzer mekan bulunamadı.</p>'}).catch(()=>{m.innerHTML='<p style="grid-column: span 3; font-size: 0.72rem; color: #5d6a75; margin: 0;">Yüklenirken hata oluştu.</p>'})}else m.innerHTML='<p style="grid-column: span 3; font-size: 0.72rem; color: #5d6a75; margin: 0;">Benzer mekan bulunamadı.</p>'}}function pe(e){e&&(t.selectedVenueSlug=e,S(e),Pe(),ge())}function fe(e,t){q&&(q.textContent=e,q.dataset.state=t?"error":"neutral")}function ye(){F&&(t.nearbyMode&&t.userLocation?F.textContent="Konumuna göre sıralanan İstanbul gezi noktaları":F.textContent="İstanbul'da keşfedebileceğin gezi noktaları")}function he(){if(!R)return;R.innerHTML="";const e=[];t.selectedDistrict&&e.push({label:`İlçe: ${t.selectedDistrict}`,type:"district"}),t.selectedCategory&&e.push({label:`Kategori: ${ve()}`,type:"category"}),t.query&&e.push({label:`Arama: ${t.query}`,type:"query"});let n=t.items.length;t.pagination&&null!=t.pagination.total&&(n=t.pagination.total),n>0&&e.unshift({label:`${n} mekan listeleniyor`,type:"info"}),t.nearbyMode&&e.push({label:"Yakındakiler",type:"nearby"}),0!==e.length?(R.hidden=!1,e.forEach(e=>{if("info"===e.type){const t=document.createElement("span");return t.className="istanbul-active-pill istanbul-active-pill--info",t.textContent=e.label,void R.appendChild(t)}const n=document.createElement("button");n.type="button",n.className="istanbul-active-pill istanbul-active-pill--dismissible",n.setAttribute("aria-label",`${e.label} filtresini kaldır`),n.textContent=e.label+" ×",n.addEventListener("click",()=>{!function(e){switch(e.type){case"district":t.selectedDistrict="";break;case"category":t.selectedCategory="";break;case"query":t.query="",w&&(w.value="");break;case"nearby":t.nearbyMode=!1,t.userLocation=null,oe();break;default:return}t.page=1,he(),Fe()}(e)}),R.appendChild(n)})):R.hidden=!0}function be(){if(x){x.innerHTML="";const e=document.createElement("button");e.type="button",e.className="istanbul-filter-chip",e.setAttribute("data-clear","true"),e.setAttribute("role","radio"),e.setAttribute("aria-label","Tüm kategoriler"),e.textContent="Tüm kategoriler",x.appendChild(e);const n=Array.isArray(t.filters.categoryOptions)?t.filters.categoryOptions:[];return n.length?[...n].sort((e,t)=>String(e.name||"").localeCompare(String(t.name||""),"tr-TR")).forEach(e=>{const t=document.createElement("button");t.type="button",t.className="istanbul-filter-chip",null!=e.id&&""!==String(e.id).trim()?t.setAttribute("data-category-id",String(e.id)):t.setAttribute("data-category-value",String(e.name||"").trim()||String(e.slug||"")),t.setAttribute("role","radio");const n=u(e.name);t.setAttribute("aria-label",`Kategori: ${n}`),t.textContent=n,x.appendChild(t)}):[...t.filters.categories||[]].sort((e,t)=>String(e).localeCompare(String(t),"tr-TR")).forEach(e=>{const t=document.createElement("button");t.type="button",t.className="istanbul-filter-chip",t.setAttribute("data-category-value",String(e)),t.setAttribute("role","radio");const n=u(e);t.setAttribute("aria-label",`Kategori: ${n}`),t.textContent=n,x.appendChild(t)}),void ae()}if(!z)return;const e=Array.isArray(t.filters.categoryOptions)?t.filters.categoryOptions:[];if(!e.length){const e=[...t.filters.categories||[]].sort((e,t)=>String(e).localeCompare(String(t),"tr-TR"));return void function(e,t){if(!e)return;e.innerHTML="";const n=document.createElement("option");n.value="",n.textContent="Tüm kategoriler",e.appendChild(n),t.forEach(t=>{const n=document.createElement("option");n.value=t,n.textContent=t,e.appendChild(n)})}(z,e)}z.innerHTML="";const n=document.createElement("option");n.value="",n.textContent="Tüm kategoriler",z.appendChild(n),[...e].sort((e,t)=>String(e.name||"").localeCompare(String(t.name||""),"tr-TR")).forEach(e=>{const t=document.createElement("option");t.value=String(e.id),t.textContent=e.name,z.appendChild(t)})}function ve(){if(!t.selectedCategory)return"";const e=Array.isArray(t.filters.categoryOptions)?t.filters.categoryOptions:[];if(!e.length)return u(t.selectedCategory);const n=String(t.selectedCategory).trim(),i=e.find(e=>String(e.id)===n);if(i)return u(i.name);const a=e.find(e=>c(String(e.name||""))===c(n));return u(a?a.name:t.selectedCategory)}const Se=new WeakMap,we=new WeakMap;function ke(e){if(!e)return;const t=Se.get(e);t&&(window.clearTimeout(t),Se.delete(e))}function Le(){A&&T&&N&&(ke(A),T.hidden=!0,N.setAttribute("aria-expanded","false"),A.classList.remove("is-open"))}function Me(e){if(!e)return;const t=we.get(e);t&&(window.clearTimeout(t),we.delete(e))}function Ce(){L&&C&&M&&(Me(L),C.hidden=!0,M.setAttribute("aria-expanded","false"),L.classList.remove("is-open"))}function Ee(){L&&C&&M&&(Me(L),Le(),C.hidden=!1,M.setAttribute("aria-expanded","true"),L.classList.add("is-open"))}function xe(){A&&T&&N&&(ke(A),Ce(),T.hidden=!1,N.setAttribute("aria-expanded","true"),A.classList.add("is-open"))}function Ae(){if(!I)return;if(!String(t.selectedCategory||"").trim())return void(I.textContent="Tüm kategoriler");const e=ve();I.textContent=e&&String(e).trim()?e:"Tüm kategoriler"}function Ne(){if(!E)return;const e=String(t.selectedDistrict||"").trim();E.textContent=e||"Tüm ilçeler"}function Te(){if(!k)return;const e=String(t.selectedDistrict||"").trim();k.querySelectorAll(".istanbul-mvp-subcategory-box").forEach(t=>{if(!t.hasAttribute("data-district-value"))return;const n=t.getAttribute("data-district-value"),i=e?n===e:""===(n||"");t.classList.toggle("is-active",i),t.setAttribute("aria-checked",i?"true":"false")})}function Ie(){if(!k)return;const e="Tüm ilçeler";k.innerHTML="";const n=document.createElement("button");n.type="button",n.className="istanbul-mvp-subcategory-box",n.setAttribute("data-district-value",""),n.setAttribute("role","radio"),n.setAttribute("aria-label",e),n.textContent=e,k.appendChild(n),(t.filters.districts||[]).forEach(e=>{const t=document.createElement("button");t.type="button",t.className="istanbul-mvp-subcategory-box",t.setAttribute("data-district-value",e),t.setAttribute("role","radio"),t.setAttribute("aria-label",e),t.textContent=e,k.appendChild(t)}),Te(),Ne()}function ze(){if(!O)return;O.innerHTML="";const e=t.pagination;if(!e||!e.totalPages||e.totalPages<=1)return void(O.hidden=!0);O.hidden=!1;const n=document.createElement("button");n.type="button",n.className="istanbul-pagination-button",n.textContent="<",n.disabled=e.page<=1,n.addEventListener("click",()=>{t.page<=1||(t.page-=1,Fe())}),O.appendChild(n);const i=document.createElement("span");i.className="istanbul-pagination-current",i.textContent=`${e.page} / ${e.totalPages}`,O.appendChild(i);const a=document.createElement("button");a.type="button",a.className="istanbul-pagination-button",a.textContent=">",a.disabled=e.page>=e.totalPages,a.addEventListener("click",()=>{t.page>=e.totalPages||(t.page+=1,Fe())}),O.appendChild(a)}function Pe(){if(e.innerHTML="",!t.items.length)return e.hidden=!0,U&&(U.hidden=!0),B.hidden=!1,B.textContent="Bu filtrelerle mekan bulunamadı.",void ze();for(let e=t.items.length-1;e>0;e--){const n=Math.floor(Math.random()*(e+1));[t.items[e],t.items[n]]=[t.items[n],t.items[e]]}const n=e=>{if(!e)return!1;const t=e.photoUri||e.photoUrl||e.imageUrl||e.image||e.coverImageUrl;if("string"!=typeof t)return!1;const n=t.trim().toLowerCase();return!(!n||n.includes("al8-snh-")||n.includes("al8-snhylsmxv7pa75n")||n.includes("staticmap")||n.includes("maps.google")||n.includes("assets/")||n.includes("static-maps.yandex")||n.includes("s100x100")||"null"===n||"undefined"===n||"none"===n||"placeholder"===n||"empty"===n||"false"===n||n.includes("no-image")||n.includes("noimage")||n.includes("no_image")||n.includes("no-photo")||n.includes("nophoto")||n.includes("placeholder")||n.includes("upload-img")||n.includes("upload_img")||n.includes("<img")||n.includes("default-")||n.includes("default_")||n.includes("/default.")||n.includes("/defaultog")||n.includes("og-image")||n.includes("social-image")||n.includes("stock/")||!(n.startsWith("http://")||n.startsWith("https://")||n.startsWith("/")))};t.items.sort((e,t)=>{const i=n(e);return i!==n(t)?i?-1:1:0}),ne?ce():t.selectedVenueSlug="",e.hidden=!1,B.hidden=!0,t.items.forEach(n=>{const i=j.content.cloneNode(!0),a=i.querySelector(".istanbul-venue-card"),r=i.querySelector(".istanbul-venue-media"),o=i.querySelector(".istanbul-venue-image"),s=i.querySelector(".istanbul-venue-eyebrow"),l=i.querySelector(".istanbul-venue-distance"),d=i.querySelector(".istanbul-venue-title-link"),u=i.querySelector(".istanbul-venue-address"),m=i.querySelector(".istanbul-venue-contact"),g=i.querySelector(".istanbul-venue-summary"),p=i.querySelector(".istanbul-venue-gallery"),f=i.querySelector(".istanbul-venue-rating"),y=i.querySelector(".istanbul-venue-budget"),h=i.querySelector(".istanbul-venue-tags"),S=i.querySelector(".istanbul-favorite-button"),w=i.querySelector(".istanbul-venue-actions");if(i.querySelector(".istanbul-venue-action-group"),a.tabIndex=0,a.dataset.cardCategory=(n.category||n.cuisine||"").toLowerCase().replace(/\s+/g,"-"),n.slug===t.selectedVenueSlug&&a.classList.add("is-selected"),o&&r){const e=function(e){const t="string"==typeof e.photoUri?e.photoUri.trim():"";if(t)return t;const n=e.galleryPhotoUris;if(Array.isArray(n)&&n.length){const e=String(n[0]||"").trim();if(e)return e}return""}(n);e?(o.alt=`${n.name||"Mekan"} fotoğrafı`,o.addEventListener("error",()=>{o.src=v(n.category||n.cuisine||""),o.alt=n.name||"Mekan"},{once:!0}),o.src=e):(o.src=v(n.category||n.cuisine||""),o.alt=n.name||"Mekan")}m&&(m.hidden=!0,m.textContent=""),g&&(g.hidden=!0,g.textContent="");const k=i.querySelector(".istanbul-venue-venue-type-row");k&&(k.hidden=!0),p&&(p.hidden=!0,p.innerHTML=""),s.textContent=u(n.category||n.cuisine||""),s.hidden=!u(n.category||n.cuisine||""),l.hidden=!0,d.textContent=n.name||"İsimsiz mekan",d.href="#",d.addEventListener("click",e=>{e.preventDefault(),window.openVenueInMaps(n)}),u.textContent=n.address||"Adres bilgisi bulunmuyor.",u.hidden=!1;const L=a.querySelector(".istanbul-venue-phone");if(L&&L.remove(),String(n.phone||"").trim()){const e=document.createElement("p");e.className="istanbul-venue-phone",e.innerHTML=`Tel: <a href="tel:${n.phone}">${n.phone}</a>`,u.parentNode.insertBefore(e,u.nextSibling)}f.hidden=!0,y.hidden=!0;const M=i.querySelector(".istanbul-venue-pill-row");M&&(M.hidden=!0),w&&(w.hidden=!0),h.innerHTML="";const C=document.createElement("div");C.className="venue-card-info-boxes";const E=document.createElement("div");E.className="venue-card-info-row";const x=String(n.district||"").trim();if(x){const e=document.createElement("a");e.className="istanbul-venue-tag",e.href=`gezi.html#district=${encodeURIComponent(x)}`,e.setAttribute("aria-label",`${x} ilçesindeki mekanları aç`),e.textContent=x,E.appendChild(e)}const A=String(n.neighborhood||n.mahalle||"").trim();if(A){const e=document.createElement("span");e.className="istanbul-venue-tag",e.textContent=A,E.appendChild(e)}const N=String(n.cuisine||n.category||"").trim();if(N&&c(N)!==c(x)){const e=document.createElement("span");e.className="istanbul-venue-tag",e.textContent=u(N),E.appendChild(e)}E.childElementCount&&C.appendChild(E);const T=document.createElement("div");T.className="venue-card-info-row";const I=document.createElement("button");I.type="button",I.className="venue-info-chip-btn istanbul-favorite-chip";const z=()=>{const e=de(n.id);I.innerHTML='<img src="assets/fav.png" class="venue-chip-icon" alt="" />'+(e?"Favorilerde":"Favorilere Ekle"),I.classList.toggle("is-favorited",e),I.setAttribute("aria-pressed",e?"true":"false")};z(),I.addEventListener("click",async e=>{e.stopPropagation();try{I.disabled=!0,await me(n.id),z(),"function"==typeof window.syncMapPanelFavoriteButton&&window.syncMapPanelFavoriteButton()}catch(e){console.error("Favori işlemi hatası:",e)}finally{I.disabled=!1}}),T.appendChild(I);const P=null!=n.distanceMeters&&""!==n.distanceMeters?Number(n.distanceMeters):NaN,q=(F=Number.isFinite(P)?P:b(t.userLocation,n),Number.isFinite(F)?F<1e3?`${Math.round(F)} m`:`${(F/1e3).toFixed(1).replace(".",",")} km`:"");var F;if(q){const e=document.createElement("span");e.className="venue-distance-chip",e.innerHTML=`<img src="assets/uzak.png" class="venue-chip-icon" alt="" />${q}`,T.appendChild(e)}const $=document.createElement("button");$.type="button",$.className="venue-info-chip-btn",$.innerHTML='<img src="assets/detail.png?v=20260601b" class="venue-chip-icon" alt="" />Ayrıntılı Bilgi',$.addEventListener("click",e=>{e.stopPropagation();const t=n.mapsUrl||n.maps_url||`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((n.name||"")+" "+(n.district||"")+" İstanbul")}`;window.open(t,"_blank","noopener,noreferrer")}),T.appendChild($),T.childElementCount&&C.appendChild(T),h.appendChild(C),l.hidden=!0,C.childElementCount||a.classList.add("is-tagless"),a.addEventListener("click",e=>{e.target instanceof HTMLElement&&e.target.closest("a, button")||(ie?window.openVenueInMaps(n):pe(n.slug))}),a.addEventListener("keydown",e=>{if("Enter"===e.key||" "===e.key){if(e.preventDefault(),ie)return void window.openVenueInMaps(n);pe(n.slug)}}),S.addEventListener("click",async e=>{e.preventDefault(),e.stopPropagation();try{S.disabled=!0,await me(n.id)}catch(e){fe(e instanceof Error?e.message:"Favori işlemi tamamlanamadı.",!0)}finally{S.disabled=!1}}),e.appendChild(i)}),ge(),ze()}function qe(e){ye(),he(),$&&($.style.display="none")}async function Fe(){re(!0,"Mekanlar getiriliyor.");try{if("local"===t.dataMode){const e=(await y()).filter(e=>!(t.selectedDistrict&&c(e.district)!==c(t.selectedDistrict)||t.selectedCategory&&!function(e,t){return!t||(c(t)===c(a)?!0===e.fromKtbRegistry:c(e.category)===c(t))}(e,t.selectedCategory)||t.query&&!function(e,t){const n=c(e);return!n||[t.name,t.address,t.district,t.neighborhood,t.cuisine].filter(Boolean).map(e=>c(e)).join(" ").includes(n)}(t.query,e)));if(t.nearbyMode&&t.userLocation){const e=function(){const e=h();if(!e)return null;const t=s.get(e);return t?Date.now()-t.timestamp>12e4?(s.delete(e),null):t:null}();if(e)return t.items=e.items,t.pagination=e.pagination,await ue(),qe((t.pagination,e.total)),void Pe()}const n=t.nearbyMode&&t.userLocation?t.localDataLoaded?t.localData.filter(e=>Number.isFinite(Number(e.latitude))&&Number.isFinite(Number(e.longitude))):[]:e,i=t.nearbyMode&&t.userLocation?function(e){const t=Number(e.lat),n=Number(e.lng),i=8e3/111320,a=8e3/(111320*Math.cos(t*Math.PI/180));return{minLat:t-i,maxLat:t+i,minLng:n-a,maxLng:n+a}}(t.userLocation):null,r=i?n.filter(e=>function(e,t){const n=Number(e.latitude),i=Number(e.longitude);return!(!Number.isFinite(n)||!Number.isFinite(i))&&n>=t.minLat&&n<=t.maxLat&&i>=t.minLng&&i<=t.maxLng}(e,i)):n,o=r.map(e=>{const n=b(t.userLocation,e);return{...e,distanceMeters:n}}),l=t.nearbyMode&&t.userLocation?o.filter(e=>Number.isFinite(e.distanceMeters)&&e.distanceMeters<=8e3):o,d=e=>{if(!e)return!1;const t=e.photoUri||e.photoUrl||e.imageUrl||e.image||e.coverImageUrl;if("string"!=typeof t)return!1;const n=t.trim().toLowerCase();return!(!n||n.includes("al8-snh-")||n.includes("al8-snhylsmxv7pa75n")||n.includes("staticmap")||n.includes("maps.google")||n.includes("assets/")||n.includes("static-maps.yandex")||n.includes("s100x100")||"null"===n||"undefined"===n||"none"===n||"placeholder"===n||"empty"===n||"false"===n||n.includes("no-image")||n.includes("noimage")||n.includes("no_image")||n.includes("no-photo")||n.includes("nophoto")||n.includes("placeholder")||n.includes("upload-img")||n.includes("upload_img")||n.includes("<img")||n.includes("default-")||n.includes("default_")||n.includes("/default.")||n.includes("/defaultog")||n.includes("og-image")||n.includes("social-image")||n.includes("stock/")||!(n.startsWith("http://")||n.startsWith("https://")||n.startsWith("/")))};if(t.nearbyMode&&t.userLocation)l.sort((e,t)=>{const n=d(e);if(n!==d(t))return n?-1:1;const i="openstreetmap"===e.source;return i!==("openstreetmap"===t.source)?i?-1:1:Number.isFinite(e.distanceMeters)?Number.isFinite(t.distanceMeters)?e.distanceMeters-t.distanceMeters:-1:1});else{const e=l.slice();!function(e){for(let t=e.length-1;t>0;t-=1){const n=Math.floor(Math.random()*(t+1));[e[t],e[n]]=[e[n],e[t]]}}(e),e.sort((e,t)=>{const n=d(e);return n!==d(t)?n?-1:1:0}),l.length=0,l.push(...e)}const u=l.length,m=u?Math.ceil(u/t.limit):0,g=m?Math.min(t.page,m):1;t.page=g;const p=(g-1)*t.limit,f=l.slice(p,p+t.limit);return t.items=f,t.pagination=m?{page:g,totalPages:m,total:u}:{page:1,totalPages:0,total:0},await ue(),qe(t.pagination),Pe(),void(t.nearbyMode&&t.userLocation&&function(e){const t=h();t&&s.set(t,{...e,timestamp:Date.now()})}({items:t.items,pagination:t.pagination,total:u}))}if("api"===t.dataMode){const e=["gezi",t.selectedDistrict,String(t.selectedCategory||""),t.query.trim()].join("");t.discoveryShuffleFilterKey!==e&&(t.discoveryShuffleFilterKey=e,t.discoveryRandomSeed=String(Math.floor(1e9*Math.random()))),t.discoveryRandomSeed||(t.discoveryRandomSeed=String(Math.floor(1e9*Math.random())))}else n();const e=function(){const e=new URLSearchParams;return e.set("page",String(t.page)),e.set("limit",String(t.limit)),t.selectedDistrict&&e.set("district",t.selectedDistrict),t.selectedCategory&&(c(String(t.selectedCategory).trim())===c(a)?e.set("source","ktb"):Array.isArray(t.filters.categoryOptions)&&t.filters.categoryOptions.length?e.set("subcategoryId",t.selectedCategory):e.set("category",t.selectedCategory)),t.query&&e.set("q",t.query),t.nearbyMode&&t.userLocation&&(e.set("lat",String(t.userLocation.lat)),e.set("lng",String(t.userLocation.lng)),e.set("radius","8000")),"api"===t.dataMode&&(e.set("sort","random"),t.discoveryRandomSeed||(t.discoveryRandomSeed=String(Math.floor(1e9*Math.random()))),e.set("randomSeed",t.discoveryRandomSeed)),e}(),i=t.nearbyMode&&t.userLocation?`/api/discovery/gezi/istanbul/venues/nearby?${e.toString()}`:`/api/discovery/gezi/istanbul/venues?${e.toString()}`,r=await fetch(i,{headers:{Accept:"application/json"}});if(!r.ok)throw new Error("Gezi noktaları yüklenemedi. Lütfen sunucuyu kontrol et.");const o=await r.json();t.items=Array.isArray(o.items)?o.items:[],t.pagination=o.pagination||null,await ue(),qe(),Pe()}catch(t){e.hidden=!0,B.hidden=!1,B.textContent=t instanceof Error?t.message:"Mekanlar alınamadı.",O.hidden=!0}finally{re(!1,B.hidden?"":B.textContent),oe()}}function $e(){t.nearbyMode?function(e=""){t.nearbyMode=!1,t.userLocation=null,t.page=1,n(),oe(),fe(e,!1),Fe()}():navigator.geolocation?(fe("Konumun alınıyor.",!1),navigator.geolocation.getCurrentPosition(e=>{t.userLocation={lat:e.coords.latitude,lng:e.coords.longitude},t.nearbyMode=!0,t.page=1,oe(),fe("Yakındaki mod aktif. Sonuçlar konumuna göre sıralanıyor.",!1),Fe()},()=>{t.nearbyMode=!1,t.userLocation=null,oe(),fe("Konum izni verilmedi. İstanbul genel listesi gösteriliyor.",!0),Fe()},{enableHighAccuracy:!0,timeout:8e3,maximumAge:6e4})):fe("Tarayıcı konum desteği vermiyor.",!0)}!async function(){try{const e=new URLSearchParams(window.location.search).get("venue")||"";t.selectedVenueSlug=e,await async function(){if("local"===t.dataMode){const e=await y();return t.filters=function(e){const t=new Set;return e.forEach(e=>{e.district&&t.add(e.district)}),{districts:Array.from(t).sort((e,t)=>e.localeCompare(t,"tr-TR")),categoryOptions:[],categories:i.slice(),tags:[]}}(e),Ie(),void be()}const e=new URLSearchParams({mainCategoryKey:"gezi"}),n=await fetch(`/api/mvp/istanbul/filters?${e.toString()}`,{headers:{Accept:"application/json"}});if(!n.ok)throw new Error("Gezi filtre verileri alınamadı. Lütfen sunucuyu kontrol et.");const a=await n.json(),r=await async function(){try{const e=await fetch(`/api/public/content-model/subcategories?mainCategoryKey=${encodeURIComponent("gezi")}`,{headers:{Accept:"application/json"}});if(!e.ok)return[];const t=await e.json(),n=Array.isArray(t.items)?t.items:[],i=["Camping","Günübirlik Tesis","Kongre Ve Sergi Merkezi","Otel","Pansiyon","Plaj","Yat Limanı"];return n.filter(e=>i.includes(e.name))}catch(e){return[]}}(),o=r.length>0;t.filters={districts:Array.isArray(a.districts)?a.districts:[],categoryOptions:o?r:[],categories:o?[]:i.slice(),tags:Array.isArray(a.tags)?a.tags:[]},Ie(),be()}();const n=new URLSearchParams(window.location.search).get("subcategoryId");if(n){const e=(Array.isArray(t.filters.categoryOptions)?t.filters.categoryOptions:[]).find(e=>String(e.id)===String(n));if(e)t.selectedCategory=String(e.id);else try{const e=await fetch("/api/public/content-model/subcategories?mainCategoryKey=gezi",{headers:{Accept:"application/json"}});if(e.ok){const i=await e.json(),a=(Array.isArray(i.items)?i.items:[]).find(e=>String(e.id)===String(n));if(a&&a.name){const e=(Array.isArray(t.filters.categories)?t.filters.categories:[]).find(e=>c(e)===c(a.name));t.selectedCategory=e||a.name}}}catch(e){}ae(),Ae()}const a=function(){const e=new URLSearchParams(window.location.search);return(e.get("q")||e.get("query")||"").trim()}();a&&w&&(t.query=a,w.value=a),function(){w&&(w.addEventListener("keydown",e=>{"Enter"===e.key&&(e.preventDefault(),t.query=w.value.trim(),t.page=1,Fe())}),w.addEventListener("blur",()=>{t.query=w.value.trim(),t.page=1,Fe()}));const e=document.getElementById("istanbulGeziSearchForm");e&&w&&e.addEventListener("submit",e=>{e.preventDefault(),t.query=w.value.trim(),t.page=1,Fe()}),k&&k.addEventListener("click",e=>{const n=e.target.closest(".istanbul-mvp-subcategory-box");n&&k.contains(n)&&n.hasAttribute("data-district-value")&&(t.selectedDistrict=n.getAttribute("data-district-value")||"",Te(),Ne(),Ce(),t.page=1,Fe())}),x?x.addEventListener("click",e=>{const n=e.target.closest(".istanbul-filter-chip");if(n&&x.contains(n)){if("true"===n.getAttribute("data-clear"))t.selectedCategory="";else if(n.hasAttribute("data-category-id"))t.selectedCategory=n.getAttribute("data-category-id")||"";else{if(!n.hasAttribute("data-category-value"))return;t.selectedCategory=n.getAttribute("data-category-value")||""}ae(),Le(),Ce(),t.page=1,Fe()}}):z&&z.addEventListener("change",()=>{t.selectedCategory=z.value,t.page=1,Fe()}),P&&(P.setAttribute("aria-pressed","false"),P.dataset.state="off",oe(),P.addEventListener("click",$e)),document.addEventListener("click",e=>{e.target instanceof HTMLElement&&e.target.closest(".card-share-wrap")||se()}),document.addEventListener("keydown",e=>{"Escape"===e.key&&(Le(),Ce(),se())}),A&&N&&T&&(N.addEventListener("click",e=>{e.preventDefault(),T.hidden?xe():Le()}),A.addEventListener("mouseenter",()=>{ke(A),xe()}),A.addEventListener("mouseleave",()=>{!function(){if(!A)return;ke(A);const e=window.setTimeout(()=>{Le(),Se.delete(A)},180);Se.set(A,e)}()}),T.addEventListener("mouseenter",()=>{ke(A)}),N.addEventListener("focus",()=>{xe()}),A.addEventListener("focusout",e=>{const t=e.relatedTarget;t&&A.contains(t)||Le()}),document.addEventListener("click",e=>{e.target&&e.target.closest&&e.target.closest("[data-kesfet-category-switch]")||Le()})),L&&M&&C&&(M.addEventListener("click",e=>{e.preventDefault(),C.hidden?Ee():Ce()}),L.addEventListener("mouseenter",()=>{Me(L),Ee()}),L.addEventListener("mouseleave",()=>{!function(){if(!L)return;Me(L);const e=window.setTimeout(()=>{Ce(),we.delete(L)},180);we.set(L,e)}()}),C.addEventListener("mouseenter",()=>{Me(L)}),M.addEventListener("focus",()=>{Ee()}),L.addEventListener("focusout",e=>{const t=e.relatedTarget;t&&L.contains(t)||Ce()}),document.addEventListener("click",e=>{e.target&&e.target.closest&&e.target.closest("[data-kesfet-district-switch]")||Ce()})),Ae(),_&&_.addEventListener("click",async()=>{const e=le();if(e)try{_.disabled=!0,await me(e.id)}catch(e){fe(e instanceof Error?e.message:"Favori işlemi tamamlanamadı.",!0)}finally{_.disabled=!1}})}(),ye(),he(),await Fe(),await async function(e){const n=String(e||"").trim();if(!n||t.initialVenueSelectionHandled)return;t.initialVenueSelectionHandled=!0;let i=t.items.find(e=>e.slug===n)||null;if(!i)try{const e=await fetch(`/api/mvp/istanbul/venues/${encodeURIComponent(n)}`,{headers:{Accept:"application/json"}});if(e.ok){const t=await e.json();i=t.venue||t.item||t}}catch(e){console.warn("Derin link mekan seçilemedi:",e)}i&&"object"==typeof i&&i.slug&&(t.selectedVenueSlug=i.slug,S(i.slug),Pe(),ge())}(e),e||function(){function e(e){t.userLocation={lat:e.coords.latitude,lng:e.coords.longitude},Fe()}!t.userLocation&&navigator.geolocation&&navigator.geolocation.getCurrentPosition(e,()=>{navigator.geolocation.getCurrentPosition(e,()=>{},{enableHighAccuracy:!0,timeout:15e3,maximumAge:3e5})},{enableHighAccuracy:!1,timeout:1e4,maximumAge:3e5})}()}catch(e){re(!1,e instanceof Error?e.message:"Sayfa başlatılamadı.")}}()}();
+"use strict";
+!(function () {
+  const e = document.getElementById("resultsGrid");
+  if (!e) return;
+  const t = {
+    filters: { districts: [], categoryOptions: [], categories: [], tags: [] },
+    dataMode: "api",
+    localData: [],
+    localDataLoaded: !1,
+    localFavoritesKey: "geziKesfetFavorites",
+    selectedDistrict: "",
+    selectedCategory: "",
+    query: "",
+    page: 1,
+    limit: 24,
+    nearbyMode: !1,
+    userLocation: null,
+    loading: !1,
+    items: [],
+    pagination: null,
+    selectedVenueSlug: "",
+    initialVenuePopupOpened: !1,
+    favoriteVenueIds: new Set(),
+    discoveryShuffleFilterKey: "",
+    discoveryRandomSeed: "",
+  };
+  function n() {
+    ((t.discoveryShuffleFilterKey = ""), (t.discoveryRandomSeed = ""));
+  }
+  const i = [
+      "Camping",
+      "Günübirlik Tesis",
+      "Kongre Ve Sergi Merkezi",
+      "Otel",
+      "Pansiyon",
+      "Plaj",
+      "Yat Limanı",
+    ],
+    a = "Gezi Tesis Tipleri",
+    r = [
+      {
+        label: "Kamp Alanları",
+        file: "data/gezi-kamp-alanlari.json",
+        category: "Kamp Alanları",
+      },
+      {
+        label: "Butik Oteller",
+        file: "data/gezi-butik-oteller.json",
+        category: "Otel",
+      },
+      {
+        label: "5 Yıldızlı Oteller",
+        file: "data/gezi-oteller-5-yildiz.json",
+        category: "Otel",
+      },
+      {
+        label: "4 Yıldızlı Oteller",
+        file: "data/gezi-oteller-4-yildiz.json",
+        category: "Otel",
+      },
+      {
+        label: "3 Yıldızlı Oteller",
+        file: "data/gezi-oteller-3-yildiz.json",
+        category: "Otel",
+      },
+      {
+        label: "2 Yıldızlı Oteller",
+        file: "data/gezi-oteller-2-yildiz.json",
+        category: "Otel",
+      },
+      {
+        label: "1 Yıldızlı Oteller",
+        file: "data/gezi-oteller-1-yildiz.json",
+        category: "Otel",
+      },
+      {
+        label: "Diğer Oteller",
+        file: "data/gezi-oteller-diger.json",
+        category: "Otel",
+      },
+      {
+        label: "KTB tesis kayıtları (İstanbul)",
+        file: "data/ktb-tesis-kayitlari-gezi.json",
+        categoryFromField: "sourceTesisTuru",
+      },
+    ],
+    o = { current: null },
+    s = new Map(),
+    l = { trigger: null, menu: null };
+  function c(e) {
+    return e
+      ? String(e)
+          .trim()
+          .toLocaleLowerCase("tr-TR")
+          .normalize("NFKD")
+          .replace(/\p{Diacritic}/gu, "")
+      : "";
+  }
+  function u(e) {
+    return e
+      ? c(e)
+          .replace(/[^a-z0-9\s-]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-|-$/g, "")
+      : "";
+  }
+  function d(e) {
+    const t = String(e || "").trim();
+    if (!t) return "";
+    const n = c(t);
+    return "otel" === n
+      ? "Otel"
+      : "pansiyon" === n
+        ? "Pansiyon"
+        : "camping" === n || "kamp alanlari" === n
+          ? "Kamp Alanı"
+          : "plaj" === n
+            ? "Plaj"
+            : "yat limani" === n
+              ? "Yat Limanı"
+              : "butik oteller" === n || "butik otel" === n
+                ? "Butik Otel"
+                : "5 yildizli oteller" === n || "5 yildizli otel" === n
+                  ? "5 Yıldızlı Otel"
+                  : "4 yildizli oteller" === n || "4 yildizli otel" === n
+                    ? "4 Yıldızlı Otel"
+                    : "3 yildizli oteller" === n || "3 yildizli otel" === n
+                      ? "3 Yıldızlı Otel"
+                      : "2 yildizli oteller" === n || "2 yildizli otel" === n
+                        ? "2 Yıldızlı Otel"
+                        : "1 yildizli oteller" === n || "1 yildizli otel" === n
+                          ? "1 Yıldızlı Otel"
+                          : t.charAt(0).toLocaleUpperCase("tr-TR") + t.slice(1);
+  }
+  function m(e) {
+    let t = c(e)
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+    const n = new Set(["istanbul", "turkiye", "turkey"]);
+    return t
+      .split(/\s+/)
+      .filter((e) => e.length > 1 && !n.has(e))
+      .sort()
+      .join(" ");
+  }
+  function g(e, t, n, i) {
+    const a = (e) => (e * Math.PI) / 180,
+      r = a(n - e),
+      o = a(i - t),
+      s =
+        Math.sin(r / 2) ** 2 +
+        Math.cos(a(e)) * Math.cos(a(n)) * Math.sin(o / 2) ** 2;
+    return 12742e3 * Math.asin(Math.min(1, Math.sqrt(s)));
+  }
+  function p(e) {
+    let t = 0;
+    e.photoUri && (t += 4);
+    const n = Number(e.latitude),
+      i = Number(e.longitude);
+    return (
+      Number.isFinite(n) && Number.isFinite(i) && (t += 3),
+      e.mapsUrl && (t += 2),
+      e.phone && (t += 1),
+      e.website && (t += 1),
+      String(e.address || "").length > 55 && (t += 2),
+      e.editorialSummary && (t += 1),
+      e.fromKtbRegistry && e.sourceBelgeNo && (t += 2),
+      t
+    );
+  }
+  function f(e, t) {
+    if (!t || e === t) return;
+    (!e.photoUri && t.photoUri && (e.photoUri = t.photoUri),
+      !e.mapsUrl && t.mapsUrl && (e.mapsUrl = t.mapsUrl),
+      !e.phone && t.phone && (e.phone = t.phone),
+      !e.website && t.website && (e.website = t.website));
+    const n = Number(e.latitude),
+      i = Number(e.longitude),
+      a = Number(t.latitude),
+      r = Number(t.longitude);
+    ((Number.isFinite(n) && Number.isFinite(i)) ||
+      !Number.isFinite(a) ||
+      !Number.isFinite(r) ||
+      ((e.latitude = t.latitude), (e.longitude = t.longitude)),
+      String(e.address || "").length < String(t.address || "").length &&
+        (e.address = t.address),
+      !e.rating && t.rating && (e.rating = t.rating));
+  }
+  async function y() {
+    return t.localDataLoaded
+      ? t.localData
+      : (o.current ||
+          (o.current = (async () => {
+            const e = (
+              await Promise.all(
+                r.map(async (e) => {
+                  try {
+                    const t = await fetch(e.file, {
+                      headers: { Accept: "application/json" },
+                    });
+                    if (!t.ok) return [];
+                    const n = await t.json();
+                    return (Array.isArray(n) ? n : [])
+                      .filter((e) => {
+                        return (
+                          e &&
+                          (!e.city || (!!(t = e.city) && "istanbul" === c(t)))
+                        );
+                        var t;
+                      })
+                      .map((t) =>
+                        (function (e, t) {
+                          const n = e.name || e.title || e.adi || "",
+                            i = e.district || e.ilce || "",
+                            a = e.neighborhood || e.mahalle || "",
+                            r = e.address || e.adres || "",
+                            o = e.mapsUrl || e.mapUrl || "";
+                          let s = t.category,
+                            l = !1;
+                          if (t.categoryFromField) {
+                            l = !0;
+                            const n = e[t.categoryFromField] || e.cuisine || "";
+                            s = String(n).trim() || "Otel";
+                          }
+                          const c =
+                              u([n, i, a, s].filter(Boolean).join(" ")) || u(n),
+                            d = `${c || u(n) || "venue"}-${s}`,
+                            m =
+                              "string" == typeof e.phone ? e.phone.trim() : "",
+                            g =
+                              "string" == typeof e.website
+                                ? e.website.trim()
+                                : "",
+                            p =
+                              "string" == typeof e.editorialSummary
+                                ? e.editorialSummary.trim()
+                                : "";
+                          return {
+                            id: d,
+                            slug: c || d,
+                            name: n,
+                            address: r,
+                            district: i,
+                            neighborhood: a,
+                            cuisine: e.cuisine || "",
+                            category: s,
+                            fromKtbRegistry: l,
+                            sourceLabel: t.label,
+                            source: e.source || "",
+                            rating: e.rating || e.googleRating || "",
+                            budget: e.budget || "",
+                            tags: Array.isArray(e.tags) ? e.tags : [],
+                            mapsUrl: o,
+                            photoUri: ("string" == typeof e.photoUri
+                              ? e.photoUri
+                              : "string" == typeof e.photoUrl
+                                ? e.photoUrl
+                                : ""
+                            ).trim(),
+                            latitude: e.latitude || e.lat || null,
+                            longitude: e.longitude || e.lng || null,
+                            sourceBelgeNo:
+                              "string" == typeof e.sourceBelgeNo
+                                ? e.sourceBelgeNo.trim()
+                                : "",
+                            sourceTesisTuru:
+                              "string" == typeof e.sourceTesisTuru
+                                ? e.sourceTesisTuru.trim()
+                                : "",
+                            sourcePlaceId:
+                              "string" == typeof e.sourcePlaceId
+                                ? e.sourcePlaceId.trim()
+                                : "",
+                            phone: m,
+                            website: g,
+                            editorialSummary: p,
+                          };
+                        })(t, e),
+                      );
+                  } catch (e) {
+                    return [];
+                  }
+                }),
+              )
+            ).flat();
+            return (
+              (t.localData = (function (e) {
+                const t = new Map(),
+                  n = [];
+                for (const i of e) {
+                  const e = String(i.sourceBelgeNo || "").trim();
+                  if (e) {
+                    const n = t.get(e);
+                    (!n || p(i) > p(n)) && t.set(e, i);
+                  } else n.push(i);
+                }
+                const i = new Map();
+                for (const e of n) {
+                  const t = String(e.sourcePlaceId || "").trim();
+                  if (t) {
+                    const n = `pid:${t}`,
+                      a = i.get(n);
+                    (!a || p(e) > p(a)) && i.set(n, e);
+                    continue;
+                  }
+                  const n = [c(e.name), c(e.district), m(e.address)].join("|"),
+                    a = i.get(n);
+                  (!a || p(e) > p(a)) && i.set(n, e);
+                }
+                const a = [...t.values(), ...i.values()],
+                  r = new Map(),
+                  o = (e) => `${c(e.name)}|${c(e.district)}`;
+                for (const e of a) {
+                  const t = o(e);
+                  (r.has(t) || r.set(t, []), r.get(t).push(e));
+                }
+                const s = [];
+                for (const [, e] of r) {
+                  if (1 === e.length) {
+                    s.push(e[0]);
+                    continue;
+                  }
+                  const t = e.filter((e) =>
+                    String(e.sourceBelgeNo || "").trim(),
+                  );
+                  if (1 === t.length) {
+                    const n = t[0],
+                      i = e
+                        .filter((e) => !String(e.sourceBelgeNo || "").trim())
+                        .sort((e, t) => p(t) - p(e))[0];
+                    (i && f(n, i), s.push(n));
+                    continue;
+                  }
+                  (t.length, s.push(...e));
+                }
+                const l = [...s].sort((e, t) => p(t) - p(e)),
+                  u = [],
+                  d = new Map();
+                for (const e of l) {
+                  const t = Number(e.latitude),
+                    n = Number(e.longitude);
+                  let i = !1;
+                  if (Number.isFinite(t) && Number.isFinite(n)) {
+                    const a = `${c(e.name)}|${c(e.district)}`,
+                      r = d.get(a) || [];
+                    for (const e of r) {
+                      const a = Number(e.latitude),
+                        r = Number(e.longitude);
+                      if (
+                        Number.isFinite(a) &&
+                        Number.isFinite(r) &&
+                        g(t, n, a, r) < 220
+                      ) {
+                        i = !0;
+                        break;
+                      }
+                    }
+                  }
+                  if (!i) {
+                    u.push(e);
+                    const t = `${c(e.name)}|${c(e.district)}`,
+                      n = d.get(t) || [];
+                    (n.push(e), d.set(t, n));
+                  }
+                }
+                return u;
+              })(e)),
+              (t.localDataLoaded = !0),
+              t.localData
+            );
+          })()),
+        o.current);
+  }
+  function h() {
+    return t.userLocation
+      ? [
+          Number(t.userLocation.lat || 0).toFixed(3),
+          Number(t.userLocation.lng || 0).toFixed(3),
+          c(t.query),
+          c(t.selectedDistrict),
+          c(t.selectedCategory),
+        ].join("|")
+      : "";
+  }
+  function b(e, t) {
+    if (!e) return null;
+    const n = Number(t.latitude),
+      i = Number(t.longitude);
+    if (
+      !(t.latitude && t.longitude && Number.isFinite(n) && Number.isFinite(i))
+    )
+      return null;
+    if (n < 35 || n > 43 || i < 25 || i > 45) return null;
+    const a = (e) => (Number(e) * Math.PI) / 180,
+      r = a(e.lat),
+      o = a(e.lng),
+      s = a(t.latitude),
+      l = s - r,
+      c = a(t.longitude) - o,
+      u =
+        Math.sin(l / 2) ** 2 + Math.cos(r) * Math.cos(s) * Math.sin(c / 2) ** 2,
+      d = 2 * Math.atan2(Math.sqrt(u), Math.sqrt(1 - u)) * 6371e3;
+    return d > 5e5 ? null : d;
+  }
+  function v(e) {
+    return c(e).includes("otel")
+      ? "assets/otel.png"
+      : "assets/no-image-icon.webp";
+  }
+  function S(e) {
+    const t = new URL(window.location.href);
+    (e ? t.searchParams.set("venue", e) : t.searchParams.delete("venue"),
+      window.history.replaceState({}, "", t.toString()));
+  }
+  const w = document.getElementById("queryInput"),
+    k = document.getElementById("districtOptions"),
+    L = document.querySelector("[data-kesfet-district-switch]"),
+    M = document.querySelector("[data-kesfet-district-trigger]"),
+    C = document.querySelector("[data-kesfet-district-menu]"),
+    E = document.querySelector("[data-kesfet-district-current]"),
+    x = document.getElementById("categoryChipRow"),
+    N = document.querySelector("[data-kesfet-category-switch]"),
+    A = document.querySelector("[data-kesfet-category-trigger]"),
+    T = document.querySelector("[data-kesfet-category-menu]"),
+    P = document.querySelector("[data-kesfet-category-current]"),
+    z = document.getElementById("categorySelect"),
+    I = document.getElementById("nearbyButton"),
+    q = document.getElementById("locationMessage"),
+    F = document.getElementById("resultsTitle"),
+    $ = document.getElementById("resultsMeta"),
+    B = document.getElementById("resultsState"),
+    U = document.getElementById("resultsLayout"),
+    O = document.getElementById("pagination"),
+    R = document.getElementById("activeFilterPills"),
+    j = document.getElementById("istanbulVenueCardTemplate"),
+    D = document.getElementById("mapPanelTitle"),
+    V = document.getElementById("mapPanelMeta"),
+    H = document.getElementById("mapPanelTags"),
+    K = document.getElementById("mapPanelFrame"),
+    Y = document.getElementById("mapPanelAddress"),
+    G = document.getElementById("mapPanelRating"),
+    W = document.getElementById("mapPanelStatus"),
+    _ = document.getElementById("mapPanelFavoriteButton"),
+    J = document.getElementById("mapPanelDetailLink"),
+    Q = document.getElementById("mapPanelExternalLink"),
+    X = document.getElementById("mapPanelContact"),
+    phoneEl = document.getElementById("mapPanelPhone"),
+    Z = document.getElementById("mapPanelVenueTypeWrap"),
+    ee = document.getElementById("mapPanelVenueTypeChip"),
+    te = Boolean(D && V && K && Y && G && W),
+    ne = !te;
+  function ie() {
+    if (!x) return;
+    const e = String(t.selectedCategory || "").trim();
+    (x.querySelectorAll(".istanbul-filter-chip").forEach((t) => {
+      t.classList.remove("is-active");
+      const n = "true" === t.getAttribute("data-clear"),
+        i = t.getAttribute("data-category-id"),
+        a = t.getAttribute("data-category-value");
+      let r = !1;
+      if (e)
+        if (n) r = !1;
+        else {
+          const t = null == i ? "" : String(i).trim();
+          if (t) r = t === String(e);
+          else {
+            const t = null == a ? "" : String(a).trim();
+            t && (r = c(t) === c(String(e)));
+          }
+        }
+      else r = n;
+      (r && t.classList.add("is-active"),
+        t.setAttribute("aria-checked", r ? "true" : "false"));
+    }),
+      Ne());
+  }
+  function ae(e, n) {
+    ((t.loading = e),
+      B && ((B.hidden = !n), (B.textContent = n || "")),
+      I && (I.disabled = e));
+  }
+  function re() {
+    if (!I) return;
+    const e = Boolean(t.nearbyMode && t.userLocation);
+    (I.classList.toggle("is-active", e),
+      I.setAttribute("aria-pressed", e ? "true" : "false"),
+      (I.dataset.state = e ? "on" : "off"));
+  }
+  function oe(e) {
+    return new Intl.NumberFormat("tr-TR").format(Number(e || 0));
+  }
+  function se() {
+    (l.trigger && l.trigger.setAttribute("aria-expanded", "false"),
+      l.menu && (l.menu.hidden = !0),
+      (l.trigger = null),
+      (l.menu = null));
+  }
+  function le() {
+    return t.items.find((e) => e.slug === t.selectedVenueSlug) || null;
+  }
+  function ce() {
+    const e = le();
+    if (e) return (S(e.slug || ""), e);
+    if (!t.items.length) return ((t.selectedVenueSlug = ""), S(""), null);
+    if (!te) return ((t.selectedVenueSlug = ""), S(""), null);
+    t.selectedVenueSlug = t.items[0].slug || "";
+    const n = le();
+    return (S(n?.slug || ""), n);
+  }
+  function ue(e) {
+    return t.favoriteVenueIds.has(String(e));
+  }
+  async function de() {
+    if ("local" === t.dataMode)
+      return void (t.favoriteVenueIds = (function () {
+        try {
+          const e = window.localStorage.getItem(t.localFavoritesKey);
+          if (!e) return new Set();
+          const n = JSON.parse(e);
+          return Array.isArray(n)
+            ? new Set(n.map((e) => String(e)))
+            : new Set();
+        } catch (e) {
+          return new Set();
+        }
+      })());
+    const e = t.items
+      .map((e) => Number(e.id))
+      .filter((e) => Number.isFinite(e) && e > 0);
+    if (!e.length) return void (t.favoriteVenueIds = new Set());
+    const n = new URLSearchParams();
+    n.set("venueIds", e.join(","));
+    const i = await fetch(`/api/mvp/favorites/ids?${n.toString()}`, {
+      headers: { Accept: "application/json" },
+    });
+    if (!i.ok) throw new Error("Favori durumları yüklenemedi.");
+    const a = await i.json();
+    t.favoriteVenueIds = new Set(
+      Array.isArray(a.ids) ? a.ids.map((e) => String(e)) : [],
+    );
+  }
+  async function me(e) {
+    if (!e) return;
+    if ("local" === t.dataMode) {
+      const n = String(e);
+      return (
+        ue(e)
+          ? (t.favoriteVenueIds.delete(n),
+            fe("Mekan favorilerden çıkarıldı.", !1))
+          : (t.favoriteVenueIds.add(n), fe("Mekan favorilere kaydedildi.", !1)),
+        (function (e) {
+          try {
+            const n = JSON.stringify(Array.from(e));
+            window.localStorage.setItem(t.localFavoritesKey, n);
+          } catch (e) {}
+        })(t.favoriteVenueIds),
+        Ie(),
+        void ge()
+      );
+    }
+    const n = ue(e),
+      i = `/api/mvp/favorites/${encodeURIComponent(e)}`;
+    if (
+      !(
+        await fetch(i, {
+          method: n ? "DELETE" : "POST",
+          headers: { Accept: "application/json" },
+        })
+      ).ok
+    )
+      throw new Error("Favori işlemi tamamlanamadı.");
+    (n
+      ? (t.favoriteVenueIds.delete(String(e)),
+        fe("Mekan favorilerden çıkarıldı.", !1))
+      : (t.favoriteVenueIds.add(String(e)),
+        fe("Mekan favorilere kaydedildi.", !1)),
+      Ie(),
+      ge());
+  }
+  function ge() {
+    if (!te) return void (U && (U.hidden = !t.items.length));
+    const e = ce();
+    if (!e)
+      return (
+        Z instanceof HTMLElement && (Z.hidden = !0),
+        void (U && (U.hidden = !0))
+      );
+    if (
+      (U && (U.hidden = !1),
+      document.querySelector(".map-panel-details") &&
+        (document.querySelector(".map-panel-details").scrollTop = 0),
+      (D.textContent = e.name || "İsimsiz mekan"),
+      (V.textContent = d(e.cuisine || e.category || "")),
+      (Y.textContent = e.address || "Adres bilgisi bulunmuyor."),
+      phoneEl && (e.phone ? (phoneEl.innerHTML = `Tel: <a href="tel:${e.phone}">${e.phone}</a>`, phoneEl.hidden = false) : phoneEl.hidden = true),
+      X)
+    ) {
+      const t = (function (e) {
+        const t = [],
+          n = String(e.phone || "").trim(),
+          i = String(e.email || "").trim(),
+          a = String(e.website || "").trim(),
+          r = String(e.instagram || "").trim();
+        return (
+          n && t.push(`Tel: ${n}`),
+          i && t.push(i),
+          a && t.push(a),
+          r && t.push(r.includes("http") ? r : `Instagram: ${r}`),
+          t.join(" · ")
+        );
+      })(e);
+      t
+        ? ((X.hidden = !1), (X.textContent = t))
+        : ((X.hidden = !0), (X.textContent = ""));
+    }
+    if (Z && ee) {
+      const n = String(e.cuisine || e.category || "").trim();
+      n
+        ? ((Z.hidden = !1),
+          (ee.textContent = d(n)),
+          ee.setAttribute("aria-label", `${n} türündeki mekanları göster`),
+          (ee.onclick = (n) => {
+            (n.preventDefault(),
+              n.stopPropagation(),
+              (function (e) {
+                const n = (function (e) {
+                  const n = String(e.cuisine || e.category || "").trim();
+                  if (!n) return "";
+                  const a = Array.isArray(t.filters.categoryOptions)
+                    ? t.filters.categoryOptions
+                    : [];
+                  if (a.length) {
+                    const e = a.find((e) => c(String(e.name || "")) === c(n));
+                    if (e)
+                      return null != e.id && "" !== String(e.id).trim()
+                        ? String(e.id)
+                        : String(e.name || "").trim() || n;
+                  }
+                  return (
+                    (Array.isArray(t.filters.categories)
+                      ? t.filters.categories
+                      : i.slice()
+                    ).find((e) => c(String(e)) === c(n)) || n
+                  );
+                })(e);
+                if (!n) return;
+                ((t.selectedCategory = n), (t.page = 1), ie(), he(), Fe());
+                const a = document.querySelector(".istanbul-filter-card");
+                a instanceof HTMLElement &&
+                  a.scrollIntoView({ behavior: "smooth", block: "start" });
+              })(e));
+          }))
+        : ((Z.hidden = !0), (ee.textContent = ""), (ee.onclick = null));
+    }
+    ((G.textContent = (function (e, t) {
+      const n = Number(e);
+      if (!Number.isFinite(n) || n <= 0) return "Puan yok";
+      const i = Math.max(1, Math.min(5, Math.round(n))),
+        a = "★".repeat(i),
+        r = n.toFixed(1).replace(".", ","),
+        o = Number(t);
+      return Number.isFinite(o) && o > 0
+        ? `${a} ${r} Google Puanı (${new Intl.NumberFormat("tr-TR").format(o)} yorum)`
+        : `${a} ${r} Google Puanı`;
+    })(e.rating, e.userRatingCount)),
+      (W.textContent = (function (e) {
+        return e.temporarilyClosed
+          ? "Geçici olarak kapalı"
+          : !0 === e.isOpenNow
+            ? e.openingStatusText || "Şu an açık"
+            : !1 === e.isOpenNow
+              ? e.openingStatusText || "Şu an kapalı"
+              : e.openingStatusText || "";
+      })(e)),
+      (J.href = (function (e) {
+        !(function () {
+          try {
+            const e =
+              window.location.pathname.replace(/^\//, "") +
+              window.location.search;
+            sessionStorage.setItem("aramabul:venue-list-return-url", e);
+          } catch (e) {}
+        })();
+        const t = new URL(
+            window.location.pathname || "gezi-kesfet.html",
+            window.location.href,
+          ),
+          n = String(e || "").trim();
+        return (
+          n && t.searchParams.set("venue", n),
+          `${t.pathname}${t.search}`
+        );
+      })(e.slug)),
+      (Q.href =
+        e.mapsUrl ||
+        `https://www.google.com/maps?q=${encodeURIComponent(e.address || e.name || "İstanbul")}`),
+      (K.src = (function (e) {
+        const t = (() => {
+          try {
+            if (!e.mapsUrl) return "";
+            const t = new URL(e.mapsUrl),
+              n = t.searchParams.get("query") || t.searchParams.get("q") || "";
+            if (n)
+              return `https://maps.google.com/maps?hl=tr&q=${encodeURIComponent(n)}&z=15&output=embed`;
+            const i = t.searchParams.get("cid") || "";
+            return i
+              ? `https://www.google.com/maps?cid=${encodeURIComponent(i)}&hl=tr&output=embed`
+              : "";
+          } catch (e) {
+            return "";
+          }
+        })();
+        if (t) return t;
+        if (
+          Number.isFinite(Number(e.latitude)) &&
+          Number.isFinite(Number(e.longitude))
+        ) {
+          const t = Number(e.latitude),
+            n = Number(e.longitude);
+          return `https://maps.google.com/maps?hl=tr&q=${encodeURIComponent(`${t},${n}`)}&z=15&output=embed`;
+        }
+        const n = e.address || e.name || "İstanbul";
+        return `https://maps.google.com/maps?hl=tr&q=${encodeURIComponent(n)}&z=15&output=embed`;
+      })(e)));
+    const n =
+        null != e.distanceMeters && "" !== e.distanceMeters
+          ? Number(e.distanceMeters)
+          : NaN,
+      a = Number.isFinite(n) ? n : b(t.userLocation, e),
+      r = Number.isFinite(a)
+        ? a < 1e3
+          ? `${Math.round(a)} m`
+          : `${(a / 1e3).toFixed(1).replace(".", ",")} km`
+        : "",
+      o = document.getElementById("mapPanelDistance"),
+      s = document.getElementById("mapPanelDistanceText");
+    if (
+      (o && s && (r ? ((s.textContent = r), (o.hidden = !1)) : (o.hidden = !0)),
+      _)
+    ) {
+      const t = ue(e.id);
+      ((_.textContent = t ? "Kaydedildi" : "Kaydet"),
+        _.classList.toggle("is-active", t),
+        _.setAttribute("aria-pressed", t ? "true" : "false"));
+    }
+    H.innerHTML = "";
+    const l = Array.isArray(e.tags) ? e.tags : [];
+    if (!l.length) {
+      const t = document.createElement("span");
+      return (
+        (t.className = "istanbul-active-pill"),
+        (t.textContent =
+          (function (e) {
+            const t = c(e);
+            return t
+              ? t === c("bilinmiyor")
+                ? "Bilinmiyor"
+                : "budget" === t || "₺" === t || "₺₺" === t
+                  ? "Uygun"
+                  : "mid" === t || "₺₺₺" === t
+                    ? "Makul"
+                    : "high" === t || "₺₺₺₺" === t
+                      ? "Yüksek"
+                      : String(e)
+              : "";
+          })(e.budget) || "Etiket yok"),
+        void H.appendChild(t)
+      );
+    }
+    l.forEach((e) => {
+      const n = document.createElement("span");
+      n.className = "istanbul-active-pill";
+      const i = t.filters.tags.find((t) => t.key === e);
+      ((n.textContent = i ? i.label : e), H.appendChild(n));
+    });
+    let u = document.getElementById("mapPanelSimilarSection");
+    if (!u) {
+      ((u = document.createElement("div")),
+        (u.id = "mapPanelSimilarSection"),
+        (u.className = "map-panel-similar-section"),
+        (u.style.cssText =
+          "margin-top: 1.2rem; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 1rem;"),
+        (u.innerHTML =
+          '\n      <h4 style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700; color: #011d36;">Benzer Mekanlar</h4>\n      <div id="mapPanelSimilarList" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;"></div>\n    '));
+      const e = document.querySelector(".map-panel-details");
+      e && e.appendChild(u);
+    }
+    const m = document.getElementById("mapPanelSimilarList");
+    if (m) {
+      m.innerHTML =
+        '<p style="grid-column: span 3; font-size: 0.72rem; color: #5d6a75; margin: 0;">Yükleniyor...</p>';
+      const n = (e.district || "").trim(),
+        i = (e.cuisine || e.categoryName || "").trim(),
+        a = u.querySelector("h4");
+      if (
+        (a &&
+          (a.textContent = n
+            ? n + " ilçesindeki benzer mekanlar"
+            : "Benzer Mekanlar"),
+        n || i)
+      ) {
+        const a = new URLSearchParams();
+        (n && a.set("district", n),
+          i && a.set("category", i),
+          a.set("limit", "4"),
+          a.set("sort", "rating"),
+          t.userLocation &&
+            (a.set("lat", String(t.userLocation.lat)),
+            a.set("lng", String(t.userLocation.lng))),
+          fetch("/api/mvp/istanbul/venues?" + a.toString())
+            .then((e) => e.json())
+            .then((n) => {
+              const i = (n.items || [])
+                .filter(
+                  (t) =>
+                    String(t.id) !== String(e.id) &&
+                    String(t.slug) !== String(e.slug),
+                )
+                .slice(0, 3);
+              ((m.innerHTML = ""),
+                i.length
+                  ? i.forEach((e) => {
+                      const n = document.createElement("div");
+                      n.className = "map-panel-similar-card";
+                      const i =
+                        "string" == typeof e.photoUri && e.photoUri.trim()
+                          ? e.photoUri.trim()
+                          : v(e.category || e.cuisine || "");
+                      n.style.cssText =
+                        "position: relative; display: flex; flex-direction: column; background: #fff; border: 1px solid rgba(0,0,0,0.06); border-radius: 6px; padding: 0.45rem; cursor: pointer; aspect-ratio: 1/1; justify-content: flex-end; box-sizing: border-box; transition: transform 0.2s, box-shadow 0.2s; overflow: hidden; background-size: cover; background-position: center; background-repeat: no-repeat; background-image: linear-gradient(180deg, rgba(0,0,0,0) 25%, rgba(0,0,0,0.85) 90%), url('" +
+                        i.replace(/'/g, "\\'") +
+                        "');";
+                      const a =
+                          null != e.distanceMeters && "" !== e.distanceMeters
+                            ? Number(e.distanceMeters)
+                            : NaN,
+                        r = Number.isFinite(a)
+                          ? a
+                          : (() => {
+                              if (
+                                !(t.userLocation && e.latitude && e.longitude)
+                              )
+                                return null;
+                              const n = (e) => (e * Math.PI) / 180,
+                                i = n(t.userLocation.lat),
+                                a = n(t.userLocation.lng),
+                                r = n(e.latitude),
+                                o = r - i,
+                                s = n(e.longitude) - a,
+                                l =
+                                  Math.sin(o / 2) * Math.sin(o / 2) +
+                                  Math.cos(i) *
+                                    Math.cos(r) *
+                                    Math.sin(s / 2) *
+                                    Math.sin(s / 2),
+                                c =
+                                  2 *
+                                  Math.atan2(Math.sqrt(l), Math.sqrt(1 - l));
+                              return Math.round(6371e3 * c);
+                            })(),
+                        o =
+                          Number.isFinite(r) && r < 2e7
+                            ? r < 1e3
+                              ? `${Math.round(r)} m`
+                              : `${(r / 1e3).toFixed(1).replace(".", ",")} km`
+                            : "";
+                      ((n.innerHTML = `\n              <span class="map-panel-similar-card-name" style="font-size: 0.72rem; font-weight: 700; color: #ffffff; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; word-break: break-word; text-shadow: 0 1px 2px rgba(0,0,0,0.8);" title="${e.name || ""}">${e.name || ""}</span>\n              ${o ? `<span class="map-panel-similar-card-distance" style="font-size: 0.65rem; color: #64b5f6; font-weight: 700; display: flex; align-items: center; gap: 0.15rem; text-shadow: 0 1px 2px rgba(0,0,0,0.8);"><img src="assets/uzak.png" style="width: 10px; height: 10px; object-fit: contain; filter: brightness(0) invert(1);" alt="" />dots{} ${o}</span>` : ""}\n            `),
+                        (n.innerHTML = n.innerHTML.replace("\\dots{}", "")),
+                        n.addEventListener("click", () => {
+                          pe(e.slug);
+                        }),
+                        n.addEventListener("mouseenter", () => {
+                          ((n.style.transform = "translateY(-2px)"),
+                            (n.style.boxShadow = "0 4px 8px rgba(0,0,0,0.15)"),
+                            (n.style.borderColor = "#1a73e8"));
+                        }),
+                        n.addEventListener("mouseleave", () => {
+                          ((n.style.transform = "none"),
+                            (n.style.boxShadow = "none"),
+                            (n.style.borderColor = "rgba(0,0,0,0.06)"));
+                        }),
+                        m.appendChild(n));
+                    })
+                  : (m.innerHTML =
+                      '<p style="grid-column: span 3; font-size: 0.72rem; color: #5d6a75; margin: 0;">Benzer mekan bulunamadı.</p>'));
+            })
+            .catch(() => {
+              m.innerHTML =
+                '<p style="grid-column: span 3; font-size: 0.72rem; color: #5d6a75; margin: 0;">Yüklenirken hata oluştu.</p>';
+            }));
+      } else
+        m.innerHTML =
+          '<p style="grid-column: span 3; font-size: 0.72rem; color: #5d6a75; margin: 0;">Benzer mekan bulunamadı.</p>';
+    }
+  }
+  function pe(e) {
+    e && ((t.selectedVenueSlug = e), S(e), Ie(), ge());
+  }
+  function fe(e, t) {
+    q && ((q.textContent = e), (q.dataset.state = t ? "error" : "neutral"));
+  }
+  function ye() {
+    F &&
+      (t.nearbyMode && t.userLocation
+        ? (F.textContent = "Konumuna göre sıralanan İstanbul gezi noktaları")
+        : (F.textContent = "İstanbul'da keşfedebileceğin gezi noktaları"));
+  }
+  function he() {
+    if (!R) return;
+    R.innerHTML = "";
+    const e = [];
+    (t.selectedDistrict &&
+      e.push({ label: `İlçe: ${t.selectedDistrict}`, type: "district" }),
+      t.selectedCategory &&
+        e.push({ label: `Kategori: ${ve()}`, type: "category" }),
+      t.query && e.push({ label: `Arama: ${t.query}`, type: "query" }));
+      
+    let count = t.items.length;
+    if (t.pagination && null != t.pagination.total) {
+      count = t.pagination.total;
+    }
+    if (count > 0) {
+      e.unshift({ label: `${count} mekan listeleniyor`, type: "info" });
+    }
+    if (t.nearbyMode) {
+      e.push({ label: "Yakındakiler", type: "nearby" });
+    }
+
+    if (0 !== e.length) {
+      R.hidden = !1;
+      e.forEach((e) => {
+        if ("info" === e.type) {
+          const n = document.createElement("span");
+          n.className = "istanbul-active-pill istanbul-active-pill--info";
+          n.textContent = e.label;
+          R.appendChild(n);
+          return;
+        }
+        const n = document.createElement("button");
+        ((n.type = "button"),
+          (n.className =
+            "istanbul-active-pill istanbul-active-pill--dismissible"),
+          n.setAttribute("aria-label", `${e.label} filtresini kaldır`),
+          (n.textContent = e.label + " ×"),
+          n.addEventListener("click", () => {
+            !(function (e) {
+              switch (e.type) {
+                case "district":
+                  t.selectedDistrict = "";
+                  break;
+                case "category":
+                  t.selectedCategory = "";
+                  break;
+                case "query":
+                  ((t.query = ""), w && (w.value = ""));
+                  break;
+                case "nearby":
+                  ((t.nearbyMode = !1), (t.userLocation = null), re());
+                  break;
+                default:
+                  return;
+              }
+              ((t.page = 1), he(), Fe());
+            })(e);
+          }),
+          R.appendChild(n));
+      });
+    } else {
+      R.hidden = !0;
+    }
+  }
+  function be() {
+    if (x) {
+      x.innerHTML = "";
+      const e = document.createElement("button");
+      ((e.type = "button"),
+        (e.className = "istanbul-filter-chip"),
+        e.setAttribute("data-clear", "true"),
+        e.setAttribute("role", "radio"),
+        e.setAttribute("aria-label", "Tüm kategoriler"),
+        (e.textContent = "Tüm kategoriler"),
+        x.appendChild(e));
+      const n = Array.isArray(t.filters.categoryOptions)
+        ? t.filters.categoryOptions
+        : [];
+      return (
+        n.length
+          ? [...n]
+              .sort((e, t) =>
+                String(e.name || "").localeCompare(
+                  String(t.name || ""),
+                  "tr-TR",
+                ),
+              )
+              .forEach((e) => {
+                const t = document.createElement("button");
+                ((t.type = "button"),
+                  (t.className = "istanbul-filter-chip"),
+                  null != e.id && "" !== String(e.id).trim()
+                    ? t.setAttribute("data-category-id", String(e.id))
+                    : t.setAttribute(
+                        "data-category-value",
+                        String(e.name || "").trim() || String(e.slug || ""),
+                      ),
+                  t.setAttribute("role", "radio"));
+                const n = d(e.name);
+                (t.setAttribute("aria-label", `Kategori: ${n}`),
+                  (t.textContent = n),
+                  x.appendChild(t));
+              })
+          : [...(t.filters.categories || [])]
+              .sort((e, t) => String(e).localeCompare(String(t), "tr-TR"))
+              .forEach((e) => {
+                const t = document.createElement("button");
+                ((t.type = "button"),
+                  (t.className = "istanbul-filter-chip"),
+                  t.setAttribute("data-category-value", String(e)),
+                  t.setAttribute("role", "radio"));
+                const n = d(e);
+                (t.setAttribute("aria-label", `Kategori: ${n}`),
+                  (t.textContent = n),
+                  x.appendChild(t));
+              }),
+        void ie()
+      );
+    }
+    if (!z) return;
+    const e = Array.isArray(t.filters.categoryOptions)
+      ? t.filters.categoryOptions
+      : [];
+    if (!e.length) {
+      const e = [...(t.filters.categories || [])].sort((e, t) =>
+        String(e).localeCompare(String(t), "tr-TR"),
+      );
+      return void (function (e, t) {
+        if (!e) return;
+        e.innerHTML = "";
+        const n = document.createElement("option");
+        ((n.value = ""),
+          (n.textContent = "Tüm kategoriler"),
+          e.appendChild(n),
+          t.forEach((t) => {
+            const n = document.createElement("option");
+            ((n.value = t), (n.textContent = t), e.appendChild(n));
+          }));
+      })(z, e);
+    }
+    z.innerHTML = "";
+    const n = document.createElement("option");
+    ((n.value = ""),
+      (n.textContent = "Tüm kategoriler"),
+      z.appendChild(n),
+      [...e]
+        .sort((e, t) =>
+          String(e.name || "").localeCompare(String(t.name || ""), "tr-TR"),
+        )
+        .forEach((e) => {
+          const t = document.createElement("option");
+          ((t.value = String(e.id)),
+            (t.textContent = e.name),
+            z.appendChild(t));
+        }));
+  }
+  function ve() {
+    if (!t.selectedCategory) return "";
+    const e = Array.isArray(t.filters.categoryOptions)
+      ? t.filters.categoryOptions
+      : [];
+    if (!e.length) return d(t.selectedCategory);
+    const n = String(t.selectedCategory).trim(),
+      i = e.find((e) => String(e.id) === n);
+    if (i) return d(i.name);
+    const a = e.find((e) => c(String(e.name || "")) === c(n));
+    return d(a ? a.name : t.selectedCategory);
+  }
+  const Se = new WeakMap(),
+    we = new WeakMap();
+  function ke(e) {
+    if (!e) return;
+    const t = Se.get(e);
+    t && (window.clearTimeout(t), Se.delete(e));
+  }
+  function Le() {
+    N &&
+      T &&
+      A &&
+      (ke(N),
+      (T.hidden = !0),
+      A.setAttribute("aria-expanded", "false"),
+      N.classList.remove("is-open"));
+  }
+  function Me(e) {
+    if (!e) return;
+    const t = we.get(e);
+    t && (window.clearTimeout(t), we.delete(e));
+  }
+  function Ce() {
+    L &&
+      C &&
+      M &&
+      (Me(L),
+      (C.hidden = !0),
+      M.setAttribute("aria-expanded", "false"),
+      L.classList.remove("is-open"));
+  }
+  function Ee() {
+    L &&
+      C &&
+      M &&
+      (Me(L),
+      Le(),
+      (C.hidden = !1),
+      M.setAttribute("aria-expanded", "true"),
+      L.classList.add("is-open"));
+  }
+  function xe() {
+    N &&
+      T &&
+      A &&
+      (ke(N),
+      Ce(),
+      (T.hidden = !1),
+      A.setAttribute("aria-expanded", "true"),
+      N.classList.add("is-open"));
+  }
+  function Ne() {
+    if (!P) return;
+    if (!String(t.selectedCategory || "").trim())
+      return void (P.textContent = "Tüm kategoriler");
+    const e = ve();
+    P.textContent = e && String(e).trim() ? e : "Tüm kategoriler";
+  }
+  function Ae() {
+    if (!E) return;
+    const e = String(t.selectedDistrict || "").trim();
+    E.textContent = e || "Tüm ilçeler";
+  }
+  function Te() {
+    if (!k) return;
+    const e = String(t.selectedDistrict || "").trim();
+    k.querySelectorAll(".istanbul-mvp-subcategory-box").forEach((t) => {
+      if (!t.hasAttribute("data-district-value")) return;
+      const n = t.getAttribute("data-district-value"),
+        i = e ? n === e : "" === (n || "");
+      (t.classList.toggle("is-active", i),
+        t.setAttribute("aria-checked", i ? "true" : "false"));
+    });
+  }
+  function Pe() {
+    if (!k) return;
+    const e = "Tüm ilçeler";
+    k.innerHTML = "";
+    const n = document.createElement("button");
+    ((n.type = "button"),
+      (n.className = "istanbul-mvp-subcategory-box"),
+      n.setAttribute("data-district-value", ""),
+      n.setAttribute("role", "radio"),
+      n.setAttribute("aria-label", e),
+      (n.textContent = e),
+      k.appendChild(n),
+      (t.filters.districts || []).forEach((e) => {
+        const t = document.createElement("button");
+        ((t.type = "button"),
+          (t.className = "istanbul-mvp-subcategory-box"),
+          t.setAttribute("data-district-value", e),
+          t.setAttribute("role", "radio"),
+          t.setAttribute("aria-label", e),
+          (t.textContent = e),
+          k.appendChild(t));
+      }),
+      Te(),
+      Ae());
+  }
+  function ze() {
+    if (!O) return;
+    O.innerHTML = "";
+    const e = t.pagination;
+    if (!e || !e.totalPages || e.totalPages <= 1) return void (O.hidden = !0);
+    O.hidden = !1;
+    const n = document.createElement("button");
+    ((n.type = "button"),
+      (n.className = "istanbul-pagination-button"),
+      (n.textContent = "<"),
+      (n.disabled = e.page <= 1),
+      n.addEventListener("click", () => {
+        t.page <= 1 || ((t.page -= 1), Fe());
+      }),
+      O.appendChild(n));
+    const i = document.createElement("span");
+    ((i.className = "istanbul-pagination-current"),
+      (i.textContent = `${e.page} / ${e.totalPages}`),
+      O.appendChild(i));
+    const a = document.createElement("button");
+    ((a.type = "button"),
+      (a.className = "istanbul-pagination-button"),
+      (a.textContent = ">"),
+      (a.disabled = e.page >= e.totalPages),
+      a.addEventListener("click", () => {
+        t.page >= e.totalPages || ((t.page += 1), Fe());
+      }),
+      O.appendChild(a));
+  }
+  function Ie() {
+    if (((e.innerHTML = ""), !t.items.length))
+      return (
+        (e.hidden = !0),
+        U && (U.hidden = !0),
+        (B.hidden = !1),
+        (B.textContent = "Bu filtrelerle mekan bulunamadı."),
+        void ze()
+      );
+    for (let e = t.items.length - 1; e > 0; e--) {
+      const n = Math.floor(Math.random() * (e + 1));
+      [t.items[e], t.items[n]] = [t.items[n], t.items[e]];
+    }
+    const n = (e) => {
+      if (!e) return !1;
+      const t =
+        e.photoUri || e.photoUrl || e.imageUrl || e.image || e.coverImageUrl;
+      if ("string" != typeof t) return !1;
+      const n = t.trim().toLowerCase();
+      return !(
+        !n ||
+        n.includes("al8-snh-") ||
+        n.includes("al8-snhylsmxv7pa75n") ||
+        n.includes("staticmap") ||
+        n.includes("maps.google") ||
+        n.includes("assets/") ||
+        n.includes("static-maps.yandex") ||
+        n.includes("s100x100") ||
+        "null" === n ||
+        "undefined" === n ||
+        "none" === n ||
+        "placeholder" === n ||
+        "empty" === n ||
+        "false" === n ||
+        n.includes("no-image") ||
+        n.includes("noimage") ||
+        n.includes("no_image") ||
+        n.includes("no-photo") ||
+        n.includes("nophoto") ||
+        n.includes("placeholder") ||
+        n.includes("upload-img") ||
+        n.includes("upload_img") ||
+        n.includes("<img") ||
+        n.includes("default-") ||
+        n.includes("default_") ||
+        n.includes("/default.") ||
+        n.includes("/defaultog") ||
+        n.includes("og-image") ||
+        n.includes("social-image") ||
+        n.includes("stock/") ||
+        !(
+          n.startsWith("http://") ||
+          n.startsWith("https://") ||
+          n.startsWith("/")
+        )
+      );
+    };
+    (t.items.sort((e, t) => {
+      const i = n(e);
+      return i !== n(t) ? (i ? -1 : 1) : 0;
+    }),
+      te ? ce() : (t.selectedVenueSlug = ""),
+      (e.hidden = !1),
+      (B.hidden = !0),
+      t.items.forEach((n) => {
+        const i = j.content.cloneNode(!0),
+          a = i.querySelector(".istanbul-venue-card"),
+          r = i.querySelector(".istanbul-venue-media"),
+          o = i.querySelector(".istanbul-venue-image"),
+          s = i.querySelector(".istanbul-venue-eyebrow"),
+          l = i.querySelector(".istanbul-venue-distance"),
+          u = i.querySelector(".istanbul-venue-title-link"),
+          d = i.querySelector(".istanbul-venue-address"),
+          m = i.querySelector(".istanbul-venue-contact"),
+          g = i.querySelector(".istanbul-venue-summary"),
+          p = i.querySelector(".istanbul-venue-gallery"),
+          f = i.querySelector(".istanbul-venue-rating"),
+          y = i.querySelector(".istanbul-venue-budget"),
+          h = i.querySelector(".istanbul-venue-tags"),
+          S = i.querySelector(".istanbul-favorite-button"),
+          w = i.querySelector(".istanbul-venue-actions");
+        if (
+          (i.querySelector(".istanbul-venue-action-group"),
+          (a.tabIndex = 0),
+          (a.dataset.cardCategory = (n.category || n.cuisine || "")
+            .toLowerCase()
+            .replace(/\s+/g, "-")),
+          n.slug === t.selectedVenueSlug && a.classList.add("is-selected"),
+          o && r)
+        ) {
+          const e = (function (e) {
+            const t = "string" == typeof e.photoUri ? e.photoUri.trim() : "";
+            if (t) return t;
+            const n = e.galleryPhotoUris;
+            if (Array.isArray(n) && n.length) {
+              const e = String(n[0] || "").trim();
+              if (e) return e;
+            }
+            return "";
+          })(n);
+          e
+            ? ((o.alt = `${n.name || "Mekan"} fotoğrafı`),
+              o.addEventListener(
+                "error",
+                () => {
+                  ((o.src = v(n.category || n.cuisine || "")),
+                    (o.alt = n.name || "Mekan"));
+                },
+                { once: !0 },
+              ),
+              (o.src = e))
+            : ((o.src = v(n.category || n.cuisine || "")),
+              (o.alt = n.name || "Mekan"));
+        }
+        (m && ((m.hidden = !0), (m.textContent = "")),
+          g && ((g.hidden = !0), (g.textContent = "")));
+        const k = i.querySelector(".istanbul-venue-venue-type-row");
+        (k && (k.hidden = !0),
+          p && ((p.hidden = !0), (p.innerHTML = "")),
+          (s.textContent = d(n.category || n.cuisine || "")),
+          (s.hidden = !d(n.category || n.cuisine || "")),
+          (l.hidden = !0),
+          (u.textContent = n.name || "İsimsiz mekan"),
+          (u.href = "#"),
+          u.addEventListener("click", (e) => {
+            (e.preventDefault(), window.openVenuePopup(n));
+          }),
+          (d.textContent = n.address || "Adres bilgisi bulunmuyor."),
+          (d.hidden = !1));
+        const L = a.querySelector(".istanbul-venue-phone");
+        if ((L && L.remove(), String(n.phone || "").trim())) {
+          const e = document.createElement("p");
+          ((e.className = "istanbul-venue-phone"),
+            (e.innerHTML = `Tel: <a href="tel:${n.phone}">${n.phone}</a>`),
+            d.parentNode.insertBefore(e, d.nextSibling));
+        }
+        ((f.hidden = !0), (y.hidden = !0));
+        const M = i.querySelector(".istanbul-venue-pill-row");
+        (M && (M.hidden = !0), w && (w.hidden = !0), (h.innerHTML = ""));
+        const C = document.createElement("div");
+        C.className = "venue-card-info-boxes";
+        const E = document.createElement("div");
+        E.className = "venue-card-info-row";
+        const x = String(n.district || "").trim();
+        if (x) {
+          const e = document.createElement("a");
+          ((e.className = "istanbul-venue-tag"),
+            (e.href = `gezi.html#district=${encodeURIComponent(x)}`),
+            e.setAttribute("aria-label", `${x} ilçesindeki mekanları aç`),
+            (e.textContent = x),
+            E.appendChild(e));
+        }
+        const N = String(n.neighborhood || n.mahalle || "").trim();
+        if (N) {
+          const e = document.createElement("span");
+          ((e.className = "istanbul-venue-tag"),
+            (e.textContent = N),
+            E.appendChild(e));
+        }
+        const A = String(n.cuisine || n.category || "").trim();
+        if (A && c(A) !== c(x)) {
+          const e = document.createElement("span");
+          ((e.className = "istanbul-venue-tag"),
+            (e.textContent = d(A)),
+            E.appendChild(e));
+        }
+        E.childElementCount && C.appendChild(E);
+        const T = document.createElement("div");
+        T.className = "venue-card-info-row";
+        const P = document.createElement("button");
+        ((P.type = "button"),
+          (P.className = "venue-popup-info-chip-btn istanbul-favorite-chip"));
+        const z = () => {
+          const e = ue(n.id);
+          ((P.innerHTML =
+            '<img src="assets/fav.png" class="venue-popup-chip-icon" alt="" />' +
+            (e ? "Favorilerde" : "Favorilere Ekle")),
+            P.classList.toggle("is-favorited", e),
+            P.setAttribute("aria-pressed", e ? "true" : "false"));
+        };
+        (z(),
+          P.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            try {
+              ((P.disabled = !0),
+                await me(n.id),
+                z(),
+                "function" == typeof window.syncMapPanelFavoriteButton &&
+                  window.syncMapPanelFavoriteButton());
+            } catch (e) {
+              console.error("Favori işlemi hatası:", e);
+            } finally {
+              P.disabled = !1;
+            }
+          }),
+          T.appendChild(P));
+        const I =
+            null != n.distanceMeters && "" !== n.distanceMeters
+              ? Number(n.distanceMeters)
+              : NaN,
+          q =
+            ((F = Number.isFinite(I) ? I : b(t.userLocation, n)),
+            Number.isFinite(F)
+              ? F < 1e3
+                ? `${Math.round(F)} m`
+                : `${(F / 1e3).toFixed(1).replace(".", ",")} km`
+              : "");
+        var F;
+        if (q) {
+          const e = document.createElement("span");
+          ((e.className = "venue-popup-distance-chip"),
+            (e.innerHTML = `<img src="assets/uzak.png" class="venue-popup-chip-icon" alt="" />${q}`),
+            T.appendChild(e));
+        }
+        const $ = document.createElement("button");
+        (($.type = "button"),
+          ($.className = "venue-popup-info-chip-btn"),
+          ($.innerHTML =
+            '<img src="assets/detail.png?v=20260601b" class="venue-popup-chip-icon" alt="" />Ayrıntılı Bilgi'),
+          $.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const t =
+              n.mapsUrl ||
+              n.maps_url ||
+              `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((n.name || "") + " " + (n.district || "") + " İstanbul")}`;
+            window.open(t, "_blank", "noopener,noreferrer");
+          }),
+          T.appendChild($),
+          T.childElementCount && C.appendChild(T),
+          h.appendChild(C),
+          (l.hidden = !0),
+          C.childElementCount || a.classList.add("is-tagless"),
+          a.addEventListener("click", (e) => {
+            (e.target instanceof HTMLElement &&
+              e.target.closest("a, button")) ||
+              (ne ? window.openVenuePopup(n) : pe(n.slug));
+          }),
+          a.addEventListener("keydown", (e) => {
+            if ("Enter" === e.key || " " === e.key) {
+              if ((e.preventDefault(), ne))
+                return void window.openVenuePopup(n);
+              pe(n.slug);
+            }
+          }),
+          S.addEventListener("click", async (e) => {
+            (e.preventDefault(), e.stopPropagation());
+            try {
+              ((S.disabled = !0), await me(n.id));
+            } catch (e) {
+              fe(
+                e instanceof Error ? e.message : "Favori işlemi tamamlanamadı.",
+                !0,
+              );
+            } finally {
+              S.disabled = !1;
+            }
+          }),
+          e.appendChild(i));
+      }),
+      ge(),
+      ze());
+  }
+  function qe(e) {
+    ye();
+    he();
+    if ($) {
+      $.style.display = "none";
+    }
+  }
+  async function Fe() {
+    ae(!0, "Mekanlar getiriliyor.");
+    try {
+      if ("local" === t.dataMode) {
+        const e = (await y()).filter(
+          (e) =>
+            !(
+              (t.selectedDistrict && c(e.district) !== c(t.selectedDistrict)) ||
+              (t.selectedCategory &&
+                !(function (e, t) {
+                  return (
+                    !t ||
+                    (c(t) === c(a)
+                      ? !0 === e.fromKtbRegistry
+                      : c(e.category) === c(t))
+                  );
+                })(e, t.selectedCategory)) ||
+              (t.query &&
+                !(function (e, t) {
+                  const n = c(e);
+                  return (
+                    !n ||
+                    [t.name, t.address, t.district, t.neighborhood, t.cuisine]
+                      .filter(Boolean)
+                      .map((e) => c(e))
+                      .join(" ")
+                      .includes(n)
+                  );
+                })(t.query, e))
+            ),
+        );
+        if (t.nearbyMode && t.userLocation) {
+          const e = (function () {
+            const e = h();
+            if (!e) return null;
+            const t = s.get(e);
+            return t
+              ? Date.now() - t.timestamp > 12e4
+                ? (s.delete(e), null)
+                : t
+              : null;
+          })();
+          if (e)
+            return (
+              (t.items = e.items),
+              (t.pagination = e.pagination),
+              await de(),
+              qe({ pagination: t.pagination, meta: { count: e.total } }),
+              void Ie()
+            );
+        }
+        const n =
+            t.nearbyMode && t.userLocation
+              ? t.localDataLoaded
+                ? t.localData.filter(
+                    (e) =>
+                      Number.isFinite(Number(e.latitude)) &&
+                      Number.isFinite(Number(e.longitude)),
+                  )
+                : []
+              : e,
+          i =
+            t.nearbyMode && t.userLocation
+              ? (function (e) {
+                  const t = Number(e.lat),
+                    n = Number(e.lng),
+                    i = 8e3 / 111320,
+                    a = 8e3 / (111320 * Math.cos((t * Math.PI) / 180));
+                  return {
+                    minLat: t - i,
+                    maxLat: t + i,
+                    minLng: n - a,
+                    maxLng: n + a,
+                  };
+                })(t.userLocation)
+              : null,
+          r = i
+            ? n.filter((e) =>
+                (function (e, t) {
+                  const n = Number(e.latitude),
+                    i = Number(e.longitude);
+                  return (
+                    !(!Number.isFinite(n) || !Number.isFinite(i)) &&
+                    n >= t.minLat &&
+                    n <= t.maxLat &&
+                    i >= t.minLng &&
+                    i <= t.maxLng
+                  );
+                })(e, i),
+              )
+            : n,
+          o = r.map((e) => {
+            const n = b(t.userLocation, e);
+            return { ...e, distanceMeters: n };
+          }),
+          l =
+            t.nearbyMode && t.userLocation
+              ? o.filter(
+                  (e) =>
+                    Number.isFinite(e.distanceMeters) &&
+                    e.distanceMeters <= 8e3,
+                )
+              : o,
+          u = (e) => {
+            if (!e) return !1;
+            const t =
+              e.photoUri ||
+              e.photoUrl ||
+              e.imageUrl ||
+              e.image ||
+              e.coverImageUrl;
+            if ("string" != typeof t) return !1;
+            const n = t.trim().toLowerCase();
+            return !(
+              !n ||
+              n.includes("al8-snh-") ||
+              n.includes("al8-snhylsmxv7pa75n") ||
+              n.includes("staticmap") ||
+              n.includes("maps.google") ||
+              n.includes("assets/") ||
+              n.includes("static-maps.yandex") ||
+              n.includes("s100x100") ||
+              "null" === n ||
+              "undefined" === n ||
+              "none" === n ||
+              "placeholder" === n ||
+              "empty" === n ||
+              "false" === n ||
+              n.includes("no-image") ||
+              n.includes("noimage") ||
+              n.includes("no_image") ||
+              n.includes("no-photo") ||
+              n.includes("nophoto") ||
+              n.includes("placeholder") ||
+              n.includes("upload-img") ||
+              n.includes("upload_img") ||
+              n.includes("<img") ||
+              n.includes("default-") ||
+              n.includes("default_") ||
+              n.includes("/default.") ||
+              n.includes("/defaultog") ||
+              n.includes("og-image") ||
+              n.includes("social-image") ||
+              n.includes("stock/") ||
+              !(
+                n.startsWith("http://") ||
+                n.startsWith("https://") ||
+                n.startsWith("/")
+              )
+            );
+          };
+        if (t.nearbyMode && t.userLocation)
+          l.sort((e, t) => {
+            const n = u(e);
+            if (n !== u(t)) return n ? -1 : 1;
+            const i = "openstreetmap" === e.source;
+            return i !== ("openstreetmap" === t.source)
+              ? i
+                ? -1
+                : 1
+              : Number.isFinite(e.distanceMeters)
+                ? Number.isFinite(t.distanceMeters)
+                  ? e.distanceMeters - t.distanceMeters
+                  : -1
+                : 1;
+          });
+        else {
+          const e = l.slice();
+          (!(function (e) {
+            for (let t = e.length - 1; t > 0; t -= 1) {
+              const n = Math.floor(Math.random() * (t + 1));
+              [e[t], e[n]] = [e[n], e[t]];
+            }
+          })(e),
+            e.sort((e, t) => {
+              const n = u(e);
+              return n !== u(t) ? (n ? -1 : 1) : 0;
+            }),
+            (l.length = 0),
+            l.push(...e));
+        }
+        const d = l.length,
+          m = d ? Math.ceil(d / t.limit) : 0,
+          g = m ? Math.min(t.page, m) : 1;
+        t.page = g;
+        const p = (g - 1) * t.limit,
+          f = l.slice(p, p + t.limit);
+        return (
+          (t.items = f),
+          (t.pagination = m
+            ? { page: g, totalPages: m, total: d }
+            : { page: 1, totalPages: 0, total: 0 }),
+          await de(),
+          qe({ pagination: t.pagination, meta: { count: d } }),
+          Ie(),
+          void (
+            t.nearbyMode &&
+            t.userLocation &&
+            (function (e) {
+              const t = h();
+              t && s.set(t, { ...e, timestamp: Date.now() });
+            })({ items: t.items, pagination: t.pagination, total: d })
+          )
+        );
+      }
+      if ("api" === t.dataMode) {
+        const e = [
+          "gezi",
+          t.selectedDistrict,
+          String(t.selectedCategory || ""),
+          t.query.trim(),
+        ].join("");
+        (t.discoveryShuffleFilterKey !== e &&
+          ((t.discoveryShuffleFilterKey = e),
+          (t.discoveryRandomSeed = String(Math.floor(1e9 * Math.random())))),
+          t.discoveryRandomSeed ||
+            (t.discoveryRandomSeed = String(Math.floor(1e9 * Math.random()))));
+      } else n();
+      const e = (function () {
+          const e = new URLSearchParams();
+          return (
+            e.set("page", String(t.page)),
+            e.set("limit", String(t.limit)),
+            t.selectedDistrict && e.set("district", t.selectedDistrict),
+            t.selectedCategory &&
+              (c(String(t.selectedCategory).trim()) === c(a)
+                ? e.set("source", "ktb")
+                : Array.isArray(t.filters.categoryOptions) &&
+                    t.filters.categoryOptions.length
+                  ? e.set("subcategoryId", t.selectedCategory)
+                  : e.set("category", t.selectedCategory)),
+            t.query && e.set("q", t.query),
+            t.nearbyMode &&
+              t.userLocation &&
+              (e.set("lat", String(t.userLocation.lat)),
+              e.set("lng", String(t.userLocation.lng)),
+              e.set("radius", "8000")),
+            "api" === t.dataMode &&
+              (e.set("sort", "random"),
+              t.discoveryRandomSeed ||
+                (t.discoveryRandomSeed = String(
+                  Math.floor(1e9 * Math.random()),
+                )),
+              e.set("randomSeed", t.discoveryRandomSeed)),
+            e
+          );
+        })(),
+        i =
+          t.nearbyMode && t.userLocation
+            ? `/api/discovery/gezi/istanbul/venues/nearby?${e.toString()}`
+            : `/api/discovery/gezi/istanbul/venues?${e.toString()}`,
+        r = await fetch(i, { headers: { Accept: "application/json" } });
+      if (!r.ok)
+        throw new Error(
+          "Gezi noktaları yüklenemedi. Lütfen sunucuyu kontrol et.",
+        );
+      const o = await r.json();
+      ((t.items = Array.isArray(o.items) ? o.items : []),
+        (t.pagination = o.pagination || null),
+        await de(),
+        qe(o),
+        Ie());
+    } catch (t) {
+      ((e.hidden = !0),
+        (B.hidden = !1),
+        (B.textContent =
+          t instanceof Error ? t.message : "Mekanlar alınamadı."),
+        (O.hidden = !0));
+    } finally {
+      (ae(!1, B.hidden ? "" : B.textContent), re());
+    }
+  }
+  function $e() {
+    t.nearbyMode
+      ? (function (e = "") {
+          ((t.nearbyMode = !1),
+            (t.userLocation = null),
+            (t.page = 1),
+            n(),
+            re(),
+            fe(e, !1),
+            Fe());
+        })()
+      : navigator.geolocation
+        ? (fe("Konumun alınıyor.", !1),
+          navigator.geolocation.getCurrentPosition(
+            (e) => {
+              ((t.userLocation = {
+                lat: e.coords.latitude,
+                lng: e.coords.longitude,
+              }),
+                (t.nearbyMode = !0),
+                (t.page = 1),
+                re(),
+                fe(
+                  "Yakındaki mod aktif. Sonuçlar konumuna göre sıralanıyor.",
+                  !1,
+                ),
+                Fe());
+            },
+            () => {
+              ((t.nearbyMode = !1),
+                (t.userLocation = null),
+                re(),
+                fe(
+                  "Konum izni verilmedi. İstanbul genel listesi gösteriliyor.",
+                  !0,
+                ),
+                Fe());
+            },
+            { enableHighAccuracy: !0, timeout: 8e3, maximumAge: 6e4 },
+          ))
+        : fe("Tarayıcı konum desteği vermiyor.", !0);
+  }
+  !(async function () {
+    try {
+      const e = new URLSearchParams(window.location.search).get("venue") || "";
+      ((t.selectedVenueSlug = e),
+        await (async function () {
+          if ("local" === t.dataMode) {
+            const e = await y();
+            return (
+              (t.filters = (function (e) {
+                const t = new Set();
+                return (
+                  e.forEach((e) => {
+                    e.district && t.add(e.district);
+                  }),
+                  {
+                    districts: Array.from(t).sort((e, t) =>
+                      e.localeCompare(t, "tr-TR"),
+                    ),
+                    categoryOptions: [],
+                    categories: i.slice(),
+                    tags: [],
+                  }
+                );
+              })(e)),
+              Pe(),
+              void be()
+            );
+          }
+          const e = new URLSearchParams({ mainCategoryKey: "gezi" }),
+            n = await fetch(`/api/mvp/istanbul/filters?${e.toString()}`, {
+              headers: { Accept: "application/json" },
+            });
+          if (!n.ok)
+            throw new Error(
+              "Gezi filtre verileri alınamadı. Lütfen sunucuyu kontrol et.",
+            );
+          const a = await n.json(),
+            r = await (async function () {
+              try {
+                const e = await fetch(
+                  `/api/public/content-model/subcategories?mainCategoryKey=${encodeURIComponent("gezi")}`,
+                  { headers: { Accept: "application/json" } },
+                );
+                if (!e.ok) return [];
+                const t = await e.json(),
+                  n = Array.isArray(t.items) ? t.items : [],
+                  i = [
+                    "Camping",
+                    "Günübirlik Tesis",
+                    "Kongre Ve Sergi Merkezi",
+                    "Otel",
+                    "Pansiyon",
+                    "Plaj",
+                    "Yat Limanı",
+                  ];
+                return n.filter((e) => i.includes(e.name));
+              } catch (e) {
+                return [];
+              }
+            })(),
+            o = r.length > 0;
+          ((t.filters = {
+            districts: Array.isArray(a.districts) ? a.districts : [],
+            categoryOptions: o ? r : [],
+            categories: o ? [] : i.slice(),
+            tags: Array.isArray(a.tags) ? a.tags : [],
+          }),
+            Pe(),
+            be());
+        })());
+      const n = new URLSearchParams(window.location.search).get(
+        "subcategoryId",
+      );
+      if (n) {
+        const e = (
+          Array.isArray(t.filters.categoryOptions)
+            ? t.filters.categoryOptions
+            : []
+        ).find((e) => String(e.id) === String(n));
+        if (e) t.selectedCategory = String(e.id);
+        else
+          try {
+            const e = await fetch(
+              "/api/public/content-model/subcategories?mainCategoryKey=gezi",
+              { headers: { Accept: "application/json" } },
+            );
+            if (e.ok) {
+              const i = await e.json(),
+                a = (Array.isArray(i.items) ? i.items : []).find(
+                  (e) => String(e.id) === String(n),
+                );
+              if (a && a.name) {
+                const e = (
+                  Array.isArray(t.filters.categories)
+                    ? t.filters.categories
+                    : []
+                ).find((e) => c(e) === c(a.name));
+                t.selectedCategory = e || a.name;
+              }
+            }
+          } catch (e) {}
+        (ie(), Ne());
+      }
+      const a = (function () {
+        const e = new URLSearchParams(window.location.search);
+        return (e.get("q") || e.get("query") || "").trim();
+      })();
+      (a && w && ((t.query = a), (w.value = a)),
+        (function () {
+          w &&
+            (w.addEventListener("keydown", (e) => {
+              "Enter" === e.key &&
+                (e.preventDefault(),
+                (t.query = w.value.trim()),
+                (t.page = 1),
+                Fe());
+            }),
+            w.addEventListener("blur", () => {
+              ((t.query = w.value.trim()), (t.page = 1), Fe());
+            }));
+          const e = document.getElementById("istanbulGeziSearchForm");
+          (e &&
+            w &&
+            e.addEventListener("submit", (e) => {
+              (e.preventDefault(),
+                (t.query = w.value.trim()),
+                (t.page = 1),
+                Fe());
+            }),
+            k &&
+              k.addEventListener("click", (e) => {
+                const n = e.target.closest(".istanbul-mvp-subcategory-box");
+                n &&
+                  k.contains(n) &&
+                  n.hasAttribute("data-district-value") &&
+                  ((t.selectedDistrict =
+                    n.getAttribute("data-district-value") || ""),
+                  Te(),
+                  Ae(),
+                  Ce(),
+                  (t.page = 1),
+                  Fe());
+              }),
+            x
+              ? x.addEventListener("click", (e) => {
+                  const n = e.target.closest(".istanbul-filter-chip");
+                  if (n && x.contains(n)) {
+                    if ("true" === n.getAttribute("data-clear"))
+                      t.selectedCategory = "";
+                    else if (n.hasAttribute("data-category-id"))
+                      t.selectedCategory =
+                        n.getAttribute("data-category-id") || "";
+                    else {
+                      if (!n.hasAttribute("data-category-value")) return;
+                      t.selectedCategory =
+                        n.getAttribute("data-category-value") || "";
+                    }
+                    (ie(), Le(), Ce(), (t.page = 1), Fe());
+                  }
+                })
+              : z &&
+                z.addEventListener("change", () => {
+                  ((t.selectedCategory = z.value), (t.page = 1), Fe());
+                }),
+            I &&
+              (I.setAttribute("aria-pressed", "false"),
+              (I.dataset.state = "off"),
+              re(),
+              I.addEventListener("click", $e)),
+            document.addEventListener("click", (e) => {
+              (e.target instanceof HTMLElement &&
+                e.target.closest(".card-share-wrap")) ||
+                se();
+            }),
+            document.addEventListener("keydown", (e) => {
+              "Escape" === e.key && (Le(), Ce(), se());
+            }),
+            N &&
+              A &&
+              T &&
+              (A.addEventListener("click", (e) => {
+                (e.preventDefault(), T.hidden ? xe() : Le());
+              }),
+              N.addEventListener("mouseenter", () => {
+                (ke(N), xe());
+              }),
+              N.addEventListener("mouseleave", () => {
+                !(function () {
+                  if (!N) return;
+                  ke(N);
+                  const e = window.setTimeout(() => {
+                    (Le(), Se.delete(N));
+                  }, 180);
+                  Se.set(N, e);
+                })();
+              }),
+              T.addEventListener("mouseenter", () => {
+                ke(N);
+              }),
+              A.addEventListener("focus", () => {
+                xe();
+              }),
+              N.addEventListener("focusout", (e) => {
+                const t = e.relatedTarget;
+                (t && N.contains(t)) || Le();
+              }),
+              document.addEventListener("click", (e) => {
+                (e.target &&
+                  e.target.closest &&
+                  e.target.closest("[data-kesfet-category-switch]")) ||
+                  Le();
+              })),
+            L &&
+              M &&
+              C &&
+              (M.addEventListener("click", (e) => {
+                (e.preventDefault(), C.hidden ? Ee() : Ce());
+              }),
+              L.addEventListener("mouseenter", () => {
+                (Me(L), Ee());
+              }),
+              L.addEventListener("mouseleave", () => {
+                !(function () {
+                  if (!L) return;
+                  Me(L);
+                  const e = window.setTimeout(() => {
+                    (Ce(), we.delete(L));
+                  }, 180);
+                  we.set(L, e);
+                })();
+              }),
+              C.addEventListener("mouseenter", () => {
+                Me(L);
+              }),
+              M.addEventListener("focus", () => {
+                Ee();
+              }),
+              L.addEventListener("focusout", (e) => {
+                const t = e.relatedTarget;
+                (t && L.contains(t)) || Ce();
+              }),
+              document.addEventListener("click", (e) => {
+                (e.target &&
+                  e.target.closest &&
+                  e.target.closest("[data-kesfet-district-switch]")) ||
+                  Ce();
+              })),
+            Ne(),
+            _ &&
+              _.addEventListener("click", async () => {
+                const e = le();
+                if (e)
+                  try {
+                    ((_.disabled = !0), await me(e.id));
+                  } catch (e) {
+                    fe(
+                      e instanceof Error
+                        ? e.message
+                        : "Favori işlemi tamamlanamadı.",
+                      !0,
+                    );
+                  } finally {
+                    _.disabled = !1;
+                  }
+              }));
+        })(),
+        ye(),
+        he(),
+        await Fe(),
+        await (async function (e) {
+          const n = String(e || "").trim();
+          if (
+            !n ||
+            t.initialVenuePopupOpened ||
+            "function" != typeof window.openVenuePopup
+          )
+            return;
+          t.initialVenuePopupOpened = !0;
+          let i = t.items.find((e) => e.slug === n) || null;
+          if (!i)
+            try {
+              const e = await fetch(
+                `/api/mvp/istanbul/venues/${encodeURIComponent(n)}`,
+                { headers: { Accept: "application/json" } },
+              );
+              if (e.ok) {
+                const t = await e.json();
+                i = t.venue || t.item || t;
+              }
+            } catch (e) {
+              console.warn("Derin link mekan popupu açılamadı:", e);
+            }
+          i &&
+            "object" == typeof i &&
+            (i.slug && ((t.selectedVenueSlug = i.slug), S(i.slug), Ie(), ge()),
+            (window.innerWidth < 992 || ne) && window.openVenuePopup(i));
+        })(e),
+        (function () {
+          function e(e) {
+            ((t.userLocation = {
+              lat: e.coords.latitude,
+              lng: e.coords.longitude,
+            }),
+              Fe());
+          }
+          !t.userLocation &&
+            navigator.geolocation &&
+            navigator.geolocation.getCurrentPosition(
+              e,
+              () => {
+                navigator.geolocation.getCurrentPosition(e, () => {}, {
+                  enableHighAccuracy: !0,
+                  timeout: 15e3,
+                  maximumAge: 3e5,
+                });
+              },
+              { enableHighAccuracy: !1, timeout: 1e4, maximumAge: 3e5 },
+            );
+        })());
+    } catch (e) {
+      ae(!1, e instanceof Error ? e.message : "Sayfa başlatılamadı.");
+    }
+  })();
+})();
