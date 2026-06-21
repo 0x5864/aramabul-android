@@ -59,6 +59,8 @@
   }
 
   async function logout() {
+    clearClientAuthState();
+
     await fetch("/api/admin/auth/logout", {
       method: "POST",
       credentials: "include",
@@ -68,6 +70,32 @@
     }).catch(() => null);
 
     redirectToLogin();
+  }
+
+  function clearClientAuthState() {
+    const storageKeys = [
+      "aramabul.auth.session.v1",
+      "auth_user_name",
+      "auth_user_email",
+      "aramabul_admin_session",
+    ];
+
+    for (const storage of [window.localStorage, window.sessionStorage]) {
+      if (!storage) continue;
+      storageKeys.forEach((key) => {
+        try {
+          storage.removeItem(key);
+        } catch (_error) {}
+      });
+    }
+
+    try {
+      document.cookie = "aramabul_admin_session=; Max-Age=0; path=/; SameSite=Lax";
+    } catch (_error) {}
+
+    try {
+      document.dispatchEvent(new CustomEvent("aramabul:authchange"));
+    } catch (_error) {}
   }
 
   function bindSessionUi(session) {

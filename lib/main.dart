@@ -24,7 +24,9 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.3';
+const String kAppVersion = '1.6.4';
+const String kAppBuildNumber = '78';
+const String kAppWebCacheVersion = '20260621-mobile-location-nav-bypass-v3';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -80,6 +82,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   bool _isPageTransitioning = false;
   bool _isOffline = false;
   bool _googleInitialized = false;
+  Timer? _loadingWatchdog;
+  int _lastLoggedProgressBucket = -1;
 
   @override
   void initState() {
@@ -96,16 +100,19 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: _onNavigationRequest,
-          onPageStarted: (_) {
+          onPageStarted: (url) {
+            debugPrint('[HomeWebView] page started: $url');
             if (!mounted) return;
             setState(() {
               _isLoading = true;
               _lastError = null;
               _isPageTransitioning = true;
             });
+            _startLoadingWatchdog('page started');
           },
           onPageFinished: (_) {
             if (!mounted) return;
+            _loadingWatchdog?.cancel();
             _injectAppBridge();
             _injectAppVisualOverrides();
             _controller.currentUrl().then((currentUrl) {
@@ -124,11 +131,21 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           },
           onProgress: (value) {
             if (!mounted) return;
+            final bucket = value ~/ 25;
+            if (bucket != _lastLoggedProgressBucket || value == 100) {
+              _lastLoggedProgressBucket = bucket;
+              debugPrint('[HomeWebView] progress: $value');
+            }
             setState(() => _progress = value);
           },
           onWebResourceError: (error) {
             if (error.isForMainFrame != true) return;
+            debugPrint(
+              '[HomeWebView] main frame error: '
+              '${error.errorCode} ${error.errorType} ${error.description}',
+            );
             if (!mounted) return;
+            _loadingWatchdog?.cancel();
             setState(() {
               _lastError = error.description;
               _isLoading = false;
@@ -143,7 +160,36 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     _setupJsBridge();
     _startConnectivityWatch();
     unawaited(_initGoogleSignIn());
-    _loadInitialPage();
+    unawaited(_bootstrapInitialPage());
+    unawaited(_requestLocationPermissionOnStartup());
+  }
+
+  Future<void> _bootstrapInitialPage() async {
+    await _prepareWebViewForFreshLiveAssets();
+    await _loadInitialPage();
+  }
+
+  Future<void> _prepareWebViewForFreshLiveAssets() async {
+    try {
+      await _controller.clearCache();
+    } catch (error) {
+      debugPrint('[HomeWebView] cache clear skipped: $error');
+    }
+  }
+
+  Future<void> _requestLocationPermissionOnStartup() async {
+    try {
+      final status = await Permission.location.status;
+      if (status.isDenied) {
+        debugPrint('[Permission] Location permission is denied, requesting...');
+        final result = await Permission.location.request();
+        debugPrint('[Permission] Location permission request result: $result');
+      } else {
+        debugPrint('[Permission] Location permission status: $status');
+      }
+    } catch (e) {
+      debugPrint('[Permission] Startup location permission request failed: $e');
+    }
   }
 
   Future<void> _initGoogleSignIn() async {
@@ -165,17 +211,28 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
     await platformController.setGeolocationPermissionsPromptCallbacks(
       onShowPrompt: (request) async {
-        final origin = Uri.tryParse(request.origin);
-        final trustedOrigin =
-            origin != null && origin.scheme == 'https' && _isDeepLink(origin);
+        debugPrint('WebView Geolocation Prompt origin request: ${request.origin}');
+        bool trustedOrigin = false;
+        final originLower = request.origin.toLowerCase();
+        
+        if (kDebugMode) {
+          trustedOrigin = true;
+        } else {
+          trustedOrigin = originLower.contains('aramabul.com') ||
+              originLower.contains('localhost') ||
+              originLower.startsWith('file:');
+        }
+
         if (!trustedOrigin) {
+          debugPrint('WebView Geolocation Denied: origin not trusted');
           return const GeolocationPermissionsResponse(
             allow: false,
             retain: false,
           );
         }
 
-        final status = await Permission.locationWhenInUse.request();
+        final status = await Permission.location.request();
+        debugPrint('WebView Geolocation OS status: $status');
         return GeolocationPermissionsResponse(
           allow: status.isGranted,
           retain: status.isGranted,
@@ -216,6 +273,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
   Future<void> _loadLivePage([String? path]) async {
     if (!mounted) return;
+    debugPrint('[HomeWebView] load live page path: ${path ?? widget.initialPath ?? '/'}');
     setState(() {
       _isLoading = true;
       _isPageTransitioning = true;
@@ -223,8 +281,34 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       _isOffline = false;
     });
     final requestedPath = path ?? widget.initialPath ?? '';
-    final url = requestedPath.isNotEmpty ? '$kLiveUrl$requestedPath' : kLiveUrl;
-    await _controller.loadRequest(Uri.parse(url));
+    final rawUrl = requestedPath.isNotEmpty ? '$kLiveUrl$requestedPath' : kLiveUrl;
+    final uri = Uri.parse(rawUrl);
+    final url = uri.replace(
+      queryParameters: {
+        ...uri.queryParameters,
+        'appCache': kAppWebCacheVersion,
+      },
+    );
+    _startLoadingWatchdog('load live page');
+    await _controller.loadRequest(url);
+  }
+
+  void _startLoadingWatchdog(String reason) {
+    _loadingWatchdog?.cancel();
+    _loadingWatchdog = Timer(const Duration(seconds: 8), () async {
+      if (!mounted || (!_isLoading && !_isPageTransitioning)) return;
+      final currentUrl = await _controller.currentUrl();
+      debugPrint(
+        '[HomeWebView] loading watchdog released overlay '
+        'reason=$reason progress=$_progress url=$currentUrl',
+      );
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _isPageTransitioning = false;
+        _hasLoadedAtLeastOnce = true;
+      });
+    });
   }
 
   void _showOfflineState([String? message]) {
@@ -303,10 +387,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     NavigationRequest request,
   ) async {
     final rawUrl = request.url.trim();
+    debugPrint('[HomeWebView] navigation request: $rawUrl');
     final parsed = Uri.tryParse(rawUrl);
     if (parsed == null) return NavigationDecision.navigate;
 
     if (_isDeepLink(parsed)) {
+      debugPrint('[HomeWebView] navigation decision: navigate internal');
       return NavigationDecision.navigate;
     }
 
@@ -320,14 +406,19 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             scheme != 'data' &&
             scheme != 'javascript');
 
-    if (!shouldOpenExternally) return NavigationDecision.navigate;
+    if (!shouldOpenExternally) {
+      debugPrint('[HomeWebView] navigation decision: navigate');
+      return NavigationDecision.navigate;
+    }
 
     Uri externalUri;
     try {
       externalUri = _resolveExternalUri(rawUrl);
     } catch (error) {
+      debugPrint('[HomeWebView] external navigation parse failed: $error');
       return NavigationDecision.prevent;
     }
+    debugPrint('[HomeWebView] navigation decision: open external $externalUri');
     await launchUrl(externalUri, mode: LaunchMode.externalApplication);
     return NavigationDecision.prevent;
   }
@@ -386,7 +477,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           break;
         case 'getAppInfo':
           _controller.runJavaScript(
-            'window.__ARAMABUL_APP__ = ${jsonEncode({'platform': 'android', 'version': kAppVersion, 'isApp': true})}',
+            'window.__ARAMABUL_APP__ = ${jsonEncode({'platform': 'android', 'version': kAppVersion, 'build': kAppBuildNumber, 'isApp': true})}',
           );
           break;
         case 'shareVenue':
@@ -408,6 +499,13 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             await prefs.setString('auth_user_email', loginEmail);
           });
           break;
+        case 'requestLocationPermission':
+          Permission.location.request().then((status) {
+            _controller.runJavaScript(
+              'window.dispatchEvent(new CustomEvent("aramabul:locationPermissionResult", { detail: { granted: ${status.isGranted} } }))'
+            );
+          });
+          break;
         case 'logout':
         case 'accountDeleted':
           _resetSession();
@@ -422,9 +520,23 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('auth_user_name');
     await prefs.remove('auth_user_email');
+    await prefs.remove('aramabul.auth.session.v1');
     try {
       await GoogleSignIn.instance.signOut();
     } catch (_) {}
+    try {
+      await _controller.runJavaScript('''
+        try { localStorage.removeItem('aramabul.auth.session.v1'); } catch(e) {}
+        try { localStorage.removeItem('auth_user_name'); } catch(e) {}
+        try { localStorage.removeItem('auth_user_email'); } catch(e) {}
+        try { sessionStorage.removeItem('aramabul.auth.session.v1'); } catch(e) {}
+        try { sessionStorage.removeItem('auth_user_name'); } catch(e) {}
+        try { sessionStorage.removeItem('auth_user_email'); } catch(e) {}
+        try { document.dispatchEvent(new CustomEvent('aramabul:authchange')); } catch(e) {}
+      ''');
+    } catch (error) {
+      debugPrint('[AuthSync] Web session reset skipped: $error');
+    }
     await WebViewCookieManager().clearCookies();
     if (!mounted) return;
     await _loadLivePage('/');
@@ -454,6 +566,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         }),
       );
       final response = await request.close();
+      await _syncSetCookieHeadersToWebView(
+        response.headers[HttpHeaders.setCookieHeader],
+      );
       final body = await response.transform(utf8.decoder).join();
       if (response.statusCode < 200 || response.statusCode >= 300) {
         throw HttpException('Social login failed: ${response.statusCode}');
@@ -467,6 +582,31 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       };
     } finally {
       client.close();
+    }
+  }
+
+  Future<void> _syncSetCookieHeadersToWebView(
+    List<String>? setCookieHeaders,
+  ) async {
+    if (setCookieHeaders == null || setCookieHeaders.isEmpty) return;
+
+    final cookieManager = WebViewCookieManager();
+    for (final header in setCookieHeaders) {
+      try {
+        final cookie = Cookie.fromSetCookieValue(header);
+        if (cookie.name.isEmpty || cookie.value.isEmpty) continue;
+
+        await cookieManager.setCookie(
+          WebViewCookie(
+            name: cookie.name,
+            value: cookie.value,
+            domain: 'aramabul.com',
+            path: cookie.path?.isNotEmpty == true ? cookie.path! : '/',
+          ),
+        );
+      } catch (error) {
+        debugPrint('[AuthSync] Cookie sync failed: $error');
+      }
     }
   }
 
@@ -644,6 +784,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       final appInfoLiteral = jsonEncode({
         'platform': 'android',
         'version': kAppVersion,
+        'build': kAppBuildNumber,
         'isApp': true,
       });
       final usersLiteral = jsonEncode(nativeUsersRaw);
@@ -672,6 +813,175 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
               bridge.postMessage(JSON.stringify({ action: 'apple_signin' }));
             }
           };
+          try {
+            (function renderNativeAppVersion() {
+              function render() {
+                var app = window.__ARAMABUL_APP__ || {};
+                if (!app.isApp) return;
+                var version = String(app.version || '').trim();
+                var build = String(app.build || '').trim();
+                if (!version && !build) return;
+                var row = document.querySelector('[data-app-version-row]');
+                var text = document.querySelector('[data-app-version-text]');
+                var sidebar = document.querySelector('.settings-sidebar-card');
+                if (!row && sidebar) {
+                  row = document.createElement('div');
+                  row.className = 'settings-app-version';
+                  row.setAttribute('data-app-version-row', '');
+                  row.innerHTML = '<span class="settings-app-version-label">Uygulama sürümü</span><span class="settings-app-version-value" data-app-version-text></span>';
+                  sidebar.appendChild(row);
+                  text = row.querySelector('[data-app-version-text]');
+                }
+                if (!row || !text) return;
+                text.textContent = build ? 'AB ' + (version || 'app') + '+' + build : 'AB ' + version;
+                row.hidden = false;
+                row.style.display = 'grid';
+              }
+              render();
+              window.setTimeout(render, 250);
+              window.setTimeout(render, 1000);
+              document.addEventListener('DOMContentLoaded', render);
+              document.addEventListener('aramabul:appready', render);
+              document.addEventListener('aramabul:authchange', render);
+            })();
+          } catch(e) {}
+          try {
+            (function installAppLocationNavigationBypass() {
+              if (window.__ARAMABUL_APP_LOCATION_NAV_BYPASS__) {
+                return;
+              }
+              window.__ARAMABUL_APP_LOCATION_NAV_BYPASS__ = true;
+
+              function stripNearbyUrl(rawHref) {
+                var href = String(rawHref || '').trim();
+                if (!href) {
+                  return '';
+                }
+                try {
+                  var url = new URL(href, window.location.href);
+                  url.searchParams.delete('nearby');
+                  url.searchParams.delete('neighborhood');
+                  return url.pathname + url.search + url.hash;
+                } catch (error) {
+                  return href
+                    .replace(/[?&]nearby=1\b/g, '')
+                    .replace(/[?&]neighborhood=[^&]*/g, '');
+                }
+              }
+
+              function isDiscoveryHref(href) {
+                try {
+                  var path = new URL(String(href || ''), window.location.href).pathname;
+                  return /(yeme-icme|gezi|hizmetler|saglik|kultur|sanat)[.]html/.test(path);
+                } catch (error) {
+                  return String(href || '').indexOf('.html') !== -1;
+                }
+              }
+
+              function handleClick(event) {
+                var target = event.target && event.target.closest
+                  ? event.target.closest('[data-mobile-nav="nearby"], .top-city-card, .category-home-card, .home-subcategory-card, .home-subcat-chip, .home-food-card')
+                  : null;
+                if (!target) {
+                  return;
+                }
+
+                var href = target.getAttribute('href') || '';
+                var isNearbyTrigger = target.getAttribute('data-mobile-nav') === 'nearby';
+                var shouldBypass = isNearbyTrigger || target.matches('.home-subcategory-card, .home-subcat-chip, .home-food-card');
+                if (!shouldBypass && !isDiscoveryHref(href)) {
+                  return;
+                }
+
+                if (target.hasAttribute('data-home-subcategory-trigger') && !isNearbyTrigger) {
+                  return;
+                }
+
+                var nextHref = stripNearbyUrl(href || window.location.pathname);
+                if (!nextHref) {
+                  return;
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+                if (window.ARAMABUL_HIDE_NAV_TOAST) {
+                  try { window.ARAMABUL_HIDE_NAV_TOAST(); } catch (error) {}
+                }
+                window.location.assign(nextHref);
+              }
+
+              window.addEventListener('click', handleClick, true);
+
+              try {
+                var currentUrl = new URL(window.location.href);
+                if (currentUrl.searchParams.get('nearby') === '1') {
+                  currentUrl.searchParams.delete('nearby');
+                  currentUrl.searchParams.delete('neighborhood');
+                  window.history.replaceState({}, '', currentUrl.pathname + currentUrl.search + currentUrl.hash);
+                }
+              } catch (error) {}
+            })();
+          } catch(e) {}
+          try {
+            (function installDirectCategoryNavigation() {
+              if (window.__ARAMABUL_DIRECT_CATEGORY_NAV_BOUND__) {
+                return;
+              }
+              window.__ARAMABUL_DIRECT_CATEGORY_NAV_BOUND__ = true;
+              document.addEventListener('click', function (event) {
+                var target = event.target && event.target.closest
+                  ? event.target.closest('.home-subcategory-card, .home-subcat-chip, .home-food-card')
+                  : null;
+                if (!target) {
+                  return;
+                }
+                if (target.getAttribute('data-mobile-nav') === 'nearby') {
+                  return;
+                }
+                var href = target.getAttribute('href') || '';
+                if (!href) {
+                  return;
+                }
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                window.location.assign(href);
+              }, true);
+            })();
+          } catch(e) {}
+          try {
+            (function installLocationFailsafe() {
+              function wrapLocationDetector() {
+                if (typeof window.ARAMABUL_GET_OR_DETECT_LOCATION !== 'function') {
+                  return;
+                }
+                if (window.ARAMABUL_GET_OR_DETECT_LOCATION.__appFailsafe) {
+                  return;
+                }
+                var originalDetector = window.ARAMABUL_GET_OR_DETECT_LOCATION;
+                var wrappedDetector = function () {
+                  return Promise.race([
+                    Promise.resolve().then(function () {
+                      return originalDetector.apply(window, arguments);
+                    }),
+                    new Promise(function (resolve) {
+                      window.setTimeout(function () { resolve(null); }, 3000);
+                    })
+                  ]);
+                };
+                wrappedDetector.__appFailsafe = true;
+                window.ARAMABUL_GET_OR_DETECT_LOCATION = wrappedDetector;
+              }
+              wrapLocationDetector();
+              window.setTimeout(wrapLocationDetector, 250);
+              window.setTimeout(wrapLocationDetector, 1000);
+              window.setTimeout(wrapLocationDetector, 2500);
+              window.setTimeout(wrapLocationDetector, 5000);
+              document.addEventListener('DOMContentLoaded', wrapLocationDetector);
+              window.addEventListener('load', wrapLocationDetector);
+              document.addEventListener('aramabul:appready', wrapLocationDetector);
+            })();
+          } catch(e) {}
           try {
             document.dispatchEvent(new CustomEvent('aramabul:appready'));
           } catch(e) {}
@@ -763,6 +1073,98 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
               }
             }
           `;
+
+          function ensureCorporateProfileRow() {
+            var sidebar = document.querySelector('.settings-sidebar-card');
+            if (!sidebar || document.querySelector('a[href="kurumsal-settings.html"]')) {
+              return;
+            }
+
+            var row = document.createElement('a');
+            row.className = 'settings-row settings-row-button';
+            row.href = 'kurumsal-settings.html';
+            row.setAttribute('aria-label', 'Kurumsal');
+            row.innerHTML = [
+              '<span class="settings-row-icon" aria-hidden="true">',
+              '<svg viewBox="0 0 24 24">',
+              '<path d="M6 3h9l3 3v15H6z"></path>',
+              '<path d="M14 3v4h4"></path>',
+              '<path d="M9 11h6"></path>',
+              '<path d="M9 15h6"></path>',
+              '</svg>',
+              '</span>',
+              '<span class="settings-row-label">Kurumsal</span>',
+              '<span class="settings-row-chevron" aria-hidden="true">',
+              '<svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"></path></svg>',
+              '</span>'
+            ].join('');
+
+            var feedback = sidebar.querySelector('a[href="feedback-settings.html"]');
+            var admin = sidebar.querySelector('[data-admin-settings-link]');
+            sidebar.insertBefore(row, feedback || admin || null);
+          }
+
+          function updateTurkishProfileHandle() {
+            var handle = document.getElementById('settingsHandle') ||
+              document.getElementById('accountDisplayHandle');
+            if (!handle) return;
+
+            try {
+              var session = JSON.parse(localStorage.getItem('aramabul.auth.session.v1') || 'null');
+              if (!session || !session.email) {
+                handle.textContent = '@giris-yapilmadi';
+                return;
+              }
+              var localPart = String(session.email).split('@')[0] || session.email;
+              var normalized = localPart
+                .toLocaleLowerCase('tr')
+                .replace(/[^\p{Letter}\p{Number}._-]/gu, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '') || 'kullanici';
+              handle.textContent = '@' + normalized + '.aramabul';
+            } catch (error) {}
+          }
+
+          function renderAppVersionRow() {
+            var app = window.__ARAMABUL_APP__ || {};
+            if (!app.isApp) return;
+            var version = String(app.version || '').trim();
+            var build = String(app.build || '').trim();
+            if (!version && !build) return;
+
+            var sidebar = document.querySelector('.settings-sidebar-card');
+            var row = document.querySelector('[data-app-version-row]');
+            var text = document.querySelector('[data-app-version-text]');
+            if (!row && sidebar) {
+              row = document.createElement('div');
+              row.className = 'settings-app-version';
+              row.setAttribute('data-app-version-row', '');
+              row.innerHTML = '<span class="settings-app-version-label">Uygulama sürümü</span><span class="settings-app-version-value" data-app-version-text></span>';
+              sidebar.appendChild(row);
+              text = row.querySelector('[data-app-version-text]');
+            }
+            if (!row || !text) return;
+            text.textContent = build ? 'AB ' + (version || 'app') + '+' + build : 'AB ' + version;
+            row.hidden = false;
+            row.style.display = 'grid';
+          }
+
+          ensureCorporateProfileRow();
+          updateTurkishProfileHandle();
+          renderAppVersionRow();
+          document.addEventListener('aramabul:authchange', function () {
+            window.setTimeout(updateTurkishProfileHandle, 0);
+            window.setTimeout(renderAppVersionRow, 0);
+          });
+          document.addEventListener('aramabul:languagechange', function () {
+            window.setTimeout(updateTurkishProfileHandle, 0);
+            window.setTimeout(renderAppVersionRow, 0);
+          });
+          window.setTimeout(function () {
+            ensureCorporateProfileRow();
+            updateTurkishProfileHandle();
+            renderAppVersionRow();
+          }, 350);
         })();
       ''');
     } catch (error) {
@@ -829,6 +1231,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
   @override
   void dispose() {
+    _loadingWatchdog?.cancel();
     _connectivitySub.cancel();
     super.dispose();
   }

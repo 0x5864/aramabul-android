@@ -16,7 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260613d" />
+    <link rel="stylesheet" href="styles.css?v=20260614-v3" />
     <link rel="stylesheet" href="mobile-search-header.css?v=20260612-v2" />
   </head>
   <body class="admin-page admin-venue-editor-page">
@@ -29,7 +29,7 @@
         </a>
         <div class="istanbul-topbar-actions">
           <span class="istanbul-topbar-link admin-session-chip" data-admin-session-name>Admin</span>
-          <button class="istanbul-topbar-link admin-logout-button" type="button" data-admin-logout>Çıkış yap</button>
+          <a class="istanbul-topbar-link admin-logout-button" href="/api/admin/auth/logout?redirect=/admin-login.html" data-admin-logout>Çıkış yap</a>
         </div>
       </nav>
       <div class="global-topline"></div>
@@ -146,7 +146,7 @@
                     <button class="admin-table-sort-button" type="button" data-sort-key="category" aria-sort="none">Kategori</button>
                   </th>
                   <th scope="col">
-                    <button class="admin-table-sort-button" type="button" data-sort-key="location" aria-sort="none">İlçe</button>
+                    <button class="admin-table-sort-button" type="button" data-sort-key="location" aria-sort="none">İlçe / Mahalle</button>
                   </th>
                   <th scope="col">
                     <button class="admin-table-sort-button" type="button" data-sort-key="rating" aria-sort="descending">Puan</button>
@@ -296,7 +296,6 @@
                 <span>Hızlı erişim</span>
                 <div class="admin-map-link-actions">
                   <a id="adminVenueMapsQuickLink" class="istanbul-topbar-link" href="#" target="_blank" rel="noopener noreferrer">Haritada aç</a>
-                  <a id="adminVenueDetailQuickLink" class="istanbul-topbar-link" href="#" target="_blank" rel="noopener noreferrer">Detayı aç</a>
                 </div>
               </div>
 
@@ -310,8 +309,9 @@
               <label class="istanbul-filter-field">
                 <span>Ana foto</span>
                 <div class="admin-photo-uri-actions">
-                  <input id="adminVenuePhotoUri" name="photoUri" type="url" />
+                  <input id="adminVenuePhotoUri" name="photoUri" type="text" />
                   <button id="adminVenueFindPhotoButton" class="istanbul-filter-reset" type="button">Gorsel bul</button>
+                  <button id="adminVenueDownloadPhotoButton" class="istanbul-filter-reset" type="button" hidden>Görseli indir</button>
                 </div>
                 <div id="adminVenuePhotoUriPreviewWrap" class="admin-photo-preview-wrap admin-photo-uri-preview-wrap" hidden>
                   <img id="adminVenuePhotoUriPreview" class="admin-photo-preview" alt="Ana foto önizleme" hidden />
@@ -397,7 +397,7 @@
         <div class="admin-photo-item-grid">
           <label class="istanbul-filter-field admin-venue-field-wide">
             <span>Foto URL</span>
-            <input class="admin-photo-url" type="url" />
+            <input class="admin-photo-url" type="text" />
           </label>
 
           <label class="istanbul-filter-field">
@@ -440,7 +440,7 @@
       </div>
     </template>
 
-    <script src="admin-auth.js?v=20260410-admin-auth-02"></script>
-    <script src="admin-venues.js?v=20260514-no-cuisine-02"></script>
+    <script src="admin-auth.js?v=20260621-admin-logout-clear-01"></script>
+    <script src="admin-venues.js?v=20260620-admin-save-01"></script>
   </body>
 </html>

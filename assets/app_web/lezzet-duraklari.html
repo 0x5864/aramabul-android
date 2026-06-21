@@ -31,9 +31,61 @@
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260613e" />
+    <link rel="stylesheet" href="styles.css?v=20260614-v3" />
     <link rel="stylesheet" href="mobile-search-header.css?v=20260612-v2" />
-    <link rel="stylesheet" href="profile.css?v=20260613-v2" />
+    <link rel="stylesheet" href="profile.css?v=20260614-v1" />
+    <style>
+      .lezzet-venue-link {
+        color: var(--accent-strong, #e34b32);
+        text-decoration: underline;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        padding: 1px 4px;
+        border-radius: 4px;
+        font-weight: 600;
+      }
+      .lezzet-venue-link:hover {
+        background: rgba(227, 75, 50, 0.1);
+        color: #e34b32;
+      }
+      .lezzet-venue-link.is-active {
+        color: #e30a17 !important;
+        text-decoration: underline;
+        font-weight: 700;
+      }
+      .map-panel-close-btn:hover {
+        background-color: rgba(0, 0, 0, 0.08) !important;
+      }
+      .content-guide li {
+        line-height: 1.8;
+      }
+      @media (min-width: 993px) {
+        .istanbul-results-layout {
+          display: flex;
+          gap: 1.5rem;
+          width: 100%;
+          align-items: flex-start;
+        }
+        .home-ustalara-saygi {
+          flex: 1;
+          min-width: 0;
+        }
+        .istanbul-map-panel {
+          width: 400px;
+          flex-shrink: 0;
+          position: sticky;
+          top: 96px;
+          height: calc(100vh - 130px);
+          border: 1px solid var(--box-border, #d2d8db);
+          background: var(--paper, #fff);
+          border-radius: var(--radius, 12px);
+          overflow: hidden;
+          box-shadow: var(--shadow, 0 8px 16px rgba(0,0,0,0.05));
+          display: flex;
+          flex-direction: column;
+        }
+      }
+    </style>
     
     <!-- Google tag (gtag.js) -->
     <!-- Google Consent Mode v2 -->
@@ -104,16 +156,15 @@
           <a class="drawer-link" href="index.html"><span class="drawer-link-icon">⌂</span> Anasayfa</a>
           <a class="drawer-link" href="favorites.html"><span class="drawer-link-icon">♡</span> Favoriler</a>
           <a class="drawer-link" href="profile.html?action=profile"><span class="drawer-link-icon">◎</span> Hesap</a>
-          <a class="drawer-link" href="isbirligi.html"><span class="drawer-link-icon">↗</span> İşbirliği</a>
-          <a class="drawer-link" href="lezzet-duraklari.html"><span class="drawer-link-icon">★</span> Lezzet Durakları</a>
-        </div>
+          <a class="drawer-link" href="isbirligi.html"><span class="drawer-link-icon">↗</span> İşbirliği</a></div>
 
         </nav>
     </div>
     <div class="drawer-backdrop" id="drawerBackdrop"></div>
 
     <main class="hero settings-shell">
-      <section class="content-guide settings-card settings-panel-card home-ustalara-saygi" aria-label="Lezzet Durakları" style="margin-top: 1rem;">
+      <div class="istanbul-results-layout">
+        <section class="content-guide settings-card settings-panel-card home-ustalara-saygi" aria-label="Lezzet Durakları" style="margin-top: 1rem;">
         <div class="ustalara-saygi-inner">
           <div class="ustalara-saygi-content">
             <h1>Mehmet Yaşin ve Teoman Hünal — İstanbul Lezzet Durakları</h1>
@@ -151,7 +202,36 @@
           <li><strong>Reşitpaşa:</strong> Havan'dan, Bysteak Steakhouse, Odun Pizza</li>
         </ul>
       </section>
-    </main>
+
+      <aside id="mapPanel" class="istanbul-map-panel" style="margin-top: 1rem; display: none;">
+        <div class="map-panel-sticky">
+          <div class="map-panel-details">
+            <div class="map-panel-header">
+              <h3 id="mapPanelTitle" class="map-panel-title">Mekan</h3>
+              <button id="mapPanelCloseBtn" type="button" class="map-panel-close-btn" aria-label="Kapat" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--ink); line-height: 1; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; transition: background-color 0.2s;">&times;</button>
+            </div>
+            <div id="mapPanelMeta" class="map-panel-meta"></div>
+            <div id="mapPanelStatus" class="map-panel-status"></div>
+            <p id="mapPanelAddress" class="map-panel-address"></p>
+            <p id="mapPanelPhone" class="map-panel-phone" hidden></p>
+            <div id="mapPanelRating" class="map-panel-rating"></div>
+            <div id="mapPanelDistance" class="map-panel-distance" hidden>
+              <img src="assets/uzak.png" class="map-panel-distance-icon" alt="Mesafe" />
+              <span id="mapPanelDistanceText"></span>
+            </div>
+            <div id="mapPanelMapsLinkContainer" style="margin-top: 0.6rem; display: none;">
+              <a id="mapPanelMapsLink" href="#" target="_blank" rel="noopener noreferrer" style="color: var(--accent-strong); font-weight: 700; font-size: 0.85rem; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">Ayrıntılı bilgi ↗</a>
+            </div>
+            <div class="map-panel-actions">
+            </div>
+          </div>
+          <div class="map-panel-frame-wrapper" style="flex: 1; min-height: 250px;">
+            <iframe id="mapPanelFrame" class="map-panel-iframe" src="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
 
                     <footer class="yr-footer" aria-label="Alt Bant">
       <div class="yr-footer-inner">
@@ -164,7 +244,7 @@
               <a href="#" class="yr-footer-store-link">
                 <img src="assets/android.svg" alt="Google Play Store" />
               </a>
-              <a href="#" class="yr-footer-store-link">
+              <a href="https://apps.apple.com/app/id1564758712" class="yr-footer-store-link">
                 <img src="assets/ios.svg" alt="Apple App Store" />
               </a>
             </div>
@@ -194,7 +274,7 @@
       </div>
     </footer>
 
-    <script src="web-runtime.js?v=20260611-subcategory-12col-v6"></script>
+    <script src="web-runtime.js?v=20260620-location-hang-fix-v5"></script>
     <script src="header-state.js?v=20260302-01"></script>
     <script src="header-i18n.js?v=20260610-i18n-footer-01"></script>
     <script src="header-nav.js?v=20260612-profile-menu-v2"></script>
@@ -203,6 +283,6 @@
     <script src="header-search-data.js?v=20260530b"></script>
     <script src="header-search.js?v=20260611-subcategory-12col-v6"></script>
     <script src="adsense-privacy.js?v=20260523-adsense-consent-02"></script>
-    <script src="lezzet-duraklari-linker.js?v=20260517-01"></script>
+    <script src="lezzet-duraklari-linker.js?v=20260620-v2"></script>
   </body>
 </html>

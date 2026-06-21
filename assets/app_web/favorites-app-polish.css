@@ -11,6 +11,6 @@
 }
 
 .favorites-page-shell .favorites-grid .istanbul-venue-card {
-  border-color: #c9ced4 !important;
+  border: 1px solid #c9ced4 !important;
   border-radius: 8px !important;
 }

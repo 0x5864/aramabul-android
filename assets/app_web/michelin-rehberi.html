@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#45503f" />
+    <title>Michelin Rehberi - İstanbul | AramaBul</title>
+    <meta
+      name="description"
+      content="İstanbul'daki Michelin Yıldızlı ve Michelin Rehberi tarafından tavsiye edilen en iyi 88 restoranı ilçelerine göre keşfedin."
+    />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://aramabul.com/michelin-rehberi.html" />
+    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Michelin Rehberi - İstanbul | AramaBul" />
+    <meta property="og:description" content="İstanbul'daki Michelin Yıldızlı ve Michelin Rehberi tarafından tavsiye edilen en iyi 88 restoranı ilçelerine göre keşfedin." />
+    <meta property="og:url" content="https://aramabul.com/michelin-rehberi.html" />
+    <meta property="og:site_name" content="AramaBul" />
+    <meta property="og:image" content="https://aramabul.com/assets/michelin.jpeg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Michelin Rehberi - İstanbul | AramaBul" />
+    <meta name="twitter:description" content="İstanbul'daki Michelin Rehberi restoranları." />
+    <meta name="twitter:image" content="https://aramabul.com/assets/michelin.jpeg" />
+    <link rel="icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.png?v=20260524b" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png?v=20260522d" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260614-v3" />
+    <link rel="stylesheet" href="mobile-search-header.css?v=20260612-v2" />
+    <link rel="stylesheet" href="profile.css?v=20260614-v1" />
+    
+    <!-- Google tag (gtag.js) -->
+    <!-- Google Consent Mode v2 -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      (function() {
+        var consent = null;
+        try { consent = localStorage.getItem("aramabul_cookie_consent"); } catch (e) {}
+        var defaults = {
+          'ad_storage': 'denied',
+          'ad_user_data': 'denied',
+          'ad_personalization': 'denied',
+          'analytics_storage': 'denied',
+          'wait_for_update': 500
+        };
+        if (consent === 'all') {
+          defaults = {
+            'ad_storage': 'granted',
+            'ad_user_data': 'granted',
+            'ad_personalization': 'granted',
+            'analytics_storage': 'granted'
+          };
+        }
+        gtag('consent', 'default', defaults);
+      })();
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NHE1J9FWDG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "G-NHE1J9FWDG");
+    </script>
+
+    <style>
+      .michelin-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+      }
+      
+      .michelin-banner {
+        background: linear-gradient(135deg, #162123 0%, #2c3e50 100%);
+        border-radius: 12px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--box-border);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        box-shadow: var(--shadow);
+      }
+      
+      .michelin-banner-content {
+        flex: 1;
+      }
+      
+      .michelin-banner-content h1 {
+        font-size: 2.2rem;
+        font-weight: 800;
+        margin: 0 0 1rem 0;
+        color: #ffffff;
+        letter-spacing: -0.03em;
+      }
+      
+      .michelin-banner-content p {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #e2e8f0;
+        margin: 0;
+      }
+      
+      .michelin-banner-image {
+        width: 180px;
+        height: 180px;
+        border-radius: 12px;
+        overflow: hidden;
+        flex-shrink: 0;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      }
+      
+      .michelin-banner-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .michelin-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+      
+      .michelin-search-wrapper {
+        position: relative;
+        flex: 1;
+        max-width: 500px;
+      }
+      
+      .michelin-search-input {
+        width: 100%;
+        padding: 0.8rem 1.2rem 0.8rem 2.8rem;
+        border: 1px solid var(--box-border);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background: #ffffff;
+        color: var(--ink);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+      
+      .michelin-search-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(58, 125, 68, 0.15);
+      }
+      
+      .michelin-search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        font-size: 1.1rem;
+      }
+      
+      .michelin-stats {
+        font-size: 0.95rem;
+        color: #64748b;
+        font-weight: 500;
+      }
+      
+      .michelin-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+      
+      .district-card {
+        background: #ffffff;
+        border: 1px solid var(--box-border);
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .district-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+      
+      body.yeme-icme-page .district-name {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #000000 !important;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+      
+      body.yeme-icme-page .district-badge {
+        background: #ffffff !important;
+        color: #ef4444 !important;
+        border: 1px solid rgba(22, 33, 35, 0.12) !important;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 0.3rem 0.8rem;
+        border-radius: 9999px;
+      }
+
+      .michelin-grid .istanbul-results-grid {
+        margin-top: 0.5rem;
+      }
+      
+      .michelin-no-results {
+        text-align: center;
+        padding: 3rem;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px dashed var(--box-border);
+        color: #64748b;
+        grid-column: 1 / -1;
+      }
+
+      .michelin-loading-state {
+        text-align: center;
+        padding: 4rem;
+        font-size: 1.1rem;
+        color: #64748b;
+        grid-column: 1 / -1;
+      }
+      
+      @media (max-width: 768px) {
+        .michelin-banner {
+          flex-direction: column-reverse;
+          padding: 1.5rem;
+          text-align: center;
+          gap: 1.5rem;
+        }
+        .michelin-banner-image {
+          width: 120px;
+          height: 120px;
+        }
+        .michelin-banner-content h1 {
+          font-size: 1.7rem;
+        }
+        .michelin-controls {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .michelin-search-wrapper {
+          max-width: 100%;
+        }
+        .michelin-stats {
+          text-align: center;
+        }
+      }
+      
+      body.michelin-rehberi-page .istanbul-venue-title-link {
+        font-weight: 600 !important;
+      }
+      body.michelin-rehberi-page .istanbul-venue-title {
+        padding-top: 8px !important;
+      }
+    </style>
+  </head>
+  <body class="profile-page settings-page about-page michelin-rehberi-page yeme-icme-page">
+    <div class="texture"></div>
+
+    <header class="global-header-band">
+      <nav class="topbar global-topbar">
+        <button class="header-hamburger-btn" id="drawerTrigger" aria-label="Menü" type="button">☰</button>
+        <a class="brand" href="index.html" aria-label="aramabul">
+          <span class="brand-wordmark"><span class="brand-wordmark-rest">arama</span><span class="brand-wordmark-search">bul</span></span>
+        </a>
+        <form class="header-search topbar-search-form" action="search.html" method="get" role="search" aria-label="Mekan ara">
+          <label class="visually-hidden" for="queryInput">Mekan ara</label>
+          <input
+            class="header-search-input"
+            name="q"
+            type="search"
+            placeholder="Ne bulmamı istersiniz?"
+            autocomplete="off"
+          />
+          <button class="header-search-btn" type="submit">Bul</button>
+        </form>
+      </nav>
+      <div class="global-topline"></div>
+    </header>
+
+    <!-- Navigation Drawer -->
+    <div class="nav-drawer" id="navDrawer">
+      <div class="drawer-header">
+        <span class="drawer-title">arama<span style="color: #e34b32 !important;">bul</span></span>
+        <button class="drawer-close-btn" id="drawerCloseBtn" aria-label="Kapat" type="button">×</button>
+      </div>
+      <nav class="drawer-content">
+        <div class="drawer-nav-section">
+          <span class="drawer-section-title">Keşfet</span>
+          <a class="drawer-link" href="index.html"><span class="drawer-link-icon">⌂</span> Anasayfa</a>
+          <a class="drawer-link" href="favorites.html"><span class="drawer-link-icon">♡</span> Favoriler</a>
+          <a class="drawer-link" href="profile.html?action=profile"><span class="drawer-link-icon">◎</span> Hesap</a>
+          <a class="drawer-link" href="isbirligi.html"><span class="drawer-link-icon">↗</span> İşbirliği</a>
+        </div>
+      </nav>
+    </div>
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+    <main class="michelin-container">
+      <!-- Premium Banner -->
+      <section class="michelin-banner">
+        <div class="michelin-banner-content">
+          <h1>Michelin Rehberi - İstanbul</h1>
+          <p>
+            Michelin Yıldızı için gizemli Michelin müfettişleri normal bir müşteri gibi davranarak restoranları ziyaret ediyor, yemekleri tadıyor ve kimliklerini asla açıklamıyorlar. Yıldızların verilme kriteri ise “malzemelerin kalitesi, lezzetlerin uyumu, pişirme tekniklerine hakimiyet, şefin kişiliğinin yemek deneyimine yansıması ve en önemlisi müfettişlerin ziyaretleri arasındaki tutarlılık” olarak açıklanmış durumda. İstanbul’da Michelin Yıldızı kazanan restoranların yanısıra Michelin Rehberi’nde tavsiye edilen restoranları da bu köşemizde bulabilirsiniz.
+          </p>
+        </div>
+        <div class="michelin-banner-image">
+          <img src="assets/michelin.jpeg" alt="Michelin Rehberi - İstanbul" />
+        </div>
+      </section>
+
+      <!-- Controls & Search -->
+      <div class="michelin-controls">
+        <div class="michelin-search-wrapper">
+          <span class="michelin-search-icon">🔍</span>
+          <input
+            type="text"
+            id="michelinSearch"
+            class="michelin-search-input"
+            placeholder="Mekan veya ilçe adı ara..."
+            autocomplete="off"
+          />
+        </div>
+        <div class="michelin-stats" id="michelinStats">
+          Yükleniyor...
+        </div>
+      </div>
+
+      <!-- District Grid -->
+      <section class="michelin-grid" id="michelinGrid">
+        <div class="michelin-loading-state">Michelin mekanları listesi yükleniyor...</div>
+      </section>
+    </main>
+
+    <footer class="yr-footer" aria-label="Alt Bant">
+      <div class="yr-footer-inner">
+        <div class="yr-footer-grid">
+          <div class="yr-footer-col yr-footer-brand-col">
+            <a class="brand" href="index.html" aria-label="aramabul" style="display: flex; align-items: center; gap: 0.4rem; text-decoration: none;">
+              <span class="brand-wordmark" style="font-size: 1.8rem; font-weight: 800; letter-spacing: -0.045em; display: inline-flex; align-items: center; font-family: var(--ui-font-family);"><span class="brand-wordmark-rest" style="color: var(--ink) !important;">arama</span><span class="brand-wordmark-search" style="color: #e34b32 !important;">bul</span></span>
+            </a>
+            <div class="yr-footer-downloads-vertical">
+              <a href="#" class="yr-footer-store-link">
+                <img src="assets/android.svg" alt="Google Play Store" />
+              </a>
+              <a href="https://apps.apple.com/app/id1564758712" class="yr-footer-store-link">
+                <img src="assets/ios.svg" alt="Apple App Store" />
+              </a>
+            </div>
+          </div>
+          <div class="yr-footer-col">
+            <h3 class="yr-footer-col-title">İletişim</h3>
+            <ul class="yr-footer-links">
+              <li><a href="hakkimizda.html">Hakkımızda</a></li>
+              <li><a href="sss.html">Sıkça Sorulan Sorular</a></li>
+              <li><a href="iletisim.html">Bize ulaşın</a></li>
+              <li><a href="yer-ekle.html">Yer ekle</a></li>
+            </ul>
+          </div>
+          <div class="yr-footer-col">
+            <h3 class="yr-footer-col-title">Kurumsal</h3>
+            <ul class="yr-footer-links">
+              <li><a href="kullanim-kosullari.html">Kullanım Koşulları</a></li>
+              <li><a href="gizlilik-politikasi.html">Gizlilik Politikası</a></li>
+              <li><a href="cerez-politikasi.html">Çerez Politikası</a></li>
+              <li><a href="kvkk.html">Kişisel Verilerin Korunması</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="yr-footer-bottom">
+          <p class="yr-footer-copyright">&copy; 2026 AramaBul. Tüm hakları saklıdır.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="web-runtime.js?v=20260620-location-hang-fix-v5"></script>
+    <script src="public-favorites-auth.js?v=20260619-local-session-v2"></script>
+    <script src="header-state.js?v=20260302-01"></script>
+    <script src="header-i18n.js?v=20260610-i18n-footer-01"></script>
+    <script src="header-nav.js?v=20260612-profile-menu-v2"></script>
+    <script src="header-shell.js?v=20260302-02"></script>
+    <script src="header-search-ui.js?v=20260606-search-header-01"></script>
+    <script src="header-search-data.js?v=20260530b"></script>
+    <script src="header-search.js?v=20260611-subcategory-12col-v6"></script>
+    <script src="public-favorites-card-fix.js?v=20260619-card-fix-v2"></script>
+    <script src="adsense-privacy.js?v=20260523-adsense-consent-02"></script>
+
+    <script>
+      "use strict";
+
+      let allVenues = [];
+      let favoriteIds = new Set();
+
+      function normalizeTurkish(str) {
+        return str
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/ı/g, "i")
+          .replace(/I/g, "i")
+          .replace(/İ/g, "i")
+          .replace(/ğ/g, "g")
+          .replace(/Ğ/g, "g")
+          .replace(/ü/g, "u")
+          .replace(/Ü/g, "u")
+          .replace(/ş/g, "s")
+          .replace(/Ş/g, "s")
+          .replace(/ö/g, "o")
+          .replace(/Ö/g, "o")
+          .replace(/ç/g, "c")
+          .replace(/Ç/g, "c")
+          .toLowerCase();
+      }
+
+      function groupByDistrict(venues) {
+        const groups = {};
+        venues.forEach(v => {
+          const district = v.district || "Diğer";
+          if (!groups[district]) {
+            groups[district] = [];
+          }
+          groups[district].push(v);
+        });
+        
+        // Sort venues inside each district alphabetically
+        for (const district in groups) {
+          groups[district].sort((a, b) => a.name.localeCompare(b.name, "tr-TR"));
+        }
+        
+        return groups;
+      }
+
+      async function loadFavorites(venues) {
+        try {
+          const ids = venues.map(v => Number(v.id)).filter(id => Number.isFinite(id) && id > 0);
+          if (!ids.length) return;
+          
+          const params = new URLSearchParams();
+          params.set("venueIds", ids.join(","));
+          const response = await fetch(`/api/mvp/favorites/ids?${params.toString()}`, {
+            headers: { Accept: "application/json" }
+          });
+          if (response.ok) {
+            const data = await response.json();
+            favoriteIds = new Set(Array.isArray(data.ids) ? data.ids.map(id => String(id)) : []);
+          }
+        } catch (error) {
+          console.warn("Favoriler yüklenemedi:", error);
+        }
+      }
+
+      function renderGrid(grouped) {
+        const grid = document.getElementById("michelinGrid");
+        grid.innerHTML = "";
+        
+        const sortedDistricts = Object.keys(grouped).sort((a, b) => a.localeCompare(b, "tr-TR"));
+        
+        if (sortedDistricts.length === 0) {
+          grid.innerHTML = '<div class="michelin-no-results">Arama kriterlerine uygun Michelin mekanı bulunamadı.</div>';
+          return;
+        }
+        
+        sortedDistricts.forEach(district => {
+          const venues = grouped[district];
+          
+          const section = document.createElement("section");
+          section.className = "district-card";
+          
+          const header = document.createElement("div");
+          header.className = "district-header";
+          
+          const title = document.createElement("h2");
+          title.className = "district-name";
+          title.textContent = district;
+          
+          const badge = document.createElement("span");
+          badge.className = "district-badge";
+          badge.textContent = `${venues.length} Mekan`;
+          
+          header.appendChild(title);
+          header.appendChild(badge);
+          section.appendChild(header);
+          
+          const listDiv = document.createElement("div");
+          listDiv.className = "istanbul-results-grid";
+          
+          venues.forEach(v => {
+            const venueCard = document.createElement("article");
+            venueCard.className = "istanbul-venue-card";
+            venueCard.setAttribute("tabindex", "0");
+            venueCard.venue = v; // Set venue payload for favoriting scripts
+            
+            // Image & Media wrapper
+            const media = document.createElement("div");
+            media.className = "istanbul-venue-media";
+            const img = document.createElement("img");
+            img.className = "istanbul-venue-image";
+            img.src = v.photoUri || "assets/no-image-icon.webp";
+            img.alt = v.name || "Mekan";
+            img.loading = "lazy";
+            media.appendChild(img);
+            
+            // Favorite Button
+            const favBtn = document.createElement("button");
+            favBtn.className = "istanbul-favorite-button";
+            favBtn.type = "button";
+            favBtn.setAttribute("aria-label", "Favorilere ekle");
+            const isFav = favoriteIds.has(String(v.id));
+            favBtn.classList.toggle("is-active", isFav);
+            favBtn.classList.toggle("is-favorited", isFav);
+            favBtn.setAttribute("aria-pressed", isFav ? "true" : "false");
+            media.appendChild(favBtn);
+            
+            venueCard.appendChild(media);
+            
+            // Card details container
+            const details = document.createElement("div");
+            details.className = "istanbul-venue-card-details";
+            
+            // Eyebrow (Cuisine / Category)
+            const cardHead = document.createElement("div");
+            cardHead.className = "istanbul-venue-card-head";
+            const eyebrow = document.createElement("p");
+            eyebrow.className = "istanbul-venue-eyebrow";
+            eyebrow.textContent = v.cuisine || v.category || "Michelin Rehberi";
+            cardHead.appendChild(eyebrow);
+            details.appendChild(cardHead);
+            
+            // Title Row (Name + Google Rating Badge)
+            const titleRow = document.createElement("div");
+            titleRow.className = "istanbul-venue-title-row";
+            
+            const h3 = document.createElement("h3");
+            h3.className = "istanbul-venue-title";
+            const link = document.createElement("a");
+            link.className = "istanbul-venue-title-link";
+            link.href = v.slug ? `/mekan/${v.slug}` : (v.mapsUrl || "#");
+            if (!v.slug) {
+              link.target = "_blank";
+              link.rel = "noopener noreferrer";
+            }
+            link.textContent = v.name;
+            h3.appendChild(link);
+            titleRow.appendChild(h3);
+            
+            // Rating Badge (e.g. 4,7)
+            const ratingVal = Number(v.rating);
+            if (Number.isFinite(ratingVal) && ratingVal > 0) {
+              const ratingBadge = document.createElement("span");
+              ratingBadge.className = "istanbul-venue-rating-badge";
+              ratingBadge.style.display = "inline-flex";
+              ratingBadge.textContent = ratingVal.toFixed(1).replace(".", ",");
+              ratingBadge.setAttribute("aria-label", `${ratingBadge.textContent} Google puanı`);
+              titleRow.appendChild(ratingBadge);
+            }
+            details.appendChild(titleRow);
+            
+            // Meta Row (Icon + Neighborhood / District text)
+            const metaRow = document.createElement("div");
+            metaRow.className = "istanbul-venue-meta-row";
+            
+            const metaIcon = document.createElement("span");
+            metaIcon.className = "istanbul-venue-meta-icon";
+            metaRow.appendChild(metaIcon);
+            
+            const metaText = document.createElement("span");
+            metaText.className = "istanbul-venue-meta-text";
+            metaText.textContent = v.neighborhood || v.district || "";
+            metaRow.appendChild(metaText);
+            
+            details.appendChild(metaRow);
+            
+            // Hidden Address text (matching category structure)
+            const addressText = document.createElement("p");
+            addressText.className = "istanbul-venue-address-text";
+            addressText.style.display = "none";
+            addressText.textContent = v.address || "";
+            details.appendChild(addressText);
+            
+            venueCard.appendChild(details);
+            
+            // Open detail page on card click (excluding links and buttons)
+            venueCard.addEventListener("click", (e) => {
+              if (!e.target.closest("a, button")) {
+                if (v.slug) {
+                  window.location.href = `/mekan/${v.slug}`;
+                } else if (v.mapsUrl) {
+                  window.open(v.mapsUrl, "_blank", "noopener,noreferrer");
+                }
+              }
+            });
+            
+            venueCard.addEventListener("keydown", (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                if (!e.target.closest("a, button")) {
+                  e.preventDefault();
+                  if (v.slug) {
+                    window.location.href = `/mekan/${v.slug}`;
+                  } else if (v.mapsUrl) {
+                    window.open(v.mapsUrl, "_blank", "noopener,noreferrer");
+                  }
+                }
+              }
+            });
+            
+            listDiv.appendChild(venueCard);
+          });
+          
+          section.appendChild(listDiv);
+          grid.appendChild(section);
+        });
+      }
+
+      function updateStats(visibleCount, totalCount) {
+        const stats = document.getElementById("michelinStats");
+        if (visibleCount === totalCount) {
+          stats.textContent = `Toplam ${totalCount} mekan listeleniyor`;
+        } else {
+          stats.textContent = `${visibleCount} / ${totalCount} mekan bulundu`;
+        }
+      }
+
+      async function init() {
+        try {
+          const response = await fetch("/api/venues?category=Michelin%20Guide&limit=200");
+          if (!response.ok) {
+            throw new Error("API hatası");
+          }
+          allVenues = await response.json();
+          
+          // Load favorites prior to rendering grid
+          await loadFavorites(allVenues);
+          
+          const grouped = groupByDistrict(allVenues);
+          renderGrid(grouped);
+          updateStats(allVenues.length, allVenues.length);
+          
+          // Setup search
+          const searchInput = document.getElementById("michelinSearch");
+          searchInput.addEventListener("input", (e) => {
+            const query = normalizeTurkish(e.target.value.trim());
+            if (!query) {
+              renderGrid(groupByDistrict(allVenues));
+              updateStats(allVenues.length, allVenues.length);
+              return;
+            }
+            
+            const filtered = allVenues.filter(v => {
+              const nameNorm = normalizeTurkish(v.name || "");
+              const districtNorm = normalizeTurkish(v.district || "");
+              const cuisineNorm = normalizeTurkish(v.cuisine || "");
+              return nameNorm.includes(query) || districtNorm.includes(query) || cuisineNorm.includes(query);
+            });
+            
+            renderGrid(groupByDistrict(filtered));
+            updateStats(filtered.length, allVenues.length);
+          });
+        } catch (error) {
+          console.error("Yükleme hatası:", error);
+          const grid = document.getElementById("michelinGrid");
+          grid.innerHTML = '<div class="michelin-no-results" style="color: #ef4444; border-color: #fca5a5;">Mekanlar yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.</div>';
+          document.getElementById("michelinStats").textContent = "Hata oluştu";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", init);
+    </script>
+  </body>
+</html>
