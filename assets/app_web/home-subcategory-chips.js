@@ -111,6 +111,11 @@
       var mainCat = MAIN_CATEGORIES[i];
       var items = await fetchSubcategories(mainCat.key);
       items.forEach(function (item) {
+        if (mainCat.key === "yeme-icme") {
+          if (item.slug === "michelin-rehberi" || item.name === "Michelin Rehberi") {
+            return;
+          }
+        }
         if (mainCat.key === "gezi") {
           var allowedGezi = ["Camping", "Günübirlik Tesis", "Kongre Ve Sergi Merkezi", "Otel", "Pansiyon", "Plaj", "Yat Limanı"];
           if (allowedGezi.indexOf(item.name) === -1) {
