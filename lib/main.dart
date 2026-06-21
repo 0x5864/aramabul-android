@@ -25,8 +25,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.4';
-const String kAppBuildNumber = '78';
-const String kAppWebCacheVersion = '20260621-mobile-location-nav-bypass-v3';
+const String kAppBuildNumber = '82';
+const String kAppWebCacheVersion = '20260621-android-nearby-favorites-v1';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -97,6 +97,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     );
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setUserAgent(
+        'Mozilla/5.0 (Linux; Android 15; AramaBul) AppleWebKit/537.36 '
+        '(KHTML, like Gecko) Chrome/126.0 Mobile Safari/537.36 AramaBulAndroid',
+      )
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: _onNavigationRequest,
@@ -852,17 +856,23 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
               }
               window.__ARAMABUL_APP_LOCATION_NAV_BYPASS__ = true;
 
-              function stripNearbyUrl(rawHref) {
+              function stripNearbyUrl(rawHref, options) {
                 var href = String(rawHref || '').trim();
                 if (!href) {
                   return '';
                 }
+                var preserveNearby = Boolean(options && options.preserveNearby);
                 try {
                   var url = new URL(href, window.location.href);
-                  url.searchParams.delete('nearby');
-                  url.searchParams.delete('neighborhood');
+                  if (!preserveNearby) {
+                    url.searchParams.delete('nearby');
+                    url.searchParams.delete('neighborhood');
+                  }
                   return url.pathname + url.search + url.hash;
                 } catch (error) {
+                  if (preserveNearby) {
+                    return href;
+                  }
                   return href
                     .replace(/[?&]nearby=1\b/g, '')
                     .replace(/[?&]neighborhood=[^&]*/g, '');
@@ -897,7 +907,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                   return;
                 }
 
-                var nextHref = stripNearbyUrl(href || window.location.pathname);
+                var nextHref = stripNearbyUrl(isNearbyTrigger ? 'yeme-icme.html?nearby=1' : (href || window.location.pathname), { preserveNearby: isNearbyTrigger });
                 if (!nextHref) {
                   return;
                 }
@@ -916,9 +926,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
               try {
                 var currentUrl = new URL(window.location.href);
                 if (currentUrl.searchParams.get('nearby') === '1') {
-                  currentUrl.searchParams.delete('nearby');
-                  currentUrl.searchParams.delete('neighborhood');
-                  window.history.replaceState({}, '', currentUrl.pathname + currentUrl.search + currentUrl.hash);
+                  window.__ARAMABUL_APP_NEARBY_ACTIVE__ = true;
                 }
               } catch (error) {}
             })();
