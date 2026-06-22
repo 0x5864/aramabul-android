@@ -25,8 +25,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.4';
-const String kAppBuildNumber = '88';
-const String kAppWebCacheVersion = '20260622-android-native-favorites-view-v1';
+const String kAppBuildNumber = '89';
+const String kAppWebCacheVersion = '20260622-android-native-favorites-header-fix-v1';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -907,6 +907,32 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             })();
           } catch(e) {}
           try {
+            (function removeWebBottomNavForAndroid() {
+              function removeNav() {
+                try {
+                  document.querySelectorAll('.mobile-bottom-nav').forEach(function (node) {
+                    node.remove();
+                  });
+                  if (document.body) {
+                    document.body.classList.remove('mobile-bottom-nav-visible');
+                    document.body.style.paddingBottom = '0px';
+                  }
+                } catch (error) {}
+              }
+              removeNav();
+              window.setTimeout(removeNav, 100);
+              window.setTimeout(removeNav, 350);
+              window.setTimeout(removeNav, 1000);
+              window.setTimeout(removeNav, 2500);
+              try {
+                new MutationObserver(removeNav).observe(document.documentElement, {
+                  childList: true,
+                  subtree: true
+                });
+              } catch (error) {}
+            })();
+          } catch(e) {}
+          try {
             (function installAndroidDirectAppNav() {
               if (window.__ARAMABUL_ANDROID_DIRECT_APP_NAV__) {
                 return;
@@ -1152,6 +1178,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           style.textContent = `
             .mobile-bottom-nav {
               display: none !important;
+              visibility: hidden !important;
+              opacity: 0 !important;
+              pointer-events: none !important;
             }
 
             body.mobile-bottom-nav-visible {
@@ -1440,16 +1469,12 @@ class _NativeFavoritesViewState extends State<NativeFavoritesView> {
   Future<List<Map<String, dynamic>>> _loadFavorites() async {
     final prefs = await SharedPreferences.getInstance();
     final email = (prefs.getString('auth_user_email') ?? '').trim();
-    final name = (prefs.getString('auth_user_name') ?? '').trim();
     final client = HttpClient();
     try {
       final request = await client.getUrl(Uri.parse('$kLiveUrl/api/mvp/favorites'));
       request.headers.set(HttpHeaders.acceptHeader, 'application/json');
       if (email.isNotEmpty) {
         request.headers.set('X-Aramabul-Auth-Email', email);
-      }
-      if (name.isNotEmpty) {
-        request.headers.set('X-Aramabul-Auth-Name', name);
       }
       final response = await request.close().timeout(const Duration(seconds: 8));
       final body = await response.transform(utf8.decoder).join();
