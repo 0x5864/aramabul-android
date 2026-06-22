@@ -25,8 +25,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.4';
-const String kAppBuildNumber = '89';
-const String kAppWebCacheVersion = '20260622-android-native-favorites-header-fix-v1';
+const String kAppBuildNumber = '90';
+const String kAppWebCacheVersion = '20260622-android-neighborhood-nearby-v1';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -83,6 +83,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   bool _isOffline = false;
   bool _googleInitialized = false;
   Timer? _loadingWatchdog;
+  Timer? _nearbyLocationFallback;
   int _lastLoggedProgressBucket = -1;
   String _currentPath = '/';
   bool _showNativeFavorites = false;
@@ -326,14 +327,15 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   Future<void> _openNativeNavIndex(int index) async {
     switch (index) {
       case 0:
+        _nearbyLocationFallback?.cancel();
         setState(() => _showNativeFavorites = false);
         await _loadLivePage('/');
         break;
       case 1:
-        setState(() => _showNativeFavorites = false);
-        await _loadLivePage('/yeme-icme.html?nearby=1');
+        await _openNearbyNeighborhoodPage();
         break;
       case 2:
+        _nearbyLocationFallback?.cancel();
         _loadingWatchdog?.cancel();
         setState(() {
           _showNativeFavorites = true;
@@ -344,10 +346,80 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         });
         break;
       case 3:
+        _nearbyLocationFallback?.cancel();
         setState(() => _showNativeFavorites = false);
         await _loadLivePage('/profile.html?action=profile');
         break;
     }
+  }
+
+  Future<void> _openNearbyNeighborhoodPage() async {
+    _nearbyLocationFallback?.cancel();
+    setState(() => _showNativeFavorites = false);
+
+    _nearbyLocationFallback = Timer(const Duration(seconds: 7), () {
+      if (!mounted) return;
+      debugPrint('[HomeWebView] nearby location fallback opened generic nearby');
+      unawaited(_loadLivePage('/yeme-icme.html?nearby=1&limit=1000'));
+    });
+
+    try {
+      await _controller.runJavaScript('''
+        (function() {
+          var bridge = window.AramaBulAndroid;
+          function send(payload) {
+            try {
+              bridge.postMessage(JSON.stringify(Object.assign({
+                action: 'openNearbyNeighborhood'
+              }, payload || {})));
+            } catch (error) {}
+          }
+          if (!bridge || !bridge.postMessage || typeof window.ARAMABUL_GET_OR_DETECT_LOCATION !== 'function') {
+            send({});
+            return;
+          }
+          Promise.race([
+            Promise.resolve().then(function() {
+              return window.ARAMABUL_GET_OR_DETECT_LOCATION();
+            }),
+            new Promise(function(resolve) {
+              setTimeout(function() { resolve(null); }, 6000);
+            })
+          ]).then(function(location) {
+            send(location || {});
+          }).catch(function() {
+            send({});
+          });
+        })();
+      ''');
+    } catch (error) {
+      debugPrint('[HomeWebView] nearby bridge failed: $error');
+      _nearbyLocationFallback?.cancel();
+      await _loadLivePage('/yeme-icme.html?nearby=1&limit=1000');
+    }
+  }
+
+  Future<void> _openNearbyNeighborhoodFromPayload(
+    Map<String, dynamic> data,
+  ) async {
+    _nearbyLocationFallback?.cancel();
+    final district = (data['district'] as String? ?? '').trim();
+    final neighborhood = (data['neighborhood'] as String? ?? '').trim();
+
+    if (district.isEmpty) {
+      await _loadLivePage('/yeme-icme.html?nearby=1&limit=1000');
+      return;
+    }
+
+    final query = <String, String>{
+      'district': district,
+      'limit': '1000',
+    };
+    if (neighborhood.isNotEmpty) {
+      query['neighborhood'] = neighborhood;
+    }
+    final uri = Uri(path: '/yeme-icme.html', queryParameters: query);
+    await _loadLivePage(uri.toString());
   }
 
   void _startLoadingWatchdog(String reason) {
@@ -565,6 +637,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           break;
         case 'openFavorites':
           _loadLivePage('/favorites.html');
+          break;
+        case 'openNearbyNeighborhood':
+          unawaited(_openNearbyNeighborhoodFromPayload(data));
           break;
         case 'logout':
         case 'accountDeleted':
@@ -1443,6 +1518,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   @override
   void dispose() {
     _loadingWatchdog?.cancel();
+    _nearbyLocationFallback?.cancel();
     _connectivitySub.cancel();
     super.dispose();
   }
