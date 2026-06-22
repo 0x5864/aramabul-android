@@ -25,8 +25,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.4';
-const String kAppBuildNumber = '86';
-const String kAppWebCacheVersion = '20260622-android-favorites-window-capture-v1';
+const String kAppBuildNumber = '87';
+const String kAppWebCacheVersion = '20260622-android-native-bottom-nav-v1';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -84,6 +84,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   bool _googleInitialized = false;
   Timer? _loadingWatchdog;
   int _lastLoggedProgressBucket = -1;
+  String _currentPath = '/';
 
   @override
   void initState() {
@@ -106,11 +107,13 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           onNavigationRequest: _onNavigationRequest,
           onPageStarted: (url) {
             debugPrint('[HomeWebView] page started: $url');
+            final nextPath = _pathFromUrl(url);
             if (!mounted) return;
             setState(() {
               _isLoading = true;
               _lastError = null;
               _isPageTransitioning = true;
+              _currentPath = nextPath;
             });
             _startLoadingWatchdog('page started');
           },
@@ -121,6 +124,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             _injectAppVisualOverrides();
             _controller.currentUrl().then((currentUrl) {
               debugPrint('[HomeWebView] page finished: $currentUrl');
+              final nextPath = _pathFromUrl(currentUrl);
+              if (mounted) {
+                setState(() => _currentPath = nextPath);
+              }
             });
             Future.delayed(const Duration(milliseconds: 150), () {
               if (!mounted) return;
@@ -295,6 +302,39 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     );
     _startLoadingWatchdog('load live page');
     await _controller.loadRequest(url);
+  }
+
+  String _pathFromUrl(String? rawUrl) {
+    final uri = Uri.tryParse(rawUrl ?? '');
+    final path = uri?.path.trim();
+    if (path == null || path.isEmpty || path == '/') return '/';
+    return path;
+  }
+
+  int _selectedNativeNavIndex() {
+    if (_currentPath.endsWith('/favorites.html')) return 2;
+    if (_currentPath.endsWith('/profile.html') || _currentPath.contains('-settings.html')) return 3;
+    if (_currentPath.endsWith('/yeme-icme.html')) {
+      return 1;
+    }
+    return 0;
+  }
+
+  Future<void> _openNativeNavIndex(int index) async {
+    switch (index) {
+      case 0:
+        await _loadLivePage('/');
+        break;
+      case 1:
+        await _loadLivePage('/yeme-icme.html?nearby=1');
+        break;
+      case 2:
+        await _loadLivePage('/favorites.html');
+        break;
+      case 3:
+        await _loadLivePage('/profile.html?action=profile');
+        break;
+    }
   }
 
   void _startLoadingWatchdog(String reason) {
@@ -1097,6 +1137,14 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           }
 
           style.textContent = `
+            .mobile-bottom-nav {
+              display: none !important;
+            }
+
+            body.mobile-bottom-nav-visible {
+              padding-bottom: 0 !important;
+            }
+
             .favorites-page-shell {
               width: min(1220px, calc(100% - 4.8rem)) !important;
             }
@@ -1298,6 +1346,38 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                     ),
                 ],
               ),
+            ),
+          ],
+        ),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _selectedNativeNavIndex(),
+          backgroundColor: Colors.white,
+          indicatorColor: const Color(0xFFE8F1F8),
+          surfaceTintColor: Colors.white,
+          height: 64,
+          onDestinationSelected: (index) {
+            unawaited(_openNativeNavIndex(index));
+          },
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home),
+              label: 'Ana',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.my_location_outlined),
+              selectedIcon: Icon(Icons.my_location),
+              label: 'Yakın',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.favorite_border),
+              selectedIcon: Icon(Icons.favorite),
+              label: 'Favori',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.person_outline),
+              selectedIcon: Icon(Icons.person),
+              label: 'Hesap',
             ),
           ],
         ),
