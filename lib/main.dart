@@ -25,8 +25,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.4';
-const String kAppBuildNumber = '87';
-const String kAppWebCacheVersion = '20260622-android-native-bottom-nav-v1';
+const String kAppBuildNumber = '88';
+const String kAppWebCacheVersion = '20260622-android-native-favorites-view-v1';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -85,6 +85,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   Timer? _loadingWatchdog;
   int _lastLoggedProgressBucket = -1;
   String _currentPath = '/';
+  bool _showNativeFavorites = false;
 
   @override
   void initState() {
@@ -114,6 +115,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
               _lastError = null;
               _isPageTransitioning = true;
               _currentPath = nextPath;
+              _showNativeFavorites = false;
             });
             _startLoadingWatchdog('page started');
           },
@@ -312,6 +314,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   }
 
   int _selectedNativeNavIndex() {
+    if (_showNativeFavorites) return 2;
     if (_currentPath.endsWith('/favorites.html')) return 2;
     if (_currentPath.endsWith('/profile.html') || _currentPath.contains('-settings.html')) return 3;
     if (_currentPath.endsWith('/yeme-icme.html')) {
@@ -323,15 +326,25 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   Future<void> _openNativeNavIndex(int index) async {
     switch (index) {
       case 0:
+        setState(() => _showNativeFavorites = false);
         await _loadLivePage('/');
         break;
       case 1:
+        setState(() => _showNativeFavorites = false);
         await _loadLivePage('/yeme-icme.html?nearby=1');
         break;
       case 2:
-        await _loadLivePage('/favorites.html');
+        _loadingWatchdog?.cancel();
+        setState(() {
+          _showNativeFavorites = true;
+          _isLoading = false;
+          _isPageTransitioning = false;
+          _isOffline = false;
+          _currentPath = '/favorites.html';
+        });
         break;
       case 3:
+        setState(() => _showNativeFavorites = false);
         await _loadLivePage('/profile.html?action=profile');
         break;
     }
@@ -1325,14 +1338,27 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             Expanded(
               child: Stack(
                 children: [
-                  if (_hasLoadedAtLeastOnce && !_isOffline)
+                  if (_showNativeFavorites)
+                    NativeFavoritesView(
+                      onOpenVenue: (venue) {
+                        final domainKey = (venue['domainKey'] as String? ?? 'yeme-icme').trim();
+                        final slug = (venue['slug'] as String? ?? '').trim();
+                        final path = slug.isEmpty
+                            ? '/${domainKey.isEmpty ? 'yeme-icme' : domainKey}.html'
+                            : '/${domainKey.isEmpty ? 'yeme-icme' : domainKey}.html?venue=${Uri.encodeQueryComponent(slug)}';
+                        setState(() => _showNativeFavorites = false);
+                        unawaited(_loadLivePage(path));
+                      },
+                    )
+                  else if (_hasLoadedAtLeastOnce && !_isOffline)
                     WebViewWidget(controller: _controller),
                   if (_isOffline)
                     OfflineView(
                       details: kDebugMode ? _lastError : null,
                       onRetry: _reload,
                     ),
-                  if (!_isOffline &&
+                  if (!_showNativeFavorites &&
+                      !_isOffline &&
                       (_isPageTransitioning || !_hasLoadedAtLeastOnce))
                     Positioned.fill(
                       child: Container(
@@ -1390,6 +1416,254 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     _loadingWatchdog?.cancel();
     _connectivitySub.cancel();
     super.dispose();
+  }
+}
+
+class NativeFavoritesView extends StatefulWidget {
+  final ValueChanged<Map<String, dynamic>> onOpenVenue;
+
+  const NativeFavoritesView({super.key, required this.onOpenVenue});
+
+  @override
+  State<NativeFavoritesView> createState() => _NativeFavoritesViewState();
+}
+
+class _NativeFavoritesViewState extends State<NativeFavoritesView> {
+  late Future<List<Map<String, dynamic>>> _favoritesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _favoritesFuture = _loadFavorites();
+  }
+
+  Future<List<Map<String, dynamic>>> _loadFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    final email = (prefs.getString('auth_user_email') ?? '').trim();
+    final name = (prefs.getString('auth_user_name') ?? '').trim();
+    final client = HttpClient();
+    try {
+      final request = await client.getUrl(Uri.parse('$kLiveUrl/api/mvp/favorites'));
+      request.headers.set(HttpHeaders.acceptHeader, 'application/json');
+      if (email.isNotEmpty) {
+        request.headers.set('X-Aramabul-Auth-Email', email);
+      }
+      if (name.isNotEmpty) {
+        request.headers.set('X-Aramabul-Auth-Name', name);
+      }
+      final response = await request.close().timeout(const Duration(seconds: 8));
+      final body = await response.transform(utf8.decoder).join();
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        throw HttpException('Favoriler yüklenemedi: ${response.statusCode}');
+      }
+      final payload = jsonDecode(body) as Map<String, dynamic>;
+      final items = payload['items'];
+      if (items is! List) return const [];
+      return items.whereType<Map>().map((item) => Map<String, dynamic>.from(item)).toList();
+    } finally {
+      client.close();
+    }
+  }
+
+  Future<void> _refresh() async {
+    setState(() {
+      _favoritesFuture = _loadFavorites();
+    });
+    await _favoritesFuture;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: Colors.white,
+      child: SafeArea(
+        top: false,
+        child: RefreshIndicator(
+          onRefresh: _refresh,
+          color: kAppProgressColor,
+          child: FutureBuilder<List<Map<String, dynamic>>>(
+            future: _favoritesFuture,
+            builder: (context, snapshot) {
+              final items = snapshot.data ?? const <Map<String, dynamic>>[];
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+                children: [
+                  const Text(
+                    'Favorilerim',
+                    style: TextStyle(
+                      color: Color(0xFF011E3A),
+                      fontSize: 26,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    snapshot.connectionState == ConnectionState.waiting
+                        ? 'Favoriler getiriliyor.'
+                        : '${items.length} mekan kayıtlı',
+                    style: const TextStyle(
+                      color: Color(0xFF627284),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 80),
+                      child: Center(
+                        child: CircularProgressIndicator(color: kAppProgressColor),
+                      ),
+                    )
+                  else if (snapshot.hasError)
+                    _NativeFavoritesMessage(
+                      title: 'Favoriler yüklenemedi',
+                      message: '${snapshot.error}',
+                    )
+                  else if (items.isEmpty)
+                    const _NativeFavoritesMessage(
+                      title: 'Henüz kayıtlı mekanın yok',
+                      message: 'Yeme-İçme ekranından mekan kaydetmeye başlayabilirsin.',
+                    )
+                  else
+                    ...items.map((venue) => _NativeFavoriteCard(
+                          venue: venue,
+                          onTap: () => widget.onOpenVenue(venue),
+                        )),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NativeFavoritesMessage extends StatelessWidget {
+  final String title;
+  final String message;
+
+  const _NativeFavoritesMessage({required this.title, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 48),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7FAFC),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFE1E8EF)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              color: Color(0xFF011E3A),
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: const TextStyle(
+              color: Color(0xFF627284),
+              fontSize: 14,
+              height: 1.35,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NativeFavoriteCard extends StatelessWidget {
+  final Map<String, dynamic> venue;
+  final VoidCallback onTap;
+
+  const _NativeFavoriteCard({required this.venue, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final name = (venue['name'] as String? ?? 'İsimsiz mekan').trim();
+    final district = (venue['district'] as String? ?? '').trim();
+    final neighborhood = (venue['neighborhood'] as String? ?? '').trim();
+    final address = (venue['address'] as String? ?? 'Adres bilgisi bulunmuyor.').trim();
+    final rating = venue['rating'];
+    final ratingText = rating == null ? '' : rating.toString().replaceAll('.', ',');
+
+    return Card(
+      color: Colors.white,
+      elevation: 0,
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: Color(0xFFE1E8EF)),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xFF011E3A),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  if (ratingText.isNotEmpty)
+                    Text(
+                      ratingText,
+                      style: const TextStyle(
+                        color: Color(0xFF094174),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(
+                [district, neighborhood].where((part) => part.isNotEmpty).join(' / '),
+                style: const TextStyle(
+                  color: Color(0xFF627284),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                address,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Color(0xFF2D3A45),
+                  fontSize: 13,
+                  height: 1.35,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
