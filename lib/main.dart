@@ -25,8 +25,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.4';
-const String kAppBuildNumber = '90';
-const String kAppWebCacheVersion = '20260622-android-neighborhood-nearby-v1';
+const String kAppBuildNumber = '91';
+const String kAppWebCacheVersion = '20260622-android-nearby-200-v1';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -360,7 +360,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     _nearbyLocationFallback = Timer(const Duration(seconds: 7), () {
       if (!mounted) return;
       debugPrint('[HomeWebView] nearby location fallback opened generic nearby');
-      unawaited(_loadLivePage('/yeme-icme.html?nearby=1&limit=1000'));
+      unawaited(_loadLivePage('/yeme-icme.html?nearby=1&limit=200'));
     });
 
     try {
@@ -395,7 +395,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     } catch (error) {
       debugPrint('[HomeWebView] nearby bridge failed: $error');
       _nearbyLocationFallback?.cancel();
-      await _loadLivePage('/yeme-icme.html?nearby=1&limit=1000');
+      await _loadLivePage('/yeme-icme.html?nearby=1&limit=200');
     }
   }
 
@@ -407,13 +407,13 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     final neighborhood = (data['neighborhood'] as String? ?? '').trim();
 
     if (district.isEmpty) {
-      await _loadLivePage('/yeme-icme.html?nearby=1&limit=1000');
+      await _loadLivePage('/yeme-icme.html?nearby=1&limit=200');
       return;
     }
 
     final query = <String, String>{
       'district': district,
-      'limit': '1000',
+      'limit': '200',
     };
     if (neighborhood.isNotEmpty) {
       query['neighborhood'] = neighborhood;
