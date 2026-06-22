@@ -25,8 +25,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.4';
-const String kAppBuildNumber = '82';
-const String kAppWebCacheVersion = '20260621-android-nearby-favorites-v1';
+const String kAppBuildNumber = '83';
+const String kAppWebCacheVersion = '20260622-android-favorites-auth-refetch-v1';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
