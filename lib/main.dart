@@ -25,8 +25,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.4';
-const String kAppBuildNumber = '83';
-const String kAppWebCacheVersion = '20260622-android-favorites-auth-refetch-v1';
+const String kAppBuildNumber = '84';
+const String kAppWebCacheVersion = '20260622-android-favorites-direct-nav-v1';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -793,6 +793,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       });
       final usersLiteral = jsonEncode(nativeUsersRaw);
       final sessionLiteral = jsonEncode(authSessionJson);
+      final webCacheLiteral = jsonEncode(kAppWebCacheVersion);
 
       await _controller.runJavaScript('''
         try {
@@ -847,6 +848,43 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
               document.addEventListener('DOMContentLoaded', render);
               document.addEventListener('aramabul:appready', render);
               document.addEventListener('aramabul:authchange', render);
+            })();
+          } catch(e) {}
+          try {
+            (function installAndroidDirectAppNav() {
+              if (window.__ARAMABUL_ANDROID_DIRECT_APP_NAV__) {
+                return;
+              }
+              window.__ARAMABUL_ANDROID_DIRECT_APP_NAV__ = true;
+              var cacheVersion = $webCacheLiteral;
+
+              function withAppCache(path) {
+                try {
+                  var url = new URL(path, window.location.origin);
+                  url.searchParams.set('appCache', cacheVersion);
+                  return url.pathname + url.search + url.hash;
+                } catch (error) {
+                  return path;
+                }
+              }
+
+              function handleDirectNav(event) {
+                var target = event.target && event.target.closest
+                  ? event.target.closest('[data-mobile-nav="favorites"], a[href="favorites.html"], a[href="/favorites.html"]')
+                  : null;
+                if (!target) {
+                  return;
+                }
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+                if (window.ARAMABUL_HIDE_NAV_TOAST) {
+                  try { window.ARAMABUL_HIDE_NAV_TOAST(); } catch (error) {}
+                }
+                window.location.assign(withAppCache('/favorites.html'));
+              }
+
+              document.addEventListener('click', handleDirectNav, true);
             })();
           } catch(e) {}
           try {
