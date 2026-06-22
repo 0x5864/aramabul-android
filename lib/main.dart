@@ -25,8 +25,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.4';
-const String kAppBuildNumber = '84';
-const String kAppWebCacheVersion = '20260622-android-favorites-direct-nav-v1';
+const String kAppBuildNumber = '85';
+const String kAppWebCacheVersion = '20260622-android-favorites-native-nav-v1';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -510,6 +510,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             );
           });
           break;
+        case 'openFavorites':
+          _loadLivePage('/favorites.html');
+          break;
         case 'logout':
         case 'accountDeleted':
           _resetSession();
@@ -856,16 +859,18 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                 return;
               }
               window.__ARAMABUL_ANDROID_DIRECT_APP_NAV__ = true;
-              var cacheVersion = $webCacheLiteral;
 
-              function withAppCache(path) {
+              function postOpenFavorites() {
                 try {
-                  var url = new URL(path, window.location.origin);
-                  url.searchParams.set('appCache', cacheVersion);
-                  return url.pathname + url.search + url.hash;
+                  var bridge = window.AramaBulAndroid || window.AramaBulIOS;
+                  if (bridge && bridge.postMessage) {
+                    bridge.postMessage(JSON.stringify({ action: 'openFavorites' }));
+                    return true;
+                  }
                 } catch (error) {
-                  return path;
+                  return false;
                 }
+                return false;
               }
 
               function handleDirectNav(event) {
@@ -881,10 +886,32 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                 if (window.ARAMABUL_HIDE_NAV_TOAST) {
                   try { window.ARAMABUL_HIDE_NAV_TOAST(); } catch (error) {}
                 }
-                window.location.assign(withAppCache('/favorites.html'));
+                if (!postOpenFavorites()) {
+                  window.location.assign('/favorites.html?appCache=' + encodeURIComponent($webCacheLiteral));
+                }
+              }
+
+              function bindExistingButtons() {
+                document.querySelectorAll('[data-mobile-nav="favorites"], a[href="favorites.html"], a[href="/favorites.html"]').forEach(function (target) {
+                  if (target.__aramabulAndroidFavoritesBound) {
+                    return;
+                  }
+                  target.__aramabulAndroidFavoritesBound = true;
+                  target.addEventListener('click', handleDirectNav, true);
+                });
               }
 
               document.addEventListener('click', handleDirectNav, true);
+              bindExistingButtons();
+              window.setTimeout(bindExistingButtons, 250);
+              window.setTimeout(bindExistingButtons, 1000);
+              window.setTimeout(bindExistingButtons, 2500);
+              try {
+                new MutationObserver(bindExistingButtons).observe(document.documentElement, {
+                  childList: true,
+                  subtree: true
+                });
+              } catch (error) {}
             })();
           } catch(e) {}
           try {
