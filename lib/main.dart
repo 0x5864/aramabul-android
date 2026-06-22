@@ -25,8 +25,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.4';
-const String kAppBuildNumber = '85';
-const String kAppWebCacheVersion = '20260622-android-favorites-native-nav-v1';
+const String kAppBuildNumber = '86';
+const String kAppWebCacheVersion = '20260622-android-favorites-window-capture-v1';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -901,6 +901,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                 });
               }
 
+              window.addEventListener('pointerdown', handleDirectNav, true);
+              window.addEventListener('touchstart', handleDirectNav, true);
+              window.addEventListener('click', handleDirectNav, true);
               document.addEventListener('click', handleDirectNav, true);
               bindExistingButtons();
               window.setTimeout(bindExistingButtons, 250);
