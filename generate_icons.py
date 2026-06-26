@@ -3,8 +3,8 @@ from PIL import Image
 
 src_path = "/Users/metintuncgenc/Pictures/logo.png"
 img = Image.open(src_path).convert("RGBA")
-logo_scale = 0.80
-adaptive_foreground_scale = 0.56
+logo_scale = 1.00
+adaptive_foreground_scale = 0.70
 
 
 def fit_on_canvas(image, size, scale, background=(255, 255, 255, 0)):
@@ -55,7 +55,8 @@ ios_icons = {
 
 # Target directories
 res_dir = "/Users/metintuncgenc/Documents/aramabul-android/android/app/src/main/res"
-ios_dir = "/Users/metintuncgenc/Documents/aramabul-android/ios/Runner/Assets.xcassets/AppIcon.appiconset"
+ios_dir_android = "/Users/metintuncgenc/Documents/aramabul-android/ios/Runner/Assets.xcassets/AppIcon.appiconset"
+ios_dir_standalone = "/Users/metintuncgenc/Documents/aramabul-ios/ios/Runner/Assets.xcassets/AppIcon.appiconset"
 
 # Generate legacy icons
 print("Generating legacy launcher icons (ic_launcher.png)...")
@@ -77,10 +78,12 @@ for density, size in adaptive_sizes.items():
 
 # Generate iOS AppIcon images
 print("Generating iOS AppIcons...")
-os.makedirs(ios_dir, exist_ok=True)
+os.makedirs(ios_dir_android, exist_ok=True)
+os.makedirs(ios_dir_standalone, exist_ok=True)
 for filename, size in ios_icons.items():
     out_img = fit_on_canvas(img, size, logo_scale, background=(255, 255, 255, 255))
-    out_img.save(os.path.join(ios_dir, filename), "PNG")
+    out_img.save(os.path.join(ios_dir_android, filename), "PNG")
+    out_img.save(os.path.join(ios_dir_standalone, filename), "PNG")
     print(f"  Saved AppIcon.appiconset/{filename} ({size}x{size})")
 
 # Generate ic_launcher-playstore.png in android/app/src/main/
