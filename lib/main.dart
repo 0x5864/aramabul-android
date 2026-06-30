@@ -25,8 +25,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.4';
-const String kAppBuildNumber = '93';
-const String kAppWebCacheVersion = '20260622-android-nearby-200-v1';
+const String kAppBuildNumber = '94';
+const String kAppWebCacheVersion = '20260630-android-web-favorites-v1';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -225,14 +225,17 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
     await platformController.setGeolocationPermissionsPromptCallbacks(
       onShowPrompt: (request) async {
-        debugPrint('WebView Geolocation Prompt origin request: ${request.origin}');
+        debugPrint(
+          'WebView Geolocation Prompt origin request: ${request.origin}',
+        );
         bool trustedOrigin = false;
         final originLower = request.origin.toLowerCase();
-        
+
         if (kDebugMode) {
           trustedOrigin = true;
         } else {
-          trustedOrigin = originLower.contains('aramabul.com') ||
+          trustedOrigin =
+              originLower.contains('aramabul.com') ||
               originLower.contains('localhost') ||
               originLower.startsWith('file:');
         }
@@ -287,15 +290,20 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
   Future<void> _loadLivePage([String? path]) async {
     if (!mounted) return;
-    debugPrint('[HomeWebView] load live page path: ${path ?? widget.initialPath ?? '/'}');
+    debugPrint(
+      '[HomeWebView] load live page path: ${path ?? widget.initialPath ?? '/'}',
+    );
     setState(() {
       _isLoading = true;
       _isPageTransitioning = true;
       _lastError = null;
       _isOffline = false;
+      _showNativeFavorites = false;
     });
     final requestedPath = path ?? widget.initialPath ?? '';
-    final rawUrl = requestedPath.isNotEmpty ? '$kLiveUrl$requestedPath' : kLiveUrl;
+    final rawUrl = requestedPath.isNotEmpty
+        ? '$kLiveUrl$requestedPath'
+        : kLiveUrl;
     final uri = Uri.parse(rawUrl);
     final url = uri.replace(
       queryParameters: {
@@ -317,7 +325,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   int _selectedNativeNavIndex() {
     if (_showNativeFavorites) return 2;
     if (_currentPath.endsWith('/favorites.html')) return 2;
-    if (_currentPath.endsWith('/profile.html') || _currentPath.contains('-settings.html')) return 3;
+    if (_currentPath.endsWith('/profile.html') ||
+        _currentPath.contains('-settings.html')) {
+      return 3;
+    }
     if (_currentPath.endsWith('/yeme-icme.html')) {
       return 1;
     }
@@ -336,14 +347,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         break;
       case 2:
         _nearbyLocationFallback?.cancel();
-        _loadingWatchdog?.cancel();
-        setState(() {
-          _showNativeFavorites = true;
-          _isLoading = false;
-          _isPageTransitioning = false;
-          _isOffline = false;
-          _currentPath = '/favorites.html';
-        });
+        await _loadLivePage('/favorites.html');
         break;
       case 3:
         _nearbyLocationFallback?.cancel();
@@ -359,7 +363,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
     _nearbyLocationFallback = Timer(const Duration(seconds: 7), () {
       if (!mounted) return;
-      debugPrint('[HomeWebView] nearby location fallback opened generic nearby');
+      debugPrint(
+        '[HomeWebView] nearby location fallback opened generic nearby',
+      );
       unawaited(_loadLivePage('/yeme-icme.html?nearby=1&limit=200'));
     });
 
@@ -411,10 +417,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       return;
     }
 
-    final query = <String, String>{
-      'district': district,
-      'limit': '200',
-    };
+    final query = <String, String>{'district': district, 'limit': '200'};
     if (neighborhood.isNotEmpty) {
       query['neighborhood'] = neighborhood;
     }
@@ -631,7 +634,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         case 'requestLocationPermission':
           Permission.location.request().then((status) {
             _controller.runJavaScript(
-              'window.dispatchEvent(new CustomEvent("aramabul:locationPermissionResult", { detail: { granted: ${status.isGranted} } }))'
+              'window.dispatchEvent(new CustomEvent("aramabul:locationPermissionResult", { detail: { granted: ${status.isGranted} } }))',
             );
           });
           break;
@@ -759,7 +762,13 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     await _controller.runJavaScript('''
       try { localStorage.setItem('aramabul.auth.session.v1', $sessionLiteral); } catch(e) {}
       try { document.dispatchEvent(new CustomEvent('aramabul:authchange')); } catch(e) {}
-      window.location.href = window.location.href.split('#')[0] + '?t=' + Date.now();
+      try {
+        var nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.set('appAuthRefresh', Date.now().toString());
+        window.location.replace(nextUrl.pathname + nextUrl.search + nextUrl.hash);
+      } catch (error) {
+        window.location.href = window.location.href.split('#')[0] + '?appAuthRefresh=' + Date.now();
+      }
     ''');
   }
 
@@ -1445,7 +1454,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                   if (_showNativeFavorites)
                     NativeFavoritesView(
                       onOpenVenue: (venue) {
-                        final domainKey = (venue['domainKey'] as String? ?? 'yeme-icme').trim();
+                        final domainKey =
+                            (venue['domainKey'] as String? ?? 'yeme-icme')
+                                .trim();
                         final slug = (venue['slug'] as String? ?? '').trim();
                         final path = slug.isEmpty
                             ? '/${domainKey.isEmpty ? 'yeme-icme' : domainKey}.html'
@@ -1547,12 +1558,16 @@ class _NativeFavoritesViewState extends State<NativeFavoritesView> {
     final email = (prefs.getString('auth_user_email') ?? '').trim();
     final client = HttpClient();
     try {
-      final request = await client.getUrl(Uri.parse('$kLiveUrl/api/mvp/favorites'));
+      final request = await client.getUrl(
+        Uri.parse('$kLiveUrl/api/mvp/favorites'),
+      );
       request.headers.set(HttpHeaders.acceptHeader, 'application/json');
       if (email.isNotEmpty) {
         request.headers.set('X-Aramabul-Auth-Email', email);
       }
-      final response = await request.close().timeout(const Duration(seconds: 8));
+      final response = await request.close().timeout(
+        const Duration(seconds: 8),
+      );
       final body = await response.transform(utf8.decoder).join();
       if (response.statusCode < 200 || response.statusCode >= 300) {
         throw HttpException('Favoriler yüklenemedi: ${response.statusCode}');
@@ -1560,7 +1575,10 @@ class _NativeFavoritesViewState extends State<NativeFavoritesView> {
       final payload = jsonDecode(body) as Map<String, dynamic>;
       final items = payload['items'];
       if (items is! List) return const [];
-      return items.whereType<Map>().map((item) => Map<String, dynamic>.from(item)).toList();
+      return items
+          .whereType<Map>()
+          .map((item) => Map<String, dynamic>.from(item))
+          .toList();
     } finally {
       client.close();
     }
@@ -1614,7 +1632,9 @@ class _NativeFavoritesViewState extends State<NativeFavoritesView> {
                     const Padding(
                       padding: EdgeInsets.only(top: 80),
                       child: Center(
-                        child: CircularProgressIndicator(color: kAppProgressColor),
+                        child: CircularProgressIndicator(
+                          color: kAppProgressColor,
+                        ),
                       ),
                     )
                   else if (snapshot.hasError)
@@ -1625,13 +1645,16 @@ class _NativeFavoritesViewState extends State<NativeFavoritesView> {
                   else if (items.isEmpty)
                     const _NativeFavoritesMessage(
                       title: 'Henüz kayıtlı mekanın yok',
-                      message: 'Yeme-İçme ekranından mekan kaydetmeye başlayabilirsin.',
+                      message:
+                          'Yeme-İçme ekranından mekan kaydetmeye başlayabilirsin.',
                     )
                   else
-                    ...items.map((venue) => _NativeFavoriteCard(
-                          venue: venue,
-                          onTap: () => widget.onOpenVenue(venue),
-                        )),
+                    ...items.map(
+                      (venue) => _NativeFavoriteCard(
+                        venue: venue,
+                        onTap: () => widget.onOpenVenue(venue),
+                      ),
+                    ),
                 ],
               );
             },
@@ -1695,9 +1718,12 @@ class _NativeFavoriteCard extends StatelessWidget {
     final name = (venue['name'] as String? ?? 'İsimsiz mekan').trim();
     final district = (venue['district'] as String? ?? '').trim();
     final neighborhood = (venue['neighborhood'] as String? ?? '').trim();
-    final address = (venue['address'] as String? ?? 'Adres bilgisi bulunmuyor.').trim();
+    final address = (venue['address'] as String? ?? 'Adres bilgisi bulunmuyor.')
+        .trim();
     final rating = venue['rating'];
-    final ratingText = rating == null ? '' : rating.toString().replaceAll('.', ',');
+    final ratingText = rating == null
+        ? ''
+        : rating.toString().replaceAll('.', ',');
 
     return Card(
       color: Colors.white,
@@ -1742,7 +1768,10 @@ class _NativeFavoriteCard extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                [district, neighborhood].where((part) => part.isNotEmpty).join(' / '),
+                [
+                  district,
+                  neighborhood,
+                ].where((part) => part.isNotEmpty).join(' / '),
                 style: const TextStyle(
                   color: Color(0xFF627284),
                   fontSize: 13,
