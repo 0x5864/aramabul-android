@@ -1326,7 +1326,20 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
           function ensureCorporateProfileRow() {
             var sidebar = document.querySelector('.settings-sidebar-card');
-            if (!sidebar || document.querySelector('a[href="kurumsal-settings.html"]')) {
+            if (!sidebar) {
+              return;
+            }
+
+            var corporateRows = Array.from(sidebar.querySelectorAll([
+              '[data-settings-panel-trigger="corporate"]',
+              'a[href="kurumsal-settings.html"]',
+              'a[href*="action=corporate"]'
+            ].join(',')));
+
+            if (corporateRows.length) {
+              corporateRows.slice(1).forEach(function (duplicate) {
+                duplicate.remove();
+              });
               return;
             }
 
