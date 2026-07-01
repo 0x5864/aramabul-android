@@ -25,8 +25,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.4';
-const String kAppBuildNumber = '94';
-const String kAppWebCacheVersion = '20260630-android-web-favorites-v1';
+const String kAppBuildNumber = '95';
+const String kAppWebCacheVersion = '20260701-android-profile-dedupe-v1';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -1324,47 +1324,56 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             }
           `;
 
-          function ensureCorporateProfileRow() {
+          function dedupeCorporateProfileRows() {
             var sidebar = document.querySelector('.settings-sidebar-card');
             if (!sidebar) {
               return;
             }
 
-            var corporateRows = Array.from(sidebar.querySelectorAll([
+            var selectorRows = Array.from(sidebar.querySelectorAll([
               '[data-settings-panel-trigger="corporate"]',
               'a[href="kurumsal-settings.html"]',
               'a[href*="action=corporate"]'
             ].join(',')));
+            var labelRows = Array.from(sidebar.querySelectorAll('.settings-row')).filter(function (row) {
+              var label = row.querySelector('.settings-row-label');
+              return label && label.textContent && label.textContent.trim().toLocaleLowerCase('tr') === 'kurumsal';
+            });
+            var corporateRows = Array.from(new Set(selectorRows.concat(labelRows)));
 
-            if (corporateRows.length) {
-              corporateRows.slice(1).forEach(function (duplicate) {
-                duplicate.remove();
-              });
+            if (corporateRows.length < 2) {
               return;
             }
 
-            var row = document.createElement('a');
-            row.className = 'settings-row settings-row-button';
-            row.href = 'kurumsal-settings.html';
-            row.setAttribute('aria-label', 'Kurumsal');
-            row.innerHTML = [
-              '<span class="settings-row-icon" aria-hidden="true">',
-              '<svg viewBox="0 0 24 24">',
-              '<path d="M6 3h9l3 3v15H6z"></path>',
-              '<path d="M14 3v4h4"></path>',
-              '<path d="M9 11h6"></path>',
-              '<path d="M9 15h6"></path>',
-              '</svg>',
-              '</span>',
-              '<span class="settings-row-label">Kurumsal</span>',
-              '<span class="settings-row-chevron" aria-hidden="true">',
-              '<svg viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"></path></svg>',
-              '</span>'
-            ].join('');
+            var preferred = corporateRows.find(function (row) {
+              return row.getAttribute('data-settings-panel-trigger') === 'corporate';
+            }) || corporateRows.find(function (row) {
+              return (row.getAttribute('href') || '').indexOf('action=corporate') !== -1;
+            }) || corporateRows[0];
 
-            var feedback = sidebar.querySelector('a[href="feedback-settings.html"]');
-            var admin = sidebar.querySelector('[data-admin-settings-link]');
-            sidebar.insertBefore(row, feedback || admin || null);
+            corporateRows.forEach(function (row) {
+              if (row !== preferred) {
+                row.remove();
+              }
+            });
+          }
+
+          function installCorporateProfileDedupe() {
+            dedupeCorporateProfileRows();
+            window.setTimeout(dedupeCorporateProfileRows, 100);
+            window.setTimeout(dedupeCorporateProfileRows, 350);
+            window.setTimeout(dedupeCorporateProfileRows, 1000);
+            window.setTimeout(dedupeCorporateProfileRows, 2500);
+            if (window.__ARAMABUL_ANDROID_CORPORATE_DEDUPE__) {
+              return;
+            }
+            window.__ARAMABUL_ANDROID_CORPORATE_DEDUPE__ = true;
+            try {
+              new MutationObserver(dedupeCorporateProfileRows).observe(document.documentElement, {
+                childList: true,
+                subtree: true
+              });
+            } catch (error) {}
           }
 
           function updateTurkishProfileHandle() {
@@ -1412,7 +1421,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             row.style.display = 'grid';
           }
 
-          ensureCorporateProfileRow();
+          installCorporateProfileDedupe();
           updateTurkishProfileHandle();
           renderAppVersionRow();
           document.addEventListener('aramabul:authchange', function () {
@@ -1424,7 +1433,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             window.setTimeout(renderAppVersionRow, 0);
           });
           window.setTimeout(function () {
-            ensureCorporateProfileRow();
+            installCorporateProfileDedupe();
             updateTurkishProfileHandle();
             renderAppVersionRow();
           }, 350);
