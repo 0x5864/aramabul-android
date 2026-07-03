@@ -25,8 +25,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.4';
-const String kAppBuildNumber = '95';
-const String kAppWebCacheVersion = '20260701-android-profile-dedupe-v1';
+const String kAppBuildNumber = '96';
+const String kAppWebCacheVersion = '20260703-android-nearby-web-v1';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -83,7 +83,6 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   bool _isOffline = false;
   bool _googleInitialized = false;
   Timer? _loadingWatchdog;
-  Timer? _nearbyLocationFallback;
   int _lastLoggedProgressBucket = -1;
   String _currentPath = '/';
   bool _showNativeFavorites = false;
@@ -338,91 +337,21 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   Future<void> _openNativeNavIndex(int index) async {
     switch (index) {
       case 0:
-        _nearbyLocationFallback?.cancel();
         setState(() => _showNativeFavorites = false);
         await _loadLivePage('/');
         break;
       case 1:
-        await _openNearbyNeighborhoodPage();
+        setState(() => _showNativeFavorites = false);
+        await _loadLivePage('/yeme-icme.html?nearby=1&limit=200');
         break;
       case 2:
-        _nearbyLocationFallback?.cancel();
         await _loadLivePage('/favorites.html');
         break;
       case 3:
-        _nearbyLocationFallback?.cancel();
         setState(() => _showNativeFavorites = false);
         await _loadLivePage('/profile.html?action=profile');
         break;
     }
-  }
-
-  Future<void> _openNearbyNeighborhoodPage() async {
-    _nearbyLocationFallback?.cancel();
-    setState(() => _showNativeFavorites = false);
-
-    _nearbyLocationFallback = Timer(const Duration(seconds: 7), () {
-      if (!mounted) return;
-      debugPrint(
-        '[HomeWebView] nearby location fallback opened generic nearby',
-      );
-      unawaited(_loadLivePage('/yeme-icme.html?nearby=1&limit=200'));
-    });
-
-    try {
-      await _controller.runJavaScript('''
-        (function() {
-          var bridge = window.AramaBulAndroid;
-          function send(payload) {
-            try {
-              bridge.postMessage(JSON.stringify(Object.assign({
-                action: 'openNearbyNeighborhood'
-              }, payload || {})));
-            } catch (error) {}
-          }
-          if (!bridge || !bridge.postMessage || typeof window.ARAMABUL_GET_OR_DETECT_LOCATION !== 'function') {
-            send({});
-            return;
-          }
-          Promise.race([
-            Promise.resolve().then(function() {
-              return window.ARAMABUL_GET_OR_DETECT_LOCATION();
-            }),
-            new Promise(function(resolve) {
-              setTimeout(function() { resolve(null); }, 6000);
-            })
-          ]).then(function(location) {
-            send(location || {});
-          }).catch(function() {
-            send({});
-          });
-        })();
-      ''');
-    } catch (error) {
-      debugPrint('[HomeWebView] nearby bridge failed: $error');
-      _nearbyLocationFallback?.cancel();
-      await _loadLivePage('/yeme-icme.html?nearby=1&limit=200');
-    }
-  }
-
-  Future<void> _openNearbyNeighborhoodFromPayload(
-    Map<String, dynamic> data,
-  ) async {
-    _nearbyLocationFallback?.cancel();
-    final district = (data['district'] as String? ?? '').trim();
-    final neighborhood = (data['neighborhood'] as String? ?? '').trim();
-
-    if (district.isEmpty) {
-      await _loadLivePage('/yeme-icme.html?nearby=1&limit=200');
-      return;
-    }
-
-    final query = <String, String>{'district': district, 'limit': '200'};
-    if (neighborhood.isNotEmpty) {
-      query['neighborhood'] = neighborhood;
-    }
-    final uri = Uri(path: '/yeme-icme.html', queryParameters: query);
-    await _loadLivePage(uri.toString());
   }
 
   void _startLoadingWatchdog(String reason) {
@@ -642,7 +571,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           _loadLivePage('/favorites.html');
           break;
         case 'openNearbyNeighborhood':
-          unawaited(_openNearbyNeighborhoodFromPayload(data));
+          _loadLivePage('/yeme-icme.html?nearby=1&limit=200');
           break;
         case 'logout':
         case 'accountDeleted':
@@ -1081,88 +1010,6 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
             })();
           } catch(e) {}
           try {
-            (function installAppLocationNavigationBypass() {
-              if (window.__ARAMABUL_APP_LOCATION_NAV_BYPASS__) {
-                return;
-              }
-              window.__ARAMABUL_APP_LOCATION_NAV_BYPASS__ = true;
-
-              function stripNearbyUrl(rawHref, options) {
-                var href = String(rawHref || '').trim();
-                if (!href) {
-                  return '';
-                }
-                var preserveNearby = Boolean(options && options.preserveNearby);
-                try {
-                  var url = new URL(href, window.location.href);
-                  if (!preserveNearby) {
-                    url.searchParams.delete('nearby');
-                    url.searchParams.delete('neighborhood');
-                  }
-                  return url.pathname + url.search + url.hash;
-                } catch (error) {
-                  if (preserveNearby) {
-                    return href;
-                  }
-                  return href
-                    .replace(/[?&]nearby=1\b/g, '')
-                    .replace(/[?&]neighborhood=[^&]*/g, '');
-                }
-              }
-
-              function isDiscoveryHref(href) {
-                try {
-                  var path = new URL(String(href || ''), window.location.href).pathname;
-                  return /(yeme-icme|gezi|hizmetler|saglik|kultur|sanat)[.]html/.test(path);
-                } catch (error) {
-                  return String(href || '').indexOf('.html') !== -1;
-                }
-              }
-
-              function handleClick(event) {
-                var target = event.target && event.target.closest
-                  ? event.target.closest('[data-mobile-nav="nearby"], .top-city-card, .category-home-card, .home-subcategory-card, .home-subcat-chip, .home-food-card')
-                  : null;
-                if (!target) {
-                  return;
-                }
-
-                var href = target.getAttribute('href') || '';
-                var isNearbyTrigger = target.getAttribute('data-mobile-nav') === 'nearby';
-                var shouldBypass = isNearbyTrigger || target.matches('.home-subcategory-card, .home-subcat-chip, .home-food-card');
-                if (!shouldBypass && !isDiscoveryHref(href)) {
-                  return;
-                }
-
-                if (target.hasAttribute('data-home-subcategory-trigger') && !isNearbyTrigger) {
-                  return;
-                }
-
-                var nextHref = stripNearbyUrl(isNearbyTrigger ? 'yeme-icme.html?nearby=1' : (href || window.location.pathname), { preserveNearby: isNearbyTrigger });
-                if (!nextHref) {
-                  return;
-                }
-
-                event.preventDefault();
-                event.stopPropagation();
-                event.stopImmediatePropagation();
-                if (window.ARAMABUL_HIDE_NAV_TOAST) {
-                  try { window.ARAMABUL_HIDE_NAV_TOAST(); } catch (error) {}
-                }
-                window.location.assign(nextHref);
-              }
-
-              window.addEventListener('click', handleClick, true);
-
-              try {
-                var currentUrl = new URL(window.location.href);
-                if (currentUrl.searchParams.get('nearby') === '1') {
-                  window.__ARAMABUL_APP_NEARBY_ACTIVE__ = true;
-                }
-              } catch (error) {}
-            })();
-          } catch(e) {}
-          try {
             (function installDirectCategoryNavigation() {
               if (window.__ARAMABUL_DIRECT_CATEGORY_NAV_BOUND__) {
                 return;
@@ -1551,7 +1398,6 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   @override
   void dispose() {
     _loadingWatchdog?.cancel();
-    _nearbyLocationFallback?.cancel();
     _connectivitySub.cancel();
     super.dispose();
   }
