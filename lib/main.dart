@@ -24,9 +24,10 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.4';
-const String kAppBuildNumber = '96';
-const String kAppWebCacheVersion = '20260703-android-nearby-web-v1';
+const String kAppVersion = '1.6.5';
+const String kAppBuildNumber = '97';
+const String kAppWebCacheVersion = '20260710-android-nearby-400-v1';
+const String kNearbyPath = '/yeme-icme.html?nearby=1&limit=400';
 
 const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
@@ -342,7 +343,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         break;
       case 1:
         setState(() => _showNativeFavorites = false);
-        await _loadLivePage('/yeme-icme.html?nearby=1&limit=200');
+        await _loadLivePage(kNearbyPath);
         break;
       case 2:
         await _loadLivePage('/favorites.html');
@@ -571,7 +572,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           _loadLivePage('/favorites.html');
           break;
         case 'openNearbyNeighborhood':
-          _loadLivePage('/yeme-icme.html?nearby=1&limit=200');
+          _loadLivePage(kNearbyPath);
           break;
         case 'logout':
         case 'accountDeleted':
