@@ -38,6 +38,20 @@ void main() {
     expect(jwtStringClaim('invalid-token', 'sub'), isNull);
   });
 
+  test('Android Apple flow uses the native callback and preserves state', () {
+    const state = 'aramabul_android_v2_test-state';
+    final authorization = appleAuthorizationUri(state);
+    expect(authorization.host, 'appleid.apple.com');
+    expect(authorization.queryParameters['response_mode'], 'form_post');
+    expect(authorization.queryParameters['state'], state);
+
+    final callback = Uri.parse(
+      'aramabul://apple-auth?code=test&id_token=a.b.c&state=$state',
+    );
+    expect(isMatchingAppleCallback(callback, state), isTrue);
+    expect(isMatchingAppleCallback(callback, 'different-state'), isFalse);
+  });
+
   testWidgets('offline state offers retry', (tester) async {
     var retryCount = 0;
 

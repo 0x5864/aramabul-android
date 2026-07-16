@@ -41,6 +41,13 @@
                 <data android:scheme="https" android:host="aramabul.com" />
                 <data android:scheme="https" android:host="www.aramabul.com" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="aramabul" android:host="apple-auth" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.aboutyou.dart_packages.sign_in_with_apple.SignInWithAppleCallback"

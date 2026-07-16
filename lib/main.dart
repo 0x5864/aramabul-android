@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -11,7 +12,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
@@ -25,9 +25,9 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.10';
-const String kAppBuildNumber = '102';
-const String kAppWebCacheVersion = '20260716-auth-completion-v1';
+const String kAppVersion = '1.6.11';
+const String kAppBuildNumber = '103';
+const String kAppWebCacheVersion = '20260716-apple-callback-v2';
 const String kNearbyPath = '/yeme-icme.html?nearby=1&limit=400';
 
 const Color kAppBackgroundColor = Colors.white;
@@ -40,6 +40,30 @@ const String _kLegacyAuthNameKey = 'auth_user_name';
 const String _kLegacyAuthEmailKey = 'auth_user_email';
 const String _kWelcomeSeenKey = 'aramabul.welcome.seen.v1';
 const String _kPendingWebLanguageKey = 'aramabul.welcome.pendingLanguage.v1';
+const String _kPendingAppleStateKey = 'aramabul.apple.pendingState.v1';
+const MethodChannel _nativeAuthCallbackChannel = MethodChannel(
+  'com.aramabul.app/auth_callback',
+);
+
+@visibleForTesting
+Uri appleAuthorizationUri(String state) {
+  return Uri.https('appleid.apple.com', '/auth/authorize', {
+    'client_id': 'com.aramabul.app.signin',
+    'redirect_uri': 'https://aramabul.com/api/auth/apple-callback',
+    'scope': 'email name',
+    'response_type': 'code id_token',
+    'response_mode': 'form_post',
+    'state': state,
+  });
+}
+
+@visibleForTesting
+bool isMatchingAppleCallback(Uri uri, String expectedState) {
+  return uri.scheme == 'aramabul' &&
+      uri.host == 'apple-auth' &&
+      expectedState.isNotEmpty &&
+      uri.queryParameters['state'] == expectedState;
+}
 
 bool _hasStoredAuthSession(SharedPreferences prefs) {
   final legacyName = (prefs.getString(_kLegacyAuthNameKey) ?? '').trim();
@@ -202,6 +226,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   int _lastLoggedProgressBucket = -1;
   String _currentPath = '/';
   bool _showNativeFavorites = false;
+  bool _appleCallbackInProgress = false;
 
   @override
   void initState() {
@@ -287,10 +312,34 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
     _configureAndroidWebView();
     _setupJsBridge();
+    _setupNativeAuthCallback();
     _startConnectivityWatch();
     unawaited(_initGoogleSignIn());
     unawaited(_bootstrapInitialPage());
     unawaited(_requestLocationPermissionOnStartup());
+  }
+
+  void _setupNativeAuthCallback() {
+    _nativeAuthCallbackChannel.setMethodCallHandler((call) async {
+      if (call.method != 'appleAuthCallback' || call.arguments is! String) {
+        return;
+      }
+      await _completeAppleSignInFromCallback(call.arguments as String);
+    });
+    unawaited(_consumeInitialAppleAuthCallback());
+  }
+
+  Future<void> _consumeInitialAppleAuthCallback() async {
+    try {
+      final callback = await _nativeAuthCallbackChannel.invokeMethod<String>(
+        'consumeAppleAuthCallback',
+      );
+      if (callback != null && callback.trim().isNotEmpty) {
+        await _completeAppleSignInFromCallback(callback);
+      }
+    } catch (error) {
+      debugPrint('[AppleSignIn] Initial callback check failed: $error');
+    }
   }
 
   Future<void> _bootstrapInitialPage() async {
@@ -891,54 +940,104 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     );
 
     try {
-      final credential = await SignInWithApple.getAppleIDCredential(
-        scopes: const [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-        webAuthenticationOptions: WebAuthenticationOptions(
-          clientId: 'com.aramabul.app.signin',
-          redirectUri: Uri.parse(
-            'https://aramabul.com/api/auth/apple-callback',
-          ),
-        ),
+      final random = Random.secure();
+      final stateToken = base64Url
+          .encode(List<int>.generate(24, (_) => random.nextInt(256)))
+          .replaceAll('=', '');
+      final state = 'aramabul_android_v2_$stateToken';
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_kPendingAppleStateKey, state);
+
+      final launched = await launchUrl(
+        appleAuthorizationUri(state),
+        mode: LaunchMode.externalApplication,
       );
-      final providerId = credential.userIdentifier?.trim() ?? '';
-      final idToken = credential.identityToken?.trim() ?? '';
+      if (!launched) {
+        throw const FormatException('Apple giriş sayfası açılamadı.');
+      }
+    } catch (error) {
+      debugPrint('[AppleSignIn] Error: $error');
+      await _setSocialButtonState(
+        provider: 'apple',
+        loading: false,
+        error: 'Apple ile giriş başarısız.',
+      );
+    }
+  }
+
+  Future<void> _completeAppleSignInFromCallback(String rawCallback) async {
+    if (_appleCallbackInProgress) return;
+    _appleCallbackInProgress = true;
+
+    try {
+      final callback = Uri.parse(rawCallback);
+      final prefs = await SharedPreferences.getInstance();
+      final expectedState = prefs.getString(_kPendingAppleStateKey) ?? '';
+      if (!isMatchingAppleCallback(callback, expectedState)) {
+        throw const FormatException('Apple giriş dönüşü doğrulanamadı.');
+      }
+
+      final appleError = callback.queryParameters['error']?.trim() ?? '';
+      if (appleError.isNotEmpty) {
+        throw FormatException('Apple giriş hatası: $appleError');
+      }
+      if ((callback.queryParameters['code'] ?? '').trim().isEmpty) {
+        throw const FormatException('Apple yetkilendirme kodu alınamadı.');
+      }
+
+      final idToken = callback.queryParameters['id_token']?.trim() ?? '';
       if (idToken.isEmpty) {
         throw const FormatException('Apple kimlik belirteci alınamadı.');
       }
-
-      final verifiedProviderId = providerId.isNotEmpty
-          ? providerId
-          : (jwtStringClaim(idToken, 'sub') ?? '');
-      if (verifiedProviderId.isEmpty) {
+      final providerId = jwtStringClaim(idToken, 'sub') ?? '';
+      if (providerId.isEmpty) {
         throw const FormatException('Apple kullanıcı kimliği alınamadı.');
       }
 
-      final prefs = await SharedPreferences.getInstance();
-      final accountKey = 'apple_account_$verifiedProviderId';
+      final accountKey = 'apple_account_$providerId';
+      final storedAccount = <String, dynamic>{};
       final stored = prefs.getString(accountKey);
-      final storedAccount = stored == null
-          ? <String, dynamic>{}
-          : jsonDecode(stored) as Map<String, dynamic>;
-      final receivedName = [
-        credential.givenName?.trim() ?? '',
-        credential.familyName?.trim() ?? '',
-      ].where((part) => part.isNotEmpty).join(' ');
-      final name = receivedName.isNotEmpty
-          ? receivedName
+      if (stored != null && stored.trim().isNotEmpty) {
+        try {
+          final decoded = jsonDecode(stored);
+          if (decoded is Map<String, dynamic>) {
+            storedAccount.addAll(decoded);
+          }
+        } catch (error) {
+          debugPrint('[AppleSignIn] Stored account ignored: $error');
+        }
+      }
+
+      var callbackUser = <String, dynamic>{};
+      final rawUser = callback.queryParameters['user'];
+      if (rawUser != null && rawUser.trim().isNotEmpty) {
+        try {
+          final decoded = jsonDecode(rawUser);
+          if (decoded is Map<String, dynamic>) callbackUser = decoded;
+        } catch (error) {
+          debugPrint('[AppleSignIn] Callback user ignored: $error');
+        }
+      }
+      final rawName = callbackUser['name'];
+      final nameParts = rawName is Map
+          ? [rawName['firstName'], rawName['lastName']]
+                .whereType<String>()
+                .map((part) => part.trim())
+                .where((part) => part.isNotEmpty)
+                .toList()
+          : const <String>[];
+      final name = nameParts.isNotEmpty
+          ? nameParts.join(' ')
           : (storedAccount['name'] as String? ?? 'Apple kullanıcısı');
       final email =
-          credential.email?.trim() ??
           jwtStringClaim(idToken, 'email') ??
-          (storedAccount['email'] as String? ?? '');
+          (callbackUser['email'] as String? ?? '').trim().toLowerCase();
 
       final session = await _registerSocialLogin(
         provider: 'apple',
         email: email,
         name: name,
-        providerId: verifiedProviderId,
+        providerId: providerId,
         idToken: idToken,
       );
       final sessionName = session['name'] ?? name;
@@ -947,24 +1046,17 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         accountKey,
         jsonEncode({'name': sessionName, 'email': sessionEmail}),
       );
+      await prefs.remove(_kPendingAppleStateKey);
       await _syncSocialSessionToWeb(name: sessionName, email: sessionEmail);
-    } on SignInWithAppleAuthorizationException catch (error) {
-      if (error.code == AuthorizationErrorCode.canceled) {
-        await _setSocialButtonState(provider: 'apple', loading: false);
-        return;
-      }
-      await _setSocialButtonState(
-        provider: 'apple',
-        loading: false,
-        error: 'Apple ile giriş başarısız.',
-      );
     } catch (error) {
-      debugPrint('[AppleSignIn] Error: $error');
+      debugPrint('[AppleSignIn] Callback error: $error');
       await _setSocialButtonState(
         provider: 'apple',
         loading: false,
         error: 'Apple ile giriş başarısız.',
       );
+    } finally {
+      _appleCallbackInProgress = false;
     }
   }
 
@@ -1666,6 +1758,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   void dispose() {
     _loadingWatchdog?.cancel();
     _connectivitySub.cancel();
+    _nativeAuthCallbackChannel.setMethodCallHandler(null);
     super.dispose();
   }
 }
