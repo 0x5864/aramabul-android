@@ -25,9 +25,9 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.14';
-const String kAppBuildNumber = '106';
-const String kAppWebCacheVersion = '20260716-apple-handoff-v5';
+const String kAppVersion = '1.6.15';
+const String kAppBuildNumber = '107';
+const String kAppWebCacheVersion = '20260716-apple-handoff-v6';
 const String kNearbyPath = '/yeme-icme.html?nearby=1&limit=400';
 
 const Color kAppBackgroundColor = Colors.white;
@@ -254,6 +254,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
   String _currentPath = '/';
   bool _showNativeFavorites = false;
   bool _appleCallbackInProgress = false;
+  bool _appleHandoffPolling = false;
 
   @override
   void initState() {
@@ -352,7 +353,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
       if (call.method != 'appleAuthCallback' || call.arguments is! String) {
         return;
       }
-      await _completeAppleSignInFromCallback(call.arguments as String);
+      // The verified token is collected from the backend handoff endpoint.
+      // Keeping the deep-link and lifecycle paths on the same completion route
+      // avoids racing two Apple sign-in attempts after the browser closes.
+      await _resumePendingAppleSignIn();
     });
     unawaited(_consumeInitialAppleAuthCallback());
   }
@@ -363,7 +367,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
         'consumeAppleAuthCallback',
       );
       if (callback != null && callback.trim().isNotEmpty) {
-        await _completeAppleSignInFromCallback(callback);
+        debugPrint('[AppleSignIn] Initial native callback received.');
       }
       await _resumePendingAppleSignIn();
     } catch (error) {
@@ -372,35 +376,48 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
   }
 
   Future<void> _resumePendingAppleSignIn() async {
-    if (_appleCallbackInProgress) return;
-    final prefs = await SharedPreferences.getInstance();
-    final state = (prefs.getString(_kPendingAppleStateKey) ?? '').trim();
-    if (!state.startsWith('aramabul_android_v2_')) return;
+    if (_appleHandoffPolling) return;
+    _appleHandoffPolling = true;
 
     final client = HttpClient();
     try {
-      final request = await client.postUrl(
-        Uri.parse('$kLiveUrl/api/auth/apple-mobile-handoff'),
-      );
-      request.headers.set('Content-Type', 'application/json');
-      request.headers.set('Accept', 'application/json');
-      request.write(jsonEncode({'state': state}));
-      final response = await request.close();
-      final body = await response.transform(utf8.decoder).join();
-      if (response.statusCode != HttpStatus.ok) return;
+      final prefs = await SharedPreferences.getInstance();
+      final state = (prefs.getString(_kPendingAppleStateKey) ?? '').trim();
+      if (!state.startsWith('aramabul_android_v2_')) return;
 
-      final payload = jsonDecode(body);
-      if (payload is! Map<String, dynamic> || payload['ready'] != true) return;
-      final idToken = (payload['idToken'] as String? ?? '').trim();
-      if (idToken.isEmpty) return;
+      for (var attempt = 0; attempt < 6; attempt += 1) {
+        final request = await client.postUrl(
+          Uri.parse('$kLiveUrl/api/auth/apple-mobile-handoff'),
+        );
+        request.headers.set('Content-Type', 'application/json');
+        request.headers.set('Accept', 'application/json');
+        request.write(jsonEncode({'state': state}));
+        final response = await request.close();
+        final body = await response.transform(utf8.decoder).join();
 
-      await _completeAppleSignInFromCallback(
-        appleCallbackFromHandoff(state: state, idToken: idToken).toString(),
-      );
+        if (response.statusCode == HttpStatus.accepted) {
+          await Future<void>.delayed(const Duration(milliseconds: 400));
+          continue;
+        }
+        if (response.statusCode != HttpStatus.ok) return;
+
+        final payload = jsonDecode(body);
+        if (payload is! Map<String, dynamic> || payload['ready'] != true) {
+          return;
+        }
+        final idToken = (payload['idToken'] as String? ?? '').trim();
+        if (idToken.isEmpty) return;
+
+        await _completeAppleSignInFromCallback(
+          appleCallbackFromHandoff(state: state, idToken: idToken).toString(),
+        );
+        return;
+      }
     } catch (error) {
       debugPrint('[AppleSignIn] Pending handoff check skipped: $error');
     } finally {
       client.close();
+      _appleHandoffPolling = false;
     }
   }
 
