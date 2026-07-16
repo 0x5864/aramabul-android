@@ -25,9 +25,9 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.13';
-const String kAppBuildNumber = '105';
-const String kAppWebCacheVersion = '20260716-apple-handoff-v4';
+const String kAppVersion = '1.6.14';
+const String kAppBuildNumber = '106';
+const String kAppWebCacheVersion = '20260716-apple-handoff-v5';
 const String kNearbyPath = '/yeme-icme.html?nearby=1&limit=400';
 
 const Color kAppBackgroundColor = Colors.white;
@@ -1088,12 +1088,14 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
       if (idToken.isEmpty) {
         throw const FormatException('Apple kimlik belirteci alınamadı.');
       }
+      // The server is the source of truth for Apple identity claims. Mobile
+      // handoff tokens are signed and verified by the backend, so a local JWT
+      // decoding problem must not prevent the verified social-login request.
       final providerId = jwtStringClaim(idToken, 'sub') ?? '';
-      if (providerId.isEmpty) {
-        throw const FormatException('Apple kullanıcı kimliği alınamadı.');
-      }
 
-      final accountKey = 'apple_account_$providerId';
+      final accountKey = providerId.isNotEmpty
+          ? 'apple_account_$providerId'
+          : 'apple_account_latest';
       final storedAccount = <String, dynamic>{};
       final stored = prefs.getString(accountKey);
       if (stored != null && stored.trim().isNotEmpty) {
