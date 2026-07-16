@@ -25,8 +25,8 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.8';
-const String kAppBuildNumber = '100';
+const String kAppVersion = '1.6.9';
+const String kAppBuildNumber = '101';
 const String kAppWebCacheVersion = '20260710-android-nearby-400-v1';
 const String kNearbyPath = '/yeme-icme.html?nearby=1&limit=400';
 
