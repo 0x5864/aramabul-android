@@ -23,6 +23,21 @@ void main() {
     expect(welcomeInitialPath(openSignIn: false), isNull);
   });
 
+  test('social login completion opens the home page', () {
+    expect(socialLoginSuccessPath(), '/');
+  });
+
+  test('Apple subject and email can be read from an Android identity token', () {
+    const token =
+        'eyJhbGciOiJSUzI1NiJ9.'
+        'eyJzdWIiOiJhcHBsZS11c2VyLTEyMyIsImVtYWlsIjoia2lzaUBleGFtcGxlLmNvbSJ9.'
+        'signature';
+
+    expect(jwtStringClaim(token, 'sub'), 'apple-user-123');
+    expect(jwtStringClaim(token, 'email'), 'kisi@example.com');
+    expect(jwtStringClaim('invalid-token', 'sub'), isNull);
+  });
+
   testWidgets('offline state offers retry', (tester) async {
     var retryCount = 0;
 

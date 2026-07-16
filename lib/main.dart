@@ -25,9 +25,9 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.9';
-const String kAppBuildNumber = '101';
-const String kAppWebCacheVersion = '20260710-android-nearby-400-v1';
+const String kAppVersion = '1.6.10';
+const String kAppBuildNumber = '102';
+const String kAppWebCacheVersion = '20260716-auth-completion-v1';
 const String kNearbyPath = '/yeme-icme.html?nearby=1&limit=400';
 
 const Color kAppBackgroundColor = Colors.white;
@@ -71,6 +71,26 @@ bool shouldShowWelcomeScreen({
 String? welcomeInitialPath({required bool openSignIn}) {
   return openSignIn ? '/profile.html?action=login' : null;
 }
+
+@visibleForTesting
+String? jwtStringClaim(String token, String claim) {
+  final parts = token.split('.');
+  if (parts.length != 3) return null;
+  try {
+    final payload = jsonDecode(
+      utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
+    );
+    if (payload is! Map) return null;
+    final value = payload[claim];
+    if (value is! String || value.trim().isEmpty) return null;
+    return value.trim();
+  } catch (_) {
+    return null;
+  }
+}
+
+@visibleForTesting
+String socialLoginSuccessPath() => '/';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -812,17 +832,16 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       _kAuthSessionKey,
       jsonEncode({'name': name, 'email': email}),
     );
-    await _controller.runJavaScript('''
-      try { localStorage.setItem('aramabul.auth.session.v1', $sessionLiteral); } catch(e) {}
-      try { document.dispatchEvent(new CustomEvent('aramabul:authchange')); } catch(e) {}
-      try {
-        var nextUrl = new URL(window.location.href);
-        nextUrl.searchParams.set('appAuthRefresh', Date.now().toString());
-        window.location.replace(nextUrl.pathname + nextUrl.search + nextUrl.hash);
-      } catch (error) {
-        window.location.href = window.location.href.split('#')[0] + '?appAuthRefresh=' + Date.now();
-      }
-    ''');
+    try {
+      await _controller.runJavaScript('''
+        try { localStorage.setItem('aramabul.auth.session.v1', $sessionLiteral); } catch(e) {}
+        try { document.dispatchEvent(new CustomEvent('aramabul:authchange')); } catch(e) {}
+      ''');
+    } catch (error) {
+      debugPrint('[AuthSync] Web storage sync skipped: $error');
+    }
+    if (!mounted) return;
+    await _loadLivePage(socialLoginSuccessPath());
   }
 
   Future<void> _handleGoogleSignInFromWebView() async {
@@ -886,15 +905,19 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       );
       final providerId = credential.userIdentifier?.trim() ?? '';
       final idToken = credential.identityToken?.trim() ?? '';
-      if (providerId.isEmpty) {
-        throw const FormatException('Apple kullanıcı kimliği alınamadı.');
-      }
       if (idToken.isEmpty) {
         throw const FormatException('Apple kimlik belirteci alınamadı.');
       }
 
+      final verifiedProviderId = providerId.isNotEmpty
+          ? providerId
+          : (jwtStringClaim(idToken, 'sub') ?? '');
+      if (verifiedProviderId.isEmpty) {
+        throw const FormatException('Apple kullanıcı kimliği alınamadı.');
+      }
+
       final prefs = await SharedPreferences.getInstance();
-      final accountKey = 'apple_account_$providerId';
+      final accountKey = 'apple_account_$verifiedProviderId';
       final stored = prefs.getString(accountKey);
       final storedAccount = stored == null
           ? <String, dynamic>{}
@@ -907,13 +930,15 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           ? receivedName
           : (storedAccount['name'] as String? ?? 'Apple kullanıcısı');
       final email =
-          credential.email?.trim() ?? (storedAccount['email'] as String? ?? '');
+          credential.email?.trim() ??
+          jwtStringClaim(idToken, 'email') ??
+          (storedAccount['email'] as String? ?? '');
 
       final session = await _registerSocialLogin(
         provider: 'apple',
         email: email,
         name: name,
-        providerId: providerId,
+        providerId: verifiedProviderId,
         idToken: idToken,
       );
       final sessionName = session['name'] ?? name;
