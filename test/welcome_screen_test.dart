@@ -2,11 +2,17 @@ import 'package:aramabul_android/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Widget _buildWelcome({required WelcomeContinue onContinue}) {
+Widget _buildWelcome({
+  required WelcomeContinue onContinue,
+  bool hasActiveSession = false,
+}) {
   return MaterialApp(
     home: MediaQuery(
       data: const MediaQueryData(disableAnimations: true),
-      child: WelcomeScreen(onContinue: onContinue),
+      child: WelcomeScreen(
+        hasActiveSession: hasActiveSession,
+        onContinue: onContinue,
+      ),
     ),
   );
 }
@@ -90,6 +96,29 @@ void main() {
     await tester.pump();
 
     expect(selectedLanguage, 'TR');
+    expect(selectedSignIn, isTrue);
+  });
+
+  testWidgets('active session offers account continuation', (tester) async {
+    _setTestView(tester, const Size(390, 844));
+    bool? selectedSignIn;
+
+    await tester.pumpWidget(
+      _buildWelcome(
+        hasActiveSession: true,
+        onContinue: ({required languageCode, required openSignIn}) async {
+          selectedSignIn = openSignIn;
+        },
+      ),
+    );
+
+    expect(find.text('Hesabına devam et'), findsOneWidget);
+    expect(find.text('Keşfetmeye devam et'), findsOneWidget);
+    expect(find.text('Giriş yapmadan keşfet'), findsNothing);
+
+    await tester.tap(find.text('Hesabına devam et'));
+    await tester.pump();
+
     expect(selectedSignIn, isTrue);
   });
 }

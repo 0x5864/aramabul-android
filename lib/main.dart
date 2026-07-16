@@ -25,8 +25,8 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.6';
-const String kAppBuildNumber = '98';
+const String kAppVersion = '1.6.7';
+const String kAppBuildNumber = '99';
 const String kAppWebCacheVersion = '20260710-android-nearby-400-v1';
 const String kNearbyPath = '/yeme-icme.html?nearby=1&limit=400';
 
@@ -40,6 +40,24 @@ const String _kLegacyAuthNameKey = 'auth_user_name';
 const String _kLegacyAuthEmailKey = 'auth_user_email';
 const String _kWelcomeSeenKey = 'aramabul.welcome.seen.v1';
 const String _kPendingWebLanguageKey = 'aramabul.welcome.pendingLanguage.v1';
+
+bool _hasStoredAuthSession(SharedPreferences prefs) {
+  final legacyName = (prefs.getString(_kLegacyAuthNameKey) ?? '').trim();
+  final legacyEmail = (prefs.getString(_kLegacyAuthEmailKey) ?? '').trim();
+  if (legacyName.isNotEmpty && legacyEmail.isNotEmpty) return true;
+
+  final sessionRaw = (prefs.getString(_kAuthSessionKey) ?? '').trim();
+  if (sessionRaw.isEmpty) return false;
+  try {
+    final session = jsonDecode(sessionRaw);
+    if (session is! Map) return false;
+    final name = (session['name'] as String? ?? '').trim();
+    final email = (session['email'] as String? ?? '').trim();
+    return name.isNotEmpty && email.isNotEmpty;
+  } catch (_) {
+    return false;
+  }
+}
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -77,6 +95,7 @@ class AppLaunchGate extends StatefulWidget {
 
 class _AppLaunchGateState extends State<AppLaunchGate> {
   bool? _showWelcome;
+  bool _hasActiveSession = false;
   String? _initialPath;
 
   @override
@@ -88,8 +107,12 @@ class _AppLaunchGateState extends State<AppLaunchGate> {
   Future<void> _resolveInitialScreen() async {
     final prefs = await SharedPreferences.getInstance();
     final hasSeenWelcome = prefs.getBool(_kWelcomeSeenKey) ?? false;
+    final hasActiveSession = _hasStoredAuthSession(prefs);
     if (!mounted) return;
-    setState(() => _showWelcome = !hasSeenWelcome);
+    setState(() {
+      _hasActiveSession = hasActiveSession;
+      _showWelcome = !hasSeenWelcome;
+    });
   }
 
   Future<void> _completeWelcome({
@@ -102,9 +125,15 @@ class _AppLaunchGateState extends State<AppLaunchGate> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_kWelcomeSeenKey, true);
     await prefs.setString(_kPendingWebLanguageKey, normalizedLanguage);
+    final hasActiveSession = _hasStoredAuthSession(prefs);
     if (!mounted) return;
     setState(() {
-      _initialPath = openSignIn ? '/profile.html?action=login' : null;
+      _hasActiveSession = hasActiveSession;
+      _initialPath = openSignIn
+          ? hasActiveSession
+                ? '/profile.html?action=account'
+                : '/profile.html?action=login'
+          : null;
       _showWelcome = false;
     });
   }
@@ -115,7 +144,10 @@ class _AppLaunchGateState extends State<AppLaunchGate> {
       return const ColoredBox(color: Colors.white);
     }
     if (_showWelcome == true) {
-      return WelcomeScreen(onContinue: _completeWelcome);
+      return WelcomeScreen(
+        hasActiveSession: _hasActiveSession,
+        onContinue: _completeWelcome,
+      );
     }
     return HomeWebViewPage(initialPath: _initialPath);
   }
