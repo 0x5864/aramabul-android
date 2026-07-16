@@ -76,6 +76,18 @@ void main() {
     );
   });
 
+  test('Apple handoff response creates the native callback URI', () {
+    const state = 'aramabul_android_v2_poll-state';
+    const idToken = 'header.payload.signature';
+    final callback = appleCallbackFromHandoff(state: state, idToken: idToken);
+
+    expect(callback.scheme, 'aramabul');
+    expect(callback.host, 'apple-auth');
+    expect(callback.queryParameters['code'], 'apple-mobile-handoff');
+    expect(callback.queryParameters['id_token'], idToken);
+    expect(callback.queryParameters['state'], state);
+  });
+
   testWidgets('offline state offers retry', (tester) async {
     var retryCount = 0;
 

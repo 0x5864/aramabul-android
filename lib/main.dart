@@ -25,9 +25,9 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.12';
-const String kAppBuildNumber = '104';
-const String kAppWebCacheVersion = '20260716-apple-session-v3';
+const String kAppVersion = '1.6.13';
+const String kAppBuildNumber = '105';
+const String kAppWebCacheVersion = '20260716-apple-handoff-v4';
 const String kNearbyPath = '/yeme-icme.html?nearby=1&limit=400';
 
 const Color kAppBackgroundColor = Colors.white;
@@ -76,6 +76,19 @@ bool isCompletedAppleCallback({
   return hasActiveSession &&
       callbackState.isNotEmpty &&
       callbackState == completedState.trim();
+}
+
+@visibleForTesting
+Uri appleCallbackFromHandoff({required String state, required String idToken}) {
+  return Uri(
+    scheme: 'aramabul',
+    host: 'apple-auth',
+    queryParameters: {
+      'code': 'apple-mobile-handoff',
+      'id_token': idToken,
+      'state': state,
+    },
+  );
 }
 
 bool _hasStoredAuthSession(SharedPreferences prefs) {
@@ -224,7 +237,8 @@ class HomeWebViewPage extends StatefulWidget {
   State<HomeWebViewPage> createState() => _HomeWebViewPageState();
 }
 
-class _HomeWebViewPageState extends State<HomeWebViewPage> {
+class _HomeWebViewPageState extends State<HomeWebViewPage>
+    with WidgetsBindingObserver {
   late final WebViewController _controller;
   late final StreamSubscription<List<ConnectivityResult>> _connectivitySub;
 
@@ -244,6 +258,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: kAppBackgroundColor,
@@ -350,9 +365,54 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       if (callback != null && callback.trim().isNotEmpty) {
         await _completeAppleSignInFromCallback(callback);
       }
+      await _resumePendingAppleSignIn();
     } catch (error) {
       debugPrint('[AppleSignIn] Initial callback check failed: $error');
     }
+  }
+
+  Future<void> _resumePendingAppleSignIn() async {
+    if (_appleCallbackInProgress) return;
+    final prefs = await SharedPreferences.getInstance();
+    final state = (prefs.getString(_kPendingAppleStateKey) ?? '').trim();
+    if (!state.startsWith('aramabul_android_v2_')) return;
+
+    final client = HttpClient();
+    try {
+      final request = await client.postUrl(
+        Uri.parse('$kLiveUrl/api/auth/apple-mobile-handoff'),
+      );
+      request.headers.set('Content-Type', 'application/json');
+      request.headers.set('Accept', 'application/json');
+      request.write(jsonEncode({'state': state}));
+      final response = await request.close();
+      final body = await response.transform(utf8.decoder).join();
+      if (response.statusCode != HttpStatus.ok) return;
+
+      final payload = jsonDecode(body);
+      if (payload is! Map<String, dynamic> || payload['ready'] != true) return;
+      final idToken = (payload['idToken'] as String? ?? '').trim();
+      if (idToken.isEmpty) return;
+
+      await _completeAppleSignInFromCallback(
+        appleCallbackFromHandoff(state: state, idToken: idToken).toString(),
+      );
+    } catch (error) {
+      debugPrint('[AppleSignIn] Pending handoff check skipped: $error');
+    } finally {
+      client.close();
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) return;
+    unawaited(
+      Future<void>.delayed(
+        const Duration(milliseconds: 500),
+        _resumePendingAppleSignIn,
+      ),
+    );
   }
 
   Future<void> _bootstrapInitialPage() async {
@@ -1828,6 +1888,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _loadingWatchdog?.cancel();
     _connectivitySub.cancel();
     _nativeAuthCallbackChannel.setMethodCallHandler(null);

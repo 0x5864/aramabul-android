@@ -43,7 +43,6 @@ class MainActivity : FlutterActivity() {
         pendingAppleAuthCallback = callback
         if (notifyFlutter) {
             authCallbackChannel?.invokeMethod("appleAuthCallback", callback)
-            pendingAppleAuthCallback = null
         }
     }
 }
