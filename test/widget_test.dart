@@ -52,6 +52,30 @@ void main() {
     expect(isMatchingAppleCallback(callback, 'different-state'), isFalse);
   });
 
+  test('completed Apple callback is ignored when a session already exists', () {
+    const state = 'aramabul_android_v2_completed-state';
+    final callback = Uri.parse(
+      'aramabul://apple-auth?code=test&id_token=a.b.c&state=$state',
+    );
+
+    expect(
+      isCompletedAppleCallback(
+        callback: callback,
+        completedState: state,
+        hasActiveSession: true,
+      ),
+      isTrue,
+    );
+    expect(
+      isCompletedAppleCallback(
+        callback: callback,
+        completedState: state,
+        hasActiveSession: false,
+      ),
+      isFalse,
+    );
+  });
+
   testWidgets('offline state offers retry', (tester) async {
     var retryCount = 0;
 

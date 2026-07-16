@@ -25,9 +25,9 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.11';
-const String kAppBuildNumber = '103';
-const String kAppWebCacheVersion = '20260716-apple-callback-v2';
+const String kAppVersion = '1.6.12';
+const String kAppBuildNumber = '104';
+const String kAppWebCacheVersion = '20260716-apple-session-v3';
 const String kNearbyPath = '/yeme-icme.html?nearby=1&limit=400';
 
 const Color kAppBackgroundColor = Colors.white;
@@ -41,6 +41,7 @@ const String _kLegacyAuthEmailKey = 'auth_user_email';
 const String _kWelcomeSeenKey = 'aramabul.welcome.seen.v1';
 const String _kPendingWebLanguageKey = 'aramabul.welcome.pendingLanguage.v1';
 const String _kPendingAppleStateKey = 'aramabul.apple.pendingState.v1';
+const String _kCompletedAppleStateKey = 'aramabul.apple.completedState.v1';
 const MethodChannel _nativeAuthCallbackChannel = MethodChannel(
   'com.aramabul.app/auth_callback',
 );
@@ -63,6 +64,18 @@ bool isMatchingAppleCallback(Uri uri, String expectedState) {
       uri.host == 'apple-auth' &&
       expectedState.isNotEmpty &&
       uri.queryParameters['state'] == expectedState;
+}
+
+@visibleForTesting
+bool isCompletedAppleCallback({
+  required Uri callback,
+  required String completedState,
+  required bool hasActiveSession,
+}) {
+  final callbackState = callback.queryParameters['state']?.trim() ?? '';
+  return hasActiveSession &&
+      callbackState.isNotEmpty &&
+      callbackState == completedState.trim();
 }
 
 bool _hasStoredAuthSession(SharedPreferences prefs) {
@@ -890,7 +903,13 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       debugPrint('[AuthSync] Web storage sync skipped: $error');
     }
     if (!mounted) return;
-    await _loadLivePage(socialLoginSuccessPath());
+    try {
+      await _loadLivePage(socialLoginSuccessPath());
+    } catch (error) {
+      // The server session is already valid at this point. A WebView refresh
+      // failure must not be reported to the user as a failed social login.
+      debugPrint('[AuthSync] Home navigation skipped after login: $error');
+    }
   }
 
   Future<void> _handleGoogleSignInFromWebView() async {
@@ -900,6 +919,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       message: 'Google hesabınıza yönlendiriliyorsunuz...',
     );
 
+    var socialLoginCompleted = false;
     try {
       await _initGoogleSignIn();
       final account = await GoogleSignIn.instance.authenticate();
@@ -918,12 +938,21 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         providerId: account.id,
         idToken: idToken,
       );
+      socialLoginCompleted = true;
       await _syncSocialSessionToWeb(
         name: session['name'] ?? name,
         email: session['email'] ?? email,
       );
     } catch (e) {
       debugPrint('[GoogleSignIn] Error: $e');
+      if (socialLoginCompleted) {
+        await _setSocialButtonState(
+          provider: 'google',
+          loading: false,
+          message: 'Giriş tamamlandı.',
+        );
+        return;
+      }
       await _setSocialButtonState(
         provider: 'google',
         loading: false,
@@ -969,10 +998,20 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     if (_appleCallbackInProgress) return;
     _appleCallbackInProgress = true;
 
+    var socialLoginCompleted = false;
     try {
       final callback = Uri.parse(rawCallback);
       final prefs = await SharedPreferences.getInstance();
       final expectedState = prefs.getString(_kPendingAppleStateKey) ?? '';
+      final completedState = prefs.getString(_kCompletedAppleStateKey) ?? '';
+      if (isCompletedAppleCallback(
+        callback: callback,
+        completedState: completedState,
+        hasActiveSession: _hasStoredAuthSession(prefs),
+      )) {
+        debugPrint('[AppleSignIn] Duplicate completed callback ignored.');
+        return;
+      }
       if (!isMatchingAppleCallback(callback, expectedState)) {
         throw const FormatException('Apple giriş dönüşü doğrulanamadı.');
       }
@@ -1040,16 +1079,29 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         providerId: providerId,
         idToken: idToken,
       );
+      socialLoginCompleted = true;
       final sessionName = session['name'] ?? name;
       final sessionEmail = session['email'] ?? email;
       await prefs.setString(
         accountKey,
         jsonEncode({'name': sessionName, 'email': sessionEmail}),
       );
+      await prefs.setString(
+        _kCompletedAppleStateKey,
+        callback.queryParameters['state']?.trim() ?? '',
+      );
       await prefs.remove(_kPendingAppleStateKey);
       await _syncSocialSessionToWeb(name: sessionName, email: sessionEmail);
     } catch (error) {
       debugPrint('[AppleSignIn] Callback error: $error');
+      if (socialLoginCompleted) {
+        await _setSocialButtonState(
+          provider: 'apple',
+          loading: false,
+          message: 'Giriş tamamlandı.',
+        );
+        return;
+      }
       await _setSocialButtonState(
         provider: 'apple',
         loading: false,
@@ -1113,6 +1165,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       await _controller.runJavaScript('''
         try {
           window.__ARAMABUL_APP__ = $appInfoLiteral;
+          document.documentElement.classList.add('aramabul-native-app');
+          if (document.body) document.body.classList.add('aramabul-native-app');
           var nativeWelcomeLanguage = $pendingLanguageLiteral;
           if (nativeWelcomeLanguage) {
             try {
@@ -1475,6 +1529,24 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
             body.mobile-bottom-nav-visible {
               padding-bottom: 0 !important;
+            }
+
+            dialog.login-dialog-modal {
+              width: min(440px, calc(100% - 1rem)) !important;
+              max-width: calc(100% - 1rem) !important;
+              overflow-x: hidden !important;
+              overscroll-behavior: contain !important;
+            }
+
+            dialog.login-dialog-modal .social-signin-stack,
+            dialog.login-dialog-modal .gsi-button-container,
+            dialog.login-dialog-modal .gsi-button-container > div,
+            dialog.login-dialog-modal .gsi-button-container iframe,
+            dialog.login-dialog-modal .social-auth-button {
+              width: 100% !important;
+              max-width: 100% !important;
+              min-width: 0 !important;
+              box-sizing: border-box !important;
             }
 
             .favorites-page-shell {
