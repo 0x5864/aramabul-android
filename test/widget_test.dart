@@ -3,6 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  test('welcome is only shown before first use without a session', () {
+    expect(
+      shouldShowWelcomeScreen(hasSeenWelcome: false, hasActiveSession: false),
+      isTrue,
+    );
+    expect(
+      shouldShowWelcomeScreen(hasSeenWelcome: true, hasActiveSession: false),
+      isFalse,
+    );
+    expect(
+      shouldShowWelcomeScreen(hasSeenWelcome: false, hasActiveSession: true),
+      isFalse,
+    );
+  });
+
+  test('welcome account action always opens login', () {
+    expect(welcomeInitialPath(openSignIn: true), '/profile.html?action=login');
+    expect(welcomeInitialPath(openSignIn: false), isNull);
+  });
+
   testWidgets('offline state offers retry', (tester) async {
     var retryCount = 0;
 

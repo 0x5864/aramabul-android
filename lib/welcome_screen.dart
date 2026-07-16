@@ -11,14 +11,9 @@ typedef WelcomeContinue =
     });
 
 class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({
-    super.key,
-    required this.onContinue,
-    this.hasActiveSession = false,
-  });
+  const WelcomeScreen({super.key, required this.onContinue});
 
   final WelcomeContinue onContinue;
-  final bool hasActiveSession;
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
@@ -184,18 +179,14 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                           _AccountCard(copy: _copy, compact: compact),
                           SizedBox(height: compact ? 10 : 14),
                           _ActionButton(
-                            label: widget.hasActiveSession
-                                ? _copy.continueAccount
-                                : _copy.signIn,
+                            label: _copy.signIn,
                             isPrimary: true,
                             isBusy: _isSubmitting,
                             onPressed: () => _continue(openSignIn: true),
                           ),
                           const SizedBox(height: 9),
                           _ActionButton(
-                            label: widget.hasActiveSession
-                                ? _copy.continueSignedIn
-                                : _copy.continueAsGuest,
+                            label: _copy.continueAsGuest,
                             isPrimary: false,
                             isBusy: _isSubmitting,
                             onPressed: () => _continue(openSignIn: false),
@@ -761,8 +752,6 @@ class _WelcomeStrings {
     required this.recentlyViewed,
     required this.forYou,
     required this.signIn,
-    required this.continueAccount,
-    required this.continueSignedIn,
     required this.continueAsGuest,
     required this.optional,
     required this.actionError,
@@ -777,8 +766,6 @@ class _WelcomeStrings {
   final String recentlyViewed;
   final String forYou;
   final String signIn;
-  final String continueAccount;
-  final String continueSignedIn;
   final String continueAsGuest;
   final String optional;
   final String actionError;
@@ -796,8 +783,6 @@ const Map<String, _WelcomeStrings> _welcomeStrings = {
     recentlyViewed: 'Son baktıkların',
     forYou: 'Sana göre',
     signIn: 'Giriş yap / Hesap oluştur',
-    continueAccount: 'Hesabına devam et',
-    continueSignedIn: 'Keşfetmeye devam et',
     continueAsGuest: 'Giriş yapmadan keşfet',
     optional:
         'Giriş isteğe bağlıdır. AramaBul’u hesap oluşturmadan kullanabilirsin.',
@@ -814,8 +799,6 @@ const Map<String, _WelcomeStrings> _welcomeStrings = {
     recentlyViewed: 'Recently viewed',
     forYou: 'For you',
     signIn: 'Sign in / Create account',
-    continueAccount: 'Continue to your account',
-    continueSignedIn: 'Continue exploring',
     continueAsGuest: 'Explore without signing in',
     optional: 'Sign-in is optional. You can use AramaBul without an account.',
     actionError: 'The app could not be opened. Please try again.',
@@ -831,8 +814,6 @@ const Map<String, _WelcomeStrings> _welcomeStrings = {
     recentlyViewed: 'Zuletzt angesehen',
     forYou: 'Für dich',
     signIn: 'Anmelden / Konto erstellen',
-    continueAccount: 'Zum Konto',
-    continueSignedIn: 'Weiter entdecken',
     continueAsGuest: 'Ohne Anmeldung entdecken',
     optional:
         'Die Anmeldung ist optional. AramaBul funktioniert auch ohne Konto.',
@@ -850,8 +831,6 @@ const Map<String, _WelcomeStrings> _welcomeStrings = {
     recentlyViewed: 'Недавние',
     forYou: 'Для вас',
     signIn: 'Войти / Создать аккаунт',
-    continueAccount: 'Перейти в аккаунт',
-    continueSignedIn: 'Продолжить просмотр',
     continueAsGuest: 'Продолжить без входа',
     optional: 'Вход необязателен. AramaBul можно использовать без аккаунта.',
     actionError: 'Не удалось открыть приложение. Попробуйте ещё раз.',

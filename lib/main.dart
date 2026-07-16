@@ -25,8 +25,8 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.7';
-const String kAppBuildNumber = '99';
+const String kAppVersion = '1.6.8';
+const String kAppBuildNumber = '100';
 const String kAppWebCacheVersion = '20260710-android-nearby-400-v1';
 const String kNearbyPath = '/yeme-icme.html?nearby=1&limit=400';
 
@@ -57,6 +57,19 @@ bool _hasStoredAuthSession(SharedPreferences prefs) {
   } catch (_) {
     return false;
   }
+}
+
+@visibleForTesting
+bool shouldShowWelcomeScreen({
+  required bool hasSeenWelcome,
+  required bool hasActiveSession,
+}) {
+  return !hasSeenWelcome && !hasActiveSession;
+}
+
+@visibleForTesting
+String? welcomeInitialPath({required bool openSignIn}) {
+  return openSignIn ? '/profile.html?action=login' : null;
 }
 
 void main() {
@@ -95,7 +108,6 @@ class AppLaunchGate extends StatefulWidget {
 
 class _AppLaunchGateState extends State<AppLaunchGate> {
   bool? _showWelcome;
-  bool _hasActiveSession = false;
   String? _initialPath;
 
   @override
@@ -109,10 +121,12 @@ class _AppLaunchGateState extends State<AppLaunchGate> {
     final hasSeenWelcome = prefs.getBool(_kWelcomeSeenKey) ?? false;
     final hasActiveSession = _hasStoredAuthSession(prefs);
     if (!mounted) return;
-    setState(() {
-      _hasActiveSession = hasActiveSession;
-      _showWelcome = !hasSeenWelcome;
-    });
+    setState(
+      () => _showWelcome = shouldShowWelcomeScreen(
+        hasSeenWelcome: hasSeenWelcome,
+        hasActiveSession: hasActiveSession,
+      ),
+    );
   }
 
   Future<void> _completeWelcome({
@@ -125,15 +139,9 @@ class _AppLaunchGateState extends State<AppLaunchGate> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_kWelcomeSeenKey, true);
     await prefs.setString(_kPendingWebLanguageKey, normalizedLanguage);
-    final hasActiveSession = _hasStoredAuthSession(prefs);
     if (!mounted) return;
     setState(() {
-      _hasActiveSession = hasActiveSession;
-      _initialPath = openSignIn
-          ? hasActiveSession
-                ? '/profile.html?action=account'
-                : '/profile.html?action=login'
-          : null;
+      _initialPath = welcomeInitialPath(openSignIn: openSignIn);
       _showWelcome = false;
     });
   }
@@ -144,10 +152,7 @@ class _AppLaunchGateState extends State<AppLaunchGate> {
       return const ColoredBox(color: Colors.white);
     }
     if (_showWelcome == true) {
-      return WelcomeScreen(
-        hasActiveSession: _hasActiveSession,
-        onContinue: _completeWelcome,
-      );
+      return WelcomeScreen(onContinue: _completeWelcome);
     }
     return HomeWebViewPage(initialPath: _initialPath);
   }
