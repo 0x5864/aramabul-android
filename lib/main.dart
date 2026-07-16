@@ -25,9 +25,11 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.15';
-const String kAppBuildNumber = '107';
-const String kAppWebCacheVersion = '20260716-apple-handoff-v6';
+const String kAppVersion = '1.6.16';
+const String kAppBuildNumber = '108';
+const String kAppWebCacheVersion = '20260716-apple-handoff-v7';
+const int kAppleHandoffPollAttempts = 180;
+const Duration kAppleHandoffPollInterval = Duration(seconds: 2);
 const String kNearbyPath = '/yeme-icme.html?nearby=1&limit=400';
 
 const Color kAppBackgroundColor = Colors.white;
@@ -379,13 +381,13 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
     if (_appleHandoffPolling) return;
     _appleHandoffPolling = true;
 
-    final client = HttpClient();
+    final client = HttpClient()
+      ..connectionTimeout = const Duration(seconds: 10);
     try {
       final prefs = await SharedPreferences.getInstance();
-      final state = (prefs.getString(_kPendingAppleStateKey) ?? '').trim();
-      if (!state.startsWith('aramabul_android_v2_')) return;
-
-      for (var attempt = 0; attempt < 6; attempt += 1) {
+      for (var attempt = 0; attempt < kAppleHandoffPollAttempts; attempt += 1) {
+        final state = (prefs.getString(_kPendingAppleStateKey) ?? '').trim();
+        if (!state.startsWith('aramabul_android_v2_')) return;
         final request = await client.postUrl(
           Uri.parse('$kLiveUrl/api/auth/apple-mobile-handoff'),
         );
@@ -396,7 +398,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
         final body = await response.transform(utf8.decoder).join();
 
         if (response.statusCode == HttpStatus.accepted) {
-          await Future<void>.delayed(const Duration(milliseconds: 400));
+          await Future<void>.delayed(kAppleHandoffPollInterval);
           continue;
         }
         if (response.statusCode != HttpStatus.ok) return;
@@ -407,6 +409,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
         }
         final idToken = (payload['idToken'] as String? ?? '').trim();
         if (idToken.isEmpty) return;
+        final latestState = (prefs.getString(_kPendingAppleStateKey) ?? '')
+            .trim();
+        if (latestState != state) {
+          await Future<void>.delayed(kAppleHandoffPollInterval);
+          continue;
+        }
 
         await _completeAppleSignInFromCallback(
           appleCallbackFromHandoff(state: state, idToken: idToken).toString(),
@@ -1061,6 +1069,11 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
       if (!launched) {
         throw const FormatException('Apple giriş sayfası açılamadı.');
       }
+      // Chrome may keep the callback page in the browser instead of reopening
+      // the app. Poll from the moment authorization starts so the verified
+      // backend handoff is still collected when Android emits no deep link or
+      // lifecycle resume event.
+      unawaited(_resumePendingAppleSignIn());
     } catch (error) {
       debugPrint('[AppleSignIn] Error: $error');
       await _setSocialButtonState(
