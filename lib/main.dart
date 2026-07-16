@@ -981,6 +981,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       document.querySelectorAll('[data-native-social-provider="' + $providerLiteral + '"]').forEach(function(btn) {
         btn.disabled = ${loading ? 'true' : 'false'};
         btn.style.opacity = ${loading ? "'0.6'" : "'1'"};
+        if (!${loading ? 'true' : 'false'}) {
+          btn.removeAttribute('data-native-social-pending');
+        }
       });
       var msg = document.getElementById('appLoginMsg') ||
         document.getElementById('settingsLoginMessage') ||
@@ -1095,7 +1098,11 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                 if (!provider && /apple/i.test(target.id || '')) provider = 'apple';
                 if (provider !== 'google' && provider !== 'apple') return;
                 stop(event);
-                post(provider + '_signin');
+                if (target.disabled || target.getAttribute('data-native-social-pending') === '1') return;
+                target.setAttribute('data-native-social-pending', '1');
+                if (!post(provider + '_signin')) {
+                  target.removeAttribute('data-native-social-pending');
+                }
               }
 
               function clearWebSession() {
