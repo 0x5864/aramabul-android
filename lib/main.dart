@@ -10,11 +10,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
+
+import 'welcome_screen.dart';
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -24,8 +25,8 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.5';
-const String kAppBuildNumber = '97';
+const String kAppVersion = '1.6.6';
+const String kAppBuildNumber = '98';
 const String kAppWebCacheVersion = '20260710-android-nearby-400-v1';
 const String kNearbyPath = '/yeme-icme.html?nearby=1&limit=400';
 
@@ -37,6 +38,8 @@ const String _kAuthSessionKey = 'aramabul.auth.session.v1';
 const String _kAuthUsersKey = 'aramabul.auth.users.v1';
 const String _kLegacyAuthNameKey = 'auth_user_name';
 const String _kLegacyAuthEmailKey = 'auth_user_email';
+const String _kWelcomeSeenKey = 'aramabul.welcome.seen.v1';
+const String _kPendingWebLanguageKey = 'aramabul.welcome.pendingLanguage.v1';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,12 +61,63 @@ class AramaBulApp extends StatelessWidget {
         hoverColor: const Color(0xFFe8f4fd),
         splashColor: const Color(0xFFd0e8f9),
         highlightColor: const Color(0xFFe8f4fd),
-        textTheme: GoogleFonts.plusJakartaSansTextTheme(
-          ThemeData.dark().textTheme,
-        ),
+        fontFamily: 'Plus Jakarta Sans',
       ),
-      home: const HomeWebViewPage(),
+      home: const AppLaunchGate(),
     );
+  }
+}
+
+class AppLaunchGate extends StatefulWidget {
+  const AppLaunchGate({super.key});
+
+  @override
+  State<AppLaunchGate> createState() => _AppLaunchGateState();
+}
+
+class _AppLaunchGateState extends State<AppLaunchGate> {
+  bool? _showWelcome;
+  String? _initialPath;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_resolveInitialScreen());
+  }
+
+  Future<void> _resolveInitialScreen() async {
+    final prefs = await SharedPreferences.getInstance();
+    final hasSeenWelcome = prefs.getBool(_kWelcomeSeenKey) ?? false;
+    if (!mounted) return;
+    setState(() => _showWelcome = !hasSeenWelcome);
+  }
+
+  Future<void> _completeWelcome({
+    required String languageCode,
+    required bool openSignIn,
+  }) async {
+    final normalizedLanguage = ['TR', 'EN', 'DE', 'RU'].contains(languageCode)
+        ? languageCode
+        : 'TR';
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_kWelcomeSeenKey, true);
+    await prefs.setString(_kPendingWebLanguageKey, normalizedLanguage);
+    if (!mounted) return;
+    setState(() {
+      _initialPath = openSignIn ? '/profile.html?action=login' : null;
+      _showWelcome = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_showWelcome == null) {
+      return const ColoredBox(color: Colors.white);
+    }
+    if (_showWelcome == true) {
+      return WelcomeScreen(onContinue: _completeWelcome);
+    }
+    return HomeWebViewPage(initialPath: _initialPath);
   }
 }
 
@@ -885,6 +939,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           ? jsonEncode({'name': authName, 'email': authEmail})
           : '';
       final nativeUsersRaw = prefs.getString(_kAuthUsersKey) ?? '[]';
+      final pendingLanguage = (prefs.getString(_kPendingWebLanguageKey) ?? '')
+          .trim()
+          .toUpperCase();
       final appInfoLiteral = jsonEncode({
         'platform': 'android',
         'version': kAppVersion,
@@ -894,10 +951,36 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
       final usersLiteral = jsonEncode(nativeUsersRaw);
       final sessionLiteral = jsonEncode(authSessionJson);
       final webCacheLiteral = jsonEncode(kAppWebCacheVersion);
+      final pendingLanguageLiteral = jsonEncode(pendingLanguage);
 
       await _controller.runJavaScript('''
         try {
           window.__ARAMABUL_APP__ = $appInfoLiteral;
+          var nativeWelcomeLanguage = $pendingLanguageLiteral;
+          if (nativeWelcomeLanguage) {
+            try {
+              localStorage.setItem(
+                'aramabul.selectedLanguage.v1',
+                nativeWelcomeLanguage
+              );
+            } catch(e) {}
+            try {
+              if (window.ARAMABUL_RUNTIME &&
+                  window.ARAMABUL_RUNTIME.setStoredLanguage) {
+                window.ARAMABUL_RUNTIME.setStoredLanguage(
+                  nativeWelcomeLanguage,
+                  true
+                );
+              }
+            } catch(e) {}
+            window.ARAMABUL_CURRENT_LANGUAGE = nativeWelcomeLanguage;
+            try {
+              document.dispatchEvent(new CustomEvent(
+                'aramabul:languagechange',
+                { detail: { language: nativeWelcomeLanguage } }
+              ));
+            } catch(e) {}
+          }
           try {
             localStorage.setItem('aramabul.auth.users.v1', $usersLiteral);
           } catch(e) {}
@@ -1201,6 +1284,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           } catch(e) {}
         } catch (e) {}
       ''');
+      if (pendingLanguage.isNotEmpty) {
+        await prefs.remove(_kPendingWebLanguageKey);
+      }
     } catch (error) {
       debugPrint('[HomeWebView] App bridge injection failed: $error');
     }
