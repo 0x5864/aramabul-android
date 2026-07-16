@@ -33,6 +33,10 @@ const Color kAppBackgroundColor = Colors.white;
 const Color kAppProgressColor = Color(0xFFE30A17);
 
 const String _kNativeUsersKey = 'native_auth_users';
+const String _kAuthSessionKey = 'aramabul.auth.session.v1';
+const String _kAuthUsersKey = 'aramabul.auth.users.v1';
+const String _kLegacyAuthNameKey = 'auth_user_name';
+const String _kLegacyAuthEmailKey = 'auth_user_email';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -514,7 +518,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
               if (decodedUsers is List) {
                 final normalizedUsers = jsonEncode(decodedUsers);
                 prefs.setString(_kNativeUsersKey, normalizedUsers);
-                prefs.setString('aramabul.auth.users.v1', normalizedUsers);
+                prefs.setString(_kAuthUsersKey, normalizedUsers);
               }
             } catch (e) {
               debugPrint('[AuthSync] users snapshot parse failed: $e');
@@ -527,10 +531,15 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
                   final name = decodedSession['name'] as String? ?? '';
                   final email = decodedSession['email'] as String? ?? '';
                   if (name.isNotEmpty && email.isNotEmpty) {
-                    prefs.setString('auth_user_name', name);
-                    prefs.setString('auth_user_email', email);
+                    prefs.setString(_kLegacyAuthNameKey, name);
+                    prefs.setString(_kLegacyAuthEmailKey, email);
+                    prefs.setString(_kAuthSessionKey, sessionRaw);
                   }
                 }
+              } else {
+                prefs.remove(_kLegacyAuthNameKey);
+                prefs.remove(_kLegacyAuthEmailKey);
+                prefs.remove(_kAuthSessionKey);
               }
             } catch (e) {
               debugPrint('[AuthSync] session snapshot parse failed: $e');
@@ -557,8 +566,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
           final loginName = data['name'] as String? ?? '';
           final loginEmail = data['email'] as String? ?? '';
           SharedPreferences.getInstance().then((prefs) async {
-            await prefs.setString('auth_user_name', loginName);
-            await prefs.setString('auth_user_email', loginEmail);
+            await prefs.setString(_kLegacyAuthNameKey, loginName);
+            await prefs.setString(_kLegacyAuthEmailKey, loginEmail);
+            await prefs.setString(
+              _kAuthSessionKey,
+              jsonEncode({'name': loginName, 'email': loginEmail}),
+            );
           });
           break;
         case 'requestLocationPermission':
@@ -586,20 +599,35 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
 
   Future<void> _resetSession() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_user_name');
-    await prefs.remove('auth_user_email');
-    await prefs.remove('aramabul.auth.session.v1');
+    await prefs.remove(_kLegacyAuthNameKey);
+    await prefs.remove(_kLegacyAuthEmailKey);
+    await prefs.remove(_kAuthSessionKey);
     try {
       await GoogleSignIn.instance.signOut();
     } catch (_) {}
+    final client = HttpClient();
+    try {
+      final request = await client.postUrl(
+        Uri.parse('$kLiveUrl/api/auth/logout'),
+      );
+      request.headers.set('Accept', 'application/json');
+      final response = await request.close();
+      await response.drain<void>();
+    } catch (error) {
+      debugPrint('[AuthSync] Server logout skipped: $error');
+    } finally {
+      client.close();
+    }
     try {
       await _controller.runJavaScript('''
+        window.__ARAMABUL_NATIVE_AUTH_LOGGED_OUT__ = true;
         try { localStorage.removeItem('aramabul.auth.session.v1'); } catch(e) {}
         try { localStorage.removeItem('auth_user_name'); } catch(e) {}
         try { localStorage.removeItem('auth_user_email'); } catch(e) {}
         try { sessionStorage.removeItem('aramabul.auth.session.v1'); } catch(e) {}
         try { sessionStorage.removeItem('auth_user_name'); } catch(e) {}
         try { sessionStorage.removeItem('auth_user_email'); } catch(e) {}
+        try { window.ARAMABUL_RUNTIME && window.ARAMABUL_RUNTIME.removeStorageValue && window.ARAMABUL_RUNTIME.removeStorageValue('aramabul.auth.session.v1'); } catch(e) {}
         try { document.dispatchEvent(new CustomEvent('aramabul:authchange')); } catch(e) {}
       ''');
     } catch (error) {
@@ -607,7 +635,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     }
     await WebViewCookieManager().clearCookies();
     if (!mounted) return;
-    await _loadLivePage('/');
+    await _loadLivePage('/profile.html?action=login&appLogout=1');
   }
 
   Future<Map<String, String>> _registerSocialLogin({
@@ -683,10 +711,14 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
     required String email,
   }) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('auth_user_name', name);
-    await prefs.setString('auth_user_email', email);
+    await prefs.setString(_kLegacyAuthNameKey, name);
+    await prefs.setString(_kLegacyAuthEmailKey, email);
 
     final sessionLiteral = jsonEncode(
+      jsonEncode({'name': name, 'email': email}),
+    );
+    await prefs.setString(
+      _kAuthSessionKey,
       jsonEncode({'name': name, 'email': email}),
     );
     await _controller.runJavaScript('''
@@ -703,12 +735,11 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   }
 
   Future<void> _handleGoogleSignInFromWebView() async {
-    _controller.runJavaScript('''
-      var btn = document.getElementById('appGoogleSignInBtn');
-      if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
-      var msg = document.getElementById('appLoginMsg');
-      if (msg) { msg.style.color = '#4a90d9'; msg.textContent = 'Google hesabınıza yönlendiriliyorsunuz...'; }
-    ''');
+    await _setSocialButtonState(
+      provider: 'google',
+      loading: true,
+      message: 'Google hesabınıza yönlendiriliyorsunuz...',
+    );
 
     try {
       await _initGoogleSignIn();
@@ -733,13 +764,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
         email: session['email'] ?? email,
       );
     } catch (e) {
-      final errorText = jsonEncode('Google ile giriş başarısız: $e');
-      _controller.runJavaScript('''
-        var btn = document.getElementById('appGoogleSignInBtn');
-        if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
-        var msg = document.getElementById('appLoginMsg');
-        if (msg) { msg.style.color = '#e74c3c'; msg.textContent = $errorText; }
-      ''');
+      debugPrint('[GoogleSignIn] Error: $e');
+      await _setSocialButtonState(
+        provider: 'google',
+        loading: false,
+        error: 'Google ile giriş başarısız.',
+      );
     }
   }
 
@@ -849,12 +879,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
   Future<void> _injectAppBridge() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final authName = prefs.getString('auth_user_name') ?? '';
-      final authEmail = prefs.getString('auth_user_email') ?? '';
+      final authName = prefs.getString(_kLegacyAuthNameKey) ?? '';
+      final authEmail = prefs.getString(_kLegacyAuthEmailKey) ?? '';
       final authSessionJson = (authName.isNotEmpty && authEmail.isNotEmpty)
           ? jsonEncode({'name': authName, 'email': authEmail})
           : '';
-      final nativeUsersRaw = prefs.getString('aramabul.auth.users.v1') ?? '[]';
+      final nativeUsersRaw = prefs.getString(_kAuthUsersKey) ?? '[]';
       final appInfoLiteral = jsonEncode({
         'platform': 'android',
         'version': kAppVersion,
@@ -888,6 +918,87 @@ class _HomeWebViewPageState extends State<HomeWebViewPage> {
               bridge.postMessage(JSON.stringify({ action: 'apple_signin' }));
             }
           };
+          try {
+            (function installNativeAuthBridge() {
+              if (window.__ARAMABUL_NATIVE_AUTH_BRIDGE__) return;
+              window.__ARAMABUL_NATIVE_AUTH_BRIDGE__ = true;
+
+              function bridge() {
+                return window.AramaBulIOS || window.AramaBulAndroid;
+              }
+
+              function post(action) {
+                var targetBridge = bridge();
+                if (!targetBridge || !targetBridge.postMessage) return false;
+                targetBridge.postMessage(JSON.stringify({ action: action }));
+                return true;
+              }
+
+              function stop(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+              }
+
+              function handleSocial(event) {
+                var target = event.target && event.target.closest
+                  ? event.target.closest('[data-native-social-provider], #customGoogleSignInBtn, #customAppleSignInBtn, #accountGoogleSignInBtn, #appGoogleSignInBtn, #appAppleSignInBtn')
+                  : null;
+                if (!target) return;
+                var provider = String(target.getAttribute('data-native-social-provider') || '').toLowerCase();
+                if (!provider && /google/i.test(target.id || '')) provider = 'google';
+                if (!provider && /apple/i.test(target.id || '')) provider = 'apple';
+                if (provider !== 'google' && provider !== 'apple') return;
+                stop(event);
+                post(provider + '_signin');
+              }
+
+              function clearWebSession() {
+                ['aramabul.auth.session.v1', 'auth_user_name', 'auth_user_email'].forEach(function(key) {
+                  try { localStorage.removeItem(key); } catch (error) {}
+                  try { sessionStorage.removeItem(key); } catch (error) {}
+                });
+                try {
+                  if (window.ARAMABUL_RUNTIME && window.ARAMABUL_RUNTIME.removeStorageValue) {
+                    window.ARAMABUL_RUNTIME.removeStorageValue('aramabul.auth.session.v1');
+                  }
+                } catch (error) {}
+              }
+
+              function handleLogout(event) {
+                var target = event.target && event.target.closest
+                  ? event.target.closest('[data-settings-logout-trigger], #settingsSignOutBtn, #accountLogoutBtn, [data-native-logout]')
+                  : null;
+                if (!target) return;
+                stop(event);
+                clearWebSession();
+                try { document.dispatchEvent(new CustomEvent('aramabul:authchange')); } catch (error) {}
+                post('logout');
+              }
+
+              ['pointerdown', 'touchstart', 'click'].forEach(function(type) {
+                window.addEventListener(type, handleSocial, true);
+                document.addEventListener(type, handleLogout, true);
+              });
+
+              function revealNativeButtons() {
+                document.querySelectorAll('[data-native-social-provider="apple"], #customAppleSignInBtn, #appAppleSignInBtn').forEach(function(button) {
+                  button.hidden = false;
+                  button.style.display = '';
+                });
+              }
+
+              revealNativeButtons();
+              window.setTimeout(revealNativeButtons, 250);
+              window.setTimeout(revealNativeButtons, 1000);
+              try {
+                new MutationObserver(revealNativeButtons).observe(document.documentElement, {
+                  childList: true,
+                  subtree: true
+                });
+              } catch (error) {}
+            })();
+          } catch(e) {}
           try {
             (function renderNativeAppVersion() {
               function render() {
@@ -1424,7 +1535,7 @@ class _NativeFavoritesViewState extends State<NativeFavoritesView> {
 
   Future<List<Map<String, dynamic>>> _loadFavorites() async {
     final prefs = await SharedPreferences.getInstance();
-    final email = (prefs.getString('auth_user_email') ?? '').trim();
+    final email = (prefs.getString(_kLegacyAuthEmailKey) ?? '').trim();
     final client = HttpClient();
     try {
       final request = await client.getUrl(
