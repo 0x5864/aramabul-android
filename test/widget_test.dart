@@ -88,6 +88,36 @@ void main() {
     expect(callback.queryParameters['state'], state);
   });
 
+  test('stale Apple pending state is not resumed on app startup', () {
+    const state = 'aramabul_android_v2_pending-state';
+    final now = DateTime(2026, 7, 17, 12).millisecondsSinceEpoch;
+
+    expect(
+      isFreshApplePendingState(
+        state: state,
+        startedAtMillis: now - const Duration(minutes: 2).inMilliseconds,
+        nowMillis: now,
+      ),
+      isTrue,
+    );
+    expect(
+      isFreshApplePendingState(
+        state: state,
+        startedAtMillis: now - const Duration(minutes: 9).inMilliseconds,
+        nowMillis: now,
+      ),
+      isFalse,
+    );
+    expect(
+      isFreshApplePendingState(
+        state: 'invalid-state',
+        startedAtMillis: now,
+        nowMillis: now,
+      ),
+      isFalse,
+    );
+  });
+
   testWidgets('offline state offers retry', (tester) async {
     var retryCount = 0;
 

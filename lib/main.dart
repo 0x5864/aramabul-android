@@ -25,11 +25,12 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.16';
-const String kAppBuildNumber = '108';
-const String kAppWebCacheVersion = '20260716-apple-handoff-v7';
+const String kAppVersion = '1.6.17';
+const String kAppBuildNumber = '109';
+const String kAppWebCacheVersion = '20260717-apple-session-v8';
 const int kAppleHandoffPollAttempts = 180;
 const Duration kAppleHandoffPollInterval = Duration(seconds: 2);
+const Duration kApplePendingStateMaxAge = Duration(minutes: 8);
 const String kNearbyPath = '/yeme-icme.html?nearby=1&limit=400';
 
 const Color kAppBackgroundColor = Colors.white;
@@ -43,6 +44,7 @@ const String _kLegacyAuthEmailKey = 'auth_user_email';
 const String _kWelcomeSeenKey = 'aramabul.welcome.seen.v1';
 const String _kPendingWebLanguageKey = 'aramabul.welcome.pendingLanguage.v1';
 const String _kPendingAppleStateKey = 'aramabul.apple.pendingState.v1';
+const String _kPendingAppleStartedAtKey = 'aramabul.apple.pendingStartedAt.v1';
 const String _kCompletedAppleStateKey = 'aramabul.apple.completedState.v1';
 const MethodChannel _nativeAuthCallbackChannel = MethodChannel(
   'com.aramabul.app/auth_callback',
@@ -109,6 +111,17 @@ bool _hasStoredAuthSession(SharedPreferences prefs) {
   } catch (_) {
     return false;
   }
+}
+
+@visibleForTesting
+bool isFreshApplePendingState({
+  required String state,
+  required int startedAtMillis,
+  required int nowMillis,
+}) {
+  if (!state.startsWith('aramabul_android_v2_')) return false;
+  if (startedAtMillis <= 0 || nowMillis < startedAtMillis) return false;
+  return nowMillis - startedAtMillis <= kApplePendingStateMaxAge.inMilliseconds;
 }
 
 @visibleForTesting
@@ -387,28 +400,43 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
       final prefs = await SharedPreferences.getInstance();
       for (var attempt = 0; attempt < kAppleHandoffPollAttempts; attempt += 1) {
         final state = (prefs.getString(_kPendingAppleStateKey) ?? '').trim();
-        if (!state.startsWith('aramabul_android_v2_')) return;
+        final startedAtMillis = prefs.getInt(_kPendingAppleStartedAtKey) ?? 0;
+        if (!isFreshApplePendingState(
+          state: state,
+          startedAtMillis: startedAtMillis,
+          nowMillis: DateTime.now().millisecondsSinceEpoch,
+        )) {
+          await prefs.remove(_kPendingAppleStateKey);
+          await prefs.remove(_kPendingAppleStartedAtKey);
+          return;
+        }
         final request = await client.postUrl(
-          Uri.parse('$kLiveUrl/api/auth/apple-mobile-handoff'),
+          Uri.parse('$kLiveUrl/api/auth/apple-mobile-session'),
         );
         request.headers.set('Content-Type', 'application/json');
         request.headers.set('Accept', 'application/json');
+        request.headers.set('X-AramaBul-App-Build', kAppBuildNumber);
         request.write(jsonEncode({'state': state}));
         final response = await request.close();
+        await _syncSetCookieHeadersToWebView(
+          response.headers[HttpHeaders.setCookieHeader],
+        );
         final body = await response.transform(utf8.decoder).join();
 
         if (response.statusCode == HttpStatus.accepted) {
           await Future<void>.delayed(kAppleHandoffPollInterval);
           continue;
         }
-        if (response.statusCode != HttpStatus.ok) return;
+        if (response.statusCode != HttpStatus.ok) {
+          throw HttpException(
+            'Apple mobile session failed: ${response.statusCode}',
+          );
+        }
 
         final payload = jsonDecode(body);
         if (payload is! Map<String, dynamic> || payload['ready'] != true) {
           return;
         }
-        final idToken = (payload['idToken'] as String? ?? '').trim();
-        if (idToken.isEmpty) return;
         final latestState = (prefs.getString(_kPendingAppleStateKey) ?? '')
             .trim();
         if (latestState != state) {
@@ -416,13 +444,32 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
           continue;
         }
 
-        await _completeAppleSignInFromCallback(
-          appleCallbackFromHandoff(state: state, idToken: idToken).toString(),
-        );
+        await _completeAppleSessionFromHandoff(state: state, payload: payload);
         return;
       }
+      final expiredState = (prefs.getString(_kPendingAppleStateKey) ?? '')
+          .trim();
+      if (expiredState.isNotEmpty) {
+        await prefs.remove(_kPendingAppleStateKey);
+        await prefs.remove(_kPendingAppleStartedAtKey);
+      }
+      await _setSocialButtonState(
+        provider: 'apple',
+        loading: false,
+        error: 'Apple ile giriş zaman aşımına uğradı. Lütfen tekrar deneyin.',
+      );
     } catch (error) {
-      debugPrint('[AppleSignIn] Pending handoff check skipped: $error');
+      debugPrint('[AppleSignIn] Mobile session failed: $error');
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_kPendingAppleStateKey);
+      await prefs.remove(_kPendingAppleStartedAtKey);
+      try {
+        await _setSocialButtonState(
+          provider: 'apple',
+          loading: false,
+          error: 'Apple ile giriş başarısız.',
+        );
+      } catch (_) {}
     } finally {
       client.close();
       _appleHandoffPolling = false;
@@ -1061,6 +1108,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
       final state = 'aramabul_android_v2_$stateToken';
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_kPendingAppleStateKey, state);
+      await prefs.setInt(
+        _kPendingAppleStartedAtKey,
+        DateTime.now().millisecondsSinceEpoch,
+      );
 
       final launched = await launchUrl(
         appleAuthorizationUri(state),
@@ -1076,6 +1127,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
       unawaited(_resumePendingAppleSignIn());
     } catch (error) {
       debugPrint('[AppleSignIn] Error: $error');
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_kPendingAppleStateKey);
+      await prefs.remove(_kPendingAppleStartedAtKey);
       await _setSocialButtonState(
         provider: 'apple',
         loading: false,
@@ -1084,121 +1138,39 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
     }
   }
 
-  Future<void> _completeAppleSignInFromCallback(String rawCallback) async {
+  Future<void> _completeAppleSessionFromHandoff({
+    required String state,
+    required Map<String, dynamic> payload,
+  }) async {
     if (_appleCallbackInProgress) return;
     _appleCallbackInProgress = true;
-
-    var socialLoginCompleted = false;
     try {
-      final callback = Uri.parse(rawCallback);
       final prefs = await SharedPreferences.getInstance();
-      final expectedState = prefs.getString(_kPendingAppleStateKey) ?? '';
-      final completedState = prefs.getString(_kCompletedAppleStateKey) ?? '';
-      if (isCompletedAppleCallback(
-        callback: callback,
-        completedState: completedState,
-        hasActiveSession: _hasStoredAuthSession(prefs),
-      )) {
-        debugPrint('[AppleSignIn] Duplicate completed callback ignored.');
-        return;
-      }
-      if (!isMatchingAppleCallback(callback, expectedState)) {
-        throw const FormatException('Apple giriş dönüşü doğrulanamadı.');
+      final expectedState = (prefs.getString(_kPendingAppleStateKey) ?? '')
+          .trim();
+      if (state != expectedState) {
+        throw const FormatException('Apple oturum dönüşü doğrulanamadı.');
       }
 
-      final appleError = callback.queryParameters['error']?.trim() ?? '';
-      if (appleError.isNotEmpty) {
-        throw FormatException('Apple giriş hatası: $appleError');
+      final user = payload['user'];
+      if (user is! Map) {
+        throw const FormatException('Apple kullanıcı oturumu alınamadı.');
       }
-      if ((callback.queryParameters['code'] ?? '').trim().isEmpty) {
-        throw const FormatException('Apple yetkilendirme kodu alınamadı.');
-      }
-
-      final idToken = callback.queryParameters['id_token']?.trim() ?? '';
-      if (idToken.isEmpty) {
-        throw const FormatException('Apple kimlik belirteci alınamadı.');
-      }
-      // The server is the source of truth for Apple identity claims. Mobile
-      // handoff tokens are signed and verified by the backend, so a local JWT
-      // decoding problem must not prevent the verified social-login request.
-      final providerId = jwtStringClaim(idToken, 'sub') ?? '';
-
-      final accountKey = providerId.isNotEmpty
-          ? 'apple_account_$providerId'
-          : 'apple_account_latest';
-      final storedAccount = <String, dynamic>{};
-      final stored = prefs.getString(accountKey);
-      if (stored != null && stored.trim().isNotEmpty) {
-        try {
-          final decoded = jsonDecode(stored);
-          if (decoded is Map<String, dynamic>) {
-            storedAccount.addAll(decoded);
-          }
-        } catch (error) {
-          debugPrint('[AppleSignIn] Stored account ignored: $error');
-        }
+      final name = (user['displayName'] as String? ?? '').trim();
+      final email = (user['email'] as String? ?? '').trim().toLowerCase();
+      if (name.isEmpty || email.isEmpty) {
+        throw const FormatException('Apple kullanıcı bilgileri eksik.');
       }
 
-      var callbackUser = <String, dynamic>{};
-      final rawUser = callback.queryParameters['user'];
-      if (rawUser != null && rawUser.trim().isNotEmpty) {
-        try {
-          final decoded = jsonDecode(rawUser);
-          if (decoded is Map<String, dynamic>) callbackUser = decoded;
-        } catch (error) {
-          debugPrint('[AppleSignIn] Callback user ignored: $error');
-        }
-      }
-      final rawName = callbackUser['name'];
-      final nameParts = rawName is Map
-          ? [rawName['firstName'], rawName['lastName']]
-                .whereType<String>()
-                .map((part) => part.trim())
-                .where((part) => part.isNotEmpty)
-                .toList()
-          : const <String>[];
-      final name = nameParts.isNotEmpty
-          ? nameParts.join(' ')
-          : (storedAccount['name'] as String? ?? 'Apple kullanıcısı');
-      final email =
-          jwtStringClaim(idToken, 'email') ??
-          (callbackUser['email'] as String? ?? '').trim().toLowerCase();
-
-      final session = await _registerSocialLogin(
-        provider: 'apple',
-        email: email,
-        name: name,
-        providerId: providerId,
-        idToken: idToken,
-      );
-      socialLoginCompleted = true;
-      final sessionName = session['name'] ?? name;
-      final sessionEmail = session['email'] ?? email;
       await prefs.setString(
-        accountKey,
-        jsonEncode({'name': sessionName, 'email': sessionEmail}),
+        'apple_account_latest',
+        jsonEncode({'name': name, 'email': email}),
       );
-      await prefs.setString(
-        _kCompletedAppleStateKey,
-        callback.queryParameters['state']?.trim() ?? '',
-      );
+      await prefs.setString(_kCompletedAppleStateKey, state);
       await prefs.remove(_kPendingAppleStateKey);
-      await _syncSocialSessionToWeb(name: sessionName, email: sessionEmail);
-    } catch (error) {
-      debugPrint('[AppleSignIn] Callback error: $error');
-      if (socialLoginCompleted) {
-        await _setSocialButtonState(
-          provider: 'apple',
-          loading: false,
-          message: 'Giriş tamamlandı.',
-        );
-        return;
-      }
-      await _setSocialButtonState(
-        provider: 'apple',
-        loading: false,
-        error: 'Apple ile giriş başarısız.',
-      );
+      await prefs.remove(_kPendingAppleStartedAtKey);
+      await _syncSocialSessionToWeb(name: name, email: email);
+      debugPrint('[AppleSignIn] Mobile session completed.');
     } finally {
       _appleCallbackInProgress = false;
     }
