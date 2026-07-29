@@ -26,7 +26,7 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.17';
-const String kAppBuildNumber = '111';
+const String kAppBuildNumber = '112';
 const String kAppWebCacheVersion = '20260728-native-nav-v4';
 const int kAppleHandoffPollAttempts = 180;
 const Duration kAppleHandoffPollInterval = Duration(seconds: 2);
@@ -1921,7 +1921,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
               NavigationDestination(
                 icon: Icon(Icons.menu_book_outlined),
                 selectedIcon: Icon(Icons.menu_book),
-                label: 'Rehber',
+                label: 'Seçkiler',
               ),
               NavigationDestination(
                 icon: Icon(Icons.person_outline),
