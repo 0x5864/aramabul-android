@@ -26,8 +26,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.17';
-const String kAppBuildNumber = '109';
-const String kAppWebCacheVersion = '20260717-apple-session-v8';
+const String kAppBuildNumber = '111';
+const String kAppWebCacheVersion = '20260728-native-nav-v4';
 const int kAppleHandoffPollAttempts = 180;
 const Duration kAppleHandoffPollInterval = Duration(seconds: 2);
 const Duration kApplePendingStateMaxAge = Duration(minutes: 8);
@@ -267,6 +267,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
   Timer? _loadingWatchdog;
   int _lastLoggedProgressBucket = -1;
   String _currentPath = '/';
+  bool _isNearbyPage = false;
   bool _showNativeFavorites = false;
   bool _appleCallbackInProgress = false;
   bool _appleHandoffPolling = false;
@@ -294,12 +295,14 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
           onPageStarted: (url) {
             debugPrint('[HomeWebView] page started: $url');
             final nextPath = _pathFromUrl(url);
+            final isNearbyPage = _isNearbyUrl(url);
             if (!mounted) return;
             setState(() {
               _isLoading = true;
               _lastError = null;
               _isPageTransitioning = true;
               _currentPath = nextPath;
+              _isNearbyPage = isNearbyPage;
               _showNativeFavorites = false;
             });
             _startLoadingWatchdog('page started');
@@ -312,8 +315,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
             _controller.currentUrl().then((currentUrl) {
               debugPrint('[HomeWebView] page finished: $currentUrl');
               final nextPath = _pathFromUrl(currentUrl);
+              final isNearbyPage = _isNearbyUrl(currentUrl);
               if (mounted) {
-                setState(() => _currentPath = nextPath);
+                setState(() {
+                  _currentPath = nextPath;
+                  _isNearbyPage = isNearbyPage;
+                });
               }
             });
             Future.delayed(const Duration(milliseconds: 150), () {
@@ -631,15 +638,20 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
     return path;
   }
 
+  bool _isNearbyUrl(String? rawUrl) {
+    final uri = Uri.tryParse(rawUrl ?? '');
+    return (uri?.path.endsWith('/yeme-icme.html') ?? false) &&
+        uri?.queryParameters['nearby'] == '1';
+  }
+
   int _selectedNativeNavIndex() {
-    if (_showNativeFavorites) return 2;
-    if (_currentPath.endsWith('/favorites.html')) return 2;
+    if (_showNativeFavorites) return 1;
+    if (_currentPath.endsWith('/favorites.html')) return 1;
+    if (_currentPath.endsWith('/yeme-icme.html') && _isNearbyPage) return 2;
+    if (_currentPath.endsWith('/rehber.html')) return 3;
     if (_currentPath.endsWith('/profile.html') ||
         _currentPath.contains('-settings.html')) {
-      return 3;
-    }
-    if (_currentPath.endsWith('/yeme-icme.html')) {
-      return 1;
+      return 4;
     }
     return 0;
   }
@@ -651,13 +663,17 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
         await _loadLivePage('/');
         break;
       case 1:
+        await _loadLivePage('/favorites.html');
+        break;
+      case 2:
         setState(() => _showNativeFavorites = false);
         await _loadLivePage(kNearbyPath);
         break;
-      case 2:
-        await _loadLivePage('/favorites.html');
-        break;
       case 3:
+        setState(() => _showNativeFavorites = false);
+        await _loadLivePage('/rehber.html');
+        break;
+      case 4:
         setState(() => _showNativeFavorites = false);
         await _loadLivePage('/profile.html?action=profile');
         break;
@@ -1854,37 +1870,66 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
             ),
           ],
         ),
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: _selectedNativeNavIndex(),
-          backgroundColor: Colors.white,
-          indicatorColor: const Color(0xFFE8F1F8),
-          surfaceTintColor: Colors.white,
-          height: 64,
-          onDestinationSelected: (index) {
-            unawaited(_openNativeNavIndex(index));
-          },
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home),
-              label: 'Ana',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.my_location_outlined),
-              selectedIcon: Icon(Icons.my_location),
-              label: 'Yakın',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.favorite_border),
-              selectedIcon: Icon(Icons.favorite),
-              label: 'Favori',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.person_outline),
-              selectedIcon: Icon(Icons.person),
-              label: 'Hesap',
-            ),
-          ],
+        bottomNavigationBar: NavigationBarTheme(
+          data: NavigationBarThemeData(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            indicatorColor: Colors.transparent,
+            surfaceTintColor: Colors.white,
+            labelTextStyle: WidgetStateProperty.resolveWith<TextStyle>((
+              states,
+            ) {
+              final selected = states.contains(WidgetState.selected);
+              return TextStyle(
+                color: selected ? kAppProgressColor : const Color(0xFF5F6469),
+                fontSize: 10.5,
+                fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              );
+            }),
+            iconTheme: WidgetStateProperty.resolveWith<IconThemeData>((states) {
+              return IconThemeData(
+                color: states.contains(WidgetState.selected)
+                    ? kAppProgressColor
+                    : const Color(0xFF5F6469),
+                size: 26,
+              );
+            }),
+          ),
+          child: NavigationBar(
+            selectedIndex: _selectedNativeNavIndex(),
+            height: 72,
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+            onDestinationSelected: (index) {
+              unawaited(_openNativeNavIndex(index));
+            },
+            destinations: const [
+              NavigationDestination(
+                icon: Icon(Icons.search),
+                selectedIcon: Icon(Icons.search),
+                label: 'Keşfet',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.favorite_border),
+                selectedIcon: Icon(Icons.favorite),
+                label: 'Favoriler',
+              ),
+              NavigationDestination(
+                icon: ImageIcon(AssetImage('assets/nearby-nav.png')),
+                selectedIcon: ImageIcon(AssetImage('assets/nearby-nav.png')),
+                label: 'Yakın',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.menu_book_outlined),
+                selectedIcon: Icon(Icons.menu_book),
+                label: 'Rehber',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.person_outline),
+                selectedIcon: Icon(Icons.person),
+                label: 'Profil',
+              ),
+            ],
+          ),
         ),
       ),
     );
