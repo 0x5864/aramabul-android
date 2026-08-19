@@ -26,8 +26,8 @@ const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
 const String kAppVersion = '1.6.17';
-const String kAppBuildNumber = '112';
-const String kAppWebCacheVersion = '20260728-native-nav-v4';
+const String kAppBuildNumber = '113';
+const String kAppWebCacheVersion = '20260819-mobile-istanbul-v1';
 const int kAppleHandoffPollAttempts = 180;
 const Duration kAppleHandoffPollInterval = Duration(seconds: 2);
 const Duration kApplePendingStateMaxAge = Duration(minutes: 8);
