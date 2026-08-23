@@ -25,9 +25,9 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.17';
-const String kAppBuildNumber = '113';
-const String kAppWebCacheVersion = '20260819-mobile-istanbul-v1';
+const String kAppVersion = '1.6.18';
+const String kAppBuildNumber = '114';
+const String kAppWebCacheVersion = '20260823-google-signin-v1';
 const int kAppleHandoffPollAttempts = 180;
 const Duration kAppleHandoffPollInterval = Duration(seconds: 2);
 const Duration kApplePendingStateMaxAge = Duration(minutes: 8);
@@ -264,6 +264,8 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
   bool _isPageTransitioning = false;
   bool _isOffline = false;
   bool _googleInitialized = false;
+  Future<void>? _googleInitialization;
+  bool _googleSignInInProgress = false;
   Timer? _loadingWatchdog;
   int _lastLoggedProgressBucket = -1;
   String _currentPath = '/';
@@ -365,7 +367,11 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
     _setupJsBridge();
     _setupNativeAuthCallback();
     _startConnectivityWatch();
-    unawaited(_initGoogleSignIn());
+    unawaited(
+      _initGoogleSignIn().catchError((Object error) {
+        debugPrint('[GoogleSignIn] Warm-up failed: $error');
+      }),
+    );
     unawaited(_bootstrapInitialPage());
     unawaited(_requestLocationPermissionOnStartup());
   }
@@ -522,8 +528,12 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
     }
   }
 
-  Future<void> _initGoogleSignIn() async {
-    if (_googleInitialized) return;
+  Future<void> _initGoogleSignIn() {
+    if (_googleInitialized) return Future<void>.value();
+    return _googleInitialization ??= _initializeGoogleSignIn();
+  }
+
+  Future<void> _initializeGoogleSignIn() async {
     try {
       await GoogleSignIn.instance.initialize(
         serverClientId:
@@ -531,7 +541,9 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
       );
       _googleInitialized = true;
     } catch (error) {
+      _googleInitialization = null;
       debugPrint('[GoogleSignIn] Init failed: $error');
+      rethrow;
     }
   }
 
@@ -878,10 +890,10 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
           Share.share('$title $url');
           break;
         case 'google_signin':
-          _handleGoogleSignInFromWebView();
+          unawaited(_handleGoogleSignInFromWebView());
           break;
         case 'apple_signin':
-          _handleAppleSignInFromWebView();
+          unawaited(_handleAppleSignInFromWebView());
           break;
         case 'login_success':
           final loginName = data['name'] as String? ?? '';
@@ -1061,15 +1073,24 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
   }
 
   Future<void> _handleGoogleSignInFromWebView() async {
-    await _setSocialButtonState(
-      provider: 'google',
-      loading: true,
-      message: 'Google hesabınıza yönlendiriliyorsunuz...',
-    );
-
-    var socialLoginCompleted = false;
+    if (_googleSignInInProgress) {
+      debugPrint('[GoogleSignIn] Ignored duplicate sign-in request.');
+      return;
+    }
+    _googleSignInInProgress = true;
     try {
+      await _setSocialButtonState(
+        provider: 'google',
+        loading: true,
+        message: 'Google hesabınıza yönlendiriliyorsunuz...',
+      );
       await _initGoogleSignIn();
+      if (!GoogleSignIn.instance.supportsAuthenticate()) {
+        throw const GoogleSignInException(
+          code: GoogleSignInExceptionCode.uiUnavailable,
+          description: 'Bu cihaz Google kimlik doğrulama ekranını açamıyor.',
+        );
+      }
       final account = await GoogleSignIn.instance.authenticate();
       final idToken = account.authentication.idToken ?? '';
       if (idToken.isEmpty) {
@@ -1086,26 +1107,38 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
         providerId: account.id,
         idToken: idToken,
       );
-      socialLoginCompleted = true;
       await _syncSocialSessionToWeb(
         name: session['name'] ?? name,
         email: session['email'] ?? email,
       );
-    } catch (e) {
-      debugPrint('[GoogleSignIn] Error: $e');
-      if (socialLoginCompleted) {
-        await _setSocialButtonState(
-          provider: 'google',
-          loading: false,
-          message: 'Giriş tamamlandı.',
-        );
+    } on GoogleSignInException catch (error) {
+      debugPrint(
+        '[GoogleSignIn] Error code=${error.code} '
+        'description=${error.description} details=${error.details}',
+      );
+      if (error.code == GoogleSignInExceptionCode.canceled) {
+        await _setSocialButtonState(provider: 'google', loading: false);
         return;
       }
       await _setSocialButtonState(
         provider: 'google',
         loading: false,
-        error: 'Google ile giriş başarısız.',
+        error:
+            error.code == GoogleSignInExceptionCode.clientConfigurationError ||
+                error.code ==
+                    GoogleSignInExceptionCode.providerConfigurationError
+            ? 'Google giriş yapılandırması doğrulanamadı.'
+            : 'Google ile giriş başlatılamadı.',
       );
+    } catch (error) {
+      debugPrint('[GoogleSignIn] Error: $error');
+      await _setSocialButtonState(
+        provider: 'google',
+        loading: false,
+        error: 'Google ile giriş tamamlanamadı.',
+      );
+    } finally {
+      _googleSignInInProgress = false;
     }
   }
 
@@ -1316,10 +1349,11 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
 
               function handleSocial(event) {
                 var target = event.target && event.target.closest
-                  ? event.target.closest('[data-native-social-provider], #customGoogleSignInBtn, #customAppleSignInBtn, #accountGoogleSignInBtn, #appGoogleSignInBtn, #appAppleSignInBtn')
+                  ? event.target.closest('[data-native-social-provider], [data-profile-auth-google-fallback], #customGoogleSignInBtn, #customAppleSignInBtn, #accountGoogleSignInBtn, #appGoogleSignInBtn, #appAppleSignInBtn')
                   : null;
                 if (!target) return;
                 var provider = String(target.getAttribute('data-native-social-provider') || '').toLowerCase();
+                if (!provider && target.hasAttribute('data-profile-auth-google-fallback')) provider = 'google';
                 if (!provider && /google/i.test(target.id || '')) provider = 'google';
                 if (!provider && /apple/i.test(target.id || '')) provider = 'apple';
                 if (provider !== 'google' && provider !== 'apple') return;
@@ -1354,15 +1388,22 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
                 post('logout');
               }
 
-              ['pointerdown', 'touchstart', 'click'].forEach(function(type) {
-                window.addEventListener(type, handleSocial, true);
-                document.addEventListener(type, handleLogout, true);
-              });
+              window.addEventListener('click', handleSocial, true);
+              document.addEventListener('click', handleLogout, true);
 
               function revealNativeButtons() {
-                document.querySelectorAll('[data-native-social-provider="apple"], #customAppleSignInBtn, #appAppleSignInBtn').forEach(function(button) {
+                document.querySelectorAll('[data-native-social-provider], [data-profile-auth-google-fallback], #customGoogleSignInBtn, #customAppleSignInBtn, #accountGoogleSignInBtn, #appGoogleSignInBtn, #appAppleSignInBtn').forEach(function(button) {
                   button.hidden = false;
-                  button.style.display = '';
+                  button.removeAttribute('hidden');
+                  button.removeAttribute('disabled');
+                  button.style.setProperty('display', 'flex', 'important');
+                  button.style.setProperty('visibility', 'visible', 'important');
+                });
+                document.querySelectorAll('.gsi-button-container').forEach(function(container) {
+                  container.remove();
+                });
+                document.querySelectorAll('[data-profile-auth-google-slot]').forEach(function(slot) {
+                  slot.style.display = 'none';
                 });
               }
 
