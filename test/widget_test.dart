@@ -41,8 +41,9 @@ void main() {
   test('Android Apple flow uses the native callback and preserves state', () {
     const state = 'aramabul_android_v2_test-state';
     final authorization = appleAuthorizationUri(state);
-    expect(authorization.host, 'appleid.apple.com');
-    expect(authorization.queryParameters['response_mode'], 'form_post');
+    expect(authorization.host, 'aramabul.com');
+    expect(authorization.path, '/api/auth/apple-start');
+    expect(authorization.queryParameters['platform'], 'android');
     expect(authorization.queryParameters['state'], state);
 
     final callback = Uri.parse(

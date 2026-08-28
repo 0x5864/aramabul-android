@@ -25,8 +25,8 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.18';
-const String kAppBuildNumber = '114';
+const String kAppVersion = '1.6.19';
+const String kAppBuildNumber = '115';
 const String kAppWebCacheVersion = '20260823-google-signin-v1';
 const int kAppleHandoffPollAttempts = 180;
 const Duration kAppleHandoffPollInterval = Duration(seconds: 2);
@@ -52,14 +52,10 @@ const MethodChannel _nativeAuthCallbackChannel = MethodChannel(
 
 @visibleForTesting
 Uri appleAuthorizationUri(String state) {
-  return Uri.https('appleid.apple.com', '/auth/authorize', {
-    'client_id': 'com.aramabul.app.signin',
-    'redirect_uri': 'https://aramabul.com/api/auth/apple-callback',
-    'scope': 'email name',
-    'response_type': 'code id_token',
-    'response_mode': 'form_post',
-    'state': state,
-  });
+  return Uri.parse(kLiveUrl).replace(
+    path: '/api/auth/apple-start',
+    queryParameters: {'platform': 'android', 'state': state},
+  );
 }
 
 @visibleForTesting
