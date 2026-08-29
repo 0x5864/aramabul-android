@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  test('food picks route recognizes canonical and html paths', () {
+    expect(isSelectionsPath('/yeme-icme-seckileri'), isTrue);
+    expect(isSelectionsPath('/yeme-icme-seckileri.html'), isTrue);
+    expect(isSelectionsPath('/rehber.html'), isFalse);
+  });
+
   test('welcome is only shown before first use without a session', () {
     expect(
       shouldShowWelcomeScreen(hasSeenWelcome: false, hasActiveSession: false),

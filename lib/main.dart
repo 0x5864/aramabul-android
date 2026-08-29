@@ -25,9 +25,12 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.19';
-const String kAppBuildNumber = '115';
-const String kAppWebCacheVersion = '20260823-google-signin-v1';
+const String kAppVersion = '1.6.20';
+const String kAppBuildNumber = '116';
+const String kAppWebCacheVersion = '20260829-selections-summary-v1';
+const String kSelectionsPath = '/yeme-icme-seckileri';
+const String kSelectionsScrollStorageKey =
+    'aramabul_yeme_icme_selections_scroll_y';
 const int kAppleHandoffPollAttempts = 180;
 const Duration kAppleHandoffPollInterval = Duration(seconds: 2);
 const Duration kApplePendingStateMaxAge = Duration(minutes: 8);
@@ -49,6 +52,12 @@ const String _kCompletedAppleStateKey = 'aramabul.apple.completedState.v1';
 const MethodChannel _nativeAuthCallbackChannel = MethodChannel(
   'com.aramabul.app/auth_callback',
 );
+
+@visibleForTesting
+bool isSelectionsPath(String path) {
+  return path.endsWith(kSelectionsPath) ||
+      path.endsWith('$kSelectionsPath.html');
+}
 
 @visibleForTesting
 Uri appleAuthorizationUri(String state) {
@@ -269,6 +278,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
   bool _showNativeFavorites = false;
   bool _appleCallbackInProgress = false;
   bool _appleHandoffPolling = false;
+  bool _showSelectionsSummaryOnNextLoad = false;
 
   @override
   void initState() {
@@ -305,11 +315,17 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
             });
             _startLoadingWatchdog('page started');
           },
-          onPageFinished: (_) {
+          onPageFinished: (url) {
             if (!mounted) return;
             _loadingWatchdog?.cancel();
             _injectAppBridge();
             _injectAppVisualOverrides();
+            final finishedPath = _pathFromUrl(url);
+            if (_showSelectionsSummaryOnNextLoad &&
+                isSelectionsPath(finishedPath)) {
+              _showSelectionsSummaryOnNextLoad = false;
+              unawaited(_revealSelectionsSummaryAtTop());
+            }
             _controller.currentUrl().then((currentUrl) {
               debugPrint('[HomeWebView] page finished: $currentUrl');
               final nextPath = _pathFromUrl(currentUrl);
@@ -656,7 +672,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
     if (_showNativeFavorites) return 1;
     if (_currentPath.endsWith('/favorites.html')) return 1;
     if (_currentPath.endsWith('/yeme-icme.html') && _isNearbyPage) return 2;
-    if (_currentPath.endsWith('/rehber.html')) return 3;
+    if (isSelectionsPath(_currentPath)) return 3;
     if (_currentPath.endsWith('/profile.html') ||
         _currentPath.contains('-settings.html')) {
       return 4;
@@ -678,13 +694,56 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
         await _loadLivePage(kNearbyPath);
         break;
       case 3:
-        setState(() => _showNativeFavorites = false);
-        await _loadLivePage('/rehber.html');
+        await _openSelectionsPage();
         break;
       case 4:
         setState(() => _showNativeFavorites = false);
         await _loadLivePage('/profile.html?action=profile');
         break;
+    }
+  }
+
+  Future<void> _openSelectionsPage() async {
+    setState(() => _showNativeFavorites = false);
+    _showSelectionsSummaryOnNextLoad = true;
+    try {
+      await _controller.runJavaScript(
+        'try { sessionStorage.removeItem(${jsonEncode(kSelectionsScrollStorageKey)}); } catch (error) {}',
+      );
+    } catch (error) {
+      debugPrint('[HomeWebView] selections scroll reset skipped: $error');
+    }
+    await _loadLivePage(kSelectionsPath);
+  }
+
+  Future<void> _revealSelectionsSummaryAtTop() async {
+    try {
+      await _controller.runJavaScript(r'''
+        (function () {
+          try {
+            sessionStorage.removeItem('aramabul_yeme_icme_selections_scroll_y');
+          } catch (error) {}
+          var panel = document.querySelector('.yeme-icme-selections-panel');
+          var title = document.getElementById('yemeIcmeSelectionsTitle');
+          var districts = document.querySelector('.yeme-icme-selections-districts');
+          [panel, title, districts].forEach(function (element) {
+            if (!element) return;
+            element.hidden = false;
+            element.removeAttribute('hidden');
+            element.style.setProperty('visibility', 'visible', 'important');
+            element.style.setProperty('opacity', '1', 'important');
+          });
+          if (panel) panel.style.setProperty('display', 'block', 'important');
+          if (title) title.style.setProperty('display', 'block', 'important');
+          if (districts) districts.style.setProperty('display', 'flex', 'important');
+          if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+          window.requestAnimationFrame(function () {
+            window.scrollTo(0, 0);
+          });
+        })();
+      ''');
+    } catch (error) {
+      debugPrint('[HomeWebView] selections summary reveal failed: $error');
     }
   }
 
@@ -1680,6 +1739,22 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
             .favorites-page-shell .favorites-grid .istanbul-venue-card {
               border: 1px solid #c9ced4 !important;
               border-radius: 8px !important;
+            }
+
+            body.yeme-icme-selections-page .yeme-icme-selections-panel,
+            body.yeme-icme-selections-page #yemeIcmeSelectionsTitle,
+            body.yeme-icme-selections-page .yeme-icme-selections-districts {
+              visibility: visible !important;
+              opacity: 1 !important;
+            }
+
+            body.yeme-icme-selections-page .yeme-icme-selections-panel,
+            body.yeme-icme-selections-page #yemeIcmeSelectionsTitle {
+              display: block !important;
+            }
+
+            body.yeme-icme-selections-page .yeme-icme-selections-districts {
+              display: flex !important;
             }
 
             @media (max-width: 699px) {
