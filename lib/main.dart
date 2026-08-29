@@ -25,9 +25,9 @@ const String kLiveUrl = 'https://aramabul.com';
 const String kDeepLinkHost = 'aramabul.com';
 const String kDeepLinkHostWww = 'www.aramabul.com';
 
-const String kAppVersion = '1.6.20';
-const String kAppBuildNumber = '116';
-const String kAppWebCacheVersion = '20260829-selections-summary-v1';
+const String kAppVersion = '1.6.21';
+const String kAppBuildNumber = '117';
+const String kAppWebCacheVersion = '20260829-google-signin-v2';
 const String kSelectionsPath = '/yeme-icme-seckileri';
 const String kSelectionsScrollStorageKey =
     'aramabul_yeme_icme_selections_scroll_y';
@@ -52,6 +52,47 @@ const String _kCompletedAppleStateKey = 'aramabul.apple.completedState.v1';
 const MethodChannel _nativeAuthCallbackChannel = MethodChannel(
   'com.aramabul.app/auth_callback',
 );
+
+class SocialLoginException implements Exception {
+  const SocialLoginException({
+    required this.statusCode,
+    required this.code,
+    required this.message,
+  });
+
+  final int statusCode;
+  final String code;
+  final String message;
+
+  @override
+  String toString() => 'SocialLoginException($statusCode, $code): $message';
+}
+
+@visibleForTesting
+SocialLoginException readSocialLoginException(int statusCode, String body) {
+  var code = 'social_login_failed';
+  var message = 'Google ile giriş tamamlanamadı.';
+  try {
+    final payload = jsonDecode(body);
+    if (payload is Map<String, dynamic>) {
+      final error = payload['error'];
+      if (error is Map<String, dynamic>) {
+        code = (error['code'] as String? ?? code).trim();
+        message = (error['message'] as String? ?? message).trim();
+      } else {
+        code = (payload['code'] as String? ?? code).trim();
+        message = (payload['message'] as String? ?? message).trim();
+      }
+    }
+  } catch (_) {
+    // Keep the safe fallback when the server does not return JSON.
+  }
+  return SocialLoginException(
+    statusCode: statusCode,
+    code: code.isEmpty ? 'social_login_failed' : code,
+    message: message.isEmpty ? 'Google ile giriş tamamlanamadı.' : message,
+  );
+}
 
 @visibleForTesting
 bool isSelectionsPath(String path) {
@@ -1055,7 +1096,7 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
       );
       final body = await response.transform(utf8.decoder).join();
       if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw HttpException('Social login failed: ${response.statusCode}');
+        throw readSocialLoginException(response.statusCode, body);
       }
 
       final payload = jsonDecode(body) as Map<String, dynamic>;
@@ -1184,6 +1225,19 @@ class _HomeWebViewPageState extends State<HomeWebViewPage>
                     GoogleSignInExceptionCode.providerConfigurationError
             ? 'Google giriş yapılandırması doğrulanamadı.'
             : 'Google ile giriş başlatılamadı.',
+      );
+    } on SocialLoginException catch (error) {
+      debugPrint('[GoogleSignIn] Backend rejected login: $error');
+      if (error.statusCode == HttpStatus.conflict ||
+          error.code == 'account_conflict') {
+        try {
+          await GoogleSignIn.instance.signOut();
+        } catch (_) {}
+      }
+      await _setSocialButtonState(
+        provider: 'google',
+        loading: false,
+        error: error.message,
       );
     } catch (error) {
       debugPrint('[GoogleSignIn] Error: $error');

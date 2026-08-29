@@ -33,6 +33,26 @@ void main() {
     expect(socialLoginSuccessPath(), '/');
   });
 
+  test('social login conflict preserves the server guidance', () {
+    final error = readSocialLoginException(
+      409,
+      '{"ok":false,"error":{"code":"account_conflict",'
+      '"message":"Farklı bir Google hesabı seçin."}}',
+    );
+
+    expect(error.statusCode, 409);
+    expect(error.code, 'account_conflict');
+    expect(error.message, 'Farklı bir Google hesabı seçin.');
+  });
+
+  test('social login error uses a safe fallback for invalid responses', () {
+    final error = readSocialLoginException(502, '<html>bad gateway</html>');
+
+    expect(error.statusCode, 502);
+    expect(error.code, 'social_login_failed');
+    expect(error.message, 'Google ile giriş tamamlanamadı.');
+  });
+
   test('Apple subject and email can be read from an Android identity token', () {
     const token =
         'eyJhbGciOiJSUzI1NiJ9.'
